@@ -1,0 +1,14 @@
+
+%h1
+	= @equipment.title
+
+
+%p
+	= raw @equipment.description
+
+%h5
+	Featured In:
+	
+- @equipment.workouts.each do |workout|
+	%li
+		= link_to workout.title, workout

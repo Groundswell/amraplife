@@ -1,0 +1,37 @@
+#footer.footer-area
+	.footer-top.container
+		.row
+			.widget.col-xs-6.col-sm-4
+				%h4.widget-title
+					Information
+				%ul.entries.links
+					%li
+						%a{ href: '/about' }
+							About
+					%li
+						%a{ href: '/blog' }
+							Blog
+					%li
+						%a{ href: '/contacts/new' }
+							Contact
+					%li
+						%a{ href: '/admin' }
+							Admin
+
+			.widget.col-xs-6.col-sm-4
+
+			.widget.col-xs-12.col-sm-4
+				%h4.widget-title
+					Subscribe
+				%form.form-horizontal{ role: :form }
+					.form-group
+						.col-lg-10
+							%input.form-control{ type: :text, placholder: 'Your Email' }
+	.footer-bottom
+		.container.aligncenter
+			%p
+				©
+				= Time.now.year
+				= ENV['APP_NAME']
+				
+				All Rights Reserved

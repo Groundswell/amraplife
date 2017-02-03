@@ -1,0 +1,44 @@
+#header.header-navbar{ role: :navigation }
+	.header-navbar-inner.container
+		#brand.navbar-brand
+			%a{ href: '/' }
+				= image_tag 'amrap_logo_wht.png', width: 244, height: 56, style: 'border-left: 5px solid #9c27b0;border-right: 5px solid #9c27b0;'
+		%ul.nav.nav-pages.hidden-xs
+			%li
+				%a{ href: '#' }
+					About
+			%li
+				%a{ href: '#' }
+					Contact
+		%ul.nav.nav-icons
+			%li
+				%a.btn-icon
+					%span.search-toggled-out-icon
+						%i.fa.fa-search
+		%ul.nav.navbar-nav
+			-#%li
+				%a{ href: '/blog' }
+					Blog
+			-#%li
+				%a{ href: '#' }
+					Recipes
+			-#%li
+				%a{ href: '#' }
+					Places
+			-#%li
+				%a{ href: '#' }
+					Workouts
+			-#%li
+				%a{ href: '#' }
+					Trainers
+			-#%li
+				%a{ href: '#' }
+					Store
+			-#%li
+				%a{ href: '#', data: { toggle: :li } }
+					Categories
+				.subnav-wrapper
+					%ul.subnav
+						- SwellMedia::Category.all.each do |cat|
+							%li
+								= link_to cat, articles_path( cat: cat )

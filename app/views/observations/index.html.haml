@@ -1,0 +1,23 @@
+
+.main-box.clearfix
+	.main-box-header.clearfix
+		%h2
+			Observations
+	.main-box-body.clearfix
+		%table.table.table-striped
+			%thead
+				%th Workout
+				%th Value
+				%th Unit
+				%th Recorded
+			%tbody
+				- @observations.each do |observation|
+					%tr
+						%td
+							= link_to observation.workout, observation.workout
+						%td
+							= observation.value
+						%td
+							= observation.unit
+						%td
+							= observation.recorded_at

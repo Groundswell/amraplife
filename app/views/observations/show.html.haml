@@ -1,0 +1,22 @@
+%h2
+	Score:
+	= @observation.human_value
+
+%p
+	Recorded:
+	= @observation.recorded_at
+
+%p
+	Notes
+	= raw @observation.notes
+
+%h4
+	Segment Results
+%table.table
+	%tbody
+		- Observation.where( parent_id: @observation.id ).each do |result|
+			%tr
+				%td
+					= result.human_value
+				%td
+					= result.observed

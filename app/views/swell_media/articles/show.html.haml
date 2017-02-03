@@ -1,0 +1,37 @@
+#content.content.section.row
+	.col-md-8.bg-base.col-lg-8.col-xl-9
+		.ribbon.ribbon-highlight
+			%ol.breadcrumb.ribbon-inner
+				%li
+					%a{ href: '/' }
+						Home
+				%li
+					%a{ href: '/blog' }
+						Blog
+				%li.active
+					= @media.title
+
+		%header.page-header
+			%h2.page-title
+				= @media.title
+		%article.entry.style-single.type-post
+			%figure.entry-thumbnail
+				%img{ src: @media.avatar, width: 680, height: 452 }
+			.entry-meta
+				%span.author
+					By
+					= @media.user
+				%span.entry-date
+					= @media.publish_at.strftime('%B %e, %Y')
+				%span.category
+					= @media.category
+			.entry-content{ style: "font-size:18px; line-height:30px;font-family:'Droid Serif', sans-serif;" }
+				= raw @media.content
+
+
+
+	.sidebar.col-md-4.col-lg-4.col-xl-3
+		%aside.widget
+			%h2.widget-title.ribbon
+				%span
+					Featured

@@ -1,0 +1,42 @@
+!!!strict
+<!--[if lt IE 9]>
+<script src="js/html5shiv.min.js"></script>
+<![endif]-->
+<!--[if gte IE 9]>
+<style type="text/css">
+.standard-button,
+.navbar-register-button {
+filter: none;
+}
+</style>
+<![endif]-->
+%html{ lang: :en }
+	%head
+		= render 'application/html_head', args: {}
+		
+		= stylesheet_link_tag "//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"
+		= stylesheet_link_tag "https://fonts.googleapis.com/css?family=Lato:300,400,700,900"
+
+		= stylesheet_link_tag 'cube'
+
+		= javascript_include_tag 'application'
+		=# javascript_include_tag 'dash'
+
+		
+	%body.theme-amethyst
+		#theme-wrapper
+			= render 'dash/navbar'
+
+			#page-wrapper.container
+				.row
+					= render 'dash/sidebar'
+					
+					#content-wrapper
+						= render 'application/flash'
+						= yield
+
+
+
+		= render 'application/footer'
+
+= render 'application/analytics'

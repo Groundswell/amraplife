@@ -1,0 +1,21 @@
+#content.content.section.row
+	.col-md-8.bg-base.col-lg-8.col-xl-9
+		.ribbon.ribbon-highlight
+			%ol.breadcrumb.ribbon-inner
+				%li
+					%a{ href: '/' }
+						Home
+				%li.active
+					Blog
+
+		.entries
+			= raw paginate @articles
+			
+			- @articles.each do |article|
+				= render 'row', article: article
+
+	.sidebar.col-md-4.col-lg-4.col-xl-3
+		%aside.widget
+			%h2.widget-title.ribbon
+				%span
+					Featured

@@ -1,0 +1,28 @@
+%h1
+	= @workout.title
+
+%p
+	Workout type:
+	= @workout.workout_type
+
+%p
+	Movements:
+	- @workout.movements.each do |movement|
+		= link_to movement.title, movement
+%p
+	Equipment:
+	- @workout.equipment.each do |equipment|
+		= link_to equipment.title, equipment
+
+%p
+	%strong
+		Description:
+	= @workout.description
+
+
+%p
+	%strong
+		Segments:
+	- @workout.workout_segments.each do |segment|
+		%li
+			= segment.content

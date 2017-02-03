@@ -1,0 +1,84 @@
+%header#header-navbar.navbar
+	.container
+		%a#logo.navbar-brand{ href: swell_media.root_path }
+			= image_tag 'amrap_logo_wht.png', class: "normal-logo logo-white"
+		
+		.clearfix
+			%button.navbar-toggle{ type: :button, data: { target: ".navbar-ex1-collapse", toggle: :collapse } }
+				%span.sr-only
+					Toggle navigation
+				%span.fa.fa-bars
+
+			.nav-no-collapse.navbar-left.pull-left.hidden-sm.hidden-xs
+				%ul.nav.navbar-nav.pull-left
+					%li
+						%a#make-small-nav.btn
+							%i.fa.fa-bars
+					%li.dropdown.hidden-xs
+						%a.btn.dropdown-toggle{ data: { toggle: :dropdown } }
+							%i.fa.fa-bell
+							%span.count
+								8
+						%ul.dropdown-menu.notifications-list
+							%li.pointer
+								.pointer-inner
+									.arrow
+							%li.item-header
+								You have 6 new notifications
+							%li.item
+								%a{ href: '#' }
+									%i.fa.fa-comment
+									%span.content
+										Someone commented
+									%span.time
+										%i.fa.fa-clock-o
+											13 min. ago
+							%li.item
+								%a{ href: '#' }
+									%i.fa.fa-eye
+									%span.content
+										Someone viewed
+									%span.time
+										%i.fa.fa-clock-o
+											16 min. ago
+							%li.item-footer
+								%a{ href: '#' }
+									View All...
+			#header-nav.nav-no-collapse.pull-right
+				%ul.nav.navbar-nav.pull-right
+					%li.mobile-search
+						%a.btn
+							%i.fa.fa-search
+						.dropdown-search
+							%form{ role: :search }
+								.form-group
+									%input.form-control{ type: :text, placeholder: 'Search...' }
+									%i.fa.fa-search.nav-search-icon
+					%li.dropdown.profile-dropdown
+						%a.dropdown-toggle{ href: '#', data: { toggle: :dropdown } }
+							= image_tag current_user.try( :avatar )
+							%span.hidden-xs
+								= current_user
+							%b.caret
+						%ul.dropdown-menu.dropdown-menu-right
+							%li
+								%a{ href: '#' }
+									%i.fa.fa-user
+									Profile
+							%li
+								%a{ href: '#' }
+									%i.fa.fa-cog
+									Settings
+							%li
+								%a{ href: '#' }
+									%i.fa.fa-bell
+									Notifications
+							%li
+								%a{ href: main_app.logout_path }
+									%i.fa.fa-power-off
+									Logout
+					%li.hidden-xxs
+						%a.btn{ href: main_app.logout_path }
+							%i.fa.fa-power-off
+
+

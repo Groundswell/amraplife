@@ -1,0 +1,26 @@
+- cache( "row-#{article.cache_key}" ) do
+	.entry.style-media.media.type-post
+		%figure.media-object.pull-left.entry-thumbnail.hidden-xs
+			%img{ src: article.avatar, width: 230, height: 230 }
+		.media-body
+			%header.entry-header
+				%h3.entry-title
+					= link_to article.title, article.url
+				.entry-meta
+					%span.author
+						%a{href: articles_path( by: article.user_id ) }
+							By:
+							= article.user
+					%span.entry-date
+						%a{ href: '#' }
+							= article.publish_at.strftime('%B %e, %Y')
+					%span.category
+						In
+						%a{ href: '#' }
+							= article.category
+			%p
+				= raw article.description
+				%a.more-link{ href: article.url }
+					Continue
+					%i.fa.fa-arrow-right
+

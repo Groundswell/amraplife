@@ -1,0 +1,35 @@
+
+.main-box.clearfix
+	.main-box-header.clearfix
+		%h2
+			= pluralize @movements.count, 'Movement'
+		.pull-right
+			%a.btn.btn-success.pull-right{ data: { toggle: :modal, target: '#new_movement' } }
+				%i.fa.fa-plus-square
+				New
+	.main-box-body.clearfix
+		%table.table.table-striped
+			%thead
+				%th
+					Name
+				%th
+					AKA
+				%th
+					Equipment
+				%th
+					Workouts
+
+			%tbody
+				- @movements.each do |movement|
+					%tr
+						%td
+							= link_to movement.title, edit_movement_path( movement )
+						%td
+							= movement.aliases.join( ', ' )
+						%td
+							= movement.equipment
+						%td
+							= movement.workouts.count
+
+
+= render 'new_modal'

@@ -1,0 +1,22 @@
+!!!strict
+/[if lt IE 7] <html class="no-js lt-ie9 lt-ie8 lt-ie7">
+/[if IE 7] <html class="no-js lt-ie9 lt-ie8">
+/[if IE 8] <html class="no-js lt-ie9">
+//[if gt IE 8] <html class="no-js">
+%html{ lang: :en }
+	%head
+		= render 'application/goog_tag'
+		= render 'application/html_head', args: {}
+
+		= stylesheet_link_tag "//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"
+
+		= javascript_include_tag 'application'
+
+		= stylesheet_link_tag "cube", media: "all"
+		
+	%body#login-page-full
+		#login-full-wrapper
+			= render 'application/flash'
+			= yield
+
+		=# render 'application/footer'

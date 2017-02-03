@@ -1,0 +1,23 @@
+%h1
+	= @movement.title
+	- if @movement.aliases.present?
+		= "(#{@movement.aliases.join( ', '  )})"
+
+%p
+	Measured By:
+	= @movement.measured_by
+
+%p
+	Required Equipment:
+	= @movement.equipment
+
+%p
+	= raw @movement.description
+
+
+
+%h5
+	Featured In:
+- @movement.workouts.each do |workout|
+	%li
+		= link_to workout.title, workout

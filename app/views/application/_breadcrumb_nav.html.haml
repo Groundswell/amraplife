@@ -1,0 +1,15 @@
+.topic
+	.container
+		.row
+			.col-sm-8
+				%ol.breadcrumb.pull-left.hidden-xs
+					%li
+						%a{ href: '/' }
+							Home
+					- unless controller_name == 'static' or controller_name == 'sessions' or controller.action_name == 'index'
+						%li
+							= link_to controller_name.capitalize, { controller: controller_name, action: :index }
+
+					%li.active
+						= @page_meta[:title].gsub( ' | Living AMRAP', '' )
+			.col-sm-4

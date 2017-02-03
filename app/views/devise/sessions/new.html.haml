@@ -1,0 +1,66 @@
+.container
+	.row
+		.col-xs-12
+			#login-box
+				#login-box-holder
+					.row
+						.col-xs-12
+							%header#login-header
+								#login-logo
+									= image_tag 'amrap_logo_wht.png'
+							#login-box-inner
+								
+								= render 'application/flash'
+
+								= form_for resource, as: resource_name, url: session_path( resource_name ), role: :form do |f|
+									.input-group
+										%span.input-group-addon
+											%i.fa.fa-user
+										= f.text_field :login, autofocus: true, placeholder: "email", class: 'form-control'
+									.input-group
+										%span.input-group-addon
+											%i.fa.fa-key
+										= f.password_field :password, placeholder: "password", class: 'form-control'
+									#remember-me-wrapper
+										.row
+											.col-xs-6
+												.checkbox-nice
+													= f.check_box :remember_me, checked: true
+													= f.label :remember_me, "Remember me"
+
+											%a#login-forget-link.col-xs-6{ href: "/forgot" }
+												Forgot Password?
+										.row
+											.col-xs-12
+												= f.submit "Sign in", class: 'btn btn-success col-xs-12'
+									.row
+										.col-xs-12
+											%p.social-text
+												Or login with
+									.row
+										.col-xs-12.col-sm-8.col-sm-offset-2
+											%a.btn.btn-primary.btn-facebook.col-xs-12
+												%i.fa.fa-facebook
+												Facebook
+										-#.col-xs-12.col-sm-6
+											%a.btn.btn-primary.btn-twitter.col-xs-12
+												%i.fa.fa-twitter
+												Twitter
+									.row
+										.col-xs-12
+											%p.social-text{ style: 'font-size: 16px;' }
+												Don't have an account?
+												%a{ href: main_app.register_path }
+													Register
+				-#login-box-footer
+					.row
+						.col-xs-12
+							Don't have an account?
+							%a{ href: main_app.register_path }
+								Register
+
+
+
+
+
+

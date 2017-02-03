@@ -1,0 +1,21 @@
+
+.main-box.clearfix
+	.main-box-header.clearfix
+		%h2
+			Workout Results
+	.main-box-body.clearfix
+		%table.table.table-striped
+			%thead
+				%th Workout
+				%th Value
+
+				%th Recorded
+			%tbody
+				- @results.each do |result|
+					%tr
+						%td
+							= link_to result.observed, result.observed
+						%td
+							= link_to result.to_s, result
+						%td
+							= result.recorded_at.to_s( :short )

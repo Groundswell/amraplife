@@ -1,0 +1,92 @@
+
+%a.pull-right.btn.btn-danger{ href: workout_path( @workout ), data: { method: :delete, confirm: 'Are you Sure?' } }
+	Delete
+
+%h1
+	Edit Workout:
+	= @workout.title
+
+
+= render 'form'
+
+
+
+
+%h3
+	For Time:
+= form_for WorkoutSegment.new( seq: @workout.max_segment_seq ) do |f|
+	= f.hidden_field :workout_id, value: @workout.id
+	%table.table
+		%thead
+			%th
+				Seq
+			%th
+				Type
+			%th
+				Title
+			%th
+		%tbody
+			- @workout.workout_segments.order( :seq ).each do |segment|
+				%tr
+					%td= segment.seq
+					%td= segment.segment_type
+					%td= segment
+					%td
+						= segment.total_reps
+					%td
+						%a.btn.btn-small.btn-danger{ href: workout_segment_path( segment ), data: { method: :delete, confirm: 'Are you Sure?' } }
+							%i.fa.fa-trash
+			%tr
+				%td.col-xs-1
+					= f.text_field :seq, class: 'form-control'
+				%td
+					= f.select :segment_type, [ ['Work', 'work'], ['Rest', 'rest'] ], {}, class: 'form-control'
+				%td.col-xs-8
+					= f.text_area :content, class: 'form-control'
+				%td
+					= f.submit 'Add', class: 'btn btn-small btn-success'
+
+
+
+%h3
+	Movements:
+
+= form_for WorkoutMovement.new do |f|
+	= f.hidden_field :workout_id, value: @workout.id
+	%table.table
+		%thead
+			%th 
+			%th Equipment
+			%th M Rx
+			%th F Rx
+		%tbody
+			- @workout.workout_movements.each do |movement|
+				%tr
+					%td= link_to movement, movement_path( movement )
+					%td= movement.equipment
+					%td= movement.m_rx
+					%td= movement.f_rx
+			%tr
+				%td
+					= f.collection_select :movement_id, Movement.order( :title ).all, :id, :title, {}, class: 'form-control'
+				%td
+					= f.text_field :equipment, class: 'form-control'
+				%td
+					= f.text_field :m_rx, class: 'form-control'
+				%td
+					= f.text_field :f_rx, class: 'form-control'
+				%td
+					= f.submit 'Add', class: 'btn btn-small btn-success'
+
+
+
+%hr
+= link_to 'Show', @workout
+= link_to 'Back', workouts_path
+
+
+
+%br
+%br
+%br
+%br

@@ -1,0 +1,77 @@
+#nav-col
+	%section#col-left.col-left-nano
+		#col-left-inner.col-left-nano-content
+			#user-left-box.clearfix.hidden-sm.hidden-xs.dropdown.profile2-dropdown
+				= image_tag current_user.try( :avatar )
+				.user-box
+					%span.name
+						%a.dropdown-toggle{ data: { toggle: :dropdown } }
+							= current_user
+							%i.fa.fa-angle-down
+						%ul.dropdown-menu
+							%li
+								%a{ href: '#' }
+									%i.fa.fa-user
+									Profile
+							%li
+								%a{ href: '#' }
+									%i.fa.fa-cog
+									Settings
+							%li
+								%a{ href: '#' }
+									%i.fa.fa-bell
+									Notifications
+							%li
+								%a{ href: main_app.logout_path }
+									%i.fa.fa-power-off
+									Logout
+					%span.status
+						%i.fa.fa-circle
+						Online
+			#sidebar-nav.collapse.navbar-collapse.navbar-ex1-collapse
+				%ul.nav.nav-pills.nav-stacked
+					%li.hidden-sm
+						= form_for Observation.new, html: { style: 'margin: auto 1em;' } do |f|
+							= f.text_field :content, class: 'form-control', placeholder: 'Activity=Value Notes'
+							.pull-right= f.submit 'Quick Add', class: 'btn btn-primary btn-lg', style: 'margin-top: 0.5em;'
+				%ul.nav.nav-pills.nav-stacked
+					%li.nav-header.nav-header-first.hidden-sm.hidden-xs
+						Navigation
+					%li{ class: set_css_if( controller: :dash ) }
+						%a{ href: dash_index_path }
+							%i.fa.fa-dashboard
+							%span
+								Dashboard
+							%span.label.label-primary.label-circle.pull-right
+								28
+					%li{ class: set_css_if( controller: :activities ) }
+						%a{ href: main_app.workouts_path }
+							%i.fa.fa-bicycle
+							%span
+								Workouts
+					%li{ class: set_css_if( controller: :assignments ) }
+						%a{ href: main_app.movements_path }
+							%i.fa.fa-th-large
+							%span
+								Movements
+							%span.label.label-success.pull-right
+								New
+					%li{ class: set_css_if( controller: :stats ) }
+						%a{ href: main_app.observations_path }
+							%i.fa.fa-line-chart
+							%span
+								Stats
+					%li
+						%a.dropdown-toggle{ href: '#' }
+							%i.fa.fa-users
+							%span
+								Team
+							%i.fa.fa-angle-right.drop-icon
+							%ul.submenu
+								%li
+									%a{ href: '#' }
+										Someone
+								%li
+									%a{ href: '#' }
+										Someone else
+	#nav-col-submenu
