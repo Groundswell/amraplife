@@ -1,19 +1,6 @@
 
 class MovementsController < ApplicationController
-	before_action :set_movement, only: [:show, :edit, :update, :destroy]
-
-	layout 'dash'
-	
-	def create
-		@movement = Movement.new( movement_params )
-		@movement.save 
-		redirect_to edit_movement_path( @movement )
-	end
-
-	def destroy
-		@movement.destroy
-		redirect_to movements_url
-	end
+	before_action :set_movement, only: :show
 
 	def index
 		by = params[:by] || 'title'
@@ -27,15 +14,8 @@ class MovementsController < ApplicationController
 		set_page_meta( title: 'Movements )°( AMRAP Life' )
 	end
 
-
 	def show
 	end
-
-	def update
-		@movement.update( movement_params )
-		redirect_to :back
-	end
-
 
 
 	private

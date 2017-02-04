@@ -23,7 +23,7 @@
 				- @movements.each do |movement|
 					%tr
 						%td
-							= link_to movement.title, edit_movement_path( movement )
+							= link_to movement.title, movement_path( movement )
 						%td
 							= movement.aliases.join( ', ' )
 						%td

@@ -1,0 +1,44 @@
+
+.container-fluid
+	.row
+		.col-xs-10
+			%ul.breadcrumb
+				%li
+					= link_to 'Admin', swell_media.admin_index_path
+				%li
+					= link_to 'Movement Admin', movement_admin_index_path
+				%li
+					%strong
+						Edit
+						= @movement.title
+		.col-xs-2
+			%a.pull-right.btn.btn-danger{ href: movement_path( @movement ), data: { method: :delete, confirm: 'Are you Sure?' } }
+				Delete
+
+	= form_for @movement, url: movement_admin_path( @movement ) do |f|
+		.row
+			.col-xs-8
+				.form-group
+					= f.text_field :title, class: 'form-control'
+
+				.form-group
+					= f.text_area :description, class: 'form-control wysiwyg', rows: 4
+
+				.form-group
+					= f.text_area :content, class: 'form-control wysiwyg', rows: 12
+
+
+			.col-xs-4
+				.well
+					.form-group
+						= f.submit 'Update', class: 'btn btn-primary'
+						.pull-right= link_to 'Cancel', :back, class: 'btn btn-default btn-sm'
+
+
+
+
+					%hr
+					= link_to 'Show', @movement
+					= link_to 'Back', movement_admin_index_path
+
+

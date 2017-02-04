@@ -1,0 +1,53 @@
+
+.container-fluid
+	.row
+		.col-xs-10
+			%ul.breadcrumb
+				%li
+					= link_to 'Admin', swell_media.admin_index_path
+				%li
+					%strong
+						Movement Admin
+
+		.col-xs-2
+			%a.btn.btn-success{ data: { toggle: :modal, target: '#new_movement' } }
+				%i.fa.fa-plus-square
+				New
+
+	.row
+		.col-xs-6
+			= pluralize @movement_count, 'Movement'
+			= raw paginate @movements
+		.col-xs-6
+			= form_tag movement_admin_index_path, method: :get, class: 'pull-right form-inline' do
+				=# select_tag :status, options_from_collection_for_select( Movement.statuses, :first, :first, params[:status] ), { prompt: "-- All --", class: 'form-control' }
+				= text_field_tag :q, params[:q], class: 'form-control'
+				= submit_tag 'Search', class: 'btn btn-primary'
+				= link_to 'Clear', movement_admin_index_path, class: 'btn btn-default btn-xs'
+
+	.row
+		%table.table.table-striped
+			%thead
+				%th
+					Name
+				%th
+					AKA
+				%th
+					Equipment
+				%th
+					Workouts
+
+			%tbody
+				- @movements.each do |movement|
+					%tr
+						%td
+							= link_to movement.title, edit_movement_admin_path( movement )
+						%td
+							= movement.aliases.join( ', ' )
+						%td
+							= movement.equipment
+						%td
+							= movement.workouts.count
+
+
+= render 'new_modal'

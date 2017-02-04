@@ -1,0 +1,32 @@
+
+.main-box.clearfix
+	.main-box-header.clearfix
+		%h2
+			Workouts
+	.main-box-body.clearfix
+		%table.table.table-striped
+			%thead
+				%tr
+					%th
+						Title
+					%th
+						Type
+					%th
+						Description
+					%th
+						%a.btn.btn-success.pull-right{ data: { toggle: :modal, target: '#new_workout' } }
+							%i.fa.fa-plus-square
+							New
+			%tbody
+				- @workouts.each do |workout|
+					%tr
+						%td 
+							= link_to workout.title, edit_workout_path( workout )
+						%td 
+							= workout.workout_type 
+						%td 
+							= workout.description 
+
+
+
+= render 'new_modal'

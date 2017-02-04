@@ -18,7 +18,8 @@ class WorkoutsMigration < ActiveRecord::Migration
 			t.integer 		:total_duration # sum of segments
 			t.integer 		:total_reps 	# sum of segments
 			t.integer		:time_cap 		# seconds to cap out
-			t.timestamps 	null: false
+			t.timestamps	null: false
+			t.hstore		:properties, default: {}
 		end
 
 
@@ -33,12 +34,14 @@ class WorkoutsMigration < ActiveRecord::Migration
 			t.text 			:content
 			t.string		:unit_type
 			t.integer 		:unit
+			t.hstore		:properties, default: {}
 			t.timestamps
 		end
 
 		
 		create_table :metrics do |t| 
 			# to keep lookup table for observations
+			t.references 	:movement # for maxes & PRs  ??
 			t.string 		:title
 			t.text			:aliases, array: true, default: []
 			t.string		:unit
@@ -47,15 +50,20 @@ class WorkoutsMigration < ActiveRecord::Migration
 
 		create_table :movements do |t|
 			t.references 	:equipment  # required equipment
+			t.references 	:movement_category  # bodyweight, warm-up, stretch ???
 			t.references 	:parent #for variations
 			t.integer 		:rgt
 			t.integer 		:lft
-			t.string 		:slug 
 			t.string 		:title
+			t.string 		:slug 
+			t.string 		:avatar # ? how are we doing these ?
 			t.text			:aliases, array: true, default: []
 			t.string 		:description
 			t.text 			:content 
-			t.string 		:measured_by, default: :reps # reps, time, distance 
+			t.string 		:measured_by, default: :reps # reps, time, distance
+			t.string 		:anatomy
+			t.string 		:tags, array: true, default: '{}'
+			t.hstore		:properties, default: {}
 			t.timestamps
 		end
 
@@ -78,9 +86,30 @@ class WorkoutsMigration < ActiveRecord::Migration
 			t.datetime 		:started_at 
 			t.datetime 		:ended_at 
 			t.datetime 		:recorded_at
+			t.hstore		:properties, default: {}
 			t.timestamps 
 		end
 		add_index :observations, [:user_id, :tmp_id]
+
+		create_table :places do |t|
+			t.string 		:title 
+			t.string 		:description 
+			t.text 			:content
+			t.string 		:phone 
+			t.string 		:address1
+			t.string		:address2
+			t.string 		:city
+			t.string		:state 
+			t.string 		:zip 
+			t.string 		:lat 
+			t.string 		:lon
+			t.string		:hours
+			t.string 		:cost
+			t.integer 		:status, default: 1
+			t.string 		:tags, array: true, default: '{}'
+			t.hstore		:properties, default: {}
+			t.timestamps
+		end
 
 
 		# just to keep track & query workouts based on movement e.g. which workouts prescribe situps?
@@ -102,7 +131,7 @@ class WorkoutsMigration < ActiveRecord::Migration
 			t.text 			:content
 			t.string 		:segment_type, default: :ft 	# ft, amrap, rft (w/rpt_count), emom, tabata (rpt 8), accumulate, warmup, mobility, strength, rest
 			t.string 		:clock_dir, default: :down
-			t.string 		:to_record, default: :time 	# rounds (reps), time, distance
+			t.string 		:to_record, default: :time 		# rounds (reps), time, distance
 			t.integer		:duration 						# in seconds
 			t.integer 		:repeat_count, default: 0 		# use this to store rounds for time -- no need to create a segment per round. Default 8 for tabata. Default num minutes for emom
 			t.integer 		:repeat_interval, default: 60 	# in seconds, so 60 for emom, 120 for eomom, 300 for every 5 mins on the minute
