@@ -102,6 +102,7 @@ ActiveRecord::Schema.define(version: 20161204184311) do
     t.text     "content"
     t.string   "unit_type"
     t.integer  "unit"
+    t.hstore   "properties",  default: {}
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -181,22 +182,28 @@ ActiveRecord::Schema.define(version: 20161204184311) do
   add_index "media_versions", ["media_id", "status", "id"], name: "index_media_versions_on_media_id_and_status_and_id", using: :btree
 
   create_table "metrics", force: :cascade do |t|
-    t.string "title"
-    t.text   "aliases", default: [], array: true
-    t.string "unit"
+    t.integer "movement_id"
+    t.string  "title"
+    t.text    "aliases",     default: [], array: true
+    t.string  "unit"
   end
 
   create_table "movements", force: :cascade do |t|
     t.integer  "equipment_id"
+    t.integer  "movement_category_id"
     t.integer  "parent_id"
     t.integer  "rgt"
     t.integer  "lft"
-    t.string   "slug"
     t.string   "title"
-    t.text     "aliases",      default: [],     array: true
+    t.string   "slug"
+    t.string   "avatar"
+    t.text     "aliases",              default: [],     array: true
     t.string   "description"
     t.text     "content"
-    t.string   "measured_by",  default: "reps"
+    t.string   "measured_by",          default: "reps"
+    t.string   "anatomy"
+    t.string   "tags",                 default: [],     array: true
+    t.hstore   "properties",           default: {}
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -240,11 +247,33 @@ ActiveRecord::Schema.define(version: 20161204184311) do
     t.datetime "started_at"
     t.datetime "ended_at"
     t.datetime "recorded_at"
+    t.hstore   "properties",    default: {}
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   add_index "observations", ["user_id", "tmp_id"], name: "index_observations_on_user_id_and_tmp_id", using: :btree
+
+  create_table "places", force: :cascade do |t|
+    t.string   "title"
+    t.string   "description"
+    t.text     "content"
+    t.string   "phone"
+    t.string   "address1"
+    t.string   "address2"
+    t.string   "city"
+    t.string   "state"
+    t.string   "zip"
+    t.string   "lat"
+    t.string   "lon"
+    t.string   "hours"
+    t.string   "cost"
+    t.integer  "status",      default: 1
+    t.string   "tags",        default: [], array: true
+    t.hstore   "properties",  default: {}
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "users", force: :cascade do |t|
     t.string   "name"
@@ -346,8 +375,11 @@ ActiveRecord::Schema.define(version: 20161204184311) do
     t.integer  "total_duration"
     t.integer  "total_reps"
     t.integer  "time_cap"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
+    t.integer  "status",         default: 1
+    t.datetime "publish_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.hstore   "properties",     default: {}
   end
 
 end

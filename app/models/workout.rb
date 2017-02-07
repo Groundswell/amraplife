@@ -1,4 +1,8 @@
 class Workout < ActiveRecord::Base
+	
+	enum status: { 'draft' => 0, 'active' => 1, 'archive' => 2, 'trash' => 3 }
+	before_save	:set_publish_at
+
 	has_many 	:workout_movements
 	has_many 	:movements, through: :workout_movements
 	has_many 	:equipment, through: :movements
@@ -7,6 +11,14 @@ class Workout < ActiveRecord::Base
 
 	include FriendlyId
 	friendly_id :title, use: [ :slugged, :history ]
+
+
+
+
+	def self.published( args = {} )
+		where( "publish_at <= :now", now: Time.zone.now ).active
+	end
+
 
 
 	def human_type
@@ -57,6 +69,13 @@ class Workout < ActiveRecord::Base
 	def to_s
 		self.title
 	end
+
+
+	private
+		def set_publish_at
+			# set publish_at
+			self.publish_at ||= Time.zone.now
+		end
 
 
 	

@@ -1,28 +1,49 @@
-%h1
-	= @workout.title
+#content.content.section.row
+	.col-md-8.bg-base.col-lg-8.col-xl-9
+		.ribbon.ribbon-highlight
+			%ol.breadcrumb.ribbon-inner
+				%li
+					%a{ href: swell_media.root_path() }
+						Home
+				%li
+					%a{ href: '/workouts' }
+						Workouts
+				%li.active
+					= @workout.title
 
-%p
-	Workout type:
-	= @workout.workout_type
+		%h1
+			= @workout.title
 
-%p
-	Movements:
-	- @workout.movements.each do |movement|
-		= link_to movement.title, movement
-%p
-	Equipment:
-	- @workout.equipment.each do |equipment|
-		= link_to equipment.title, equipment
+		%p
+			Workout type:
+			= @workout.workout_type
 
-%p
-	%strong
-		Description:
-	= @workout.description
+		%p
+			Movements:
+			- @workout.movements.each do |movement|
+				= link_to movement.title, movement
+		%p
+			Equipment:
+			- @workout.equipment.each do |equipment|
+				= link_to equipment.title, equipment
+
+		%p
+			%strong
+				Description:
+			= @workout.description
 
 
-%p
-	%strong
-		Segments:
-	- @workout.workout_segments.each do |segment|
-		%li
-			= segment.content
+		%p
+			%strong
+				Segments:
+			- @workout.workout_segments.each do |segment|
+				%li
+					= segment.content
+
+		
+	.sidebar.col-md-4.col-lg-4.col-xl-3
+		= render 'application/sidebar'
+	/ /.sidebar col-md-4 col-lg-4 col-xl-3
+/ /#content
+
+

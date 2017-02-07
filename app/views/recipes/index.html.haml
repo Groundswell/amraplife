@@ -7,23 +7,21 @@
 					%a{ href: swell_media.root_path() }
 						Home
 				%li.active
-					%a{ href: '/workouts' }
-						Workouts
+					%a{ href: '/recipes' }
+						Recipes
 
 		%h2
-			= pluralize @count, 'Workout'
+			= pluralize @count, 'Recipe'
 
-		= paginate @workouts
+		= paginate @recipes
 
-		- @workouts.each do |workout|
-			= render 'row', workout: workout
+		- @recipes.each do |recipe|
+			= render 'row', recipe: recipe
 
-		= paginate @workouts
+		= paginate @recipes
 		
 	.sidebar.col-md-4.col-lg-4.col-xl-3
 		= render 'application/sidebar'
 	/ /.sidebar col-md-4 col-lg-4 col-xl-3
 / /#content
-
-
 

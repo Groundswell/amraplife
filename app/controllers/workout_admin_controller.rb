@@ -13,6 +13,27 @@ class WorkoutAdminController < SwellMedia::AdminController
 		redirect_to workouts_url
 	end
 
+	def edit
+		set_page_meta( title: "Edit #{@workout} )°( Live AMRAP" )
+		if @workout.workout_type == 'amrap'
+			@segment = @workout.workout_segments.first || WorkoutSegment.new( duration: 0 )
+			@segment.duration = @segment.formatted_duration
+			render 'edit_amrap'
+		end
+		if @workout.workout_type == 'rft'
+			@segment = @workout.workout_segments.first || WorkoutSegment.new()
+			render 'edit_rft'
+		end
+		if @workout.workout_type == 'ft'
+			render 'edit_ft'
+		end
+		if @workout.workout_type == 'eotm'
+			@segment = @workout.workout_segments.first || WorkoutSegment.new( every_interval: 1 )
+			render 'edit_eotm'
+		end
+		
+	end
+
 	def index
 		by = params[:by] || 'title'
 		dir = params[:dir] || 'asc'

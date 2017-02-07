@@ -7,22 +7,7 @@
 
 class WorkoutsMigration < ActiveRecord::Migration
 	def change
-		create_table :workouts do |t|
-			t.string 		:title
-			t.string 		:slug
-			t.string 		:workout_type 	# reps (amrap), rounds (rft), emom, tabata
-			t.string 		:avatar
-			t.string		:cover_img
-			t.text 			:description
-			t.text 			:content
-			t.integer 		:total_duration # sum of segments
-			t.integer 		:total_reps 	# sum of segments
-			t.integer		:time_cap 		# seconds to cap out
-			t.timestamps	null: false
-			t.hstore		:properties, default: {}
-		end
-
-
+		
 		create_table :equipment do |t|
 			t.references 	:parent #for variations e.g. different height plyo box
 			t.integer 		:rgt
@@ -38,6 +23,23 @@ class WorkoutsMigration < ActiveRecord::Migration
 			t.timestamps
 		end
 
+		create_table :foods do |t|
+			t.string 		:title
+			t.string 		:description 
+			t.text 			:content 
+			t.string 		:avatar
+			t.text 			:nutrition
+			t.timestamps
+		end
+
+		create_table :ingredients do |t|
+			t.references 	:recipe 
+			t.references 	:food
+			t.string		:amount 
+			t.string 		:unit 
+			t.string 		:notes 
+			t.timestamps 
+		end
 		
 		create_table :metrics do |t| 
 			# to keep lookup table for observations
@@ -111,6 +113,36 @@ class WorkoutsMigration < ActiveRecord::Migration
 			t.timestamps
 		end
 
+		create_table :recipes do |t|
+			t.string 		:title 
+			t.string 		:description 
+			t.text 			:content 
+			t.string 		:avatar
+			t.string 		:slug 
+			t.string 		:time 
+			t.string 		:serves 
+			t.string 		:nutrition
+			t.integer 		:status, default: 0
+			t.datetime 		:publish_at
+			t.timestamps
+		end
+
+		create_table :workouts do |t|
+			t.string 		:title
+			t.string 		:slug
+			t.string 		:workout_type 	# reps (amrap), rounds (rft), emom, tabata
+			t.string 		:avatar
+			t.string		:cover_img
+			t.text 			:description
+			t.text 			:content
+			t.integer 		:total_duration # sum of segments
+			t.integer 		:total_reps 	# sum of segments
+			t.integer		:time_cap 		# seconds to cap out
+			t.integer 		:status, default: 1
+			t.datetime		:publish_at
+			t.timestamps
+			t.hstore		:properties, default: {}
+		end
 
 		# just to keep track & query workouts based on movement e.g. which workouts prescribe situps?
 		# also, query wokouts based on equipment required. e.g. I only have a jumprope, which workouts can I do?

@@ -1,4 +1,4 @@
 
-class Recipe < SwellMedia::Media
+class Recipe < ActiveRecord::Base
 
 end
