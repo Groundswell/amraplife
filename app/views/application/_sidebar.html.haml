@@ -1,0 +1,23 @@
+%aside.widget
+	%h2.widget-title.ribbon
+		%span Featured Posts
+	.entries.row
+		- SwellMedia::Article.published.each do |featured_article|
+			%article.type-post.style-media-list.media.col-sm-6.col-md-12
+				/ to disable lazy loading, remove data-src and data-src-retina
+				%img.media-object.pull-left{:alt => "", "data-src" => featured_article.avatar, "data-src-retina" => featured_article.avatar, :height => "80", :src => image_path('placeholder.gif'), :width => "80"}/
+				/ fallback for no javascript browsers
+				%noscript
+					%img{:alt => "", :src => featured_article.avatar}/
+				.media-body
+					%h3.entry-title
+						%a{:href => featured_article.url, :rel => "bookmark"}=featured_article.title
+					.entry-meta
+						%span.entry-date
+							on
+							%time{:datetime => featured_article.publish_at.strftime("%B %e %Y")}=featured_article.publish_at.strftime("%B %e %Y")
+						- if featured_article.category.present?
+							%span.category
+								In
+								%a{:href => swell_media.browse_index_path( category_id: featured_article.category.slug) }
+									=featured_article.category.name
