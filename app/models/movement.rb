@@ -1,6 +1,12 @@
 
 class Movement < ActiveRecord::Base
 
+	enum status: { 'draft' => 0, 'active' => 1, 'archive' => 2, 'trash' => 3 }
+
+	include SwellMedia::Concerns::URLConcern
+	include SwellMedia::Concerns::AvatarAsset
+	include SwellMedia::Concerns::TagArrayConcern
+
 	validate :unique_aliases
 	
 	belongs_to :equipment 
@@ -8,8 +14,9 @@ class Movement < ActiveRecord::Base
 	has_many :workout_movements 
 	has_many :workouts, through: :workout_movements 
 
-
 	acts_as_nested_set
+
+	mounted_at '/movements'
 	
 	include FriendlyId
 	friendly_id :title, use: [ :slugged, :history ]
@@ -19,6 +26,12 @@ class Movement < ActiveRecord::Base
 		where( ":term = ANY( aliases )", term: term ).first
 	end
 
+	def self.published( args = {} )
+		self.active
+	end
+
+	
+
 
 
 	def aliases_csv
@@ -27,6 +40,18 @@ class Movement < ActiveRecord::Base
 
 	def aliases_csv=( aliases_csv )
 		self.aliases = aliases_csv.split( /,\s*/ )
+	end
+
+	def published?
+		active?
+	end
+
+	def tags_csv
+		self.tags.join(',')
+	end
+
+	def tags_csv=(tags_csv)
+		self.tags = tags_csv.split(/,\s*/)
 	end
 
 	def to_s

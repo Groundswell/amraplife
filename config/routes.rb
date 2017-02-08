@@ -32,6 +32,7 @@ Rails.application.routes.draw do
 	end
 	devise_for :users, :controllers => { :omniauth_callbacks => 'oauth', :registrations => 'registrations', :sessions => 'sessions' }
 
+	mount SwellEcom::Engine, :at => '/'
 	mount SwellMedia::Engine, :at => '/'
 
 end

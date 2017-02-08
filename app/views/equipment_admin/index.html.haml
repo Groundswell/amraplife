@@ -11,6 +11,6 @@
 		- @equipment.all.each do |eq|
 			%tr
 				%td
-					= link_to eq, eq
+					= link_to eq, edit_equipment_admin_path( eq.id )
 				%th
 					= eq.workouts.count

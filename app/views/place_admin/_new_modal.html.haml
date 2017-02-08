@@ -5,8 +5,8 @@
 				%button.close{ type: :button, 'data-dismiss' => 'modal', 'aria-hidden' => 'true' }
 					&times;
 				%h4.modal-title
-					Add Movement
-			= form_for Movement.new, url: main_app.movement_admin_index_path do |f|
+					Add Place
+			= form_for Place.new, url: main_app.place_admin_index_path do |f|
 				.modal-body
 					= f.label :title
 					= f.text_field :title, class: 'form-control'

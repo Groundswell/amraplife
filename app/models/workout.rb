@@ -1,24 +1,33 @@
 class Workout < ActiveRecord::Base
 	
 	enum status: { 'draft' => 0, 'active' => 1, 'archive' => 2, 'trash' => 3 }
+
+	attr_accessor	:slug_pref
+
 	before_save	:set_publish_at
+
+	include SwellMedia::Concerns::URLConcern
+	include SwellMedia::Concerns::AvatarAsset
+	include SwellMedia::Concerns::TagArrayConcern
+	#include SwellMedia::Concerns::ExpiresCache
+
 
 	has_many 	:workout_movements
 	has_many 	:movements, through: :workout_movements
 	has_many 	:equipment, through: :movements
 	has_many 	:workout_segments
 
+	mounted_at '/workouts'
 
 	include FriendlyId
-	friendly_id :title, use: [ :slugged, :history ]
+	friendly_id :slugger, use: [ :slugged, :history ]
 
-
+	acts_as_taggable_array_on :tags
 
 
 	def self.published( args = {} )
 		where( "publish_at <= :now", now: Time.zone.now ).active
 	end
-
 
 
 	def human_type
@@ -64,6 +73,23 @@ class Workout < ActiveRecord::Base
 
 	def overview_content
 		self.workout_segments.pluck( :content ).join( "\r\n" )
+	end
+
+	def slugger
+		if self.slug_pref.present?
+			self.slug = nil # friendly_id 5.0 only updates slug if slug field is nil
+			return self.slug_pref
+		else
+			return self.title
+		end
+	end
+
+	def tags_csv
+		self.tags.join(',')
+	end
+
+	def tags_csv=(tags_csv)
+		self.tags = tags_csv.split(/,\s*/)
 	end
 
 	def to_s

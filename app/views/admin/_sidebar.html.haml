@@ -34,7 +34,7 @@
 
 					%li.parent
 						%a{ href: '#' }
-							Blog
+							Articles
 						%ul.sub-menu
 							%li
 								%a{ href: swell_media.article_admin_index_path }
@@ -120,6 +120,73 @@
 								%li
 									%a{ href: main_app.edit_movement_admin_path( movement ) }
 										= movement.title
+					%li.parent
+						%a{ href: '#' }
+							Orders
+						%ul.sub-menu
+							%li
+								%a{ href: swell_ecom.order_admin_index_path }
+									%i.fa.fa-gear
+									Admin
+							%li.separator
+							- SwellEcom::Order.order( created_at: :desc ).limit( 10 ).each do |order|
+								%li
+									%a{ href: main_app.edit_order_admin_path( order ) }
+										= order.email
+
+					%li.parent
+						%a{ href: '#' }
+							Products
+						%ul.sub-menu
+							%li
+								%a{ href: swell_ecom.product_admin_index_path }
+									%i.fa.fa-gear
+									Admin
+							%li
+								%a{ data: { toggle: :modal, target: '#new_product' } }
+									%i.fa.fa-plus
+									New
+							%li.separator
+							- SwellEcom::Product.order( created_at: :desc ).limit( 10 ).each do |product|
+								%li
+									%a{ href: swell_ecom.edit_product_admin_path( product ) }
+										= product.title
+
+					%li.parent
+						%a{ href: '#' }
+							Places
+						%ul.sub-menu
+							%li
+								%a{ href: main_app.place_admin_index_path }
+									%i.fa.fa-gear
+									Admin
+							%li
+								%a{ data: { toggle: :modal, target: '#new_place' } }
+									%i.fa.fa-plus
+									New
+							%li.separator
+							- Place.order( created_at: :desc ).limit( 10 ).each do |place|
+								%li
+									%a{ href: main_app.edit_place_admin_path( place ) }
+										= place.title
+
+					%li.parent
+						%a{ href: '#' }
+							Recipes
+						%ul.sub-menu
+							%li
+								%a{ href: main_app.recipe_admin_index_path }
+									%i.fa.fa-gear
+									Admin
+							%li
+								%a{ data: { toggle: :modal, target: '#new_recipe' } }
+									%i.fa.fa-plus
+									New
+							%li.separator
+							- Recipe.order( created_at: :desc ).limit( 10 ).each do |recipe|
+								%li
+									%a{ href: main_app.edit_recipe_admin_path( recipe ) }
+										= recipe.title
 
 					%li.parent
 						%a{ href: '#' }
@@ -145,5 +212,8 @@
 = render 'swell_media/category_admin/new_modal'
 = render 'swell_media/page_admin/new_modal'
 = render 'movement_admin/new_modal'
+= render 'swell_ecom/product_admin/new_modal'
+= render 'place_admin/new_modal'
+= render 'recipe_admin/new_modal'
 = render 'workout_admin/new_modal'
 

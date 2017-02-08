@@ -12,6 +12,7 @@ class WorkoutsMigration < ActiveRecord::Migration
 			t.references 	:parent #for variations e.g. different height plyo box
 			t.integer 		:rgt
 			t.integer 		:lft
+			t.string 		:avatar
 			t.string 		:slug
 			t.string 		:title
 			t.text			:aliases, array: true, default: []
@@ -19,8 +20,16 @@ class WorkoutsMigration < ActiveRecord::Migration
 			t.text 			:content
 			t.string		:unit_type
 			t.integer 		:unit
+			t.string 		:tags, array: true, default: '{}'
 			t.hstore		:properties, default: {}
 			t.timestamps
+		end
+
+		create_table :equipment_place do |t|
+			t.references 	:place 
+			t.references 	:equipment 
+			t.string 		:notes 
+			t.timestamps 
 		end
 
 		create_table :foods do |t|
@@ -69,6 +78,12 @@ class WorkoutsMigration < ActiveRecord::Migration
 			t.timestamps
 		end
 
+		create_table :movement_relationships do |t|
+			t.references 	:movement 
+			t.references 	:related_movement 
+			t.string 		:relation_type, default: :variant # scale_up, scale_down 
+			t.timestamps 
+		end
 
 		create_table :observations do |t| 
 			t.string 		:tmp_id  			# for when observations are posted by the app
@@ -97,6 +112,7 @@ class WorkoutsMigration < ActiveRecord::Migration
 			t.string 		:title 
 			t.string 		:description 
 			t.text 			:content
+			t.string 		:avatar
 			t.string 		:phone 
 			t.string 		:address1
 			t.string		:address2
@@ -119,7 +135,8 @@ class WorkoutsMigration < ActiveRecord::Migration
 			t.text 			:content 
 			t.string 		:avatar
 			t.string 		:slug 
-			t.string 		:time 
+			t.string 		:prep_time 
+			t.string 		:cook_time 
 			t.string 		:serves 
 			t.string 		:nutrition
 			t.integer 		:status, default: 0
@@ -130,6 +147,7 @@ class WorkoutsMigration < ActiveRecord::Migration
 		create_table :workouts do |t|
 			t.string 		:title
 			t.string 		:slug
+			t.references 	:workout_category # bodyweight, metcon, ????
 			t.string 		:workout_type 	# reps (amrap), rounds (rft), emom, tabata
 			t.string 		:avatar
 			t.string		:cover_img
@@ -140,6 +158,7 @@ class WorkoutsMigration < ActiveRecord::Migration
 			t.integer		:time_cap 		# seconds to cap out
 			t.integer 		:status, default: 1
 			t.datetime		:publish_at
+			t.string 		:tags, array: true, default: '{}'
 			t.timestamps
 			t.hstore		:properties, default: {}
 		end
