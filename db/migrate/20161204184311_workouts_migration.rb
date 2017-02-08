@@ -73,6 +73,7 @@ class WorkoutsMigration < ActiveRecord::Migration
 			t.text 			:content 
 			t.string 		:measured_by, default: :reps # reps, time, distance
 			t.string 		:anatomy
+			t.integer 		:status, default: 1
 			t.string 		:tags, array: true, default: '{}'
 			t.hstore		:properties, default: {}
 			t.timestamps

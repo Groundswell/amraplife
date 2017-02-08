@@ -5,7 +5,7 @@ class MovementsController < ApplicationController
 	def index
 		by = params[:by] || 'title'
 		dir = params[:dir] || 'asc'
-		@movements = Movement.order( "#{by} #{dir}" )
+		@movements = Movement.published.order( "#{by} #{dir}" )
 		if params[:q]
 			match = params[:q].downcase.singularize.gsub( /\s+/, '' )
 			@movements = @movements.where( "lower(REGEXP_REPLACE(title, '\s', '' )) = :m", m: match )
@@ -21,12 +21,8 @@ class MovementsController < ApplicationController
 	private
 		# Use callbacks to share common setup or constraints between actions.
 		def set_movement
-			@movement = Movement.friendly.find( params[:id] )
+			@movement = Movement.published.friendly.find( params[:id] )
 		end
 
-		# Never trust parameters from the scary internet, only allow the white list through.
-		def movement_params
-			params.require( :movement ).permit( :parent_id, :equipment_id, :title, :aliases, :aliases_csv, :description, :measured_by )
-		end
 end
 

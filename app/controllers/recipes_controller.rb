@@ -1,7 +1,7 @@
 
 class RecipesController < ApplicationController
 
-	before_action :setrecipe, only: :show
+	before_action :set_recipe, only: :show
 
 
 	def index
@@ -17,8 +17,8 @@ class RecipesController < ApplicationController
 
   private
 	# Use callbacks to share common setup or constraints between actions.
-	def setrecipe
-		@recipe = Recipe.friendly.find(params[:id])
+	def set_recipe
+		@recipe = Recipe.published.friendly.find( params[:id] )
 	end
 
 

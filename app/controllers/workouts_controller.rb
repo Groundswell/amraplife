@@ -16,7 +16,7 @@ class WorkoutsController < ApplicationController
   private
 	# Use callbacks to share common setup or constraints between actions.
 	def set_workout
-		@workout = Workout.friendly.find(params[:id])
+		@workout = Workout.published.friendly.find(params[:id])
 	end
 
 end

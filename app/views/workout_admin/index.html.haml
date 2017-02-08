@@ -14,6 +14,8 @@
 					%th
 						Description
 					%th
+						Status
+					%th
 						%a.btn.btn-success.pull-right{ data: { toggle: :modal, target: '#new_workout' } }
 							%i.fa.fa-plus-square
 							New
@@ -25,7 +27,20 @@
 						%td 
 							= workout.workout_type 
 						%td 
-							= workout.description 
+							= workout.description
+						%td
+							- if workout.published?
+								.badge{ class: workout.status }
+									Live
+							- elsif workout.draft?
+								.badge{ class: workout.status }
+									Draft
+							- elsif workout.active?
+								.badge{ class: 'pending' }
+									Pending
+							- else
+								.badge{ class: workout.status }
+									= workout.status
 
 
 

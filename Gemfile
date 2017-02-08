@@ -46,6 +46,7 @@ gem 'swell_theme_summarize', path: '../../engines/swell_theme_summarize'
 
 # prod
 # gem 'swell_media', git: 'git://github.com/Groundswell/swell_media.git'
+# gem 'swell_ecom', git: 'git://github.com/Groundswell/swell_ecom.git'
 # gem 'swell_theme_summarize', git: 'git://github.com/Groundswell/swell_theme_summarize.git'
 
 

@@ -2,6 +2,8 @@ class Workout < ActiveRecord::Base
 	
 	enum status: { 'draft' => 0, 'active' => 1, 'archive' => 2, 'trash' => 3 }
 
+	validates		:title, presence: true, unless: :allow_blank_title?
+
 	attr_accessor	:slug_pref
 
 	before_save	:set_publish_at
@@ -98,6 +100,10 @@ class Workout < ActiveRecord::Base
 
 
 	private
+		def allow_blank_title?
+			self.slug_pref.present?
+		end
+
 		def set_publish_at
 			# set publish_at
 			self.publish_at ||= Time.zone.now

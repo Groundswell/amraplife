@@ -1,5 +1,7 @@
 
 class Equipment < ActiveRecord::Base 
+
+	validates		:title, presence: true, unless: :allow_blank_title?
 	
 	acts_as_nested_set
 	
@@ -11,4 +13,9 @@ class Equipment < ActiveRecord::Base
 	def to_s
 		self.title
 	end
+
+	private 
+		def allow_blank_title?
+			self.slug_pref.present?
+		end
 end

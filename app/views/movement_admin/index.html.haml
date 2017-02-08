@@ -35,6 +35,8 @@
 				%th
 					Equipment
 				%th
+					Status
+				%th
 					Workouts
 
 			%tbody
@@ -46,6 +48,19 @@
 							= movement.aliases.join( ', ' )
 						%td
 							= movement.equipment
+						%td
+							- if movement.published?
+								.badge{ class: movement.status }
+									Live
+							- elsif movement.draft?
+								.badge{ class: movement.status }
+									Draft
+							- elsif movement.active?
+								.badge{ class: 'pending' }
+									Pending
+							- else
+								.badge{ class: movement.status }
+									= movement.status
 						%td
 							= movement.workouts.count
 

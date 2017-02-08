@@ -3,6 +3,8 @@ class Movement < ActiveRecord::Base
 
 	enum status: { 'draft' => 0, 'active' => 1, 'archive' => 2, 'trash' => 3 }
 
+	validates		:title, presence: true, unless: :allow_blank_title?
+
 	include SwellMedia::Concerns::URLConcern
 	include SwellMedia::Concerns::AvatarAsset
 	include SwellMedia::Concerns::TagArrayConcern
@@ -27,7 +29,7 @@ class Movement < ActiveRecord::Base
 	end
 
 	def self.published( args = {} )
-		self.active
+		where( "char_length(content) > 0" ).active
 	end
 
 	
@@ -43,7 +45,7 @@ class Movement < ActiveRecord::Base
 	end
 
 	def published?
-		active?
+		self.active? && self.content.present?
 	end
 
 	def tags_csv
@@ -61,6 +63,10 @@ class Movement < ActiveRecord::Base
 
 
 	private
+
+		def allow_blank_title?
+			self.slug_pref.present?
+		end
 
 		def unique_aliases
 			existing_aliases = Movement.where.not( id: self.id ).pluck( :aliases ).flatten

@@ -154,6 +154,7 @@ ActiveRecord::Schema.define(version: 20170207215735) do
     t.integer  "parent_id"
     t.integer  "rgt"
     t.integer  "lft"
+    t.string   "avatar"
     t.string   "slug"
     t.string   "title"
     t.text     "aliases",     default: [], array: true
@@ -161,6 +162,7 @@ ActiveRecord::Schema.define(version: 20170207215735) do
     t.text     "content"
     t.string   "unit_type"
     t.integer  "unit"
+    t.string   "tags",        default: [], array: true
     t.hstore   "properties",  default: {}
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -338,6 +340,7 @@ ActiveRecord::Schema.define(version: 20170207215735) do
     t.text     "content"
     t.string   "measured_by",          default: "reps"
     t.string   "anatomy"
+    t.integer  "status",               default: 1
     t.string   "tags",                 default: [],     array: true
     t.hstore   "properties",           default: {}
     t.datetime "created_at"
@@ -433,6 +436,7 @@ ActiveRecord::Schema.define(version: 20170207215735) do
     t.string   "title"
     t.string   "description"
     t.text     "content"
+    t.string   "avatar"
     t.string   "phone"
     t.string   "address1"
     t.string   "address2"
