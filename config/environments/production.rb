@@ -54,6 +54,9 @@ Rails.application.configure do
   # Use a different logger for distributed setups.
   # config.logger = ActiveSupport::TaggedLogging.new(SyslogLogger.new)
 
+    config.cache_store = :dalli_store
+    config.action_controller.perform_caching = true
+
   # Use a different cache store in production.
   # config.cache_store = :mem_cache_store
 
