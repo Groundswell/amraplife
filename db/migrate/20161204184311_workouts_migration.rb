@@ -9,12 +9,12 @@ class WorkoutsMigration < ActiveRecord::Migration
 	def change
 		
 		create_table :equipment do |t|
+			t.string 		:title
+			t.string 		:slug
 			t.references 	:parent #for variations e.g. different height plyo box
 			t.integer 		:rgt
 			t.integer 		:lft
 			t.string 		:avatar
-			t.string 		:slug
-			t.string 		:title
 			t.text			:aliases, array: true, default: []
 			t.text 			:description
 			t.text 			:content
@@ -24,22 +24,28 @@ class WorkoutsMigration < ActiveRecord::Migration
 			t.hstore		:properties, default: {}
 			t.timestamps
 		end
+		add_index :equipment, :slug, unique: true
+		add_index :equipment, :parent_id
 
-		create_table :equipment_place do |t|
+		create_table :equipment_places do |t|
 			t.references 	:place 
 			t.references 	:equipment 
 			t.string 		:notes 
 			t.timestamps 
 		end
+		add_index :equipment_places, :place_id
+		add_index :equipment_places, :equipment_id
 
 		create_table :foods do |t|
 			t.string 		:title
+			t.string 		:slug
 			t.string 		:description 
 			t.text 			:content 
 			t.string 		:avatar
 			t.text 			:nutrition
 			t.timestamps
 		end
+		add_index :foods, :slug, unique: true
 
 		create_table :ingredients do |t|
 			t.references 	:recipe 
@@ -49,15 +55,19 @@ class WorkoutsMigration < ActiveRecord::Migration
 			t.string 		:notes 
 			t.timestamps 
 		end
+		add_index :ingredients, :recipe_id
+		add_index :ingredients, :food_id
 		
 		create_table :metrics do |t| 
 			# to keep lookup table for observations
 			t.references 	:movement # for maxes & PRs  ??
 			t.string 		:title
+			t.string 		:slug
 			t.text			:aliases, array: true, default: []
 			t.string		:unit
 		end
-
+		add_index :metrics, :movement_id
+		add_index :metrics, :slug, unique: true
 
 		create_table :movements do |t|
 			t.references 	:equipment  # required equipment
@@ -78,6 +88,9 @@ class WorkoutsMigration < ActiveRecord::Migration
 			t.hstore		:properties, default: {}
 			t.timestamps
 		end
+		add_index :movements, :equipment_id
+		add_index :movements, :parent_id
+		add_index :movements, :slug, unique: true
 
 		create_table :movement_relationships do |t|
 			t.references 	:movement 
@@ -85,6 +98,8 @@ class WorkoutsMigration < ActiveRecord::Migration
 			t.string 		:relation_type, default: :variant # scale_up, scale_down 
 			t.timestamps 
 		end
+		add_index :movement_relationships, :movement_id
+		add_index :movement_relationships, :related_movement_id
 
 		create_table :observations do |t| 
 			t.string 		:tmp_id  			# for when observations are posted by the app
@@ -108,9 +123,11 @@ class WorkoutsMigration < ActiveRecord::Migration
 			t.timestamps 
 		end
 		add_index :observations, [:user_id, :tmp_id]
+		add_index :observations, :parent_id
 
 		create_table :places do |t|
 			t.string 		:title 
+			t.string 		:slug
 			t.string 		:description 
 			t.text 			:content
 			t.string 		:avatar
@@ -129,6 +146,7 @@ class WorkoutsMigration < ActiveRecord::Migration
 			t.hstore		:properties, default: {}
 			t.timestamps
 		end
+		add_index :places, :slug, unique: true
 
 		create_table :recipes do |t|
 			t.string 		:title 
@@ -144,6 +162,7 @@ class WorkoutsMigration < ActiveRecord::Migration
 			t.datetime 		:publish_at
 			t.timestamps
 		end
+		add_index :recipes, :slug, unique: true
 
 		create_table :workouts do |t|
 			t.string 		:title
@@ -157,12 +176,13 @@ class WorkoutsMigration < ActiveRecord::Migration
 			t.integer 		:total_duration # sum of segments
 			t.integer 		:total_reps 	# sum of segments
 			t.integer		:time_cap 		# seconds to cap out
-			t.integer 		:status, default: 1
+			t.integer 		:status, default: 0
 			t.datetime		:publish_at
 			t.string 		:tags, array: true, default: '{}'
 			t.timestamps
 			t.hstore		:properties, default: {}
 		end
+		add_index :workouts, :slug, unique: true
 
 		# just to keep track & query workouts based on movement e.g. which workouts prescribe situps?
 		# also, query wokouts based on equipment required. e.g. I only have a jumprope, which workouts can I do?
@@ -174,6 +194,9 @@ class WorkoutsMigration < ActiveRecord::Migration
 			t.string 		:f_rx
 			t.timestamps 
 		end
+		add_index :workout_movements, :workout_id
+		add_index :workout_movements, :movement_id
+		add_index :workout_movements, :equipment_id
 
 		create_table :workout_segments do |t|
 			t.references 	:workout
@@ -191,6 +214,7 @@ class WorkoutsMigration < ActiveRecord::Migration
 			t.integer 		:total_reps, default: 0 		# total reps in a round e.g. 30 for Cindy
 			t.timestamps 
 		end
+		add_index :workout_segments, :workout_id
 
 	end
 end

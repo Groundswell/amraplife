@@ -151,12 +151,12 @@ ActiveRecord::Schema.define(version: 20170207215735) do
   add_index "coupons", ["valid_for_email"], name: "index_coupons_on_valid_for_email", using: :btree
 
   create_table "equipment", force: :cascade do |t|
+    t.string   "title"
+    t.string   "slug"
     t.integer  "parent_id"
     t.integer  "rgt"
     t.integer  "lft"
     t.string   "avatar"
-    t.string   "slug"
-    t.string   "title"
     t.text     "aliases",     default: [], array: true
     t.text     "description"
     t.text     "content"
@@ -168,7 +168,10 @@ ActiveRecord::Schema.define(version: 20170207215735) do
     t.datetime "updated_at"
   end
 
-  create_table "equipment_place", force: :cascade do |t|
+  add_index "equipment", ["parent_id"], name: "index_equipment_on_parent_id", using: :btree
+  add_index "equipment", ["slug"], name: "index_equipment_on_slug", unique: true, using: :btree
+
+  create_table "equipment_places", force: :cascade do |t|
     t.integer  "place_id"
     t.integer  "equipment_id"
     t.string   "notes"
@@ -176,8 +179,12 @@ ActiveRecord::Schema.define(version: 20170207215735) do
     t.datetime "updated_at"
   end
 
+  add_index "equipment_places", ["equipment_id"], name: "index_equipment_places_on_equipment_id", using: :btree
+  add_index "equipment_places", ["place_id"], name: "index_equipment_places_on_place_id", using: :btree
+
   create_table "foods", force: :cascade do |t|
     t.string   "title"
+    t.string   "slug"
     t.string   "description"
     t.text     "content"
     t.string   "avatar"
@@ -185,6 +192,8 @@ ActiveRecord::Schema.define(version: 20170207215735) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "foods", ["slug"], name: "index_foods_on_slug", unique: true, using: :btree
 
   create_table "friendly_id_slugs", force: :cascade do |t|
     t.string   "slug",                      null: false
@@ -250,6 +259,9 @@ ActiveRecord::Schema.define(version: 20170207215735) do
     t.datetime "updated_at"
   end
 
+  add_index "ingredients", ["food_id"], name: "index_ingredients_on_food_id", using: :btree
+  add_index "ingredients", ["recipe_id"], name: "index_ingredients_on_recipe_id", using: :btree
+
   create_table "media", force: :cascade do |t|
     t.integer  "user_id"
     t.integer  "managed_by_id"
@@ -314,9 +326,13 @@ ActiveRecord::Schema.define(version: 20170207215735) do
   create_table "metrics", force: :cascade do |t|
     t.integer "movement_id"
     t.string  "title"
+    t.string  "slug"
     t.text    "aliases",     default: [], array: true
     t.string  "unit"
   end
+
+  add_index "metrics", ["movement_id"], name: "index_metrics_on_movement_id", using: :btree
+  add_index "metrics", ["slug"], name: "index_metrics_on_slug", unique: true, using: :btree
 
   create_table "movement_relationships", force: :cascade do |t|
     t.integer  "movement_id"
@@ -325,6 +341,9 @@ ActiveRecord::Schema.define(version: 20170207215735) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "movement_relationships", ["movement_id"], name: "index_movement_relationships_on_movement_id", using: :btree
+  add_index "movement_relationships", ["related_movement_id"], name: "index_movement_relationships_on_related_movement_id", using: :btree
 
   create_table "movements", force: :cascade do |t|
     t.integer  "equipment_id"
@@ -346,6 +365,10 @@ ActiveRecord::Schema.define(version: 20170207215735) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "movements", ["equipment_id"], name: "index_movements_on_equipment_id", using: :btree
+  add_index "movements", ["parent_id"], name: "index_movements_on_parent_id", using: :btree
+  add_index "movements", ["slug"], name: "index_movements_on_slug", unique: true, using: :btree
 
   create_table "oauth_credentials", force: :cascade do |t|
     t.integer  "user_id"
@@ -391,6 +414,7 @@ ActiveRecord::Schema.define(version: 20170207215735) do
     t.datetime "updated_at"
   end
 
+  add_index "observations", ["parent_id"], name: "index_observations_on_parent_id", using: :btree
   add_index "observations", ["user_id", "tmp_id"], name: "index_observations_on_user_id_and_tmp_id", using: :btree
 
   create_table "order_items", force: :cascade do |t|
@@ -434,6 +458,7 @@ ActiveRecord::Schema.define(version: 20170207215735) do
 
   create_table "places", force: :cascade do |t|
     t.string   "title"
+    t.string   "slug"
     t.string   "description"
     t.text     "content"
     t.string   "avatar"
@@ -453,6 +478,8 @@ ActiveRecord::Schema.define(version: 20170207215735) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "places", ["slug"], name: "index_places_on_slug", unique: true, using: :btree
 
   create_table "plans", force: :cascade do |t|
     t.integer "product_id"
@@ -519,6 +546,8 @@ ActiveRecord::Schema.define(version: 20170207215735) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "recipes", ["slug"], name: "index_recipes_on_slug", unique: true, using: :btree
 
   create_table "shipment_items", force: :cascade do |t|
     t.integer  "shipment_id"
@@ -681,6 +710,10 @@ ActiveRecord::Schema.define(version: 20170207215735) do
     t.datetime "updated_at"
   end
 
+  add_index "workout_movements", ["equipment_id"], name: "index_workout_movements_on_equipment_id", using: :btree
+  add_index "workout_movements", ["movement_id"], name: "index_workout_movements_on_movement_id", using: :btree
+  add_index "workout_movements", ["workout_id"], name: "index_workout_movements_on_workout_id", using: :btree
+
   create_table "workout_segments", force: :cascade do |t|
     t.integer  "workout_id"
     t.integer  "seq",                default: 1
@@ -699,6 +732,8 @@ ActiveRecord::Schema.define(version: 20170207215735) do
     t.datetime "updated_at"
   end
 
+  add_index "workout_segments", ["workout_id"], name: "index_workout_segments_on_workout_id", using: :btree
+
   create_table "workouts", force: :cascade do |t|
     t.string   "title"
     t.string   "slug"
@@ -711,12 +746,14 @@ ActiveRecord::Schema.define(version: 20170207215735) do
     t.integer  "total_duration"
     t.integer  "total_reps"
     t.integer  "time_cap"
-    t.integer  "status",              default: 1
+    t.integer  "status",              default: 0
     t.datetime "publish_at"
     t.string   "tags",                default: [], array: true
     t.datetime "created_at"
     t.datetime "updated_at"
     t.hstore   "properties",          default: {}
   end
+
+  add_index "workouts", ["slug"], name: "index_workouts_on_slug", unique: true, using: :btree
 
 end

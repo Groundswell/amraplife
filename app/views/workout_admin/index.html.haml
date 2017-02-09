@@ -23,7 +23,7 @@
 				- @workouts.each do |workout|
 					%tr
 						%td 
-							= link_to workout.title, edit_workout_path( workout )
+							= link_to workout.title, edit_workout_admin_path( workout )
 						%td 
 							= workout.workout_type 
 						%td 

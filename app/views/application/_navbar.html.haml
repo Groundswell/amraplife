@@ -16,16 +16,18 @@
 					%span.search-toggled-out-icon
 						%i.fa.fa-search
 		%ul.nav.navbar-nav
-			%li
-				%a{ href: '/blog' }
-					Articles
-			-#%li
-				%a{ href: '/recipes' }
-					Food
+			- if SwellMedia::Article.published.count >= 6
+				%li
+					%a{ href: '/blog' }
+						Articles
+			- if Recipe.published.count >= 6
+				%li
+					%a{ href: '/recipes' }
+						Food
 			-#%li
 				%a{ href: '#' }
 					Places
-			-#%li
+			- if Workout.published.count >= 6
 				%a{ href: '/workouts' }
 					Workouts
 			-#%li

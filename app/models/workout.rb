@@ -77,6 +77,10 @@ class Workout < ActiveRecord::Base
 		self.workout_segments.pluck( :content ).join( "\r\n" )
 	end
 
+	def published?
+		active? && publish_at < Time.zone.now
+	end
+
 	def slugger
 		if self.slug_pref.present?
 			self.slug = nil # friendly_id 5.0 only updates slug if slug field is nil
