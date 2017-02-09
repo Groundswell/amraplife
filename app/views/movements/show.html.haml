@@ -1,23 +1,48 @@
-%h1
-	= @movement.title
-	- if @movement.aliases.present?
-		= "(#{@movement.aliases.join( ', '  )})"
+#content.content.section.row
+	.col-md-8.bg-base.col-lg-8.col-xl-9
+		.ribbon.ribbon-highlight
+			%ol.breadcrumb.ribbon-inner
+				%li
+					%a{ href: swell_media.root_path() }
+						Home
+				%li
+					%a{ href: '/movements' }
+						Movements
+				%li.active
+					= @movement.title
 
-%p
-	Measured By:
-	= @movement.measured_by
+		%h1
+			= @movement.title
+			- if @movement.aliases.present?
+				= "(#{@movement.aliases.join( ', '  )})"
 
-%p
-	Required Equipment:
-	= @movement.equipment
+		%p
+			Measured By:
+			= @movement.measured_by
 
-%p
-	= raw @movement.description
+		%p
+			Required Equipment:
+			= @movement.equipment
+
+		%p
+			= raw @movement.description
 
 
 
-%h5
-	Featured In:
-- @movement.workouts.each do |workout|
-	%li
-		= link_to workout.title, workout
+		%h5
+			Featured In:
+		- @movement.workouts.each do |workout|
+			%li
+				= link_to workout.title, workout
+
+		
+	.sidebar.col-md-4.col-lg-4.col-xl-3
+		= render 'application/sidebar'
+	/ /.sidebar col-md-4 col-lg-4 col-xl-3
+/ /#content
+
+
+
+
+
+

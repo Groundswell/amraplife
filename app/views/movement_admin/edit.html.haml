@@ -22,7 +22,11 @@
 					= f.text_field :title, class: 'form-control'
 
 				.form-group
-					= f.label :description, 'Summary'
+					= f.label :aliases_csv, 'Aliases'
+					= f.text_field :aliases_csv, class: 'form-control'
+
+				.form-group
+					= f.label :description, 'Short Description'
 					= f.text_area :description, class: 'form-control wysiwyg', data: { wysiwyg: { height_min: 100, toolbar_sticky: true, toolbar_preset: 'admin_default', asset_manager: swell_media.asset_manager_index_path( asset: { parent_obj_type: @movement.class.name, parent_obj_id: @movement.id }, request_forgery_protection_token.to_s => form_authenticity_token, response: :json ) }.to_json }
 
 				.form-group
@@ -32,6 +36,20 @@
 
 			.col-xs-4
 				.well
+					.form-group
+						= f.label :status
+						= f.collection_select :status, Movement.statuses, :first, :first, {}, class: 'form-control'
+					.form_group
+						= f.label :measured_by
+						= f.select :measured_by, [ [ 'Reps', 'reps' ], [ 'Distance', 'distance' ], [ 'Time', 'time' ] ], {}, class: 'form-control'
+					.form-group
+						= f.label :anatomy
+						= f.text_field :anatomy, class: 'form-control'
+					.form-group
+						= f.label :tags_csv, 'Tags'
+						= f.text_field :tags_csv, class: 'form-control'
+
+
 					.form-group
 						= f.submit 'Update', class: 'btn btn-primary'
 						.pull-right= link_to 'Cancel', :back, class: 'btn btn-default btn-sm'

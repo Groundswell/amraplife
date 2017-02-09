@@ -10,6 +10,10 @@ class Movement < ActiveRecord::Base
 	include SwellMedia::Concerns::TagArrayConcern
 
 	validate :unique_aliases
+
+	attr_accessor	:slug_pref
+
+	
 	
 	belongs_to :equipment 
 
