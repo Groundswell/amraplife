@@ -1,6 +1,6 @@
 
 class WorkoutSegmentsController < ApplicationController 
-	before_action :set_segment, only: [:show, :edit, :update, :destroy]
+	before_action :set_segment, only: [:edit, :update, :destroy]
 
 	def create
 		@segment = WorkoutSegment.new( segment_params )

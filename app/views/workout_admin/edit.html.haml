@@ -127,7 +127,7 @@
 								%td
 									= f.collection_select :movement_id, Movement.order( :title ).all, :id, :title, {}, class: 'form-control'
 								%td
-									= f.text_field :equipment, class: 'form-control'
+									= f.collection_select :equipment_id, Equipment.order( :title ).all, :id, :title, {}, class: 'form-control'
 								%td
 									= f.text_field :m_rx, class: 'form-control'
 								%td
