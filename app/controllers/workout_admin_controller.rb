@@ -5,7 +5,7 @@ class WorkoutAdminController < SwellMedia::AdminController
 	def create
 		@workout = Workout.new( workout_params )
 		@workout.save 
-		redirect_to edit_workout_path( @workout )
+		redirect_to edit_workout_admin_path( @workout )
 	end
 
 	def destroy
@@ -15,22 +15,22 @@ class WorkoutAdminController < SwellMedia::AdminController
 
 	def edit
 		set_page_meta( title: "Edit #{@workout} )°( Live AMRAP" )
-		if @workout.workout_type == 'amrap'
-			@segment = @workout.workout_segments.first || WorkoutSegment.new( duration: 0 )
-			@segment.duration = @segment.formatted_duration
-			render 'edit_amrap'
-		end
-		if @workout.workout_type == 'rft'
-			@segment = @workout.workout_segments.first || WorkoutSegment.new()
-			render 'edit_rft'
-		end
-		if @workout.workout_type == 'ft'
-			render 'edit_ft'
-		end
-		if @workout.workout_type == 'eotm'
-			@segment = @workout.workout_segments.first || WorkoutSegment.new( every_interval: 1 )
-			render 'edit_eotm'
-		end
+		# if @workout.workout_type == 'amrap'
+		# 	@segment = @workout.workout_segments.first || WorkoutSegment.new( duration: 0 )
+		# 	@segment.duration = @segment.formatted_duration
+		# 	render 'edit_amrap'
+		# end
+		# if @workout.workout_type == 'rft'
+		# 	@segment = @workout.workout_segments.first || WorkoutSegment.new()
+		# 	render 'edit_rft'
+		# end
+		# if @workout.workout_type == 'ft'
+		# 	render 'edit_ft'
+		# end
+		# if @workout.workout_type == 'eotm'
+		# 	@segment = @workout.workout_segments.first || WorkoutSegment.new( every_interval: 1 )
+		# 	render 'edit_eotm'
+		# end
 		
 	end
 
@@ -56,7 +56,7 @@ class WorkoutAdminController < SwellMedia::AdminController
 
 	private
 		def workout_params
-			params.require( :workout ).permit( :title, :description, :content ) 	
+			params.require( :workout ).permit( :title, :description, :content, :workout_type, :status, :tags_csv, :slug_pref ) 	
 		end
 
 		def set_workout

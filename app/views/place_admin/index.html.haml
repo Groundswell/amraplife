@@ -7,23 +7,23 @@
 					= link_to 'Admin', swell_media.admin_index_path
 				%li
 					%strong
-						Recipe Admin
+						Places Admin
 
 		.col-xs-2
-			%a.btn.btn-success{ data: { toggle: :modal, target: '#new_recipe' } }
+			%a.btn.btn-success{ data: { toggle: :modal, target: '#new_place' } }
 				%i.fa.fa-plus-square
 				New
 
 	.row
 		.col-xs-6
-			= pluralize @recipe_count, 'Recipe'
-			= raw paginate @recipes
+			= pluralize @place_count, 'Place'
+			= raw paginate @places
 		.col-xs-6
-			= form_tag recipe_admin_index_path, method: :get, class: 'pull-right form-inline' do
+			= form_tag place_admin_index_path, method: :get, class: 'pull-right form-inline' do
 				=# select_tag :status, options_from_collection_for_select( Movement.statuses, :first, :first, params[:status] ), { prompt: "-- All --", class: 'form-control' }
 				= text_field_tag :q, params[:q], class: 'form-control'
 				= submit_tag 'Search', class: 'btn btn-primary'
-				= link_to 'Clear', recipe_admin_index_path, class: 'btn btn-default btn-xs'
+				= link_to 'Clear', place_admin_index_path, class: 'btn btn-default btn-xs'
 
 	.row
 		%table.table.table-striped
@@ -36,23 +36,23 @@
 
 
 			%tbody
-				- @recipes.each do |recipe|
+				- @places.each do |place|
 					%tr
 						%td
-							= link_to recipe.title, edit_recipe_admin_path( recipe )
+							= link_to place.title, edit_place_admin_path( place )
 						%td
-							- if recipe.published?
-								.badge{ class: recipe.status }
+							- if place.published?
+								.badge{ class: place.status }
 									Live
-							- elsif recipe.draft?
-								.badge{ class: recipe.status }
+							- elsif place.draft?
+								.badge{ class: place.status }
 									Draft
-							- elsif recipe.active?
+							- elsif place.active?
 								.badge{ class: 'pending' }
 									Pending
 							- else
-								.badge{ class: recipe.status }
-									= recipe.status
+								.badge{ class: place.status }
+									= place.status
 
 
 

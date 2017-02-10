@@ -6,7 +6,7 @@
 					&times;
 				%h4.modal-title
 					New Workout
-			= form_for Workout.new, url: main_app.workouts_path do |f|
+			= form_for Workout.new, url: main_app.workout_admin_index_path do |f|
 				.modal-body
 					= f.label :title
 					= f.text_field :title, class: 'form-control'

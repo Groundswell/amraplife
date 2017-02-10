@@ -1,103 +1,146 @@
+.container-fluid
+	.row
+		.col-xs-10
+			%ul.breadcrumb
+				%li
+					= link_to 'Admin', swell_media.admin_index_path
+				%li
+					= link_to 'Workout Admin', workout_admin_index_path
+				%li
+					%strong
+						Edit
+						= @workout.title
+		.col-xs-2
+			%a.pull-right.btn.btn-danger{ href: workout_path( @workout ), data: { method: :delete, confirm: 'Are you Sure?' } }
+				Delete
 
-%a.pull-right.btn.btn-danger{ href: workout_path( @workout ), data: { method: :delete, confirm: 'Are you Sure?' } }
-	Delete
+	= form_for @workout, url: workout_admin_path( @workout ) do |f|
+		.row
+			.col-xs-8
+				.form-group
+					= f.text_field :title, class: 'form-control input-lg'
+				.form-group
+					= f.label :slug_pref, 'URL for this workout:'
+					.input-group
+						%span.input-group-addon
+							= "#{SwellMedia.app_host}/workouts/"
+						= f.text_field :slug_pref, class: 'form-control', placeholder: @workout.slug
+				
+				.form-group
+					= f.label :description, 'Short Description'
+					= f.text_area :description, class: 'form-control wysiwyg', data: { wysiwyg: { height_min: 100, toolbar_sticky: true, toolbar_preset: 'admin_default', asset_manager: swell_media.asset_manager_index_path( asset: { parent_obj_type: @workout.class.name, parent_obj_id: @workout.id }, request_forgery_protection_token.to_s => form_authenticity_token, response: :json ) }.to_json }
 
-%h1
-	Edit Workout:
-	= @workout.title
+				.form-group
+					= f.label :content
+					= f.text_area :content, class: 'form-control wysiwyg', data: { wysiwyg: { height_min: 200, toolbar_sticky: true, toolbar_preset: 'admin_default', asset_manager: swell_media.asset_manager_index_path( asset: { parent_obj_type: @workout.class.name, parent_obj_id: @workout.id }, request_forgery_protection_token.to_s => form_authenticity_token, response: :json ) }.to_json }
 
+			.col-xs-4
+				.well
+					.form-group
+						= f.label :workout_type
+						= f.select :workout_type, [ [ 'AMRAP', 'amrap' ], ['Rounds For Time', 'rft'], [ 'For Time', 'ft' ], [ 'Custom', 'custom' ], [ 'TABATA', 'tabata'], [ 'EMOM', 'emom' ] ], {}, class: 'form-control'
+					.form-group
+						= f.label :status
+						= f.collection_select :status, Recipe.statuses, :first, :first, {}, class: 'form-control'
 
-= render 'form'
-
-
-
-
-%h3
-	Timed Segments:
-= form_for WorkoutSegment.new( seq: @workout.max_segment_seq ) do |f|
-	= f.hidden_field :workout_id, value: @workout.id
-	%table.table
-		%thead
-			%th.col-xs-1
-				Seq
-			%th.col-xs-2
-				Type
-			%th
-				Title
-			%th
-				Duration
-			
-			%th
-				Reps
-			%th
-		%tbody
-			- @workout.workout_segments.order( :seq ).each do |segment|
-				%tr
-					%td= segment.seq
-					%td= segment.segment_type
-					%td= segment
-					%td
-						- if segment.duration.nil?
-							measured
-						- else
-							= "#{sprintf( '%02d', segment.duration / 60 )}:#{sprintf( '%02d', segment.duration % 60 )}"
-
-					%td
-						= segment.total_reps
-					%td
-						%a.btn.btn-small.btn-danger{ href: workout_segment_path( segment ), data: { method: :delete, confirm: 'Are you Sure?' } }
-							%i.fa.fa-trash
-			%tr
-				%td
-					= f.text_field :seq, class: 'form-control'
-				%td
-					= f.select :segment_type, [ ['AMRAP', 'amrap'], ['For Time', 'ft'], ['Rounds for Time', 'rft'], ['EotM', 'emom'], ['TABATA', 'tabata'], ['Accumulate Time', 'accumulate'], ['Strength', 'strength'], ['Rest', 'rest'] ], {}, class: 'form-control'
-				%td
-					= f.text_field :content, class: 'form-control'
-				%td
-					= f.text_field :duration, class: 'form-control'
-
-				%td
-				%td
-					= f.submit 'Add', class: 'btn btn-small btn-success'
+					.form-group
+						= f.submit 'Update', class: 'btn btn-primary'
+						.pull-right= link_to 'Cancel', :back, class: 'btn btn-default btn-sm'
 
 
+					%hr
+					= link_to 'Show', @workout
+					= link_to 'Back', workout_admin_index_path
 
-%h3
-	Movements:
+		.row
+			.col-xs-12
+				%h3
+					Segments:
+				= form_for WorkoutSegment.new( seq: @workout.max_segment_seq ) do |f|
+					= f.hidden_field :workout_id, value: @workout.id
+					%table.table
+						%thead
+							%th.col-xs-1
+								Seq
+							%th.col-xs-2
+								Type
+							%th
+								Title
+							%th
+								Duration
+							
+							%th
+								Reps
+							%th
+						%tbody
+							- @workout.workout_segments.order( :seq ).each do |segment|
+								%tr
+									%td= segment.seq
+									%td= segment.segment_type
+									%td= segment
+									%td
+										- if segment.duration.nil?
+											measured
+										- else
+											= "#{sprintf( '%02d', segment.duration / 60 )}:#{sprintf( '%02d', segment.duration % 60 )}"
 
-= form_for WorkoutMovement.new do |f|
-	= f.hidden_field :workout_id, value: @workout.id
-	%table.table
-		%thead
-			%th 
-			%th Equipment
-			%th M Rx
-			%th F Rx
-		%tbody
-			- @workout.workout_movements.each do |movement|
-				%tr
-					%td= link_to movement, movement_path( movement )
-					%td= movement.equipment
-					%td= movement.m_rx
-					%td= movement.f_rx
-			%tr
-				%td
-					= f.collection_select :movement_id, Movement.order( :title ).all, :id, :title, {}, class: 'form-control'
-				%td
-					= f.text_field :equipment, class: 'form-control'
-				%td
-					= f.text_field :m_rx, class: 'form-control'
-				%td
-					= f.text_field :f_rx, class: 'form-control'
-				%td
-					= f.submit 'Add', class: 'btn btn-small btn-success'
+									%td
+										= segment.total_reps
+									%td
+										%a.btn.btn-small.btn-danger{ href: workout_segment_path( segment ), data: { method: :delete, confirm: 'Are you Sure?' } }
+											%i.fa.fa-trash
+							%tr
+								%td
+									= f.text_field :seq, class: 'form-control'
+								%td
+									= f.select :segment_type, [ ['AMRAP', 'amrap'], ['For Time', 'ft'], ['Rounds for Time', 'rft'], ['EotM', 'emom'], ['TABATA', 'tabata'], ['Accumulate Time', 'accumulate'], ['Strength', 'strength'], ['Rest', 'rest'] ], {}, class: 'form-control'
+								%td
+									= f.text_field :content, class: 'form-control'
+								%td
+									= f.text_field :duration, class: 'form-control'
+
+								%td
+								%td
+									= f.submit 'Add', class: 'btn btn-small btn-success'
 
 
 
-%hr
-= link_to 'Show', @workout
-= link_to 'Back', workouts_path
+				%h3
+					Movements:
+
+				= form_for WorkoutMovement.new do |f|
+					= f.hidden_field :workout_id, value: @workout.id
+					%table.table
+						%thead
+							%th 
+							%th Equipment
+							%th M Rx
+							%th F Rx
+						%tbody
+							- @workout.workout_movements.each do |movement|
+								%tr
+									%td= link_to movement, movement_path( movement )
+									%td= movement.equipment
+									%td= movement.m_rx
+									%td= movement.f_rx
+							%tr
+								%td
+									= f.collection_select :movement_id, Movement.order( :title ).all, :id, :title, {}, class: 'form-control'
+								%td
+									= f.text_field :equipment, class: 'form-control'
+								%td
+									= f.text_field :m_rx, class: 'form-control'
+								%td
+									= f.text_field :f_rx, class: 'form-control'
+								%td
+									= f.submit 'Add', class: 'btn btn-small btn-success'
+
+
+
+
+
+
+
 
 
 

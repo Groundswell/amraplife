@@ -5,7 +5,7 @@ class MovementAdminController < SwellMedia::AdminController
 	def create
 		@movement = Movement.new( movement_params )
 		@movement.save 
-		redirect_to edit_movement_path( @movement )
+		redirect_to edit_movement_admin_path( @movement )
 	end
 
 	def destroy

@@ -1,9 +1,31 @@
 
-.main-box.clearfix
-	.main-box-header.clearfix
-		%h2
-			Workouts
-	.main-box-body.clearfix
+.container-fluid
+	.row
+		.col-xs-10
+			%ul.breadcrumb
+				%li
+					= link_to 'Admin', swell_media.admin_index_path
+				%li
+					%strong
+						Workouts Admin
+
+		.col-xs-2
+			%a.btn.btn-success{ data: { toggle: :modal, target: '#new_workout' } }
+				%i.fa.fa-plus-square
+				New
+
+	.row
+		.col-xs-6
+			= pluralize @workout_count, 'Workout'
+			= raw paginate @workouts
+		.col-xs-6
+			= form_tag workout_admin_index_path, method: :get, class: 'pull-right form-inline' do
+				=# select_tag :status, options_from_collection_for_select( Movement.statuses, :first, :first, params[:status] ), { prompt: "-- All --", class: 'form-control' }
+				= text_field_tag :q, params[:q], class: 'form-control'
+				= submit_tag 'Search', class: 'btn btn-primary'
+				= link_to 'Clear', workout_admin_index_path, class: 'btn btn-default btn-xs'
+
+	.row
 		%table.table.table-striped
 			%thead
 				%tr
@@ -15,10 +37,7 @@
 						Description
 					%th
 						Status
-					%th
-						%a.btn.btn-success.pull-right{ data: { toggle: :modal, target: '#new_workout' } }
-							%i.fa.fa-plus-square
-							New
+
 			%tbody
 				- @workouts.each do |workout|
 					%tr
@@ -43,5 +62,5 @@
 									= workout.status
 
 
-
 = render 'new_modal'
+

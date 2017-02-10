@@ -1,0 +1,70 @@
+
+.container-fluid
+	.row
+		.col-xs-10
+			%ul.breadcrumb
+				%li
+					= link_to 'Admin', swell_media.admin_index_path
+				%li
+					= link_to 'Place Admin', place_admin_index_path
+				%li
+					%strong
+						Edit
+						= @place.title
+		.col-xs-2
+			%a.pull-right.btn.btn-danger{ href: place_path( @place ), data: { method: :delete, confirm: 'Are you Sure?' } }
+				Delete
+
+	= form_for @place, url: place_admin_path( @place ) do |f|
+		.row
+			.col-xs-8
+				.form-group
+					= f.text_field :title, class: 'form-control'
+				.form-group
+					
+					.col-xs-10
+						= f.label :address1, 'Address'
+						= f.text_field :address1, class: 'form-control'
+					.col-xs-10
+						= f.text_field :address2, class: 'form-control'
+					.col-xs-5
+						= f.text_field :city, class: 'form-control'
+					.col-xs-2
+						= f.text_field :state, class: 'form-control'
+					.col-xs-3
+						= f.text_field :zip, class: 'form-control'
+					.col-xs-10
+						= f.label :phone
+						= f.text_field :phone, class: 'form-control'
+					.clearfix
+				.form-group
+					= f.label :hours
+					= f.text_field :hours, class: 'form-control'
+				.form-group
+					= f.label :cost
+					= f.text_field :cost, class: 'form-control'
+
+				.form-group
+					= f.label :description, 'Short Description'
+					= f.text_area :description, class: 'form-control wysiwyg', data: { wysiwyg: { height_min: 100, toolbar_sticky: true, toolbar_preset: 'admin_default', asset_manager: swell_media.asset_manager_index_path( asset: { parent_obj_type: @place.class.name, parent_obj_id: @place.id }, request_forgery_protection_token.to_s => form_authenticity_token, response: :json ) }.to_json }
+
+				.form-group
+					= f.label :content
+					= f.text_area :content, class: 'form-control wysiwyg', data: { wysiwyg: { height_min: 200, toolbar_sticky: true, toolbar_preset: 'admin_default', asset_manager: swell_media.asset_manager_index_path( asset: { parent_obj_type: @place.class.name, parent_obj_id: @place.id }, request_forgery_protection_token.to_s => form_authenticity_token, response: :json ) }.to_json }
+
+			.col-xs-4
+				.well
+					.form-group
+						= f.label :status
+						= f.collection_select :status, Place.statuses, :first, :first, {}, class: 'form-control'
+
+					.form-group
+						= f.submit 'Update', class: 'btn btn-primary'
+						.pull-right= link_to 'Cancel', :back, class: 'btn btn-default btn-sm'
+
+
+					%hr
+					= link_to 'Show', @place
+					= link_to 'Back', place_admin_index_path
+
+

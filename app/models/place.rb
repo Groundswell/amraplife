@@ -7,8 +7,6 @@ class Place < ActiveRecord::Base
 
 	attr_accessor	:slug_pref
 
-	before_save	:set_publish_at
-
 	include SwellMedia::Concerns::URLConcern
 	include SwellMedia::Concerns::AvatarAsset
 	include SwellMedia::Concerns::TagArrayConcern
@@ -26,11 +24,11 @@ class Place < ActiveRecord::Base
 
 
 	def self.published( args = {} )
-		where( "products.publish_at <= :now", now: Time.zone.now ).active
+		self.active
 	end
 
 	def published?
-		active? && publish_at < Time.zone.now
+		active?
 	end
 
 
@@ -58,8 +56,4 @@ class Place < ActiveRecord::Base
 			self.slug_pref.present?
 		end
 
-		def set_publish_at
-			# set publish_at
-			self.publish_at ||= Time.zone.now
-		end
 end
