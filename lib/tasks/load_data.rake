@@ -1,210 +1,209 @@
 # desc "Explaining what the task does"
 namespace :amraplife do
 	task load_data: :environment do
-			puts "Loading Data"
-			
+		puts "Loading Data"
+		
+		puts "Adding some Metrics"
+		ht = Metric.create title: 'Height', aliases: ['ht'], unit: 'in'
+		wt = Metric.create title: 'Weight', aliases: ['wt', 'lbs'], unit: 'lbs'
+		wst = Metric.create title: 'Waist', aliases: ['wst'], unit: 'in'
+		rhr = Metric.create title: 'Resting Heart Rate', aliases: ['pulse', 'heart-rate', 'rhr'], unit: 'bpm'
+		systolic = Metric.create title: 'Systolic Blood Pressure', aliases: ['sbp', 'systolic'], unit: 'mm Hg'
+		diastolic = Metric.create title: 'Diastolic Blood Pressure', aliases: ['dbp', 'diastolic'], unit: 'mm Hg'
+		pbf = Metric.create title: 'Percent Body Fat', aliases: ['pbf', 'bodyfat'], unit: '%'
+		bmi = Metric.create title: 'Body Mass Index', aliases: ['bmi'], unit: 'bmi'
+		bmi = Metric.create title: 'Sleep', aliases: ['slp'], unit: 'hours'
+		bmi = Metric.create title: 'Workout', aliases: ['wkout']
 
-			puts "Adding some Metrics"
-			ht = Metric.create title: 'Height', aliases: ['ht'], unit: 'in'
-			wt = Metric.create title: 'Weight', aliases: ['wt', 'lbs'], unit: 'lbs'
-			wst = Metric.create title: 'Waist', aliases: ['wst'], unit: 'in'
-			rhr = Metric.create title: 'Resting Heart Rate', aliases: ['pulse', 'heart-rate', 'rhr'], unit: 'bpm'
-			systolic = Metric.create title: 'Systolic Blood Pressure', aliases: ['sbp', 'systolic'], unit: 'mm Hg'
-			diastolic = Metric.create title: 'Diastolic Blood Pressure', aliases: ['dbp', 'diastolic'], unit: 'mm Hg'
-			pbf = Metric.create title: 'Percent Body Fat', aliases: ['pbf', 'bodyfat'], unit: '%'
-			bmi = Metric.create title: 'Body Mass Index', aliases: ['bmi'], unit: 'bmi'
-			bmi = Metric.create title: 'Sleep', aliases: ['slp'], unit: 'hours'
-			bmi = Metric.create title: 'Workout', aliases: ['wkout']
+		puts "Adding some Equipment"
+		am = Equipment.create title: 'Ab Mat', aliases: ['ab']
+		rope = Equipment.create title: 'Climbing Rope', aliases: ['rope']
+		pub = Equipment.create title: 'Pullup Bar', aliases: ['bar']
+		box = Equipment.create title: "Plyo Box", unit_type: 'inch', aliases: ['box']
+		rings = Equipment.create title: 'Rings', aliases: ['rng']
+		jr = Equipment.create title: 'Jump Rope', aliases: ['jr']
+		rower = Equipment.create title: 'Rower', aliases: ['row', 'c2']
+		ghd = Equipment.create title: 'Glute Ham Developer', aliases: ['ghd']
+		band = Equipment.create title: 'Resistance Band', aliases: ['band']
+		vest = Equipment.create title: 'Weighted Vest', aliases: ['vest']
+		kb = Equipment.create title: 'Kettle Bell', aliases: ['kb']
+		bb = Equipment.create title: 'Bar Bell', unit_type: 'lb', unit: 45, aliases: ['bb']
+		db = Equipment.create title: 'Dumb Bell', aliases: ['db']
+		mb = Equipment.create title: 'Medicine Ball', aliases: ['mb']
+		sb = Equipment.create title: 'Slam Ball', aliases: ['sb']
+		paras = Equipment.create title: 'Parallettes', aliases: ['para']
+		tire = Equipment.create title: 'Tire', aliases: ['tire']
 
-			puts "Adding some Equipment"
-			am = Equipment.create title: 'Ab Mat', aliases: ['ab']
-			rope = Equipment.create title: 'Climbing Rope', aliases: ['rope']
-			pub = Equipment.create title: 'Pullup Bar', aliases: ['bar']
-			box = Equipment.create title: "Plyo Box", unit_type: 'inch', aliases: ['box']
-			rings = Equipment.create title: 'Rings', aliases: ['rng']
-			jr = Equipment.create title: 'Jump Rope', aliases: ['jr']
-			rower = Equipment.create title: 'Rower', aliases: ['row', 'c2']
-			ghd = Equipment.create title: 'Glute Ham Developer', aliases: ['ghd']
-			band = Equipment.create title: 'Resistance Band', aliases: ['band']
-			vest = Equipment.create title: 'Weighted Vest', aliases: ['vest']
-			kb = Equipment.create title: 'Kettle Bell', aliases: ['kb']
-			bb = Equipment.create title: 'Bar Bell', unit_type: 'lb', unit: 45, aliases: ['bb']
-			db = Equipment.create title: 'Dumb Bell', aliases: ['db']
-			mb = Equipment.create title: 'Medicine Ball', aliases: ['mb']
-			sb = Equipment.create title: 'Slam Ball', aliases: ['sb']
-			paras = Equipment.create title: 'Parallettes', aliases: ['para']
-			tire = Equipment.create title: 'Tire', aliases: ['tire']
+		puts "Adding Movements"
+		run = Movement.create title: 'Run', measured_by: :distance, 	aliases: [ 'run', 'rn', 'running' ]
+		backrun = Movement.create title: 'Backwards Run', measured_by: :distance, 	aliases: [ 'brun', 'brn' ]
+		sdrun = Movement.create title: 'Sideways Run', measured_by: :distance, 	aliases: [ 'siderun', 'sdrn' ]
+		krkrun = Movement.create title: 'Karaoke Run', measured_by: :distance, 	aliases: [ 'karaoke', 'krkrun' ]
+		sprint = Movement.create title: 'Sprint', measured_by: :distance, aliases: [ 'sp', 'spr', 'sprint', 'spnt' ]
+		carry = Movement.create title: 'Carry', measured_by: :distance, aliases: [ 'cry' ], description: 'Aside from Farmer Carry and Buddy Carry, a generic carry task. May have to carry medicine balls, sandbags, plates, who knows.'
+		row = Movement.create title: 'Row', measured_by: :distance, equipment_id: rower.id, aliases: [ 'rowing', 'rower', 'rw' ]
+		pushup = Movement.create title: 'Pushup', aliases: [ 'psu', 'push', 'pushup', 'pup' ]
+		pushup = Movement.create title: 'Decline Pushup', aliases: [ 'dpsu', 'dpush', 'dpushup', 'dpup' ]
+		pushup = Movement.create title: 'Hand Release Pushup', aliases: [ 'hrpu', 'hrpush', 'hrpup' ]
+		pushup = Movement.create title: 'Diamond Pushup', aliases: [ 'dpu', 'dpush', 'dpup' ]
+		pullup = Movement.create title: 'Pullup', equipment_id: pub.id, aliases: [ 'pu', 'pull', 'pull up' ]
+		jumping_pullup = Movement.create title: 'Jumping Pullup', equipment_id: pub.id, aliases: [ 'jpu', 'jump pu', 'jumping pu', 'jump pull', 'jmpu' ]
+		l_pullup = Movement.create title: 'L-Pullup', equipment_id: pub.id, aliases: [ 'lpu', 'lpull', 'lpullup' ]
+		chin = Movement.create title: 'Chinup', equipment_id: pub.id, aliases: [ 'chin', 'chn', 'chinup' ]
+		ctb = Movement.create title: 'Chest to Bar Pullup', equipment_id: pub.id, aliases: [ 'ctb', 'c2b', 'chest to bar' ]
+		ttb = Movement.create title: 'Toe to Bar', equipment_id: pub.id, aliases: [ 'ttb', 't2b', 'toe2bar' ]
+		kte = Movement.create title: 'Knee to Elbow', equipment_id: pub.id, aliases: [ 'kte', 'k2e' ]
+		rope = Movement.create title: 'Rope Climb', equipment_id: rope.id, aliases: [ 'rp', 'rpc', 'rope' ]
+		ll_rope = Movement.create title: 'Legless Rope Climb', equipment_id: rope.id, aliases: [ 'llrc', 'llrpc' ]
+		abmat = Movement.create title: 'Abmat Situp', equipment_id: am.id, aliases: [ 'absu', 'abmat', 'abmatsu' ]
+		ghd_situp = Movement.create title: 'GHD Situp', equipment_id: ghd.id, aliases: [ 'ghd', 'ghdsu' ]
+		hspu = Movement.create title: 'Handstand Pushup', aliases: [ 'hspu' ]
+		hh = Movement.create title: 'Handstand Hold', measured_by: :time, aliases: [ 'hh', 'handhold', 'hsh' ]
+		hsw = Movement.create title: 'Handstand Walk', measured_by: :distance, aliases: [ 'hsw', 'hw' ]
+		du = Movement.create title: 'Double Under', equipment_id: jr.id, aliases: [ 'du', 'dus', 'double-under' ]
+		su = Movement.create title: 'Single Under', equipment_id: jr.id, parent_id: du, aliases: [ 'su', 'sus', 'single-under' ]
+		boxjump = Movement.create title: 'Box Jump', equipment_id: box.id, aliases: [ 'bj', 'box', 'boxjump', 'bxj' ]
+		boxjump = Movement.create title: 'Box Step Up', equipment_id: box.id, aliases: [ 'bxsu', 'stepup', 'boxstep' ]
+		boxjump = Movement.create title: 'Box Jumpover', equipment_id: box.id, aliases: [ 'bjo', 'boxo', 'boxjpo' ]
+		plank = Movement.create title: 'Plank Hold', measured_by: :time, aliases: [ 'plk', 'plank' ]
+		plank = Movement.create title: 'Pike Leg Lift', aliases: [ 'pll', 'seatedpikell' ]
+		airsquat = Movement.create title: 'Air Squat', aliases: [ 'squat', 'asq', 'sq' ]
+		airsquat = Movement.create title: 'Jumping Squat', aliases: [ 'jsq', 'jump squat' ]
+		burpee = Movement.create title: 'Burpee', aliases: [ 'brp', 'burp' ]
+		burpee = Movement.create title: 'Candlestick', aliases: [ 'cs', 'cndlstk' ]
+		otbb = Movement.create title: 'Over the Bar Burpee', equipment_id: bb.id, aliases: [ 'otbb', 'overbarburpee' ]
+		bfb = Movement.create title: 'Bar Facing Burpee', equipment_id: bb.id, aliases: [ 'bfb' ]
+		otbb = Movement.create title: 'Burpee Pullup', equipment_id: pub.id, aliases: [ 'brppull', 'brpull', 'brppu', 'brpu' ]
+		kbs = Movement.create title: 'Kettlebell Swing', equipment_id: kb.id, aliases: [ 'kbs', 'kb swing' ]
+		lunge = Movement.create title: 'Lunge', aliases: [ 'lng' ]
+		rev_lunge = Movement.create title: 'Reverse Lunge', aliases: [ 'revlng' ]
+		waking_lunge = Movement.create title: 'Walking Lunge', aliases: [ 'wlng' ]
+		waking_lunge = Movement.create title: 'Overhead Walking Lunge', aliases: [ 'ohwlng' ]
+		waking_lunge = Movement.create title: 'Jumping Lunge', aliases: [ 'jlng' ]
+		hr = Movement.create title: 'Hollow Rock', aliases: [ 'hr', 'rock', 'hollowrock' ]
+		superman = Movement.create title: 'Superman', aliases: [ 'sup' ]
+		mc = Movement.create title: 'Mountain Climber', aliases: [ 'mc', 'mtclimber' ]
+		rd = Movement.create title: 'Ring Dip', equipment_id: rings.id, aliases: [ 'rdip', 'rd', 'dip' ]
+		rd = Movement.create title: 'Bench Dip', aliases: [ 'bdip', 'bd', 'bnchdip' ]
+		fc = Movement.create title: 'Farmer Carry', aliases: [ 'fc', 'farmer' ]
+		wb = Movement.create title: 'Wall Ball', equipment_id: mb.id, aliases: [ 'wb', 'wallball', 'wallballshot' ]
+		sb = Movement.create title: 'Slam Ball', equipment_id: sb.id, aliases: [ 'sb', 'ballslam' ]
+		vu = Movement.create title: 'V Up', aliases: [ 'vu' ]
+		vu = Movement.create title: 'Bear Crawl', aliases: [ 'bc', 'brcwl' ]
+		vu = Movement.create title: 'Inch Worm', aliases: [ 'iwrm', 'inwrm' ]
+		vu = Movement.create title: 'Broad Jump', aliases: [ 'bjmp', 'bdjp' ]
+		vu = Movement.create title: 'Burpee Broad Jump', aliases: [ 'bpbdjp' ]
+		vu = Movement.create title: 'Burpee Box Jump', aliases: [ 'bpbxjp' ]
+		vu = Movement.create title: 'Slam Ball Burpee', equipment_id: sb.id, aliases: [ 'sbb' ]
+		vu = Movement.create title: 'Jumping Jack', aliases: [ 'jj', 'jacks' ]
+		vu = Movement.create title: 'Skater', aliases: [ 'skt', 'sk8', 'sktr' ]
+		vu = Movement.create title: 'High Knee', aliases: [ 'hknee' ]
+		vu = Movement.create title: 'Flutter Kicks', aliases: [ 'fk' ]
+		vu = Movement.create title: 'Butt Kicker', aliases: [ 'bkick' ]
+		vu = Movement.create title: 'Duck Walk', aliases: [ 'dwlk' ]
+		vu = Movement.create title: 'L Sit', aliases: [ 'ls', 'lst' ], equipment_id: paras.id
+		vu = Movement.create title: 'Wall Sit', aliases: [ 'wls', 'wlst' ]
+		vu = Movement.create title: 'Calf Raise', aliases: [ 'crs', 'cr' ]
+		vu = Movement.create title: 'Single Leg Calf Raise', aliases: [ 'scrs', 'scr', 'slcr' ]
+		vu = Movement.create title: 'Bicycle Situp', aliases: [ 'bsu', 'bicycle' ]
+		vu = Movement.create title: 'Russian Twist', aliases: [ 'rtw' ]
+		vu = Movement.create title: 'Tuck Jump', aliases: [ 'tjmp' ]
+		vu = Movement.create title: 'Wall Walk', aliases: [ 'ww' ]
+		vu = Movement.create title: 'Atomic Situp', aliases: [ 'asu' ]
+		vu = Movement.create title: 'Ski Hop', aliases: [ 'ski', 'skih', 'skijump' ]
+		vu = Movement.create title: 'Buddy Carry', aliases: [ 'budc', 'bdycr' ]
+		vu = Movement.create title: 'Reverse Plank', measured_by: :time, aliases: [ 'rplk', 'rplank', 'revplk' ]
+		vu = Movement.create title: 'Tire Flip', equipment_id: tire.id, aliases: [ 'tflp', 'tflip' ]
+		vu = Movement.create title: 'Rope Pulls', aliases: [ 'rpls' ], equipment_id: rope.id, description: 'Scaled rope climb'
+		vu = Movement.create title: 'Back Extension', aliases: [ 'be', 'bex' ], equipment_id: ghd.id
 
-			puts "Adding Movements"
-			run = Movement.create title: 'Run', measured_by: :distance, 	aliases: [ 'run', 'rn', 'running' ]
-			backrun = Movement.create title: 'Backwards Run', measured_by: :distance, 	aliases: [ 'brun', 'brn' ]
-			sdrun = Movement.create title: 'Sideways Run', measured_by: :distance, 	aliases: [ 'siderun', 'sdrn' ]
-			krkrun = Movement.create title: 'Karaoke Run', measured_by: :distance, 	aliases: [ 'karaoke', 'krkrun' ]
-			sprint = Movement.create title: 'Sprint', measured_by: :distance, aliases: [ 'sp', 'spr', 'sprint', 'spnt' ]
-			carry = Movement.create title: 'Carry', measured_by: :distance, aliases: [ 'cry' ], description: 'Aside from Farmer Carry and Buddy Carry, a generic carry task. May have to carry medicine balls, sandbags, plates, who knows.'
-			row = Movement.create title: 'Row', measured_by: :distance, equipment_id: rower.id, aliases: [ 'rowing', 'rower', 'rw' ]
-			pushup = Movement.create title: 'Pushup', aliases: [ 'psu', 'push', 'pushup', 'pup' ]
-			pushup = Movement.create title: 'Decline Pushup', aliases: [ 'dpsu', 'dpush', 'dpushup', 'dpup' ]
-			pushup = Movement.create title: 'Hand Release Pushup', aliases: [ 'hrpu', 'hrpush', 'hrpup' ]
-			pushup = Movement.create title: 'Diamond Pushup', aliases: [ 'dpu', 'dpush', 'dpup' ]
-			pullup = Movement.create title: 'Pullup', equipment_id: pub.id, aliases: [ 'pu', 'pull', 'pull up' ]
-			jumping_pullup = Movement.create title: 'Jumping Pullup', equipment_id: pub.id, aliases: [ 'jpu', 'jump pu', 'jumping pu', 'jump pull', 'jmpu' ]
-			l_pullup = Movement.create title: 'L-Pullup', equipment_id: pub.id, aliases: [ 'lpu', 'lpull', 'lpullup' ]
-			chin = Movement.create title: 'Chinup', equipment_id: pub.id, aliases: [ 'chin', 'chn', 'chinup' ]
-			ctb = Movement.create title: 'Chest to Bar Pullup', equipment_id: pub.id, aliases: [ 'ctb', 'c2b', 'chest to bar' ]
-			ttb = Movement.create title: 'Toe to Bar', equipment_id: pub.id, aliases: [ 'ttb', 't2b', 'toe2bar' ]
-			kte = Movement.create title: 'Knee to Elbow', equipment_id: pub.id, aliases: [ 'kte', 'k2e' ]
-			rope = Movement.create title: 'Rope Climb', equipment_id: rope.id, aliases: [ 'rp', 'rpc', 'rope' ]
-			ll_rope = Movement.create title: 'Legless Rope Climb', equipment_id: rope.id, aliases: [ 'llrc', 'llrpc' ]
-			abmat = Movement.create title: 'Abmat Situp', equipment_id: am.id, aliases: [ 'absu', 'abmat', 'abmatsu' ]
-			ghd_situp = Movement.create title: 'GHD Situp', equipment_id: ghd.id, aliases: [ 'ghd', 'ghdsu' ]
-			hspu = Movement.create title: 'Handstand Pushup', aliases: [ 'hspu' ]
-			hh = Movement.create title: 'Handstand Hold', measured_by: :time, aliases: [ 'hh', 'handhold', 'hsh' ]
-			hsw = Movement.create title: 'Handstand Walk', measured_by: :distance, aliases: [ 'hsw', 'hw' ]
-			du = Movement.create title: 'Double Under', equipment_id: jr.id, aliases: [ 'du', 'dus', 'double-under' ]
-			su = Movement.create title: 'Single Under', equipment_id: jr.id, parent_id: du, aliases: [ 'su', 'sus', 'single-under' ]
-			boxjump = Movement.create title: 'Box Jump', equipment_id: box.id, aliases: [ 'bj', 'box', 'boxjump', 'bxj' ]
-			boxjump = Movement.create title: 'Box Step Up', equipment_id: box.id, aliases: [ 'bxsu', 'stepup', 'boxstep' ]
-			boxjump = Movement.create title: 'Box Jumpover', equipment_id: box.id, aliases: [ 'bjo', 'boxo', 'boxjpo' ]
-			plank = Movement.create title: 'Plank Hold', measured_by: :time, aliases: [ 'plk', 'plank' ]
-			plank = Movement.create title: 'Pike Leg Lift', aliases: [ 'pll', 'seatedpikell' ]
-			airsquat = Movement.create title: 'Air Squat', aliases: [ 'squat', 'asq', 'sq' ]
-			airsquat = Movement.create title: 'Jumping Squat', aliases: [ 'jsq', 'jump squat' ]
-			burpee = Movement.create title: 'Burpee', aliases: [ 'brp', 'burp' ]
-			burpee = Movement.create title: 'Candlestick', aliases: [ 'cs', 'cndlstk' ]
-			otbb = Movement.create title: 'Over the Bar Burpee', equipment_id: bb.id, aliases: [ 'otbb', 'overbarburpee' ]
-			bfb = Movement.create title: 'Bar Facing Burpee', equipment_id: bb.id, aliases: [ 'bfb' ]
-			otbb = Movement.create title: 'Burpee Pullup', equipment_id: pub.id, aliases: [ 'brppull', 'brpull', 'brppu', 'brpu' ]
-			kbs = Movement.create title: 'Kettlebell Swing', equipment_id: kb.id, aliases: [ 'kbs', 'kb swing' ]
-			lunge = Movement.create title: 'Lunge', aliases: [ 'lng' ]
-			rev_lunge = Movement.create title: 'Reverse Lunge', aliases: [ 'revlng' ]
-			waking_lunge = Movement.create title: 'Walking Lunge', aliases: [ 'wlng' ]
-			waking_lunge = Movement.create title: 'Overhead Walking Lunge', aliases: [ 'ohwlng' ]
-			waking_lunge = Movement.create title: 'Jumping Lunge', aliases: [ 'jlng' ]
-			hr = Movement.create title: 'Hollow Rock', aliases: [ 'hr', 'rock', 'hollowrock' ]
-			superman = Movement.create title: 'Superman', aliases: [ 'sup' ]
-			mc = Movement.create title: 'Mountain Climber', aliases: [ 'mc', 'mtclimber' ]
-			rd = Movement.create title: 'Ring Dip', equipment_id: rings.id, aliases: [ 'rdip', 'rd', 'dip' ]
-			rd = Movement.create title: 'Bench Dip', aliases: [ 'bdip', 'bd', 'bnchdip' ]
-			fc = Movement.create title: 'Farmer Carry', aliases: [ 'fc', 'farmer' ]
-			wb = Movement.create title: 'Wall Ball', equipment_id: mb.id, aliases: [ 'wb', 'wallball', 'wallballshot' ]
-			sb = Movement.create title: 'Slam Ball', equipment_id: sb.id, aliases: [ 'sb', 'ballslam' ]
-			vu = Movement.create title: 'V Up', aliases: [ 'vu' ]
-			vu = Movement.create title: 'Bear Crawl', aliases: [ 'bc', 'brcwl' ]
-			vu = Movement.create title: 'Inch Worm', aliases: [ 'iwrm', 'inwrm' ]
-			vu = Movement.create title: 'Broad Jump', aliases: [ 'bjmp', 'bdjp' ]
-			vu = Movement.create title: 'Burpee Broad Jump', aliases: [ 'bpbdjp' ]
-			vu = Movement.create title: 'Burpee Box Jump', aliases: [ 'bpbxjp' ]
-			vu = Movement.create title: 'Slam Ball Burpee', equipment_id: sb.id, aliases: [ 'sbb' ]
-			vu = Movement.create title: 'Jumping Jack', aliases: [ 'jj', 'jacks' ]
-			vu = Movement.create title: 'Skater', aliases: [ 'skt', 'sk8', 'sktr' ]
-			vu = Movement.create title: 'High Knee', aliases: [ 'hknee' ]
-			vu = Movement.create title: 'Flutter Kicks', aliases: [ 'fk' ]
-			vu = Movement.create title: 'Butt Kicker', aliases: [ 'bkick' ]
-			vu = Movement.create title: 'Duck Walk', aliases: [ 'dwlk' ]
-			vu = Movement.create title: 'L Sit', aliases: [ 'ls', 'lst' ], equipment_id: paras.id
-			vu = Movement.create title: 'Wall Sit', aliases: [ 'wls', 'wlst' ]
-			vu = Movement.create title: 'Calf Raise', aliases: [ 'crs', 'cr' ]
-			vu = Movement.create title: 'Single Leg Calf Raise', aliases: [ 'scrs', 'scr', 'slcr' ]
-			vu = Movement.create title: 'Bicycle Situp', aliases: [ 'bsu', 'bicycle' ]
-			vu = Movement.create title: 'Russian Twist', aliases: [ 'rtw' ]
-			vu = Movement.create title: 'Tuck Jump', aliases: [ 'tjmp' ]
-			vu = Movement.create title: 'Wall Walk', aliases: [ 'ww' ]
-			vu = Movement.create title: 'Atomic Situp', aliases: [ 'asu' ]
-			vu = Movement.create title: 'Ski Hop', aliases: [ 'ski', 'skih', 'skijump' ]
-			vu = Movement.create title: 'Buddy Carry', aliases: [ 'budc', 'bdycr' ]
-			vu = Movement.create title: 'Reverse Plank', measured_by: :time, aliases: [ 'rplk', 'rplank', 'revplk' ]
-			vu = Movement.create title: 'Tire Flip', equipment_id: tire.id, aliases: [ 'tflp', 'tflip' ]
-			vu = Movement.create title: 'Rope Pulls', aliases: [ 'rpls' ], equipment_id: rope.id, description: 'Scaled rope climb'
-			vu = Movement.create title: 'Back Extension', aliases: [ 'be', 'bex' ], equipment_id: ghd.id
+		# lifting
+		bs = Movement.create title: 'Back Squat', equipment_id: bb.id, aliases: [ 'bs', 'bsq', 'backsq' ]
+		fs = Movement.create title: 'Front Squat', equipment_id: bb.id, aliases: [ 'fs', 'fsq', 'frontsq' ]
+		m = Movement.create title: 'Pistol Squat', aliases: [ 'pst', 'pstl', 'psq' ]
+		m = Movement.create title: 'Monkey Squat', aliases: [ 'mnkysq', 'monkeysq' ]
+		ohs = Movement.create title: 'Overhead Squat', equipment_id: bb.id, aliases: [ 'ohs', 'ohsq', 'osq' ]
+		m = Movement.create title: 'Overhead Lunge', equipment_id: bb.id, aliases: [ 'olng', 'ohlng', 'ohl' ]
+		m = Movement.create title: 'Front-Rack Lunge', equipment_id: bb.id, aliases: [ 'frlng', 'frl', 'flng' ]
+		sn = Movement.create title: 'Snatch', equipment_id: bb.id, aliases: [ 'sn', 'sntch', 'snch' ]
+		ps = Movement.create title: 'Power Snatch', parent_id: sn.id, equipment_id: bb.id, aliases: [ 'psn', 'psntch', 'psnch', 'pwrsn' ]
+		hps = Movement.create title: 'Hang Power Snatch', parent_id: sn.id, equipment_id: bb.id, aliases: [ 'hpsn', 'hpsntch', 'hngpsn', 'hngpwrsn' ]
+		gto = Movement.create title: 'Ground to Overhead', equipment_id: bb.id, aliases: [ 'gto', 'g2o', 'gndtoh' ]
+		dl = Movement.create title: 'Deadlift', equipment_id: bb.id, aliases: [ 'dl', 'dlft', 'ddl' ]
+		thruster = Movement.create title: 'Thruster', equipment_id: bb.id, aliases: [ 'thr', 'thrst', 'thrstr' ]
+		db_thruster = Movement.create title: 'Dumbell Thruster', parent_id: thruster.id, equipment_id: db.id, aliases: [ 'dbthr', 'dbthrst', 'dbthrstr' ]
+		db_thruster = Movement.create title: 'Man Maker', equipment_id: db.id, aliases: [ 'mm', 'mmkr', 'manmkr' ]
+		db_thruster = Movement.create title: 'Renegade Row', equipment_id: db.id, aliases: [ 'rr' ]
+		clu = Movement.create title: 'Cluster', equipment_id: bb.id, description: 'Squat Clean Thruster', aliases: [ 'clst', 'clstr', 'sqclnthr' ]
+		cln = Movement.create title: 'Clean', equipment_id: bb.id, aliases: [ 'cl', 'cln' ]
+		cln = Movement.create title: 'Medicine Ball Clean', equipment_id: mb.id, aliases: [ 'mbcl', 'mbcln' ]
+		pc = Movement.create title: 'Power Clean', parent_id: cln.id, equipment_id: bb.id, aliases: [ 'pc', 'pwrcl', 'pcl', 'pcln', 'pwrcln' ]
+		hpc = Movement.create title: 'Hang Power Clean', parent_id: cln.id, equipment_id: bb.id, aliases: [ 'hpc', 'hpcl', 'hpcln' ]
+		hpc = Movement.create title: 'Hang Squat Clean', parent_id: cln.id, equipment_id: bb.id, aliases: [ 'hsc', 'hsqcl', 'hscln' ]
+		sqc = Movement.create title: 'Squat Clean', parent_id: cln.id, equipment_id: bb.id, aliases: [ 'sqc', 'sqcl', 'sqcln' ]
+		cj = Movement.create title: 'Clean & Jerk', equipment_id: bb.id, aliases: [ 'cj', 'c&j', 'clnjrk', 'cln&jrk' ]
+		bp = Movement.create title: 'Bench Press', aliases: [ 'bp', 'bench', 'bpress' ], equipment_id: bb.id
+		press = Movement.create title: 'Press', equipment_id: bb.id, aliases: [ 'ps' ]
+		s2o = Movement.create title: 'Shoulder to Overhead', equipment_id: bb.id, aliases: [ 's2o', 'sto' ]
+		m = Movement.create title: 'Good Morning', equipment_id: bb.id, aliases: [ 'gm' ]
+		m = Movement.create title: 'Single Led Deadlift', equipment_id: kb.id, aliases: [ 'sldl' ]
+		m = Movement.create title: 'Sumo Deadlift', equipment_id: bb.id, aliases: [ 'sumodl' ]
+		m = Movement.create title: 'Romainian Deadlift', equipment_id: bb.id, aliases: [ 'rdl', 'rmdl' ]
+		m = Movement.create title: 'Bulgarian Split Squat', equipment_id: bb.id, aliases: [ 'bspsq', 'bssq' ]
+		m = Movement.create title: 'Military Press', equipment_id: bb.id, aliases: [ 'mp', 'milps' ]
+		pp = Movement.create title: 'Push Press', equipment_id: bb.id, aliases: [ 'pp', 'pshps' ]
+		pj = Movement.create title: 'Push Jerk', equipment_id: bb.id, aliases: [ 'pj', 'pshjrk' ]
+		pj = Movement.create title: 'Split Jerk', equipment_id: bb.id, aliases: [ 'sj', 'sjrk', 'spjk' ]
+		sdhp = Movement.create title: 'Sumo Deadlift High Pull', equipment_id: bb.id, aliases: [ 'sdhp', 'sumo' ]
+		sdhp = Movement.create title: 'Windshield Wiper', equipment_id: bb.id, aliases: [ 'wiper', 'wsw' ]
+		sdhp = Movement.create title: 'Ab Rollout', equipment_id: bb.id, aliases: [ 'ro', 'bbro' ]
+		tgu = Movement.create title: 'Turkish Get Up', equipment_id: kb.id, aliases: [ 'tgu' ]
+		mu = Movement.create title: 'Muscle Up', equipment_id: rings.id, aliases: [ 'mu' ]
+		rr = Movement.create title: 'Ring Row', equipment_id: rings.id, aliases: [ 'rr', 'rngrow' ]
+		ring_push = Movement.create title: 'Ring Pushup', equipment_id: rings.id, aliases: [ 'rp', 'rpsu', 'rpup' ]
+		ring_push = Movement.create title: 'Ring Handstand Pushup', equipment_id: rings.id, aliases: [ 'rhsp', 'rhspsu', 'rhspup' ]
+		bmu = Movement.create title: 'Bar Muscle Up', equipment_id: pub.id, aliases: [ 'bmu' ]
+		uprow = Movement.create title: 'Upright Row', equipment_id: bb.id, aliases: [ 'uprow', 'urow' ]
+		uprow = Movement.create title: 'Curl', equipment_id: db.id, aliases: [ 'bicep', 'bcurl', 'crl' ]
+	end
 
-			# lifting
-			bs = Movement.create title: 'Back Squat', equipment_id: bb.id, aliases: [ 'bs', 'bsq', 'backsq' ]
-			fs = Movement.create title: 'Front Squat', equipment_id: bb.id, aliases: [ 'fs', 'fsq', 'frontsq' ]
-			m = Movement.create title: 'Pistol Squat', aliases: [ 'pst', 'pstl', 'psq' ]
-			m = Movement.create title: 'Monkey Squat', aliases: [ 'mnkysq', 'monkeysq' ]
-			ohs = Movement.create title: 'Overhead Squat', equipment_id: bb.id, aliases: [ 'ohs', 'ohsq', 'osq' ]
-			m = Movement.create title: 'Overhead Lunge', equipment_id: bb.id, aliases: [ 'olng', 'ohlng', 'ohl' ]
-			m = Movement.create title: 'Front-Rack Lunge', equipment_id: bb.id, aliases: [ 'frlng', 'frl', 'flng' ]
-			sn = Movement.create title: 'Snatch', equipment_id: bb.id, aliases: [ 'sn', 'sntch', 'snch' ]
-			ps = Movement.create title: 'Power Snatch', parent_id: sn.id, equipment_id: bb.id, aliases: [ 'psn', 'psntch', 'psnch', 'pwrsn' ]
-			hps = Movement.create title: 'Hang Power Snatch', parent_id: sn.id, equipment_id: bb.id, aliases: [ 'hpsn', 'hpsntch', 'hngpsn', 'hngpwrsn' ]
-			gto = Movement.create title: 'Ground to Overhead', equipment_id: bb.id, aliases: [ 'gto', 'g2o', 'gndtoh' ]
-			dl = Movement.create title: 'Deadlift', equipment_id: bb.id, aliases: [ 'dl', 'dlft', 'ddl' ]
-			thruster = Movement.create title: 'Thruster', equipment_id: bb.id, aliases: [ 'thr', 'thrst', 'thrstr' ]
-			db_thruster = Movement.create title: 'Dumbell Thruster', parent_id: thruster.id, equipment_id: db.id, aliases: [ 'dbthr', 'dbthrst', 'dbthrstr' ]
-			db_thruster = Movement.create title: 'Man Maker', equipment_id: db.id, aliases: [ 'mm', 'mmkr', 'manmkr' ]
-			db_thruster = Movement.create title: 'Renegade Row', equipment_id: db.id, aliases: [ 'rr' ]
-			clu = Movement.create title: 'Cluster', equipment_id: bb.id, description: 'Squat Clean Thruster', aliases: [ 'clst', 'clstr', 'sqclnthr' ]
-			cln = Movement.create title: 'Clean', equipment_id: bb.id, aliases: [ 'cl', 'cln' ]
-			cln = Movement.create title: 'Medicine Ball Clean', equipment_id: mb.id, aliases: [ 'mbcl', 'mbcln' ]
-			pc = Movement.create title: 'Power Clean', parent_id: cln.id, equipment_id: bb.id, aliases: [ 'pc', 'pwrcl', 'pcl', 'pcln', 'pwrcln' ]
-			hpc = Movement.create title: 'Hang Power Clean', parent_id: cln.id, equipment_id: bb.id, aliases: [ 'hpc', 'hpcl', 'hpcln' ]
-			hpc = Movement.create title: 'Hang Squat Clean', parent_id: cln.id, equipment_id: bb.id, aliases: [ 'hsc', 'hsqcl', 'hscln' ]
-			sqc = Movement.create title: 'Squat Clean', parent_id: cln.id, equipment_id: bb.id, aliases: [ 'sqc', 'sqcl', 'sqcln' ]
-			cj = Movement.create title: 'Clean & Jerk', equipment_id: bb.id, aliases: [ 'cj', 'c&j', 'clnjrk', 'cln&jrk' ]
-			bp = Movement.create title: 'Bench Press', aliases: [ 'bp', 'bench', 'bpress' ], equipment_id: bb.id
-			press = Movement.create title: 'Press', equipment_id: bb.id, aliases: [ 'ps' ]
-			s2o = Movement.create title: 'Shoulder to Overhead', equipment_id: bb.id, aliases: [ 's2o', 'sto' ]
-			m = Movement.create title: 'Good Morning', equipment_id: bb.id, aliases: [ 'gm' ]
-			m = Movement.create title: 'Single Led Deadlift', equipment_id: kb.id, aliases: [ 'sldl' ]
-			m = Movement.create title: 'Sumo Deadlift', equipment_id: bb.id, aliases: [ 'sumodl' ]
-			m = Movement.create title: 'Romainian Deadlift', equipment_id: bb.id, aliases: [ 'rdl', 'rmdl' ]
-			m = Movement.create title: 'Bulgarian Split Squat', equipment_id: bb.id, aliases: [ 'bspsq', 'bssq' ]
-			m = Movement.create title: 'Military Press', equipment_id: bb.id, aliases: [ 'mp', 'milps' ]
-			pp = Movement.create title: 'Push Press', equipment_id: bb.id, aliases: [ 'pp', 'pshps' ]
-			pj = Movement.create title: 'Push Jerk', equipment_id: bb.id, aliases: [ 'pj', 'pshjrk' ]
-			pj = Movement.create title: 'Split Jerk', equipment_id: bb.id, aliases: [ 'sj', 'sjrk', 'spjk' ]
-			sdhp = Movement.create title: 'Sumo Deadlift High Pull', equipment_id: bb.id, aliases: [ 'sdhp', 'sumo' ]
-			sdhp = Movement.create title: 'Windshield Wiper', equipment_id: bb.id, aliases: [ 'wiper', 'wsw' ]
-			sdhp = Movement.create title: 'Ab Rollout', equipment_id: bb.id, aliases: [ 'ro', 'bbro' ]
-			tgu = Movement.create title: 'Turkish Get Up', equipment_id: kb.id, aliases: [ 'tgu' ]
-			mu = Movement.create title: 'Muscle Up', equipment_id: rings.id, aliases: [ 'mu' ]
-			rr = Movement.create title: 'Ring Row', equipment_id: rings.id, aliases: [ 'rr', 'rngrow' ]
-			ring_push = Movement.create title: 'Ring Pushup', equipment_id: rings.id, aliases: [ 'rp', 'rpsu', 'rpup' ]
-			ring_push = Movement.create title: 'Ring Handstand Pushup', equipment_id: rings.id, aliases: [ 'rhsp', 'rhspsu', 'rhspup' ]
-			bmu = Movement.create title: 'Bar Muscle Up', equipment_id: pub.id, aliases: [ 'bmu' ]
-			uprow = Movement.create title: 'Upright Row', equipment_id: bb.id, aliases: [ 'uprow', 'urow' ]
-			uprow = Movement.create title: 'Curl', equipment_id: db.id, aliases: [ 'bicep', 'bcurl', 'crl' ]
+	task load_test_workouts: :environment do
+		puts "Adding some test workouts"
 
-			puts "Adding some test workouts"
+		cindy = Workout.create title: 'Cindy', cover_img: "http://cooeecrossfit.com.au/wp-content/uploads/2013/05/WOD_Cindy.jpg"
+		cindy.workout_segments.create content: "5 pullups\r\n10 push ups\r\n15 air squats", segment_type: :amrap, duration: 20 # 20*60
 
-			cindy = Workout.create title: 'Cindy', cover_img: "http://cooeecrossfit.com.au/wp-content/uploads/2013/05/WOD_Cindy.jpg"
-			cindy.workout_segments.create content: "5 pullups\r\n10 push ups\r\n15 air squats", segment_type: :amrap, duration: 20 # 20*60
+		murph = Workout.create title: 'Murph (Straight)', cover_img: 'http://crossfitlakeland.com/wp-content/uploads/2014/05/murph-wod4-630x630.jpg'
+		murph.workout_segments.create content: "run 1 mile", segment_type: :ft, seq: 1
+		murph.workout_segments.create content: "100 pullups", segment_type: :ft, seq: 2
+		murph.workout_segments.create content: "200 pushups", segment_type: :ft, seq: 3
+		murph.workout_segments.create content: "300 air squats", segment_type: :ft, seq: 4
+		murph.workout_segments.create content: "run 1 mile", segment_type: :ft, seq: 5
 
-			murph = Workout.create title: 'Murph (Straight)', cover_img: 'http://crossfitlakeland.com/wp-content/uploads/2014/05/murph-wod4-630x630.jpg'
-			murph.workout_segments.create content: "run 1 mile", segment_type: :ft, seq: 1
-			murph.workout_segments.create content: "100 pullups", segment_type: :ft, seq: 2
-			murph.workout_segments.create content: "200 pushups", segment_type: :ft, seq: 3
-			murph.workout_segments.create content: "300 air squats", segment_type: :ft, seq: 4
-			murph.workout_segments.create content: "run 1 mile", segment_type: :ft, seq: 5
+		fran = Workout.create title: 'Fran', cover_img: "https://cdn2.omidoo.com/sites/default/files/imagecache/full_width/images/bydate/201503/crossfitempirical142.jpg"
+		fran.workout_segments.create content: "21 15 9\r\nThrusters @ 95/65\r\nPullups", segment_type: :ft
 
-			fran = Workout.create title: 'Fran', cover_img: "https://cdn2.omidoo.com/sites/default/files/imagecache/full_width/images/bydate/201503/crossfitempirical142.jpg"
-			fran.workout_segments.create content: "21 15 9\r\nThrusters @ 95/65\r\nPullups", segment_type: :ft
+		glen = Workout.create title: 'Glen', cover_img: "http://www.crossfitnyc.com/wp-content/uploads/2013/12/glenincountry.jpg"
+		glen.workout_segments.create content: "30 GTO @135lbs/95lbs", segment_type: 'ft', seq: 1
+		glen.workout_segments.create content: "Run 1 mile", segment_type: 'ft', seq: 2
+		glen.workout_segments.create content: "10 Rope Climbs", segment_type: 'ft', seq: 3
+		glen.workout_segments.create content: "Run 1 mile", segment_type: 'ft', seq: 4
+		glen.workout_segments.create content: "100 Burpees", segment_type: 'ft', seq: 5
 
-			glen = Workout.create title: 'Glen', cover_img: "http://www.crossfitnyc.com/wp-content/uploads/2013/12/glenincountry.jpg"
-			glen.workout_segments.create content: "30 GTO @135lbs/95lbs", segment_type: 'ft', seq: 1
-			glen.workout_segments.create content: "Run 1 mile", segment_type: 'ft', seq: 2
-			glen.workout_segments.create content: "10 Rope Climbs", segment_type: 'ft', seq: 3
-			glen.workout_segments.create content: "Run 1 mile", segment_type: 'ft', seq: 4
-			glen.workout_segments.create content: "100 Burpees", segment_type: 'ft', seq: 5
+		helen = Workout.create title: 'Helen', cover_img: "https://d1s2fu91rxnpt4.cloudfront.net/legacy/Helen1.jpg"
+		helen.workout_segments.create content: "Run 400m\r\n21 kettlbell swings\r\n12 pullups", segment_type: :rft, repeat_count: 3
 
-			helen = Workout.create title: 'Helen', cover_img: "https://d1s2fu91rxnpt4.cloudfront.net/legacy/Helen1.jpg"
-			helen.workout_segments.create content: "Run 400m\r\n21 kettlbell swings\r\n12 pullups", segment_type: :rft, repeat_count: 3
+		accumulate = Workout.create title: 'Test Accumulate'
+		accumulate.workout_segments.create content: "Plank Hold; accumulate 1 minute", segment_type: :accumulate, duration: 60
 
-			accumulate = Workout.create title: 'Test Accumulate'
-			accumulate.workout_segments.create content: "Plank Hold; accumulate 1 minute", segment_type: :accumulate, duration: 60
+		emom = Workout.create title: 'Test EMOM'
+		emom.workout_segments.create content: "1 high hang squat clean\r\n1 squat clean from above knee\r\n1 squat clean @ 2/3 body-weight", segment_type: :emom, repeat_count: 5, repeat_interval: 10
 
-			emom = Workout.create title: 'Test EMOM'
-			emom.workout_segments.create content: "1 high hang squat clean\r\n1 squat clean from above knee\r\n1 squat clean @ 2/3 body-weight", segment_type: :emom, repeat_count: 5, repeat_interval: 10
+		emom = Workout.create title: 'Test Tabata'
+		emom.workout_segments.create content: "DB bent rows", segment_type: :tabata, repeat_count: 8, repeat_interval: 30
 
-			emom = Workout.create title: 'Test Tabata'
-			emom.workout_segments.create content: "DB bent rows", segment_type: :tabata, repeat_count: 8, repeat_interval: 30
-
-			strength = Workout.create title: 'Test Strength'
-			strength.workout_segments.create content: "Find 2RM DL", segment_type: :strength
-
-
+		strength = Workout.create title: 'Test Strength'
+		strength.workout_segments.create content: "Find 2RM DL", segment_type: :strength
 
 	end
 end
