@@ -17,7 +17,7 @@ namespace :amraplife do
 
 	task load_data: :environment do
 		puts "Loading Data"
-
+		
 		puts "Adding some Metrics"
 		ht = Metric.create title: 'Height', aliases: ['ht'], unit: 'in'
 		wt = Metric.create title: 'Weight', aliases: ['wt', 'lbs'], unit: 'lbs'
