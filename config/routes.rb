@@ -9,16 +9,16 @@ Rails.application.routes.draw do
 	resources :movement_admin
 
 	resources :observations
-	
+
 	resources :places
 	resources :place_admin
 
 	resources :recipes
 	resources :recipe_admin
 
-	resources :workouts 
+	resources :workouts
 	resources :workout_admin
-	
+
 	resources :workout_results
 
 	resources :workout_movements
