@@ -1,13 +1,15 @@
-PATH
-  remote: ../../engines/swell_ecom
+GIT
+  remote: git://github.com/Groundswell/swell_ecom.git
+  revision: 97fac9f5ed5ca682d086225646d7bcb030757f8d
   specs:
     swell_ecom (0.0.1)
       stripe
       swell_media
       tax_cloud
 
-PATH
-  remote: ../../engines/swell_media
+GIT
+  remote: git://github.com/Groundswell/swell_media.git
+  revision: 5a7ee8f5037f8a046fb487eb38fc22a9cc29ed01
   specs:
     swell_media (0.0.1)
       acts-as-taggable-array-on
@@ -34,8 +36,9 @@ PATH
       sitemap_generator
       staccato
 
-PATH
-  remote: ../../engines/swell_theme_summarize
+GIT
+  remote: git://github.com/Groundswell/swell_theme_summarize.git
+  revision: 0b36855b4786bc4de09f7bb104031886d9b277a7
   specs:
     swell_theme_summarize (0.0.1)
       rails (~> 4.2.3)
@@ -269,7 +272,7 @@ GEM
       builder (>= 2.1.2)
     haml (4.0.7)
       tilt
-    hashie (3.5.1)
+    hashie (3.5.3)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
     httpclient (2.8.3)
@@ -314,13 +317,13 @@ GEM
     minitest (5.10.1)
     multi_json (1.12.1)
     netrc (0.11.0)
-    newrelic_rpm (3.18.0.329)
+    newrelic_rpm (3.18.1.330)
     nokogiri (1.7.0.1)
       mini_portile2 (~> 2.1.0)
     nori (2.6.0)
-    omniauth (1.4.0)
-      hashie (>= 1.2, < 4)
-      rack (>= 1.0, < 3)
+    omniauth (1.5.0)
+      hashie (~> 3.5.0, < 4)
+      rack (>= 1.6.2, < 3)
     orm_adapter (0.5.0)
     pg (0.19.0)
     public_suffix (2.0.5)

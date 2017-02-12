@@ -1,5 +1,20 @@
 # desc "Explaining what the task does"
 namespace :amraplife do
+
+	task load_products: :environment do
+
+
+		product = SwellEcom::Product.create title: 'HSPU AMARAP T-Shirt', slug: 'hspuamrap-tshirt', avatar: 'http://cdn1.amraplife.com/assets/8ff15d00-9102-49b5-972f-db9a7d66c3af.png'
+		product.product_options.create label: "Size", code: 'size'
+
+		product.skus.create code: 'hspuamrap-tshirt-sm',  price: 2800, label: 'Small', name: 'HSPU AMRAP T-Shirt, Small', options: { size: 'Small' }, status: 'active', avatar: 'http://cdn1.amraplife.com/assets/8ff15d00-9102-49b5-972f-db9a7d66c3af.png'
+		product.skus.create code: 'hspuamrap-tshirt-md',  price: 2800, label: 'Medium', name: 'HSPU AMRAP T-Shirt, Medium', options: { size: 'Medium' }, status: 'active', avatar: 'http://cdn1.amraplife.com/assets/8ff15d00-9102-49b5-972f-db9a7d66c3af.png'
+		product.skus.create code: 'hspuamrap-tshirt-lg',  price: 2800, label: 'Large', name: 'HSPU AMRAP T-Shirt, Large', options: { size: 'Large' }, status: 'active', avatar: 'http://cdn1.amraplife.com/assets/8ff15d00-9102-49b5-972f-db9a7d66c3af.png'
+		product.skus.create code: 'hspuamrap-tshirt-xlg', price: 2800, label: 'Extra Large', name: 'HSPU AMRAP T-Shirt, Extra Large', options: { size: 'Extra Large' }, status: 'active', avatar: 'http://cdn1.amraplife.com/assets/8ff15d00-9102-49b5-972f-db9a7d66c3af.png'
+
+
+	end
+
 	task load_data: :environment do
 		puts "Loading Data"
 		
