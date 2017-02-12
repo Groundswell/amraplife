@@ -1,0 +1,50 @@
+#content.content.section.row
+	- cache( "about-1" ) do
+		.col-md-8.bg-base.col-lg-8.col-xl-9
+			.ribbon.ribbon-highlight
+				%ol.breadcrumb.ribbon-inner
+					%li
+						%a{:href => swell_media.root_path()} Home
+					%li.active{:title => "About Us" }
+						About Us
+			%header.page-header
+				%h2.page-title
+					About Us
+			%article.entry.style-single.type-post
+				
+				.entry-content
+					%p
+						AMRAP stands for As Many Reps As Possible. It is a term from high-intensity exersize, massively popularized by CrossFit that challenges you to work as hard as you can in a given time-frame. AMRAP workouts require participants to complete as many movements as they can in a given timeframe.
+					%p
+						We recognized that's a lot like life: we have a fixed amount of time and we want to live as fully as possible.
+					%p
+						We at AMRAP Life strive to help each other live as fully as possible. We seek to inform and inspire each other to be the best that we can be.
+
+					%p
+						%center
+							%h3{ style: 'text-size:120%;' } 
+								)°(
+
+					.row
+						.col-xs-4
+							.well
+								%center
+									%h4
+										Gk
+								= image_tag 'gk.png', class: 'img img-responsive'
+						.col-xs-4
+							.well
+								%center
+									%h4
+										Mike
+								= image_tag 'mike.png', class: 'img img-responsive'
+						.col-xs-4
+							.well
+								%center
+									%h4
+										Tina
+								= image_tag 'tina.png', class: 'img img-responsive'
+			
+				%hr/
+	.sidebar.col-md-4.col-lg-4.col-xl-3
+		= render 'application/sidebar'

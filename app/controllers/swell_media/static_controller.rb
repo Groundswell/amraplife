@@ -1,6 +1,11 @@
 module SwellMedia
 	class StaticController < ApplicationController
 
+		def about
+			
+		end
+
+		
 		def home
 			# the homepage
 			@articles = SwellMedia::Article.published.order( publish_at: :desc ).limit( 5 )
