@@ -5,6 +5,7 @@ class CardsController < ApplicationController
 
 	def create
 		@card = Card.new( card_params )
+		@card.card_design = CardDesign.first
 		if @card.save
 
 			CardMailer.send_card( @card ).deliver

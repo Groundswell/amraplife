@@ -16,7 +16,7 @@
 							Dear
 							= @card.to_name
 
-						%img{ src: 'http://cdn1.amraplife.com/assets/45b50023-1a44-4e8f-8788-cdf50a218084.png', class: 'img img-responsive' }
+						%img{ src: @card.card_design.avatar, class: 'img img-responsive' }
 				
 						= @card.message
 
