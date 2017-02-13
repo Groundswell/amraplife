@@ -50,12 +50,15 @@ ActiveRecord::Schema.define(version: 20170212234622) do
 
   create_table "card_designs", force: :cascade do |t|
     t.string   "title"
+    t.string   "slug"
     t.string   "avatar"
     t.text     "description"
     t.integer  "status",      default: 1
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "card_designs", ["slug"], name: "index_card_designs_on_slug", unique: true, using: :btree
 
   create_table "cards", force: :cascade do |t|
     t.integer  "card_design_id"
@@ -527,6 +530,14 @@ ActiveRecord::Schema.define(version: 20170212234622) do
 
   add_index "plans", ["code"], name: "index_plans_on_code", unique: true, using: :btree
 
+  create_table "product_options", force: :cascade do |t|
+    t.integer "product_id"
+    t.string  "label"
+    t.string  "code"
+  end
+
+  add_index "product_options", ["product_id", "label"], name: "index_product_options_on_product_id_and_label", using: :btree
+
   create_table "products", force: :cascade do |t|
     t.integer  "category_id"
     t.string   "title"
@@ -598,15 +609,27 @@ ActiveRecord::Schema.define(version: 20170212234622) do
 
   add_index "shipments", ["order_id"], name: "index_shipments_on_order_id", using: :btree
 
+  create_table "sku_options", force: :cascade do |t|
+    t.integer "sku_id"
+    t.string  "code"
+    t.string  "value"
+  end
+
+  add_index "sku_options", ["sku_id", "code", "value"], name: "index_sku_options_on_sku_id_and_code_and_value", using: :btree
+
   create_table "skus", force: :cascade do |t|
     t.integer  "product_id"
     t.string   "name"
+    t.string   "label"
     t.string   "code"
+    t.string   "avatar"
+    t.integer  "status",     default: 0
     t.string   "tax_code"
     t.integer  "price",      default: 0
     t.integer  "inventory",  default: -1
     t.string   "currency",   default: "USD"
     t.hstore   "properties", default: {}
+    t.hstore   "options",    default: {}
     t.datetime "created_at"
     t.datetime "updated_at"
   end
