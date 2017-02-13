@@ -10,6 +10,8 @@ Rails.application.routes.draw do
 
 	resources :observations
 
+	resources :optins
+
 	resources :places
 	resources :place_admin
 

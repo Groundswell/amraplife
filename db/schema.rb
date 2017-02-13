@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170207215735) do
+ActiveRecord::Schema.define(version: 20170212234622) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -47,6 +47,32 @@ ActiveRecord::Schema.define(version: 20170207215735) do
   add_index "assets", ["parent_obj_id", "parent_obj_type", "asset_type", "use"], name: "swell_media_asset_use_index", using: :btree
   add_index "assets", ["parent_obj_type", "parent_obj_id"], name: "index_assets_on_parent_obj_type_and_parent_obj_id", using: :btree
   add_index "assets", ["tags"], name: "index_assets_on_tags", using: :gin
+
+  create_table "card_designs", force: :cascade do |t|
+    t.string   "title"
+    t.string   "avatar"
+    t.text     "description"
+    t.integer  "status",      default: 1
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "cards", force: :cascade do |t|
+    t.integer  "card_design_id"
+    t.string   "pub_id"
+    t.string   "from_name"
+    t.string   "from_email"
+    t.string   "to_name"
+    t.string   "to_email"
+    t.text     "message"
+    t.boolean  "viewed",         default: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "cards", ["card_design_id"], name: "index_cards_on_card_design_id", using: :btree
+  add_index "cards", ["pub_id"], name: "index_cards_on_pub_id", using: :btree
+  add_index "cards", ["to_email"], name: "index_cards_on_to_email", using: :btree
 
   create_table "cart_items", force: :cascade do |t|
     t.integer  "item_id"
@@ -501,14 +527,6 @@ ActiveRecord::Schema.define(version: 20170207215735) do
 
   add_index "plans", ["code"], name: "index_plans_on_code", unique: true, using: :btree
 
-  create_table "product_options", force: :cascade do |t|
-    t.integer "product_id"
-    t.string  "label"
-    t.string  "code"
-  end
-
-  add_index "product_options", ["product_id", "label"], name: "index_product_options_on_product_id_and_label", using: :btree
-
   create_table "products", force: :cascade do |t|
     t.integer  "category_id"
     t.string   "title"
@@ -580,27 +598,15 @@ ActiveRecord::Schema.define(version: 20170207215735) do
 
   add_index "shipments", ["order_id"], name: "index_shipments_on_order_id", using: :btree
 
-  create_table "sku_options", force: :cascade do |t|
-    t.integer "sku_id"
-    t.string  "code"
-    t.string  "value"
-  end
-
-  add_index "sku_options", ["sku_id", "code", "value"], name: "index_sku_options_on_sku_id_and_code_and_value", using: :btree
-
   create_table "skus", force: :cascade do |t|
     t.integer  "product_id"
     t.string   "name"
-    t.string   "label"
     t.string   "code"
-    t.string   "avatar"
-    t.integer  "status",     default: 0
     t.string   "tax_code"
     t.integer  "price",      default: 0
     t.integer  "inventory",  default: -1
     t.string   "currency",   default: "USD"
     t.hstore   "properties", default: {}
-    t.hstore   "options",    default: {}
     t.datetime "created_at"
     t.datetime "updated_at"
   end

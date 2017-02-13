@@ -1,0 +1,4 @@
+
+class OptinsController < ApplicationController
+
+end

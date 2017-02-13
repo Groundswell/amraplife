@@ -1,5 +1,5 @@
 
-- if @articles.count < 5
+- if @articles.count < 25
 	.section.row.entries.bg-primary.section-no-margin-bottom
 		.col-lg-12.col-xl-12
 			.row
@@ -12,6 +12,22 @@
 							Coming Soon... 
 						%h4{ style: 'margin-left:90px;'}
 							Life is a Team Sport.... Live AMRAP
+
+					%p.indented.entry-header
+						We're lacing up our sneakers. In the meantime, sign up to be one of the first in line for great tips, inspiration and discounts on cool gear when we launch.
+
+					= form_for Optin.new, url: main_app.optins_path do |f|
+						.row{ style: 'margin-top:2em;'}
+							.col-sm-6.col-sm-offset-2
+								.form-group
+									= f.label :name, style: 'color:#fff;'
+									= f.text_field :name, class: 'form-control'
+								.form-group
+									= f.label :email, style: 'color:#fff;'
+									= f.text_field :email, class: 'form-control'
+								.form-group
+									= f.submit 'Sign Up', class: 'btn btn-primary'
+
 
 					%figure.entry-thumbnail
 						%a.overlay.overlay-primary{ href: '#' }
