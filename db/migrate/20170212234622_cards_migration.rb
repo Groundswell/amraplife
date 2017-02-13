@@ -2,12 +2,14 @@ class CardsMigration < ActiveRecord::Migration
 	def change
 
 		create_table :card_designs do |t|
-			t.string	:title 
+			t.string	:title
+			t.string 	:slug
 			t.string	:avatar
 			t.text 		:description
 			t.integer 	:status, default: 1 
 			t.timestamps
 		end
+		add_index :card_designs, :slug, unique: true
 
 		create_table :cards do |t|
 			t.references 	:card_design 
