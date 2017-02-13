@@ -1,0 +1,30 @@
+#content.content.section.row
+	.col-xs-12.bg-base
+		.ribbon.ribbon-highlight
+			%ol.breadcrumb.ribbon-inner
+				%li
+					%a{ href: swell_media.root_path() }
+						Home
+				%li.active
+					Your Card
+	
+		.row
+			.col-sm-10.col-sm-offset-1.bg-base
+				.row
+					.col-sm-12
+						%h1
+							Dear
+							= @card.to_name
+
+						%img{ src: 'http://cdn1.amraplife.com/assets/45b50023-1a44-4e8f-8788-cdf50a218084.png', class: 'img img-responsive' }
+				
+						= @card.message
+
+						%br
+						%br
+						%br
+
+
+
+
+

@@ -1,0 +1,58 @@
+#content.content.section.row
+	.col-xs-12.bg-base
+		.ribbon.ribbon-highlight
+			%ol.breadcrumb.ribbon-inner
+				%li
+					%a{ href: swell_media.root_path() }
+						Home
+				%li.active
+					Send a Card
+	
+		.row
+			.col-sm-10.col-sm-offset-1.bg-base
+				.row
+					.col-sm-6
+						%h1
+							Show them you love them AMRAP
+							
+						%p
+							Send a that special someone a Valentine's Day card to let them know you will love them for As Many Reps As Possible.
+					.col-sm-5.col-sm-offset-1
+						%img{ src: 'http://cdn1.amraplife.com/assets/45b50023-1a44-4e8f-8788-cdf50a218084.png', class: 'img img-responsive' }
+				= form_for Card.new do |f|
+					.row
+						%h3 To:
+						.col-sm-6
+							.form-group
+								= f.label :to_name, 'Their Name:'
+								= f.text_field :to_name, class: 'form-control'
+						.col-sm-6
+							.form-group
+								= f.label :to_email, 'Their Email:'
+								= f.text_field :to_email, class: 'form-control'
+						%h3 From:
+						.col-sm-6
+							.form-group
+								= f.label :from_name, 'Your Name:'
+								= f.text_field :from_name, class: 'form-control'
+						.col-sm-6
+							.form-group
+								= f.label :from_email, 'Your Email:'
+								= f.text_field :from_email, class: 'form-control'
+						
+						.col-xs-12
+							.form-group
+								= f.label :message, 'Your message:'
+								= f.text_area :message, class: 'form-control'
+						.col-xs-12
+							.form-group
+								= f.submit 'Send', class: 'btn btn-info pull-right'
+
+						%br
+						%br
+						%br
+
+
+
+
+

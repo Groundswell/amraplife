@@ -1,5 +1,9 @@
 Rails.application.routes.draw do
 
+	resources :cards do 	
+		get :success, on: :member
+	end
+	
 	resources :dash, only: :index
 
 	resources :equipment

@@ -1,12 +1,28 @@
 
 class CardsController < ApplicationController 
-	before_action :set_card, only: :show
+	before_action :set_card, only: [ :show, :success ]
 
 
 	def create
+		@card = Card.new( card_params )
+		if @card.save
+
+			# send email
+
+			redirect_to success_card_path( @card.pub_id )
+		else
+
+		end
+	end
+
+	def new
+	end
+
+	def success
 	end
 
 	def show
+		@card.update( viewed: true )
 	end
 
 
