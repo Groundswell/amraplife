@@ -4,11 +4,11 @@
 %p
 	= @card.from_name
 	must love you very much. They sent you a special Valentine.
-	%a{ href: "http://www.amraplide.com/cards/#{@card.pub_id}" }
+	%a{ href: main_app.card_url(@card.pub_id) }
 		You can view it here
 %p
 	You can send a card of your own
-	%a{ href: 'http://www.amraplife.com/cards/new' }
+	%a{ href: main_app.new_card_url() }
 		here.
 
 %p

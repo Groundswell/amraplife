@@ -4,11 +4,11 @@ Happy Valentines Day <%= @card.to_name %>!
 <%=@card.from_name %> must love you very much. They sent you a special Valentine.
 You can view it here:
 
-http://www.amraplide.com/cards/<%= @card.pub_id %>
+<%= main_app.card_url(@card.pub_id) %>
 
 You can send a card of your own here:
 
-http://www.amraplife.com/cards/new
+<%= main_app.new_card_url() %>
 
 -------------------
 
