@@ -4,7 +4,7 @@ SwellMedia.configure do |config|
 	config.app_name = ENV['APP_NAME'] || 'SwellApp'
 	config.app_host = ENV['APP_DOMAIN'] || 'localhost:3000'
 	config.app_description = 'A Very Swell App indeed'
-	config.app_logo = 'https://media.licdn.com/media/p/1/000/27f/2a3/36f3707.jpg'
+	config.app_logo = 'http://cdn1.amraplife.com/assets/874a6898-ecf6-4db0-9778-8c1331a5f2c8.png'
 
 	config.twitter_handle = '@gkparishphilp'
 

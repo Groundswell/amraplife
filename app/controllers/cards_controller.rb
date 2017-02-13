@@ -1,5 +1,5 @@
 
-class CardsController < ApplicationController 
+class CardsController < ApplicationController
 	before_action :set_card, only: [ :show, :success ]
 
 
@@ -19,7 +19,7 @@ class CardsController < ApplicationController
 	end
 
 	def new
-		set_page_meta( title: 'Send a Card' )
+		set_page_meta( title: 'Send a Card', image: 'http://cdn1.amraplife.com/assets/63705c35-bde9-4f83-96b8-4b238faa2200.png' )
 	end
 
 	def success
@@ -33,7 +33,7 @@ class CardsController < ApplicationController
 
 
  	 private
-	
+
 		def card_params
 			params.require( :card ).permit( :from_name, :from_email, :to_name, :to_email, :message )
 		end
