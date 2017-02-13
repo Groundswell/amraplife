@@ -33,6 +33,8 @@
 %meta{ name: "google-site-verification", content: "Zwxt8JnFbmUfU3K4DtTN6GbilH2e0NiJ2OXZJ-su10g" }
 %meta{ name: "p:domain_verify", content: "c1bdd80449b6d6810fd314c0d71e2f41" }
 
+= render 'application/pinterest_tag'
+
 - if SwellMedia.google_analytics_code
 	%meta{ property: 'ga:client_id', content: session[:ga_client_id] || '' }
 

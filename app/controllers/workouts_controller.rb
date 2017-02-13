@@ -10,6 +10,7 @@ class WorkoutsController < ApplicationController
 	end
 
 	def show
+		set_page_meta( title: @workout.title )
 	end
 
 

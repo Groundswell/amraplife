@@ -19,13 +19,16 @@ class CardsController < ApplicationController
 	end
 
 	def new
+		set_page_meta( title: 'Send a Card' )
 	end
 
 	def success
+		set_page_meta( title: 'Thank You!' )
 	end
 
 	def show
 		@card.update( viewed: true )
+		set_page_meta( title: 'Your Card' )
 	end
 
 

@@ -2,7 +2,7 @@ module SwellMedia
 	class StaticController < ApplicationController
 
 		def about
-			
+			set_page_meta( title: 'About Us' )
 		end
 
 		
@@ -16,6 +16,8 @@ module SwellMedia
 				@trending = SwellMedia::Article.published.last 
 			end
 			@workouts = Workout.published.order( publish_at: :desc ).limit( 10 )
+
+			set_page_meta( title: 'AMRAP Life Home' )
 
 			render layout: 'swell_media/homepage'
 		end
