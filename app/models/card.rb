@@ -1,7 +1,7 @@
 
 class Card < ActiveRecord::Base
 
-	validates :to_email
+	validates :to_email, presence: true, uniqueness: { scope: :from_email, message: 'You already sent this card.' }
 
 	belongs_to :card_design
 

@@ -1,4 +1,24 @@
+#content.content.section.row
+	.col-xs-12.bg-base
+		.ribbon.ribbon-highlight
+			%ol.breadcrumb.ribbon-inner
+				%li
+					%a{ href: swell_media.root_path() }
+						Home
+				%li.active
+					Thank You!
 
-%h1
-	Thanks for sending a card to 
-	= @card.to_email
+		%h1
+			Thanks for sending a card to 
+			= @card.to_email
+			!
+
+		%p
+			They should get it in their email soon. In the meantime, why not 
+			%a{ href: new_card_path, class: 'btn btn-info' }
+				send another?
+
+
+		%br
+		%br
+		%br
