@@ -7,7 +7,7 @@ class CardsController < ApplicationController
 		@card = Card.new( card_params )
 		if @card.save
 
-			# send email
+			CardMailer.send_card( @card ).deliver
 
 			redirect_to success_card_path( @card.pub_id )
 		else
