@@ -11,7 +11,7 @@ class CardsController < ApplicationController
 
 			redirect_to success_card_path( @card.pub_id )
 		else
-			set_flash "Card could not be sent", :error
+			set_flash "Card could not be sent", :error, @card
 			redirect_to :back
 			return false
 		end

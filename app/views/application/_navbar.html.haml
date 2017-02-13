@@ -16,18 +16,21 @@
 					%span.search-toggled-out-icon
 						%i.fa.fa-search
 		%ul.nav.navbar-nav
-			- if SwellMedia::Article.published.count >= 6
+			%li
+				%a{ href: "http://amraplife.com/cards/new" }
+					Send a Valentine!
+			- if SwellMedia::Article.published.count >= 25
 				%li
 					%a{ href: '/blog' }
 						Articles
-			- if Recipe.published.count >= 6
+			- if Recipe.published.count >= 25
 				%li
 					%a{ href: '/recipes' }
 						Food
 			-#%li
 				%a{ href: '#' }
 					Places
-			- if Workout.published.count >= 6
+			- if Workout.published.count >= 25
 				%a{ href: '/workouts' }
 					Workouts
 			-#%li

@@ -1,7 +1,7 @@
 #footer.footer-area
 	.footer-top.container
 		.row
-			.widget.col-xs-6.col-sm-4
+			.widget.col-xs-6.col-sm-6
 				%h4.widget-title
 					Information
 				%ul.entries.links
@@ -20,15 +20,20 @@
 
 			.widget.col-xs-6.col-sm-4
 
-			.widget.col-xs-12.col-sm-4
+			.widget.col-xs-12.col-sm-6
 				%h4.widget-title
 					Subscribe
 				%p
 					Get new product announcements, helpful tips for getting the most out of life, and crazy discounts on workout apparel.
-				%form.form-horizontal{ role: :form }
-					.form-group
-						.col-lg-10
-							%input.form-control{ type: :text, placholder: 'Your Email' }
+				= form_for Optin.new, url: main_app.optins_path, role: :form, class: 'form-horizontal'  do |f|
+					.col-lg-10
+						.form-group
+							= f.text_field :name, placeholder: 'Your Name', class: 'form-control'
+						.form-group
+							= f.text_field :email, placeholder: 'Your Email', class: 'form-control'
+					.col-lg-2
+						= f.submit 'Join', class: 'btn btn-info pull-right'
+
 	.footer-bottom
 		.container.aligncenter
 			%p

@@ -6,7 +6,7 @@ class OptinsController < ApplicationController
 		if @optin.save
 			redirect_to success_optin_path( @optin )
 		else
-			set_flash "Couldn't register", :error
+			set_flash "Couldn't register", :error, @optin
 			redirect_to :back
 			return false
 		end
