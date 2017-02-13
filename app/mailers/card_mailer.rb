@@ -3,7 +3,7 @@ class CardMailer < ActionMailer::Base
 
 
 	def send_card( card )
-    	@user = card
-    	mail( :to => @user.email, :subject => 'Happy Valentines Day' )
+    	@card = card
+    	mail( :to => @card.to_email, :subject => "Happy Valentines Day from #{@card.from_name}" )
 	end
 end

@@ -1,2 +1,18 @@
 %p
-	Happy Valentines Day #{@user.full_name}
+	Happy Valentines Day #{@card.to_name}!
+
+%p
+	= @card.from_name
+	must love you very much. They sent you a special Valentine.
+	%a{ href: "http://www.amraplide.com/cards/#{@card.pub_id}" }
+		You can view it here
+%p
+	You can send a card of your own 
+	%a{ href: 'http:www.amraplife.com/cards/new' }
+		here.
+
+%p
+	Happy Valentine's Day!
+
+%p
+	from, the team at AMRAPLife.com
