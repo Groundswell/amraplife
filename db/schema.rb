@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170212234622) do
+ActiveRecord::Schema.define(version: 20170213184759) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -51,7 +51,7 @@ ActiveRecord::Schema.define(version: 20170212234622) do
   create_table "card_designs", force: :cascade do |t|
     t.string   "title"
     t.string   "slug"
-    t.string   "avatar"
+    t.text     "avatar"
     t.text     "description"
     t.integer  "status",      default: 1
     t.datetime "created_at"
@@ -105,8 +105,8 @@ ActiveRecord::Schema.define(version: 20170212234622) do
     t.integer  "lft"
     t.integer  "rgt"
     t.text     "description"
-    t.string   "avatar"
-    t.string   "cover_image"
+    t.text     "avatar"
+    t.text     "cover_image"
     t.integer  "status",       default: 1
     t.integer  "availability", default: 1
     t.integer  "seq"
@@ -185,7 +185,7 @@ ActiveRecord::Schema.define(version: 20170212234622) do
     t.integer  "parent_id"
     t.integer  "rgt"
     t.integer  "lft"
-    t.string   "avatar"
+    t.text     "avatar"
     t.text     "aliases",     default: [], array: true
     t.text     "description"
     t.text     "content"
@@ -195,6 +195,7 @@ ActiveRecord::Schema.define(version: 20170212234622) do
     t.hstore   "properties",  default: {}
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "cover_image"
   end
 
   add_index "equipment", ["parent_id"], name: "index_equipment_on_parent_id", using: :btree
@@ -216,10 +217,11 @@ ActiveRecord::Schema.define(version: 20170212234622) do
     t.string   "slug"
     t.string   "description"
     t.text     "content"
-    t.string   "avatar"
+    t.text     "avatar"
     t.text     "nutrition"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "cover_image"
   end
 
   add_index "foods", ["slug"], name: "index_foods_on_slug", unique: true, using: :btree
@@ -306,7 +308,7 @@ ActiveRecord::Schema.define(version: 20170212234622) do
     t.string   "title"
     t.string   "subtitle"
     t.text     "avatar"
-    t.string   "cover_path"
+    t.text     "cover_image"
     t.string   "avatar_caption"
     t.string   "layout"
     t.string   "template"
@@ -382,7 +384,7 @@ ActiveRecord::Schema.define(version: 20170212234622) do
     t.integer  "lft"
     t.string   "title"
     t.string   "slug"
-    t.string   "avatar"
+    t.text     "avatar"
     t.text     "aliases",              default: [],     array: true
     t.string   "description"
     t.text     "content"
@@ -393,6 +395,7 @@ ActiveRecord::Schema.define(version: 20170212234622) do
     t.hstore   "properties",           default: {}
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "cover_image"
   end
 
   add_index "movements", ["equipment_id"], name: "index_movements_on_equipment_id", using: :btree
@@ -490,7 +493,7 @@ ActiveRecord::Schema.define(version: 20170212234622) do
     t.string   "slug"
     t.string   "description"
     t.text     "content"
-    t.string   "avatar"
+    t.text     "avatar"
     t.string   "phone"
     t.string   "address1"
     t.string   "address2"
@@ -506,6 +509,7 @@ ActiveRecord::Schema.define(version: 20170212234622) do
     t.hstore   "properties",  default: {}
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "cover_image"
   end
 
   add_index "places", ["slug"], name: "index_places_on_slug", unique: true, using: :btree
@@ -543,7 +547,7 @@ ActiveRecord::Schema.define(version: 20170212234622) do
     t.string   "title"
     t.string   "caption"
     t.string   "slug"
-    t.string   "avatar"
+    t.text     "avatar"
     t.integer  "default_product_type", default: 1
     t.string   "fulfilled_by",         default: "self"
     t.integer  "status",               default: 0
@@ -561,6 +565,7 @@ ActiveRecord::Schema.define(version: 20170212234622) do
     t.hstore   "properties",           default: {}
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "cover_image"
   end
 
   add_index "products", ["category_id"], name: "index_products_on_category_id", using: :btree
@@ -572,7 +577,7 @@ ActiveRecord::Schema.define(version: 20170212234622) do
     t.string   "title"
     t.string   "description"
     t.text     "content"
-    t.string   "avatar"
+    t.text     "avatar"
     t.string   "slug"
     t.string   "prep_time"
     t.string   "cook_time"
@@ -582,6 +587,7 @@ ActiveRecord::Schema.define(version: 20170212234622) do
     t.datetime "publish_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "cover_image"
   end
 
   add_index "recipes", ["slug"], name: "index_recipes_on_slug", unique: true, using: :btree
@@ -622,16 +628,17 @@ ActiveRecord::Schema.define(version: 20170212234622) do
     t.string   "name"
     t.string   "label"
     t.string   "code"
-    t.string   "avatar"
-    t.integer  "status",     default: 0
+    t.text     "avatar"
+    t.integer  "status",      default: 0
     t.string   "tax_code"
-    t.integer  "price",      default: 0
-    t.integer  "inventory",  default: -1
-    t.string   "currency",   default: "USD"
-    t.hstore   "properties", default: {}
-    t.hstore   "options",    default: {}
+    t.integer  "price",       default: 0
+    t.integer  "inventory",   default: -1
+    t.string   "currency",    default: "USD"
+    t.hstore   "properties",  default: {}
+    t.hstore   "options",     default: {}
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "cover_image"
   end
 
   add_index "skus", ["code"], name: "index_skus_on_code", unique: true, using: :btree
@@ -695,8 +702,8 @@ ActiveRecord::Schema.define(version: 20170212234622) do
     t.string   "slug"
     t.string   "first_name"
     t.string   "last_name"
-    t.string   "avatar"
-    t.string   "cover_image"
+    t.text     "avatar"
+    t.text     "cover_image"
     t.datetime "dob"
     t.string   "gender"
     t.string   "location"
@@ -788,8 +795,8 @@ ActiveRecord::Schema.define(version: 20170212234622) do
     t.string   "slug"
     t.integer  "workout_category_id"
     t.string   "workout_type"
-    t.string   "avatar"
-    t.string   "cover_img"
+    t.text     "avatar"
+    t.text     "cover_image"
     t.text     "description"
     t.text     "content"
     t.integer  "total_duration"

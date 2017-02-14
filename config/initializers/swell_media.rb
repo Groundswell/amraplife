@@ -2,11 +2,11 @@
 SwellMedia.configure do |config|
 
 	config.app_name = ENV['APP_NAME'] || 'SwellApp'
-	config.app_host = ENV['APP_DOMAIN'] || 'localhost:3000'
-	config.app_description = 'A Very Swell App indeed'
+	config.app_host = ENV['APP_DOMAIN'] || 'localhost:3008'
+	config.app_description = 'Life is a Team Sport )°( Live AMRAP'
 	config.app_logo = 'http://cdn1.amraplife.com/assets/874a6898-ecf6-4db0-9778-8c1331a5f2c8.png'
 
-	config.twitter_handle = '@gkparishphilp'
+	config.twitter_handle = '@amraplife'
 
 	# config.encryption_secret = 'fdty45u654jtyredhgr4u654etrhdht54eu6e5hdrt5'
 

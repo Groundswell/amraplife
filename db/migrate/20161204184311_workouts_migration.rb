@@ -77,7 +77,7 @@ class WorkoutsMigration < ActiveRecord::Migration
 			t.integer 		:lft
 			t.string 		:title
 			t.string 		:slug 
-			t.string 		:avatar # ? how are we doing these ?
+			t.string 		:avatar
 			t.text			:aliases, array: true, default: []
 			t.string 		:description
 			t.text 			:content 

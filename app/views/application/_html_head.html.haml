@@ -1,42 +1,26 @@
-%title
-	= @page_meta[:title]
+
 %meta{charset: "utf-8"}/
 %meta{content: "IE=edge,chrome=1", "http-equiv" => "X-UA-Compatible"}
-%meta{content: @page_meta[:description], name: "description"}
 %meta{content: "width=device-width, initial-scale=1, maximum-scale=1", name: "viewport"}
 
+%title
+	= @page_meta[:title]
+%meta{ name: "description", content: @page_meta[:description] }
 
-%meta{ name: "p:domain_verify", content: "c1bdd80449b6d6810fd314c0d71e2f41" }
+= render 'application/structured_data'
 
-%meta{ property: 'og:title', content: @page_meta[:title] }
-%meta{ property: 'og:type', content: @page_meta[:fb_type] }
-%meta{ property: 'og:site_name', content: @page_meta[:site_name] }
-%meta{ property: 'og:url', content: @page_meta[:url] }
-%meta{ property: 'og:description', content: @page_meta[:description] }
-%meta{ property: 'og:image', content: @page_meta[:image] }
+- if @page_meta[:og].present?
+	- @page_meta[:og].each do |property, content|
+		%meta{ property: "og:#{property}", content: content }
 
-- if @page_meta[:video]
-	%meta{ property: 'og:video', content: @page_meta[:video] }
-	%meta{ property: 'og:video:height', content: (@page_meta[:video_height] || 385) }
-	%meta{ property: 'og:video:width', content: (@page_meta[:video_width] || 640) }
-	%meta{ property: 'og:video:type', content: (@page_meta[:video_mime_type] || 'application/x-shockwave-flash') }
-
-
-%meta{ property: 'twitter:title', content: @page_meta[:title] }
-%meta{ property: 'twitter:card', content: @page_meta[:twitter_format] }
-%meta{ property: 'twitter:site', content: @page_meta[:twitter_site] }
-%meta{ property: 'twitter:url', content: @page_meta[:url] }
-%meta{ property: 'twitter:description', content: @page_meta[:description] }
-%meta{ property: 'twitter:image', content: @page_meta[:image] }
-%meta{ property: 'twitter:image:src', content: @page_meta[:image] }
+- if @page_meta[:twitter].present?
+	- @page_meta[:twitter].each do |property, content|
+		%meta{ property: "twitter:#{property}", content: content }
 
 %meta{ name: "google-site-verification", content: "Zwxt8JnFbmUfU3K4DtTN6GbilH2e0NiJ2OXZJ-su10g" }
 %meta{ name: "p:domain_verify", content: "c1bdd80449b6d6810fd314c0d71e2f41" }
 
 = render 'application/pinterest_tag'
-
-- if SwellMedia.google_analytics_code
-	%meta{ property: 'ga:client_id', content: session[:ga_client_id] || '' }
 
 = favicon_link_tag 'favicon.ico'
 

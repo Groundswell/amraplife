@@ -7,7 +7,7 @@ class Movement < ActiveRecord::Base
 
 	include SwellMedia::Concerns::URLConcern
 	include SwellMedia::Concerns::AvatarAsset
-	include SwellMedia::Concerns::TagArrayConcern
+	include SwellMedia::Concerns::ExpiresCache
 
 	validate :unique_aliases
 
