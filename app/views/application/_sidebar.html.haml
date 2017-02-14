@@ -22,6 +22,8 @@
 								%a{:href => swell_media.browse_index_path( category_id: featured_article.category.slug) }
 									=featured_article.category.name
 
+%script{ src: "//z-na.amazon-adsystem.com/widgets/onejs?MarketPlace=US&adInstanceId=9b863990-4462-4a7a-867d-9c30c6fb51cd" }
+
 - if SwellMedia::Media.published.media_tag_cloud.present?
 	%aside.widget
 		%h3.widget-title.ribbon
