@@ -1,13 +1,15 @@
-PATH
-  remote: ../../engines/swell_ecom
+GIT
+  remote: git://github.com/Groundswell/swell_ecom.git
+  revision: 97fac9f5ed5ca682d086225646d7bcb030757f8d
   specs:
     swell_ecom (0.0.1)
       stripe
       swell_media
       tax_cloud
 
-PATH
-  remote: ../../engines/swell_media
+GIT
+  remote: git://github.com/Groundswell/swell_media.git
+  revision: 029b7ae7b68c60e19cbb2e3ee484749069d3b5cf
   specs:
     swell_media (0.0.1)
       acts-as-taggable-array-on
@@ -34,8 +36,9 @@ PATH
       sitemap_generator
       staccato
 
-PATH
-  remote: ../../engines/swell_theme_summarize
+GIT
+  remote: git://github.com/Groundswell/swell_theme_summarize.git
+  revision: 0b36855b4786bc4de09f7bb104031886d9b277a7
   specs:
     swell_theme_summarize (0.0.1)
       rails (~> 4.2.3)
