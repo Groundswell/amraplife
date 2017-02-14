@@ -65,6 +65,7 @@
 						%time{:datetime => "2013-07-04T23:26:34+00:00"}=@media.publish_at.strftime("%B %e %Y")
 						by
 						%a{ href: swell_media.browse_index_path( author: @media.user ) }
+							= @media.user
 					- if @media.category.present?
 						%span.category
 							In
