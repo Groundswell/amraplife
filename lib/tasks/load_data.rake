@@ -185,27 +185,27 @@ namespace :amraplife do
 	task load_test_workouts: :environment do
 		puts "Adding some test workouts"
 
-		cindy = Workout.create title: 'Cindy', cover_img: "http://cooeecrossfit.com.au/wp-content/uploads/2013/05/WOD_Cindy.jpg"
+		cindy = Workout.create title: 'Cindy', cover_image: "http://cooeecrossfit.com.au/wp-content/uploads/2013/05/WOD_Cindy.jpg"
 		cindy.workout_segments.create content: "5 pullups\r\n10 push ups\r\n15 air squats", segment_type: :amrap, duration: 20 # 20*60
 
-		murph = Workout.create title: 'Murph (Straight)', cover_img: 'http://crossfitlakeland.com/wp-content/uploads/2014/05/murph-wod4-630x630.jpg'
+		murph = Workout.create title: 'Murph (Straight)', cover_image: 'http://crossfitlakeland.com/wp-content/uploads/2014/05/murph-wod4-630x630.jpg'
 		murph.workout_segments.create content: "run 1 mile", segment_type: :ft, seq: 1
 		murph.workout_segments.create content: "100 pullups", segment_type: :ft, seq: 2
 		murph.workout_segments.create content: "200 pushups", segment_type: :ft, seq: 3
 		murph.workout_segments.create content: "300 air squats", segment_type: :ft, seq: 4
 		murph.workout_segments.create content: "run 1 mile", segment_type: :ft, seq: 5
 
-		fran = Workout.create title: 'Fran', cover_img: "https://cdn2.omidoo.com/sites/default/files/imagecache/full_width/images/bydate/201503/crossfitempirical142.jpg"
+		fran = Workout.create title: 'Fran', cover_image: "https://cdn2.omidoo.com/sites/default/files/imagecache/full_width/images/bydate/201503/crossfitempirical142.jpg"
 		fran.workout_segments.create content: "21 15 9\r\nThrusters @ 95/65\r\nPullups", segment_type: :ft
 
-		glen = Workout.create title: 'Glen', cover_img: "http://www.crossfitnyc.com/wp-content/uploads/2013/12/glenincountry.jpg"
+		glen = Workout.create title: 'Glen', cover_image: "http://www.crossfitnyc.com/wp-content/uploads/2013/12/glenincountry.jpg"
 		glen.workout_segments.create content: "30 GTO @135lbs/95lbs", segment_type: 'ft', seq: 1
 		glen.workout_segments.create content: "Run 1 mile", segment_type: 'ft', seq: 2
 		glen.workout_segments.create content: "10 Rope Climbs", segment_type: 'ft', seq: 3
 		glen.workout_segments.create content: "Run 1 mile", segment_type: 'ft', seq: 4
 		glen.workout_segments.create content: "100 Burpees", segment_type: 'ft', seq: 5
 
-		helen = Workout.create title: 'Helen', cover_img: "https://d1s2fu91rxnpt4.cloudfront.net/legacy/Helen1.jpg"
+		helen = Workout.create title: 'Helen', cover_image: "https://d1s2fu91rxnpt4.cloudfront.net/legacy/Helen1.jpg"
 		helen.workout_segments.create content: "Run 400m\r\n21 kettlbell swings\r\n12 pullups", segment_type: :rft, repeat_count: 3
 
 		accumulate = Workout.create title: 'Test Accumulate'

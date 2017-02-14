@@ -11,7 +11,7 @@ class Recipe < ActiveRecord::Base
 
 	include SwellMedia::Concerns::URLConcern
 	include SwellMedia::Concerns::AvatarAsset
-	include SwellMedia::Concerns::ExpiresCache
+	#include SwellMedia::Concerns::ExpiresCache
 
 	has_many :ingredients
 	has_many :foods, through: :ingredients

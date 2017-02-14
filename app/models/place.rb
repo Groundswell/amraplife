@@ -9,7 +9,7 @@ class Place < ActiveRecord::Base
 
 	include SwellMedia::Concerns::URLConcern
 	include SwellMedia::Concerns::AvatarAsset
-	include SwellMedia::Concerns::ExpiresCache
+	#include SwellMedia::Concerns::ExpiresCache
 
 	has_many :equipment_places
 	has_many :equipments, through: :eqipment_places

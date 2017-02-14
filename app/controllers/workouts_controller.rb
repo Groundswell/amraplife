@@ -10,7 +10,7 @@ class WorkoutsController < ApplicationController
 	end
 
 	def show
-		set_page_meta( title: @workout.title )
+		set_page_meta( title: @workout.title, description: @workout.content.html_safe )
 	end
 
 

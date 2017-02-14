@@ -10,7 +10,7 @@ class Workout < ActiveRecord::Base
 
 	include SwellMedia::Concerns::URLConcern
 	include SwellMedia::Concerns::AvatarAsset
-	include SwellMedia::Concerns::ExpiresCache
+	#include SwellMedia::Concerns::ExpiresCache
 
 
 	has_many 	:workout_movements
