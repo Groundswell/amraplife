@@ -1,6 +1,6 @@
 
 # config/unicorn.rb
-worker_processes Integer( ENV["WEB_CONCURRENCY"] || 3 ) # using the performance-M dynos
+worker_processes Integer( ENV["WEB_CONCURRENCY"] || 2 ) # using the performance-M dynos
 timeout 30
 preload_app true
 

@@ -50,19 +50,21 @@
 				%h2.page-title
 					= @media.title
 			%article.entry.style-single.type-post
-				- if (@media.cover_path || @media.avatar).present?
+				- if (@media.cover_image || @media.avatar).present?
 					%figure.entry-thumbnail
 						/ to disable lazy loading, remove data-src and data-src-retina
-						%img{:alt => "", "data-src" => (@media.cover_path || @media.avatar), "data-src-retina" => (@media.cover_path || @media.avatar), :height => "452", :src => image_path('placeholder.gif'), :width => "680"}/
+						%img{:alt => "", "data-src" => (@media.cover_image || @media.avatar), "data-src-retina" => (@media.cover_image || @media.avatar), :height => "452", :src => image_path('placeholder.gif'), :width => "680"}/
 						/ fallback for no javascript browsers
 						%noscript
-							%img{:alt => "", :src => (@media.cover_path || @media.avatar)}/
+							%img{:alt => "", :src => (@media.cover_image || @media.avatar)}/
 				.entry-meta
 					%span.author
 						Posted
 					%span.entry-date
 						on
 						%time{:datetime => "2013-07-04T23:26:34+00:00"}=@media.publish_at.strftime("%B %e %Y")
+						by
+							%a{ href: swell_media.browse_index_path( author: @media.user ) }
 					- if @media.category.present?
 						%span.category
 							In
