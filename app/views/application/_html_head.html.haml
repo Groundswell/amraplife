@@ -4,14 +4,17 @@
 %meta{content: "width=device-width, initial-scale=1, maximum-scale=1", name: "viewport"}
 
 %title
-	= @page_meta[:title]
+	= @page_meta[:page_title]
 %meta{ name: "description", content: @page_meta[:description] }
 
 = render 'application/structured_data'
 
 - if @page_meta[:og].present?
 	- @page_meta[:og].each do |property, content|
-		%meta{ property: "og:#{property}", content: content }
+		- if property.is_a? String
+			%meta{ property: property, content: content }
+		- else
+			%meta{ property: "og:#{property}", content: content }
 
 - if @page_meta[:twitter].present?
 	- @page_meta[:twitter].each do |property, content|

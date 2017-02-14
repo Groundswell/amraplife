@@ -9,7 +9,7 @@ GIT
 
 GIT
   remote: git://github.com/Groundswell/swell_media.git
-  revision: 7abe53d85abee2f3083f4b794e43f1b89ad4bbcf
+  revision: c41d2abe7622274d1961e55da51a8a2a9cb2135a
   specs:
     swell_media (0.0.1)
       acts-as-taggable-array-on
@@ -129,6 +129,8 @@ GEM
     erubis (2.7.0)
     excon (0.55.0)
     execjs (2.7.0)
+    faraday (0.11.0)
+      multipart-post (>= 1.2, < 3)
     fastimage (2.0.1)
       addressable (~> 2)
     fb_graph (2.7.17)
@@ -316,6 +318,7 @@ GEM
     mini_portile2 (2.1.0)
     minitest (5.10.1)
     multi_json (1.12.1)
+    multipart-post (2.0.0)
     netrc (0.11.0)
     newrelic_rpm (3.18.1.330)
     nokogiri (1.7.0.1)
@@ -408,8 +411,8 @@ GEM
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
     staccato (0.5.1)
-    stripe (1.58.0)
-      rest-client (>= 1.4, < 4.0)
+    stripe (2.0.0)
+      faraday (~> 0)
     tax_cloud (0.3.0)
       activesupport (>= 3.0)
       i18n
