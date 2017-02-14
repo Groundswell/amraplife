@@ -50,13 +50,13 @@
 				%h2.page-title
 					= @media.title
 			%article.entry.style-single.type-post
-				- if (@media.cover_image || @media.avatar).present?
-					%figure.entry-thumbnail
+				- if @media.avatar.present?
+					%figure.entry-thumbnail{ style: 'max-height: 240px;' }
 						/ to disable lazy loading, remove data-src and data-src-retina
-						%img{:alt => "", "data-src" => (@media.cover_image || @media.avatar), "data-src-retina" => (@media.cover_image || @media.avatar), :height => "452", :src => image_path('placeholder.gif'), :width => "680"}/
+						%img{:alt => "", "data-src" => @media.avatar, "data-src-retina" => @media.avatar, :height => "452", :src => @media.avatar, :width => "680"}/
 						/ fallback for no javascript browsers
 						%noscript
-							%img{:alt => "", :src => (@media.cover_image || @media.avatar)}/
+							%img{:alt => "", :src => @media.avatar}/
 				.entry-meta
 					%span.author
 						Posted

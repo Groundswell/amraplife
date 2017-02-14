@@ -2,7 +2,7 @@
 	%h2.widget-title.ribbon
 		%span Featured Posts
 	.entries.row
-		- SwellMedia::Article.published.each do |featured_article|
+		- SwellMedia::Article.published.order( publish_at: :desc ).limit( 5 ).each do |featured_article|
 			%article.type-post.style-media-list.media.col-sm-6.col-md-12
 				/ to disable lazy loading, remove data-src and data-src-retina
 				%img.media-object.pull-left{:alt => "", "data-src" => featured_article.avatar, "data-src-retina" => featured_article.avatar, :height => "80", :src => image_path('placeholder.gif'), :width => "80"}/
@@ -21,3 +21,12 @@
 								In
 								%a{:href => swell_media.browse_index_path( category_id: featured_article.category.slug) }
 									=featured_article.category.name
+
+- if SwellMedia::Media.published.media_tag_cloud.present?
+	%aside.widget
+		%h3.widget-title.ribbon
+			%span Tags
+		.tagcloud
+			- SwellMedia::Media.published.media_tag_cloud( limit: 16 ).each do |tag,count|
+				%a{:href => swell_media.browse_index_path( tag: tag ) }
+					= tag
