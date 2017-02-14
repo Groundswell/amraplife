@@ -19,18 +19,18 @@
 			%li
 				%a{ href: "http://amraplife.com/cards/new" }
 					Send a Valentine!
-			- if SwellMedia::Article.published.count >= 25
+			- if SwellMedia::Article.published.count > 10
 				%li
 					%a{ href: '/blog' }
 						Articles
-			- if Recipe.published.count >= 25
+			- if Recipe.published.count > 10
 				%li
 					%a{ href: '/recipes' }
 						Food
 			-#%li
 				%a{ href: '#' }
 					Places
-			- if Workout.published.count >= 25
+			- if Workout.published.count > 10
 				%a{ href: '/workouts' }
 					Workouts
 			-#%li
@@ -46,4 +46,4 @@
 					%ul.subnav
 						- SwellMedia::Category.all.each do |cat|
 							%li
-								= link_to cat, articles_path( cat: cat )
+								= link_to cat, swel_media.browse_index_path( category_id: cat.id )

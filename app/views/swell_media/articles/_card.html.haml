@@ -1,0 +1,15 @@
+- cache( "row-#{article.cache_key}" ) do
+	%article.entry.style-grid.style-hero.type-post.col-md-4.col-lg-6.colheight-sm-1
+		- if article.category.present?
+			.ribbon.ribbon-pulled.ribbon-small.ribbon-highlight
+				%a{ href: swell_media.browse_index_path( category_id: article.category.slug ) }
+					= article.category.name
+		%header.entry-header
+			%h3.entry-title
+				%a{ href: article.url }
+					= article.title
+		.home-card-desc{ style: args[:desc_style] }
+			= truncate( article.sanitized_description, length: 120 )
+		%figure.entry-thumbnail
+			%a.overlay.overlay-primary{ href: article.url }
+				%img{ src: article.avatar, style: 'opacity:0.25' }
