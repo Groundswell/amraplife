@@ -1,5 +1,5 @@
 #content.content.section.row
-	- cache( "show-#{@movement.cache_key}" ) do
+	- cache( "show-#{@equipment.cache_key}" ) do
 		.col-md-8.bg-base.col-lg-8.col-xl-9
 			.ribbon.ribbon-highlight
 				%ol.breadcrumb.ribbon-inner
@@ -7,39 +7,35 @@
 						%a{ href: swell_media.root_path() }
 							Home
 					%li
-						%a{ href: '/movements' }
+						%a{ href: '/equipment' }
 							Equipment
 					%li.active
-						= @movement.title
+						= @equipment.title
 			%header.page-header
 				%h2.page-title
-					= @movement.title
+					= @equipment.title
 				
 			%article.entry.style-single.type-post
-				- if @movement.avatar.present?
+				- if @equipment.avatar.present?
 					%figure.entry-thumbnail{ style: 'max-height: 240px;' }
 						/ to disable lazy loading, remove data-src and data-src-retina
-						%img{:alt => "", "data-src" => @movement.avatar, "data-src-retina" => @movement.avatar, :height => "452", :src => @movement.avatar, :width => "680"}/
+						%img{:alt => "", "data-src" => @equipment.avatar, "data-src-retina" => @equipment.avatar, :height => "452", :src => @equipment.avatar, :width => "680"}/
 						/ fallback for no javascript browsers
 						%noscript
-							%img{:alt => "", :src => @movement.avatar}/
+							%img{:alt => "", :src => @equipment.avatar}/
 				.entry-meta
-					- if @movement.aliases.present?
+					- if @equipment.aliases.present?
 						%span.category
-							= "(#{@movement.aliases.join( ', '  )})"
+							= "(#{@equipment.aliases.join( ', '  )})"
 
 				.entry-content
-					= raw @movement.content
+					= raw @equipment.content
 					
 		
 	.sidebar.col-md-4.col-lg-4.col-xl-3
 		= render 'application/sidebar'
 	/ /.sidebar col-md-4 col-lg-4 col-xl-3
 / /#content
-
-
-
-
 
 
 

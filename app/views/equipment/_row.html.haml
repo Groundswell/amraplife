@@ -1,0 +1,13 @@
+- cache( "row-#{equipment.cache_key}" ) do
+	.entry.style-media.media.type-post
+		%figure.media-object.pull-left.entry-thumbnail.hidden-xs
+			%img{ src: equipment.avatar, width: 230, height: 230 }
+		.media-body
+			%header.entry-header
+				%h3.entry-title
+					= link_to equipment.title, equipment.url
+			%p
+				= raw equipment.description
+				%a.more-link{ href: equipment.url }
+					Continue
+					%i.fa.fa-arrow-right

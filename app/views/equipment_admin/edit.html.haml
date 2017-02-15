@@ -46,6 +46,10 @@
 				.well
 
 					.form-group
+						= f.label :status, 'Status:'
+						= f.collection_select :status, Equipment.statuses, :first, :first, {}, class: 'form-control'
+
+					.form-group
 						= f.label :tags_csv, 'Tags'
 						= f.text_field :tags_csv, class: 'form-control'
 

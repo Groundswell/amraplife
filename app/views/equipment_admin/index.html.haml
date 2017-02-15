@@ -28,6 +28,7 @@
 		%table.table.table-striped
 			%thead
 				%th
+				%th
 					Name
 				%th
 					AKA
@@ -39,6 +40,8 @@
 			%tbody
 				- @equipment.each do |equipment|
 					%tr
+						%td
+							= image_tag equipment.avatar, width: 50, class: 'img img-rounded'
 						%td
 							= link_to equipment.title, edit_equipment_admin_path( equipment )
 						%td

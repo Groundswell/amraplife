@@ -1,0 +1,23 @@
+
+#content.content.section.row
+	.col-md-8.bg-base.col-lg-8.col-xl-9
+		.ribbon.ribbon-highlight
+			%ol.breadcrumb.ribbon-inner
+				%li
+					%a{ href: '/' }
+						Home
+				%li.active
+					Equipment
+
+		.entries
+			%h2
+				= pluralize @equipment.total_count, 'Equipment'
+			
+			= raw paginate @equipment
+			
+			- @equipment.each do |equipment|
+				= render 'row', equipment: equipment
+
+	
+	.sidebar.col-md-4.col-lg-4.col-xl-3
+		= render 'application/sidebar'

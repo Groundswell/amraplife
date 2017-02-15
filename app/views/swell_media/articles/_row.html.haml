@@ -1,7 +1,8 @@
 - cache( "row-#{article.cache_key}" ) do
 	.entry.style-media.media.type-post
 		%figure.media-object.pull-left.entry-thumbnail.hidden-xs
-			%img{ src: article.avatar, width: 230, height: 230 }
+			%a{ href: article.url }
+				%img{ src: article.avatar, width: 230, height: 230 }
 		.media-body
 			%header.entry-header
 				%h3.entry-title

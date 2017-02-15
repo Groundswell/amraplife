@@ -29,6 +29,7 @@
 		%table.table.table-striped
 			%thead
 				%th
+				%th
 					Name
 				%th
 					AKA
@@ -42,6 +43,8 @@
 			%tbody
 				- @movements.each do |movement|
 					%tr
+						%td
+							= image_tag movement.avatar, width: 50, class: 'img img-rounded'
 						%td
 							= link_to movement.title, edit_movement_admin_path( movement )
 						%td

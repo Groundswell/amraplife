@@ -44,6 +44,6 @@ class EquipmentAdminController < SwellMedia::AdminController
 
 	# Never trust parameters from the scary internet, only allow the white list through.
 	def equipment_params
-		params.require( :equipment ).permit( :title, :description, :content )
+		params.require( :equipment ).permit( :title, :description, :content, :status, :tags_csv )
 	end
 end

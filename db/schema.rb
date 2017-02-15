@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170213184759) do
+ActiveRecord::Schema.define(version: 20170215170912) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -196,10 +196,28 @@ ActiveRecord::Schema.define(version: 20170213184759) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "cover_image"
+    t.integer  "status",      default: 0
   end
 
   add_index "equipment", ["parent_id"], name: "index_equipment_on_parent_id", using: :btree
   add_index "equipment", ["slug"], name: "index_equipment_on_slug", unique: true, using: :btree
+
+  create_table "equipment_models", force: :cascade do |t|
+    t.integer  "equipment_id"
+    t.string   "title"
+    t.string   "slug"
+    t.string   "brand"
+    t.text     "description"
+    t.text     "content"
+    t.text     "avatar"
+    t.integer  "status",       default: 0
+    t.hstore   "properties",   default: {}
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "equipment_models", ["equipment_id"], name: "index_equipment_models_on_equipment_id", using: :btree
+  add_index "equipment_models", ["slug"], name: "index_equipment_models_on_slug", unique: true, using: :btree
 
   create_table "equipment_places", force: :cascade do |t|
     t.integer  "place_id"

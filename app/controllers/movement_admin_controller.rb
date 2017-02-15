@@ -35,7 +35,7 @@ class MovementAdminController < SwellMedia::AdminController
 
 	private
 		def movement_params
-			params.require( :movement ).permit( :title, :aliases_csv, :description, :content, :status, :measured_by, :anatomy, :tags_csv ) 	
+			params.require( :movement ).permit( :title, :aliases_csv, :equipment_id, :description,  :content, :status, :measured_by, :anatomy, :tags_csv ) 	
 		end
 
 		def set_movement
