@@ -11,7 +11,7 @@
 						Edit
 						= @equipment.title
 		.col-xs-2
-			%a.pull-right.btn.btn-danger{ href: equipment_path( @equipment ), data: { method: :delete, confirm: 'Are you Sure?' } }
+			%a.pull-right.btn.btn-danger{ href: equipment_admin_path( @equipment ), data: { method: :delete, confirm: 'Are you Sure?' } }
 				Delete
 
 	= form_for @equipment, url: equipment_admin_path( @equipment ) do |f|

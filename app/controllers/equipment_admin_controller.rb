@@ -11,7 +11,7 @@ class EquipmentAdminController < SwellMedia::AdminController
 
 	def destroy
 		@equipment.destroy
-		redirect_to equipments_url
+		redirect_to equipment_admin_index_url
 	end
 
 
