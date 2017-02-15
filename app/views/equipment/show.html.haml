@@ -17,12 +17,10 @@
 				
 			%article.entry.style-single.type-post
 				- if @equipment.avatar.present?
-					%figure.entry-thumbnail{ style: 'max-height: 240px;' }
-						/ to disable lazy loading, remove data-src and data-src-retina
-						%img{:alt => "", "data-src" => @equipment.avatar, "data-src-retina" => @equipment.avatar, :height => "452", :src => @equipment.avatar, :width => "680"}/
-						/ fallback for no javascript browsers
-						%noscript
-							%img{:alt => "", :src => @equipment.avatar}/
+					.row
+						.col-sm-8.col-sm.offset-2
+							%img.img.img-responsive{:alt => @equipment.title, src: @equipment.avatar }
+						
 				.entry-meta
 					- if @equipment.aliases.present?
 						%span.category
