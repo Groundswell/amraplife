@@ -48,8 +48,45 @@ class Movement < ActiveRecord::Base
 		self.aliases = aliases_csv.split( /,\s*/ )
 	end
 
+	def page_meta
+		if self.title.present?
+			title = "#{self.title} | #{SwellMedia.app_name}"
+		else
+			title = SwellMedia.app_name
+		end
+
+		return {
+			page_title: title,
+			title: self.title,
+			description: self.sanitized_description,
+			image: self.avatar,
+			url: self.url,
+			twitter_format: 'summary_large_image',
+			type: 'Article',
+			og: {
+				"article:published_time" => self.created_at.iso8601
+			},
+			data: {
+				'url' => self.url,
+				'name' => self.title,
+				'description' => self.sanitized_description,
+				'datePublished' => self.created_at.iso8601,
+				'image' => self.avatar
+			}
+
+		}
+	end
+
 	def published?
 		self.active? && self.content.present?
+	end
+
+	def sanitized_content
+		ActionView::Base.full_sanitizer.sanitize( self.content )
+	end
+
+	def sanitized_description
+		ActionView::Base.full_sanitizer.sanitize( self.description )
 	end
 
 	def tags_csv

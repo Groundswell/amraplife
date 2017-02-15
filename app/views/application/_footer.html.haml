@@ -25,14 +25,7 @@
 					Subscribe
 				%p
 					Get new product announcements, helpful tips for getting the most out of life, and crazy discounts on workout apparel.
-				= form_for Optin.new, url: main_app.optins_path, role: :form, class: 'form-horizontal'  do |f|
-					.col-lg-10
-						.form-group
-							= f.text_field :name, placeholder: 'Your Name', class: 'form-control'
-						.form-group
-							= f.text_field :email, placeholder: 'Your Email', class: 'form-control'
-					.col-lg-2
-						= f.submit 'Join', class: 'btn btn-info pull-right'
+				= render 'swell_media/optins/form'
 
 	.footer-bottom
 		.container.aligncenter

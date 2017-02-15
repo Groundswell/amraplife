@@ -11,10 +11,15 @@ class MovementsController < ApplicationController
 			@movements = @movements.where( "lower(REGEXP_REPLACE(title, '\s', '' )) = :m", m: match )
 			@movements << Movement.find_by_alias( match )
 		end
+
+		@movements = @movements.page( params[:page] )
+
 		set_page_meta( title: 'Movements )°( AMRAP Life' )
 	end
 
 	def show
+		@media = @movement
+		set_page_meta( @movement.page_meta )
 	end
 
 

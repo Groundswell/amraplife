@@ -8,6 +8,7 @@
 				%li
 					%strong
 						Movement Admin
+						= "(#{pluralize @movements.total_count, 'Movement'})"
 
 		.col-xs-2
 			%a.btn.btn-success{ data: { toggle: :modal, target: '#new_movement' } }
@@ -16,7 +17,6 @@
 
 	.row
 		.col-xs-6
-			= pluralize @movement_count, 'Movement'
 			= raw paginate @movements
 		.col-xs-6
 			= form_tag movement_admin_index_path, method: :get, class: 'pull-right form-inline' do

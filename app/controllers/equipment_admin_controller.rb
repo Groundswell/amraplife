@@ -6,7 +6,7 @@ class EquipmentAdminController < SwellMedia::AdminController
 	def create
 		@equipment = Equipment.new( equipment_params )
 		@equipment.save
-		redirect_to :back
+		redirect_to edit_equipment_admin_path( @movement )
 	end
 
 	def destroy
@@ -14,18 +14,19 @@ class EquipmentAdminController < SwellMedia::AdminController
 		redirect_to equipments_url
 	end
 
-	def edit
-	end
-
-	def new
-		@equipment = Equipment.new
-	end
 
 	def index
-		@equipment = Equipment.all
-	end
+		by = params[:by] || 'title'
+		dir = params[:dir] || 'asc'
+		@equipment = Equipment.order( "#{by} #{dir}" )
+		if params[:q]
+			match = params[:q].downcase.singularize.gsub( /\s+/, '' )
+			@equipment = @equipment.where( "lower(REGEXP_REPLACE(title, '\s', '' )) = :m", m: match )
+			@equipment << Equipment.find_by_alias( match )
+		end
 
-	def show
+		@equipment = @equipment.page( params[:page] )
+		
 	end
 
 
@@ -38,11 +39,11 @@ class EquipmentAdminController < SwellMedia::AdminController
   private
 	# Use callbacks to share common setup or constraints between actions.
 	def set_equipment
-		@equipment = Equipment.find( params[:id] )
+		@equipment = Equipment.friendly.find( params[:id] )
 	end
 
 	# Never trust parameters from the scary internet, only allow the white list through.
 	def equipment_params
-		params.require( :equipment ).permit( :title, :description )
+		params.require( :equipment ).permit( :title, :description, :content )
 	end
 end

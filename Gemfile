@@ -37,15 +37,15 @@ gem 'carrierwave'
 gem 'unicorn'
 
 # dev
-# gem 'swell_media', path: '../../engines/swell_media'
-# gem 'swell_ecom', path: '../../engines/swell_ecom'
-# gem 'swell_theme_summarize', path: '../../engines/swell_theme_summarize'
+gem 'swell_media', path: '../../engines/swell_media'
+gem 'swell_ecom', path: '../../engines/swell_ecom'
+gem 'swell_theme_summarize', path: '../../engines/swell_theme_summarize'
 
 
 # prod
-gem 'swell_media', git: 'git://github.com/Groundswell/swell_media.git'
-gem 'swell_ecom', git: 'git://github.com/Groundswell/swell_ecom.git'
-gem 'swell_theme_summarize', git: 'git://github.com/Groundswell/swell_theme_summarize.git'
+# gem 'swell_media', git: 'git://github.com/Groundswell/swell_media.git'
+# gem 'swell_ecom', git: 'git://github.com/Groundswell/swell_ecom.git'
+# gem 'swell_theme_summarize', git: 'git://github.com/Groundswell/swell_theme_summarize.git'
 
 
 group :development, :test do

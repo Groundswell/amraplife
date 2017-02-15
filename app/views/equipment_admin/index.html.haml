@@ -1,16 +1,53 @@
+.container-fluid
+	.row
+		.col-xs-10
+			%ul.breadcrumb
+				%li
+					= link_to 'Admin', swell_media.admin_index_path
+				%li
+					%strong
+						Equipment Admin
+						= "(#{pluralize @equipment.total_count, 'Equipment'})"
 
-%h1
-	Equipment
+		.col-xs-2
+			%a.btn.btn-success{ data: { toggle: :modal, target: '#new_equipment' } }
+				%i.fa.fa-plus-square
+				New
 
+	.row
+		.col-xs-6
+			= raw paginate @equipment
+		.col-xs-6
+			= form_tag equipment_admin_index_path, method: :get, class: 'pull-right form-inline' do
+				=# select_tag :status, options_from_collection_for_select( Movement.statuses, :first, :first, params[:status] ), { prompt: "-- All --", class: 'form-control' }
+				= text_field_tag :q, params[:q], class: 'form-control'
+				= submit_tag 'Search', class: 'btn btn-primary'
+				= link_to 'Clear', equipment_admin_index_path, class: 'btn btn-default btn-xs'
 
-%table.table
-	%thead
-		%th
-		%th
-	%tbody
-		- @equipment.all.each do |eq|
-			%tr
-				%td
-					= link_to eq, edit_equipment_admin_path( eq.id )
+	.row
+		%table.table.table-striped
+			%thead
 				%th
-					= eq.workouts.count
+					Name
+				%th
+					AKA
+				%th
+					Status
+				%th
+					Workouts
+
+			%tbody
+				- @equipment.each do |equipment|
+					%tr
+						%td
+							= link_to equipment.title, edit_equipment_admin_path( equipment )
+						%td
+							= equipment.aliases.join( ', ' )
+						%td
+							.badge{ class: equipment.status }
+								= equipment.status
+						%td
+							= equipment.workouts.count
+
+
+= render 'new_modal'

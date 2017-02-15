@@ -4,7 +4,6 @@ class WorkoutsController < ApplicationController
 
 	def index
 		@workouts = Workout.published.order( :title )
-		@count = @workouts.count
 		@workouts = @workouts.page( params[:page] )
 		set_page_meta( title: 'Workouts )°( AMRAP Life' )
 	end

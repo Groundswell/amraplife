@@ -82,8 +82,8 @@
 						- @media.tags.each do |tag|
 							%a{:href => swell_media.browse_index_path( category_id: :all, tag: tag )}=tag
 				%hr/
-				
-			= render 'application/comments'
+			= render 'application/fb_comments'
+			=# render 'application/disqus_comments'
 	/ /.col-md-8.col-lg-8.col-xl-9
 	.sidebar.col-md-4.col-lg-4.col-xl-3
 		= render 'application/sidebar'

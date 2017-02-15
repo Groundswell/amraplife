@@ -14,10 +14,6 @@ Rails.application.routes.draw do
 
 	resources :observations
 
-	resources :optins do 	
-		get :success, on: :member
-	end
-
 	resources :places
 	resources :place_admin
 

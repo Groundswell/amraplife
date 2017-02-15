@@ -11,7 +11,7 @@
 						Workouts
 
 		%h2
-			= pluralize @count, 'Workout'
+			= pluralize @workouts.total_count, 'Workout'
 
 		= paginate @workouts
 

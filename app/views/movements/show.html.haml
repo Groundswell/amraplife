@@ -13,27 +13,23 @@
 
 		%h1
 			= @movement.title
-			- if @movement.aliases.present?
-				= "(#{@movement.aliases.join( ', '  )})"
-
-		%p
-			Measured By:
-			= @movement.measured_by
+		- if @movement.aliases.present?
+			= "(#{@movement.aliases.join( ', '  )})"
 
 		%p
 			Required Equipment:
 			= @movement.equipment
 
 		%p
-			= raw @movement.description
+			= raw @movement.content
 
 
-
-		%h5
-			Featured In:
-		- @movement.workouts.each do |workout|
-			%li
-				= link_to workout.title, workout
+		- if @movement.workouts.present?
+			%h5
+				Featured In:
+			- @movement.workouts.each do |workout|
+				%li
+					= link_to workout.title, workout
 
 		
 	.sidebar.col-md-4.col-lg-4.col-xl-3

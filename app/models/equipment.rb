@@ -15,6 +15,24 @@ class Equipment < ActiveRecord::Base
 	friendly_id :slugger, use: [ :slugged, :history ]
 	
 
+	def self.published
+		where( "char_length(content) > 0" ).active
+	end
+
+
+
+	def aliases_csv
+		self.aliases.join( ', ' )	
+	end
+
+	def aliases_csv=( aliases_csv )
+		self.aliases = aliases_csv.split( /,\s*/ )
+	end
+
+
+	def published?
+		self.content.present?
+	end
 
 	def slugger
 		if self.slug_pref.present?
@@ -23,6 +41,18 @@ class Equipment < ActiveRecord::Base
 		else
 			return self.title
 		end
+	end
+
+	def status
+		self.published? ? 'active' : 'draft'
+	end
+
+	def tags_csv
+		self.tags.join( ', ' )	
+	end
+
+	def tags_csv=( tags_csv )
+		self.tags = tags_csv.split( /,\s*/ )
 	end
 	
 

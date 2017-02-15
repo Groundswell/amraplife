@@ -18,17 +18,7 @@
 							%p.entry-header
 								We're lacing up our sneakers. In the meantime, sign up to be one of the first in line for great tips, inspiration and discounts on cool gear when we launch.
 
-					= form_for Optin.new, url: main_app.optins_path do |f|
-						.row{ style: 'margin-top:2em;'}
-							.col-sm-6.col-sm-offset-2
-								.form-group
-									= f.label :name, style: 'color:#fff;'
-									= f.text_field :name, class: 'form-control'
-								.form-group
-									= f.label :email, style: 'color:#fff;'
-									= f.text_field :email, class: 'form-control'
-								.form-group
-									= f.submit 'Sign Up', class: 'btn btn-success'
+					= render 'swell_media/optins/form'
 
 
 					%figure.entry-thumbnail
@@ -54,7 +44,7 @@
 							%p.entry-header
 								We're just lacing up our sneakers. Sign up to be one of the first in line for great tips, inspiration and discounts on cool gear when we launch.
 
-					= form_for Optin.new, url: main_app.optins_path, class: 'form-inline' do |f|
+					= form_for SwellMedia::Optin.new, url: swell_media.optins_path, class: 'form-inline' do |f|
 						.row{ style: 'margin-top:1em;'}
 							.col-sm-5.hidden-xs
 								= f.text_field :name, class: 'form-control', placeholder: 'Name'

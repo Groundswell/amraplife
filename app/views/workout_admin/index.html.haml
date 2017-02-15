@@ -8,6 +8,8 @@
 				%li
 					%strong
 						Workouts Admin
+						= "(#{pluralize @workouts.total_count, 'Workout'})"
+
 
 		.col-xs-2
 			%a.btn.btn-success{ data: { toggle: :modal, target: '#new_workout' } }
@@ -16,7 +18,6 @@
 
 	.row
 		.col-xs-6
-			= pluralize @workout_count, 'Workout'
 			= raw paginate @workouts
 		.col-xs-6
 			= form_tag workout_admin_index_path, method: :get, class: 'pull-right form-inline' do

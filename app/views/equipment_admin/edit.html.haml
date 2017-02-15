@@ -1,14 +1,55 @@
+.container-fluid
+	.row
+		.col-xs-10
+			%ul.breadcrumb
+				%li
+					= link_to 'Admin', swell_media.admin_index_path
+				%li
+					= link_to 'Equipment Admin', equipment_admin_index_path
+				%li
+					%strong
+						Edit
+						= @equipment.title
+		.col-xs-2
+			%a.pull-right.btn.btn-danger{ href: equipment_path( @equipment ), data: { method: :delete, confirm: 'Are you Sure?' } }
+				Delete
 
-%h1
-	= @equipment.title
+	= form_for @equipment, url: equipment_admin_path( @equipment ) do |f|
+		.row
+			.col-xs-8
+				.form-group
+					= f.text_field :title, class: 'form-control'
+
+				.form-group
+					= f.label :aliases_csv, 'Aliases'
+					= f.text_field :aliases_csv, class: 'form-control'
+
+				.form-group
+					= f.label :description, 'Short Description'
+					= f.text_area :description, class: 'form-control wysiwyg', data: { wysiwyg: { height_min: 100, toolbar_sticky: true, toolbar_preset: 'admin_default', asset_manager: swell_media.asset_manager_index_path( asset: { parent_obj_type: @equipment.class.name, parent_obj_id: @equipment.id }, request_forgery_protection_token.to_s => form_authenticity_token, response: :json ) }.to_json }
+
+				.form-group
+					= f.label :content
+					= f.text_area :content, class: 'form-control wysiwyg', data: { wysiwyg: { height_min: 200, toolbar_sticky: true, toolbar_preset: 'admin_default', asset_manager: swell_media.asset_manager_index_path( asset: { parent_obj_type: @equipment.class.name, parent_obj_id: @equipment.id }, request_forgery_protection_token.to_s => form_authenticity_token, response: :json ) }.to_json }
 
 
-%p
-	= raw @equipment.description
+			.col-xs-4
+				.well
 
-%h5
-	Featured In:
-	
-- @equipment.workouts.each do |workout|
-	%li
-		= link_to workout.title, workout
+					.form-group
+						= f.label :tags_csv, 'Tags'
+						= f.text_field :tags_csv, class: 'form-control'
+
+
+					.form-group
+						= f.submit 'Update', class: 'btn btn-primary'
+						.pull-right= link_to 'Cancel', :back, class: 'btn btn-default btn-sm'
+
+
+
+
+					%hr
+					= link_to 'Show', @equipment
+					= link_to 'Back', equipment_admin_index_path
+
+

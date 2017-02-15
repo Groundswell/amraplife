@@ -1,12 +1,12 @@
-#new_movement.modal.fade
+#new_equipment.modal.fade
 	.modal-dialog
 		.modal-content
 			.modal-header
 				%button.close{ type: :button, 'data-dismiss' => 'modal', 'aria-hidden' => 'true' }
 					&times;
 				%h4.modal-title
-					Add Movement
-			= form_for Movement.new, url: main_app.movements_path do |f|
+					Add Equipment
+			= form_for Equipment.new, url: main_app.equipment_admin_index_path do |f|
 				.modal-body
 					= f.label :title
 					= f.text_field :title, class: 'form-control'

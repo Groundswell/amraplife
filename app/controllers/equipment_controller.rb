@@ -2,10 +2,8 @@
 class EquipmentController < ApplicationController
 	before_action :set_equipment, only: [ :show ]
 
-
-
 	def index
-		@equipment = Equipment.all
+		@equipment = Equipment.published
 	end
 
 	def show

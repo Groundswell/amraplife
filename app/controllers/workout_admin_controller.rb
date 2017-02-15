@@ -43,7 +43,7 @@ class WorkoutAdminController < SwellMedia::AdminController
 			@workouts = @workouts.where( "lower(REGEXP_REPLACE(title, '\s', '' )) = :m", m: match )
 			@workouts << Workout.find_by_alias( match )
 		end
-		@workout_count = @workouts.count
+
 		@workouts = @workouts.page( params[:page] )
 		
 	end

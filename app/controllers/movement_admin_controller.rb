@@ -10,7 +10,7 @@ class MovementAdminController < SwellMedia::AdminController
 
 	def destroy
 		@movement.destroy
-		redirect_to movements_url
+		redirect_to movement_admin_index_path
 	end
 
 	def index
@@ -22,7 +22,7 @@ class MovementAdminController < SwellMedia::AdminController
 			@movements = @movements.where( "lower(REGEXP_REPLACE(title, '\s', '' )) = :m", m: match )
 			@movements << Movement.find_by_alias( match )
 		end
-		@movement_count = @movements.count
+
 		@movements = @movements.page( params[:page] )
 		
 	end

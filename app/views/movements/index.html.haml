@@ -1,35 +1,23 @@
 
-.main-box.clearfix
-	.main-box-header.clearfix
-		%h2
-			= pluralize @movements.count, 'Movement'
-		.pull-right
-			%a.btn.btn-success.pull-right{ data: { toggle: :modal, target: '#new_movement' } }
-				%i.fa.fa-plus-square
-				New
-	.main-box-body.clearfix
-		%table.table.table-striped
-			%thead
-				%th
-					Name
-				%th
-					AKA
-				%th
-					Equipment
-				%th
-					Workouts
+#content.content.section.row
+	.col-md-8.bg-base.col-lg-8.col-xl-9
+		.ribbon.ribbon-highlight
+			%ol.breadcrumb.ribbon-inner
+				%li
+					%a{ href: '/' }
+						Home
+				%li.active
+					Movements
 
-			%tbody
-				- @movements.each do |movement|
-					%tr
-						%td
-							= link_to movement.title, movement_path( movement )
-						%td
-							= movement.aliases.join( ', ' )
-						%td
-							= movement.equipment
-						%td
-							= movement.workouts.count
+		.entries
+			%h2
+				= pluralize @movements.total_count, 'Movement'
+			
+			= raw paginate @movements
+			
+			- @movements.each do |movement|
+				= render 'row', movement: movement
 
-
-= render 'new_modal'
+	
+	.sidebar.col-md-4.col-lg-4.col-xl-3
+		= render 'application/sidebar'
