@@ -25,6 +25,15 @@
 					= f.text_field :aliases_csv, class: 'form-control'
 
 				.form-group
+					= f.label :avatar, 'Image (default):'
+					= image_tag @equipment.avatar, class: 'img-responsive', id: 'equipment_avatar_img'
+					%div{ style: 'text-align:center;padding:0.3em;' }
+						%a{ href: '#', data: { toggle: :assetup, for: '#equipment_avatar,#equipment_avatar_img', asset: { asset_type: 'image', use: 'avatar', status: 'active', parent_obj_id: @equipment.id, parent_obj_type: @equipment.class.base_class.name }.to_json, params: { authenticity_token: form_authenticity_token() }.to_json } }
+							%i.fa.fa-upload
+							upload
+					= f.hidden_field :avatar, class: 'form-control', id: 'equipment_avatar'
+
+				.form-group
 					= f.label :description, 'Short Description'
 					= f.text_area :description, class: 'form-control wysiwyg', data: { wysiwyg: { height_min: 100, toolbar_sticky: true, toolbar_preset: 'admin_default', asset_manager: swell_media.asset_manager_index_path( asset: { parent_obj_type: @equipment.class.name, parent_obj_id: @equipment.id }, request_forgery_protection_token.to_s => form_authenticity_token, response: :json ) }.to_json }
 

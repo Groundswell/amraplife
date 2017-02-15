@@ -11,12 +11,19 @@ class Equipment < ActiveRecord::Base
 	has_many :workout_movements
 	has_many :workouts, -> { distinct }, through: :workout_movements
 
+
+	include SwellMedia::Concerns::URLConcern
+	include SwellMedia::Concerns::AvatarAsset
+	#include SwellMedia::Concerns::ExpiresCache
+
+	mounted_at '/equipment'
+
 	include FriendlyId
 	friendly_id :slugger, use: [ :slugged, :history ]
 	
 
 	def self.published
-		where( "char_length(content) > 0" ).active
+		where( "char_length(content) > 0" )
 	end
 
 

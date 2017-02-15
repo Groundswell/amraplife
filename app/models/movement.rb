@@ -62,7 +62,7 @@ class Movement < ActiveRecord::Base
 			image: self.avatar,
 			url: self.url,
 			twitter_format: 'summary_large_image',
-			type: 'Article',
+			type: 'article',
 			og: {
 				"article:published_time" => self.created_at.iso8601
 			},
