@@ -130,11 +130,7 @@
 							Ecom
 						%ul.sub-menu
 							%li
-								%a{ href: swell_ecom.order_admin_index_path }
-									%i.fa.fa-gear
-									Orders
-							%li
-								%a{ href: swell_ecom.product_admin_index_path }
+								%a{ href: main_app.product_admin_index_path }
 									%i.fa.fa-gear
 									Prodcuts
 
@@ -147,8 +143,9 @@
 = render 'swell_media/page_admin/new_modal'
 = render 'equipment_admin/new_modal'
 = render 'movement_admin/new_modal'
-= render 'swell_ecom/product_admin/new_modal'
+=# render 'swell_ecom/product_admin/new_modal'
 = render 'place_admin/new_modal'
+= render 'product_admin/new_modal'
 = render 'recipe_admin/new_modal'
 = render 'workout_admin/new_modal'
 

@@ -17,6 +17,13 @@ Rails.application.routes.draw do
 	resources :places
 	resources :place_admin
 
+	resources :products, path: :store
+
+	resources :product_admin do
+		get :preview, on: :member
+		delete :empty_trash, on: :collection
+	end
+
 	resources :recipes
 	resources :recipe_admin
 
@@ -37,7 +44,8 @@ Rails.application.routes.draw do
 	end
 	devise_for :users, :controllers => { :omniauth_callbacks => 'oauth', :registrations => 'registrations', :sessions => 'sessions' }
 
-	mount SwellEcom::Engine, :at => '/'
+	#mount SwellEcom::Engine, :at => '/'
+	
 	mount SwellMedia::Engine, :at => '/'
 
 end

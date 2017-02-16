@@ -50,16 +50,17 @@
 				%h2.page-title
 					= @media.title
 			%article.entry.style-single.type-post
-				- if @media.avatar.present?
-					.col-sm-4
-						%img.img.img-responsive{:alt => @media.title, src: @media.avatar }
-				- elsif @media.cover_image.present?
+				- if @media.cover_image.present?
 					%figure.entry-thumbnail
 						/ to disable lazy loading, remove data-src and data-src-retina
 						%img{:alt => "", "data-src" => @media.cover_image, "data-src-retina" => @media.cover_image, :height => "452", :src => @media.cover_image, :width => "680"}/
 						/ fallback for no javascript browsers
 						%noscript
 							%img{:alt => "", :src => @media.cover_image}/
+				- elsif @media.avatar.present?
+					.col-sm-4
+						%img.img.img-responsive{:alt => @media.title, src: @media.avatar, style: 'padding-right: 2em;' }
+				
 				.entry-meta
 					%span.author
 						Posted

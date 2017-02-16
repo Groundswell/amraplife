@@ -1,0 +1,41 @@
+#content.content.section.row
+	- cache( "show-#{@product.cache_key}" ) do
+		.col-md-8.bg-base.col-lg-8.col-xl-9
+			.ribbon.ribbon-highlight
+				%ol.breadcrumb.ribbon-inner
+					%li
+						%a{ href: swell_media.root_path() }
+							Home
+					%li
+						%a{ href: '/store' }
+							Store
+					%li.active
+						= @product.title
+			%header.page-header
+				%h2.page-title
+					= @product.title
+				
+			%article.entry.style-single.type-post
+				- if @product.avatar.present?
+					.row
+						.col-sm-6.col-sm-offset-3
+							%img.img.img-responsive{:alt => @product.title, src: @product.avatar }
+
+				.entry-content
+					= raw @product.content
+					
+		
+	.sidebar.col-md-4.col-lg-4.col-xl-3
+		= render 'products/sidebar'
+	/ /.sidebar col-md-4 col-lg-4 col-xl-3
+/ /#content
+
+
+
+
+
+
+
+
+
+

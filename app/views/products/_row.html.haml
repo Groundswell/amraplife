@@ -1,0 +1,29 @@
+- cache( "row-#{product.cache_key}" ) do
+	.col-sm-4
+		.thumbnail
+			%a{ href: product.url }
+				%img.img.img-responsive.center-block{ src: product.avatar }
+				%h4{ style: 'text-align: center;' }
+					= product.title
+				%p.price{ style: 'text-align: center;' }
+					- if product.suggested_price.present?
+						%span.strikethrough{ style: 'text-decoration:line-through;' }
+							= number_to_currency( product.suggested_price / 100 )
+						= number_to_currency( product.price / 100 )
+
+
+
+
+
+	-#.entry.style-media.media.type-post
+		%figure.media-object.pull-left.entry-thumbnail.hidden-xs
+			%img{ src: product.avatar, width: 230, height: 230 }
+		.media-body
+			%header.entry-header
+				%h3.entry-title
+					= link_to product.title, product.url
+			%p
+				= raw product.description
+				%a.more-link{ href: product.url }
+					Continue
+					%i.fa.fa-arrow-right
