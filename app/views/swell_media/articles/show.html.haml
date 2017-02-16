@@ -51,12 +51,15 @@
 					= @media.title
 			%article.entry.style-single.type-post
 				- if @media.avatar.present?
-					%figure.entry-thumbnail{ style: 'max-height: 240px;' }
+					.col-sm-4
+						%img.img.img-responsive{:alt => @media.title, src: @media.avatar }
+				- elsif @media.cover_image.present?
+					%figure.entry-thumbnail
 						/ to disable lazy loading, remove data-src and data-src-retina
-						%img{:alt => "", "data-src" => @media.avatar, "data-src-retina" => @media.avatar, :height => "452", :src => @media.avatar, :width => "680"}/
+						%img{:alt => "", "data-src" => @media.cover_image, "data-src-retina" => @media.cover_image, :height => "452", :src => @media.cover_image, :width => "680"}/
 						/ fallback for no javascript browsers
 						%noscript
-							%img{:alt => "", :src => @media.avatar}/
+							%img{:alt => "", :src => @media.cover_image}/
 				.entry-meta
 					%span.author
 						Posted
