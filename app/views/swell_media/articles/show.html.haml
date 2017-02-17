@@ -57,10 +57,11 @@
 						/ fallback for no javascript browsers
 						%noscript
 							%img{:alt => "", :src => @media.cover_image}/
+					.addthis_inline_share_toolbox.hidden-xs.hidden-sm
 				- elsif @media.avatar.present?
 					.col-sm-4
 						%img.img.img-responsive{:alt => @media.title, src: @media.avatar, style: 'padding-right: 2em;' }
-				
+
 				.entry-meta
 					%span.author
 						Posted
@@ -78,6 +79,7 @@
 				.entry-content
 					= raw @media.content
 			.after-entry
+				.addthis_inline_share_toolbox.hidden-xs.hidden-sm
 				- if @media.tags.present?
 					%hr/
 					%aside.widget.post-tags
