@@ -11,7 +11,8 @@
 		.col-md-2.col-lg-2.col-xl-1
 			%h4{ style: 'border-bottom: 1px #ddd solid;margin-bottom: 0.25em;'}
 				Shop
-
+				
+			.cat= link_to 'Everything', products_path
 			- ProductCategory.order( name: :asc ).each do |cat|
 				.cat= link_to cat.name, products_path( category: cat.slug )
 
