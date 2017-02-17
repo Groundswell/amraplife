@@ -1,6 +1,6 @@
 #content.content.section.row
 	- cache( "show-#{@product.cache_key}" ) do
-		.col-md-8.bg-base.col-lg-8.col-xl-9
+		.col-md-10.bg-base.col-lg-10.col-xl-11
 			.ribbon.ribbon-highlight
 				%ol.breadcrumb.ribbon-inner
 					%li
@@ -11,24 +11,50 @@
 							Store
 					%li.active
 						= @product.title
-			%header.page-header
-				%h2.page-title
-					= @product.title
-				
-			%article.entry.style-single.type-post
-				- if @product.avatar.present?
+			
+			
+			
+			.col-md-2.col-lg-2.col-xl-1
+				%h4{ style: 'border-bottom: 1px #ddd solid;margin-bottom: 0.25em;'}
+					Shop
+
+				- ProductCategory.order( name: :asc ).each do |cat|
+					.cat= link_to cat.name, products_path( category: cat.slug )
+			.col-md-10.col-lg-10.col-xl-11{ style: 'border-left:1px #ddd solid; '}
+				%article.entry.style-single.type-post
 					.row
-						.col-sm-6.col-sm-offset-3
+						.col-sm-4
 							%img.img.img-responsive{:alt => @product.title, src: @product.avatar }
 
-				.entry-content
-					= raw @product.content
+							%p.buy-btn{ style: 'text-align: center;' }
+								= raw @product.shopify_code
+
+
+						.col-sm-8
+							%header.page-header
+								%h2.page-title
+									= @product.title
+								
+								.row.entry-meta{ style: 'margin-bottom: 0;' }
+									.col-xs-8
+										.price-info{ style: 'font-size:150%;' }
+											%span.price{ style: 'font-weight:600;color:#000;'}
+												= number_to_currency( @product.price / 100 )
+											- if @product.suggested_price > 0
+												%span.strikethrough{ style: 'text-decoration:line-through;font-size:90%;' }
+													= number_to_currency( @product.suggested_price / 100 )
+									.col-xs-4
+										- if @product.product_category.present?
+											%span.category{ style: 'margin-right: 2em;'}
+												In
+												%a{:href => products_path( category: @product.product_category.slug ) }
+													= @product.product_category.name
+							.entry-content
+								= raw @product.content
 					
 		
-	.sidebar.col-md-4.col-lg-4.col-xl-3
-		= render 'products/sidebar'
-	/ /.sidebar col-md-4 col-lg-4 col-xl-3
-/ /#content
+		.sidebar.col-md-2.col-lg-2.col-xl-1
+			= render 'products/sidebar'
 
 
 

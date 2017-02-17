@@ -5,11 +5,14 @@
 				%img.img.img-responsive.center-block{ src: product.avatar }
 				%h4{ style: 'text-align: center;' }
 					= product.title
-				%p.price{ style: 'text-align: center;' }
-					- if product.suggested_price.present?
-						%span.strikethrough{ style: 'text-decoration:line-through;' }
-							= number_to_currency( product.suggested_price / 100 )
+
+			%a{ href: product.url }
+				.price-info{ style: 'font-size:100%;text-align:center;' }
+					%span.price{ style: 'font-weight:600;color:#555;'}
 						= number_to_currency( product.price / 100 )
+					- if product.suggested_price > 0
+						%span.strikethrough{ style: 'text-decoration:line-through;font-size:90%;' }
+							= number_to_currency( product.suggested_price / 100 )
 
 
 

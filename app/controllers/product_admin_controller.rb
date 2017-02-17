@@ -40,6 +40,10 @@ class ProductAdminController < SwellMedia::AdminController
 		redirect_to product_admin_index_path
 	end
 
+	def preview
+		render "products/show", layout: 'application'
+	end
+
 	def update
 		@product.slug = nil if params[:update_slug].present? && params[:product][:title] != @product.title
 

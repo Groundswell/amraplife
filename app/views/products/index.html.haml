@@ -1,5 +1,5 @@
 #content.content.section.row
-	.col-md-8.bg-base.col-lg-8.col-xl-9
+	.col-md-10.bg-base.col-lg-10.col-xl-11
 		.ribbon.ribbon-highlight
 			%ol.breadcrumb.ribbon-inner
 				%li
@@ -8,15 +8,29 @@
 				%li.active
 					Store
 
-		.entries
-			%h2
-				= pluralize @products.total_count, 'Product'
+		.col-md-2.col-lg-2.col-xl-1
+			%h4{ style: 'border-bottom: 1px #ddd solid;margin-bottom: 0.25em;'}
+				Shop
+
+			- ProductCategory.order( name: :asc ).each do |cat|
+				.cat= link_to cat.name, products_path( category: cat.slug )
+
+
+		.col-md-10.col-lg-10.col-xl-11{ style: 'border-left:1px #ddd solid; '}
+			.entries
+				%h2.page-header
+					= pluralize @products.total_count, 'Product'
+					= @title_mod
+
+			
+
+
 			
 			= raw paginate @products
 			
 			- @products.each do |product|
-				= render 'row', product: product
+				= render 'card', product: product
 
 	
-	.sidebar.col-md-4.col-lg-4.col-xl-3
+	.sidebar.col-md-2.col-lg-2.col-xl-1
 		= render 'products/sidebar'
