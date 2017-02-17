@@ -11,4 +11,5 @@
 // about supported directives.
 //
 //= require app_theme
+//= require ./plugins/jquery.magnific-popup
 //= require_self
