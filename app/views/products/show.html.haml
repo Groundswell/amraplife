@@ -11,9 +11,9 @@
 							Store
 					%li.active
 						= @product.title
-			
-			
-			
+
+
+
 			.col-md-2.col-lg-2.col-xl-1
 				%h4{ style: 'border-bottom: 1px #ddd solid;margin-bottom: 0.25em;'}
 					Shop
@@ -26,7 +26,9 @@
 				%article.entry.style-single.type-post
 					.row
 						.col-sm-4
-							%img.img.img-responsive{:alt => @product.title, src: @product.avatar }
+							.img-group
+								%a{ href: @product.avatar }
+									%img.img.img-responsive{ :alt => @product.title, src: @product.avatar }
 
 							%p.buy-btn{ style: 'text-align: center;' }
 								= raw @product.shopify_code
@@ -36,7 +38,7 @@
 							%header.page-header
 								%h2.page-title
 									= @product.title
-								
+
 								.row.entry-meta{ style: 'margin-bottom: 0;' }
 									.col-xs-8
 										.price-info{ style: 'font-size:150%;' }
@@ -53,17 +55,7 @@
 													= @product.product_category.name
 							.entry-content
 								= raw @product.content
-					
-		
+
+
 		.sidebar.col-md-2.col-lg-2.col-xl-1
 			= render 'products/sidebar'
-
-
-
-
-
-
-
-
-
-

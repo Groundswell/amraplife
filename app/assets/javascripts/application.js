@@ -12,4 +12,5 @@
 //
 //= require app_theme
 //= require ./plugins/jquery.magnific-popup
+//= require ./custom/application
 //= require_self
