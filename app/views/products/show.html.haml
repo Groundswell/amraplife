@@ -29,6 +29,9 @@
 							.img-group
 								%a{ href: @product.avatar }
 									%img.img.img-responsive{ :alt => @product.title, src: @product.avatar }
+									%center
+										%i.fa.fa-search
+										Enlarge
 
 							%p.buy-btn{ style: 'text-align: center;' }
 								= raw @product.shopify_code
