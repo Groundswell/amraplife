@@ -24,6 +24,11 @@ Rails.application.routes.draw do
 		delete :empty_trash, on: :collection
 	end
 
+	resources :product_options
+	resources :product_variants do 
+		post :generate, on: :member
+	end
+
 	resources :recipes
 	resources :recipe_admin
 

@@ -49,6 +49,7 @@ class ProductAdminController < SwellMedia::AdminController
 
 		params[:product][:price] = params[:product][:price].to_f * 100 #.gsub( /\D/, '' ) if params[:product][:price].present?
 		params[:product][:suggested_price] = params[:product][:suggested_price].to_f * 100 #.gsub( /\D/, '' ) if params[:product][:suggested_price].present?
+		params[:product][:shipping_price] = params[:product][:shipping_price].to_f * 100 #.gsub( /\D/, '' ) if params[:product][:suggested_price].present?
 
 		@product.attributes = product_params
 		@product.avatar_urls = params[:product][:avatar_urls] if params[:product].present? && params[:product][:avatar_urls].present?

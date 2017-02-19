@@ -14,7 +14,9 @@ class Product < ActiveRecord::Base
 
 	mounted_at '/store'
 
-	belongs_to :product_category, foreign_key: :category_id
+	belongs_to 	:product_category, foreign_key: :category_id
+	has_many 	:product_options
+	has_many 	:product_variants
 
 	before_save	:set_publish_at
 
