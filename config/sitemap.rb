@@ -17,7 +17,7 @@ SitemapGenerator::Sitemap.create do
 	add '/about'
 	add '/privacy'
 	add '/terms'
-	add '/blog'
+	add '/articles'
 	#add '/recipes'
 	#add '/places'
 	#add '/workouts'
