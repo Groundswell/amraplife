@@ -36,6 +36,7 @@ Rails.application.routes.draw do
 	resources :workout_segments
 
 	get '/about' => 'swell_media/static#about', as: 'about'
+	get '/faq' => 'swell_media/static#faq', as: 'faq'
 
 	devise_scope :user do
 		get '/login' => 'sessions#new', as: 'login'

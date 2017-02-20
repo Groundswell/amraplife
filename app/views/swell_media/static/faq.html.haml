@@ -1,0 +1,51 @@
+#content.content.section.row
+	- cache( "about-1" ) do
+		.col-md-8.bg-base.col-lg-8.col-xl-9
+			.ribbon.ribbon-highlight
+				%ol.breadcrumb.ribbon-inner
+					%li
+						%a{:href => swell_media.root_path()} Home
+					%li.active{:title => "About Us" }
+						FAQs
+
+			%article.entry.style-single.type-post
+				.entry-content
+					%h2
+						FAQs
+					
+
+					%p
+						Here are some questions that we get asked sometimes. We hope that the answers to these questions are helpful or interesting to you. You may have your own questions. If so, 
+						%a{ href: swell_media.new_contact_path, style: 'text-decoration:underline;' }
+							please do get in touch. 
+						The answers to your questions might be intersting for other readers, too! Besides, we just love hearing from you - that's why we're paying for all these pixels to be here in the first place.
+
+					%h3
+						Site
+
+					%h4
+						Who Are you?
+					%p{ style: 'margin-left:2em;' }
+						Read about us here
+
+					%h4
+						Where Are you?
+					%p{ style: 'margin-left:2em;' }
+						We are in Californai, df sd ai sfdfl df but we often like to ski in nevada
+
+					%h4
+						Why Are you?
+					%p{ style: 'margin-left:2em;' }
+						We are because we are and that is all that we are at least for now it is.
+
+					%h3
+						Store
+
+					%h4
+						What is your return policy?
+					%p
+						one is the loneliest number
+			
+				%hr/
+	.sidebar.col-md-4.col-lg-4.col-xl-3
+		= render 'application/sidebar'

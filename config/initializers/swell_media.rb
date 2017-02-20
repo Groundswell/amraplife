@@ -10,6 +10,8 @@ SwellMedia.configure do |config|
 
 	config.twitter_handle = '@amraplife'
 
+	config.article_path = 'blog'
+
 	# config.encryption_secret = 'fdty45u654jtyredhgr4u654etrhdht54eu6e5hdrt5'
 
 	# config.google_analytics_code = nil

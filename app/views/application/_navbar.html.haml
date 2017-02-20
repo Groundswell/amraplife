@@ -16,10 +16,9 @@
 					%span.search-toggled-out-icon
 						%i.fa.fa-search
 		%ul.nav.navbar-nav
-			- if SwellMedia::Article.published.count > 10
-				%li
-					%a{ href: '/blog' }
-						Articles
+			%li
+				%a{ href: SwellMedia.article_path }
+					Articles
 			- if Recipe.published.count > 10
 				%li
 					%a{ href: '/recipes' }
