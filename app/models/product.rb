@@ -1,6 +1,5 @@
 
 class Product < ActiveRecord::Base
-	self.table_name = 'products'
 
 	enum status: { 'draft' => 0, 'active' => 1, 'archive' => 2, 'trash' => 3 }
 

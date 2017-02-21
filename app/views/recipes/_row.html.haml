@@ -16,7 +16,7 @@
 					%time{:datetime => recipe.publish_at.to_formatted_s(:iso8601) }
 						= recipe.publish_at.strftime("%B %e %Y")
 		%p
-			= recipe.description
+			= raw recipe.description
 			%a.more-link{ href: recipe_path( recipe ) }
 				Continue
 				%i.icon.icon-long-arrow-right

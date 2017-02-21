@@ -18,11 +18,15 @@ SitemapGenerator::Sitemap.create do
 	add '/privacy'
 	add '/terms'
 	add '/articles'
+	add '/store'
 	#add '/recipes'
 	#add '/places'
 	#add '/workouts'
-	SwellMedia::Media.active.each do |media|
+	SwellMedia::Media.published.each do |media|
 		add media.path, lastmod: media.updated_at
+	end
+	Product.published.each do |product|
+		add product.path, lastmod: product.updated_at
 	end
 	# Equipment.active.each do |equipment|
 	# 	add equipment.path, lastmod: equipment.updated_at
