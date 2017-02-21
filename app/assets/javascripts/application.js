@@ -12,6 +12,7 @@
 //
 //= require app_theme
 //= require ./plugins/jquery.magnific-popup
+//= require ./plugins/imagesloaded.pkgd
 //= require ./plugins/masonry.pkgd.min
 //= require ./custom/application
 //= require_self
