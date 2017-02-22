@@ -42,11 +42,6 @@
 							%a{:href => swell_media.browse_index_path( category_id: @media.category.slug ) }=@media.category.name
 					%li.active{:title => @media.title}=@media.title.truncate(32)
 			%header.page-header
-				-# .page-meta.pull-right.hidden-xs
-					%a{:href => "#comments"}
-						%span.comments-count-balloon.bg-primary
-							123
-							%em Comments
 				%h2.page-title
 					= @media.title
 			%article.entry.style-single.type-post
@@ -59,9 +54,9 @@
 							%img{:alt => "", :src => @media.cover_image}/
 					.addthis_inline_share_toolbox.hidden-xs.hidden-sm
 				- elsif @media.avatar.present?
-					.col-sm-4
+					.col-sm-6
 						%img.img.img-responsive{:alt => @media.title, src: @media.avatar, style: 'padding-right: 2em;' }
-
+						.addthis_inline_share_toolbox.hidden-xs.hidden-sm
 				.entry-meta
 					%span.author
 						Posted
