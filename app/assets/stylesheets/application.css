@@ -11,5 +11,6 @@
  * file per style scope.
  *
  *= require ./plugins/magnific-popup
+ *= require ./custom/application
  *= require_self
  */

@@ -25,7 +25,7 @@
 			.col-md-10.col-lg-10.col-xl-11{ style: 'border-left:1px #ddd solid; '}
 				%article.entry.style-single.type-post
 					.row
-						.col-sm-4
+						.col-sm-6
 							.img-group
 								%a{ href: @product.avatar }
 									%img.img.img-responsive{ :alt => @product.title, src: @product.avatar }
@@ -33,16 +33,15 @@
 										%i.fa.fa-search
 										Enlarge
 
-							%p.buy-btn{ style: 'text-align: center;' }
-								= raw @product.shopify_code
 
-
-						.col-sm-8
+						.col-sm-6
 							%header.page-header
 								%h2.page-title
 									= @product.title
 
-								.row.entry-meta{ style: 'margin-bottom: 0;' }
+
+
+								.row.entry-meta
 									.col-xs-8
 										.price-info{ style: 'font-size:150%;' }
 											%span.price{ style: 'font-weight:600;color:#000;'}
@@ -56,6 +55,10 @@
 												In
 												%a{:href => products_path( category: @product.product_category.slug ) }
 													= @product.product_category.name
+
+								.entry-meta{ style: 'margin-bottom: 0;opacity: 1.0;' }
+									.buy-btn
+										= raw @product.shopify_code
 							.entry-content
 								.addthis_inline_share_toolbox.hidden-xs.hidden-sm
 								
