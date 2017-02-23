@@ -1,6 +1,6 @@
 #content.content.section.row
 	- cache( "show-#{@product.cache_key}" ) do
-		.col-md-10.bg-base.col-lg-10.col-xl-11
+		.col-md-10.bg-base.col-lg-10.col-xl-11.product-show
 			.ribbon.ribbon-highlight
 				%ol.breadcrumb.ribbon-inner
 					%li
@@ -58,10 +58,10 @@
 
 								.entry-meta{ style: 'margin-bottom: 0;opacity: 1.0;' }
 									.buy-btn
-										= raw @product.shopify_code
+										= raw shopify_code @product.shopify_code
 							.entry-content
 								.addthis_inline_share_toolbox.hidden-xs.hidden-sm
-								
+
 								= raw @product.content
 
 
