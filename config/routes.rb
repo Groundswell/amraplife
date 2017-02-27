@@ -37,6 +37,7 @@ Rails.application.routes.draw do
 
 	get '/about' => 'swell_media/static#about', as: 'about'
 	get '/faq' => 'swell_media/static#faq', as: 'faq'
+	get '/deleteGAPPSnotBefore20170225utc.html' => 'swell_media/static#goog_verify'
 
 	devise_scope :user do
 		get '/login' => 'sessions#new', as: 'login'
