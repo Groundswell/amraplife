@@ -44,7 +44,7 @@
 						= f.select :measured_by, [ [ 'Reps', 'reps' ], [ 'Distance', 'distance' ], [ 'Time', 'time' ] ], {}, class: 'form-control'
 					.form-group
 						= f.label :equipment_id, 'Equipment:'
-						= f.collection_select :equipment_id, Equipment.order( title: :asc ), :id, :title, {}, class: 'form-control'
+						= f.collection_select :equipment_id, Equipment.order( title: :asc ), :id, :title, { prompt: 'None' }, class: 'form-control'
 					.form-group
 						= f.label :anatomy
 						= f.text_field :anatomy, class: 'form-control'
