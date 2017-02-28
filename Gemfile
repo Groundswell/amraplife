@@ -34,7 +34,6 @@ gem 'gibbon'
 gem 'memcachier'
 gem 'newrelic_rpm'
 gem 'sendgrid-ruby'
-gem 'fancybox-rails'
 
 
 gem 'unicorn'

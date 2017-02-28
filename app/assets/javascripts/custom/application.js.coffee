@@ -13,8 +13,8 @@ $( document ).ready ->
 		#	console.log change.ui.currentImage.src
 		#	console.log change.ui.formattedPrice
 		$('.product-show .price-info .price').html(change.ui.formattedPrice+' ')
-		$('.product-show .img-group a').attr('href', change.ui.currentImage.src)
-		$('.product-show .img-group a img').attr('src', change.ui.currentImage.src)
+		# $('.product-show .img-group a').attr('href', change.ui.currentImage.src)
+		# $('.product-show .img-group a img').attr('src', change.ui.currentImage.src)
 
 
 	#initiate the plugin and pass the id of the div containing gallery images

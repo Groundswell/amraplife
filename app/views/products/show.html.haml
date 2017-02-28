@@ -28,12 +28,14 @@
 						.col-sm-6
 							.zoom-gallery
 								%img{"data-zoom-image" => @product.avatar, :src => @product.avatar}/
-								-#%h3 More Views
-								-#.gallery
-									%a{"data-image" => @product.avatar, "data-zoom-image" => @product.avatar, :href => "#"}
-										%img#img_01{:src => @product.avatar, style: 'width: 150px;' }/
-									%a{"data-image" => 'http://cdn1.amraplife.com/assets/40b0c279-58b7-4dde-8583-a63f8b8e7a7d.jpg', "data-zoom-image" => 'http://cdn1.amraplife.com/assets/40b0c279-58b7-4dde-8583-a63f8b8e7a7d.jpg', :href => "#"}
-										%img#img_01{:src => 'http://cdn1.amraplife.com/assets/40b0c279-58b7-4dde-8583-a63f8b8e7a7d.jpg', style: 'width: 150px;' }/
+								- if @images.present?
+									%h3 More Views
+									.gallery
+										%a{"data-image" => @product.avatar, "data-zoom-image" => @product.avatar, :href => "#"}
+											%img#img_01{:src => @product.avatar, style: 'width: 150px;' }
+										- @images.each do |image|
+											%a{"data-image" => image.url, "data-zoom-image" => image.url, :href => "#"}
+												%img{:src => image.url }/
 						.col-sm-6
 							%header.page-header
 								%h2.page-title
