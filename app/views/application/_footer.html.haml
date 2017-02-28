@@ -4,20 +4,40 @@
 			.widget.col-xs-6.col-sm-6
 				%h4.widget-title
 					Information
-				%ul.entries.links
-					%li
-						%a{ href: '/about' }
-							About
-					%li
-						%a{ href: '/blog' }
-							Blog
-					%li
-						%a{ href: '/contacts/new' }
-							Contact
-					%li
-						%a{ href: '/admin' }
-							Admin
-
+				.row
+					.col-sm-6
+						%ul.entries.links
+							%li
+								%a{ href: '/about' }
+									About
+							%li
+								%a{ href: '/blog' }
+									Blog
+							%li
+								%a{ href: '/contacts/new' }
+									Contact
+							%li
+								%a{ href: '/admin' }
+									Admin
+					.col-sm-6
+						%ul.entries.links
+							%li
+								%a{ href: 'http://facebook.com/amraplife', target: '_new' }
+									%i.fa.fa-facebook-square{ style: 'font-size:110%;' }
+									Facebook
+							%li
+								%a{ href: 'http://twitter.com/amraplife', target: '_new' }
+									%i.fa.fa-twitter-square{ style: 'font-size:110%;' }
+									Twitter
+							%li
+								%a{ href: 'http://pinterest.com/amraplife', target: '_new' }
+									%i.fa.fa-pinterest-square{ style: 'font-size:110%;' }
+									Pinterest
+							%li
+								%a{ href: 'https://www.instagram.com/amrap_life/', target: '_new' }
+									%i.fa.fa-instagram{ style: 'font-size:110%;' }
+									Instagram
+			
 			-#.widget.col-xs-6.col-sm-4
 
 			.widget.col-xs-12.col-sm-6
