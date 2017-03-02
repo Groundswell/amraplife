@@ -26,14 +26,16 @@
 				%article.entry.style-single.type-post
 					.row
 						.col-sm-6
-							.img-group
-								%a{ href: @product.avatar }
-									%img.img.img-responsive{ :alt => @product.title, src: @product.avatar }
-									%center
-										%i.fa.fa-search
-										Enlarge
-
-
+							.zoom-gallery
+								%img{"data-zoom-image" => @product.avatar, :src => @product.avatar}/
+								- if @images.present?
+									%h3 More Views
+									.gallery
+										%a{"data-image" => @product.avatar, "data-zoom-image" => @product.avatar, :href => "#"}
+											%img#img_01{:src => @product.avatar, style: 'width: 150px;' }
+										- @images.each do |image|
+											%a{"data-image" => image.url, "data-zoom-image" => image.url, :href => "#"}
+												%img{:src => image.url }/
 						.col-sm-6
 							%header.page-header
 								%h2.page-title

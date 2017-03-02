@@ -11,8 +11,9 @@
 // about supported directives.
 //
 //= require app_theme
-//= require ./plugins/jquery.magnific-popup
 //= require ./plugins/imagesloaded.pkgd
 //= require ./plugins/masonry.pkgd.min
+//= require ./plugins/jquery.elevatezoom
+//= require ./plugins/fancybox/jquery.fancybox
 //= require ./custom/application
 //= require_self

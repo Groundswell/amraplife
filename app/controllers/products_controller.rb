@@ -16,6 +16,9 @@ class ProductsController < ApplicationController
 	end
 
 	def show
+
+		@images = SwellMedia::Asset.where( parent_obj: @product, use: 'gallery' ).active
+
 		set_page_meta( @product.page_meta )
 	end
 
@@ -26,4 +29,3 @@ class ProductsController < ApplicationController
 		end
 
 end
-
