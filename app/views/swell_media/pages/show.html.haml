@@ -1,0 +1,44 @@
+#content.content.section.row
+	- cache( "show-#{@media.cache_key}" ) do
+		.col-md-8.bg-base.col-lg-8.col-xl-9
+			.ribbon.ribbon-highlight
+				%ol.breadcrumb.ribbon-inner
+					%li
+						%a{ href: swell_media.root_path() }
+							Home
+					- if @media.show_title?
+						%li.active
+							= @media.title
+			
+			- if @media.show_title?
+				%header.page-header
+					%h2.page-title
+						= @media.title
+			
+			%article.entry.style-single.type-post
+				
+				- if @media.avatar.present?
+					.row
+						.col-xs-12
+							%img.img.img-responsive{:alt => @media.title, src: @media.avatar }
+						
+				.entry-content
+					= raw @media.content
+
+					.addthis_inline_share_toolbox.hidden-xs.hidden-sm
+
+				- if @media.is_commentable?
+					%hr/
+					= render 'application/fb_comments'
+					
+		
+	.sidebar.col-md-4.col-lg-4.col-xl-3
+		= render 'application/sidebar'
+	/ /.sidebar col-md-4 col-lg-4 col-xl-3
+/ /#content
+
+
+
+
+
+

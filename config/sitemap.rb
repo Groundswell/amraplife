@@ -18,8 +18,10 @@ SitemapGenerator::Sitemap.create do
 	add '/privacy'
 	add '/terms'
 	add '/articles'
+	add '/movements'
+	add '/equipment'
 	add '/store'
-	#add '/recipes'
+	add '/recipes'
 	#add '/places'
 	#add '/workouts'
 	SwellMedia::Media.published.each do |media|
@@ -28,15 +30,15 @@ SitemapGenerator::Sitemap.create do
 	Product.published.each do |product|
 		add product.path, lastmod: product.updated_at
 	end
-	# Equipment.active.each do |equipment|
-	# 	add equipment.path, lastmod: equipment.updated_at
-	# end
-	# Recipe.active.each do |recipe|
-	# 	add recipe.path, lastmod: recipe.updated_at
-	# end
-	# Movement.active.each do |movement|
-	# 	add movement.path, lastmod: movement.updated_at
-	# end
+	Equipment.active.each do |equipment|
+	 	add equipment.path, lastmod: equipment.updated_at
+	end
+	Recipe.active.each do |recipe|
+	 	add recipe.path, lastmod: recipe.updated_at
+	end
+	Movement.active.each do |movement|
+	 	add movement.path, lastmod: movement.updated_at
+	end
 	# Workout.active.each do |workout|
 	# 	add workout.path, lastmod: workout.updated_at
 	# end

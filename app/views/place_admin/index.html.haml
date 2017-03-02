@@ -8,6 +8,7 @@
 				%li
 					%strong
 						Places Admin
+						= "(#{pluralize @places.total_count, 'Place'})"
 
 		.col-xs-2
 			%a.btn.btn-success{ data: { toggle: :modal, target: '#new_place' } }
@@ -16,7 +17,6 @@
 
 	.row
 		.col-xs-6
-			= pluralize @place_count, 'Place'
 			= raw paginate @places
 		.col-xs-6
 			= form_tag place_admin_index_path, method: :get, class: 'pull-right form-inline' do

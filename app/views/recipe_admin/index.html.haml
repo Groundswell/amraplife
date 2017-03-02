@@ -8,6 +8,7 @@
 				%li
 					%strong
 						Recipe Admin
+						= "(#{pluralize @recipes.total_count, 'Recipe'})"
 
 		.col-xs-2
 			%a.btn.btn-success{ data: { toggle: :modal, target: '#new_recipe' } }
@@ -16,7 +17,7 @@
 
 	.row
 		.col-xs-6
-			= pluralize @recipe_count, 'Recipe'
+			
 			= raw paginate @recipes
 		.col-xs-6
 			= form_tag recipe_admin_index_path, method: :get, class: 'pull-right form-inline' do
@@ -29,6 +30,7 @@
 		%table.table.table-striped
 			%thead
 				%th
+				%th
 					Name
 
 				%th
@@ -38,6 +40,8 @@
 			%tbody
 				- @recipes.each do |recipe|
 					%tr
+						%td
+							= image_tag recipe.avatar, width: 50, class: 'img img-rounded'
 						%td
 							= link_to recipe.title, edit_recipe_admin_path( recipe )
 						%td

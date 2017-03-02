@@ -35,7 +35,7 @@ class RecipeAdminController < SwellMedia::AdminController
 
 	private
 		def recipe_params
-			params.require( :recipe ).permit( :title, :description, :content, :status, :prep_time, :cook_time, :serves ) 	
+			params.require( :recipe ).permit( :title, :description, :content, :status, :prep_time, :cook_time, :serves, :tags_csv ) 	
 		end
 
 		def set_recipe

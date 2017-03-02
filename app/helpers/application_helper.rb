@@ -1,7 +1,7 @@
 module ApplicationHelper
 
 	def shopify_code( code )
-
+		return nil if code.blank?
 		json_string = code.match(/ui\.createComponent\('product'\, (\{(\n|.)*?)\}\)/).captures.first.strip.match(/options\: (\{(\n|.)*\})/).captures.first.strip
 
 		json_addition = <<-JSON
