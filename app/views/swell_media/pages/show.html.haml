@@ -16,6 +16,7 @@
 						= @media.title
 			
 			%article.entry.style-single.type-post
+				.addthis_inline_share_toolbox.hidden-xs.hidden-sm
 				
 				- if @media.avatar.present?
 					.row
@@ -25,7 +26,7 @@
 				.entry-content
 					= raw @media.content
 
-					.addthis_inline_share_toolbox.hidden-xs.hidden-sm
+
 
 				- if @media.is_commentable?
 					%hr/
