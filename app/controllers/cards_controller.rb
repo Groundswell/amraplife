@@ -19,16 +19,16 @@ class CardsController < ApplicationController
 	end
 
 	def new
-		set_page_meta( page_title: 'Send a Card', image: 'http://cdn1.amraplife.com/assets/63705c35-bde9-4f83-96b8-4b238faa2200.png' )
+		set_page_meta( title: 'Send a Card', image: 'http://cdn1.amraplife.com/assets/63705c35-bde9-4f83-96b8-4b238faa2200.png' )
 	end
 
 	def success
-		set_page_meta( page_title: 'Thank You!' )
+		set_page_meta( title: 'Thank You!' )
 	end
 
 	def show
 		@card.update( viewed: true )
-		set_page_meta( page_title: 'Your Card' )
+		set_page_meta( title: 'Your Card' )
 	end
 
 

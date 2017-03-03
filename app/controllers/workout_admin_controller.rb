@@ -14,7 +14,7 @@ class WorkoutAdminController < SwellMedia::AdminController
 	end
 
 	def edit
-		set_page_meta( page_title: "Edit #{@workout} )°( Live AMRAP" )
+		set_page_meta( title: "Edit #{@workout} )°( Live AMRAP" )
 		# if @workout.workout_type == 'amrap'
 		# 	@segment = @workout.workout_segments.first || WorkoutSegment.new( duration: 0 )
 		# 	@segment.duration = @segment.formatted_duration

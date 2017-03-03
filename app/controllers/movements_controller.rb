@@ -14,7 +14,7 @@ class MovementsController < ApplicationController
 
 		@movements = @movements.page( params[:page] )
 
-		set_page_meta( page_title: 'Movements )°( AMRAP Life' )
+		set_page_meta( title: 'Movements )°( AMRAP Life' )
 	end
 
 	def show
