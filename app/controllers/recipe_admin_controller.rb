@@ -4,7 +4,7 @@ class RecipeAdminController < SwellMedia::AdminController
 
 	def create
 		@recipe = Recipe.new( recipe_params )
-		@recipe.save 
+		@recipe.save
 		redirect_to edit_recipe_admin_path( @recipe )
 	end
 
@@ -24,7 +24,7 @@ class RecipeAdminController < SwellMedia::AdminController
 		end
 		@recipe_count = @recipes.count
 		@recipes = @recipes.page( params[:page] )
-		
+
 	end
 
 	def update
@@ -35,7 +35,7 @@ class RecipeAdminController < SwellMedia::AdminController
 
 	private
 		def recipe_params
-			params.require( :recipe ).permit( :title, :description, :content, :status, :prep_time, :cook_time, :serves, :tags_csv ) 	
+			params.require( :recipe ).permit( :title, :description, :avatar, :content, :status, :prep_time, :cook_time, :serves, :tags_csv ) 	
 		end
 
 		def set_recipe
