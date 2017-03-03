@@ -33,7 +33,7 @@ class Product < ActiveRecord::Base
 
 	def page_meta
 		if self.title.present?
-			title = "#{self.title} | #{SwellMedia.app_name}"
+			title = "#{self.title} )°( #{SwellMedia.app_name}"
 		else
 			title = SwellMedia.app_name
 		end

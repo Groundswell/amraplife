@@ -14,7 +14,7 @@ class RecipesController < ApplicationController
 	def show
 		@media = @recipe
 
-		set_page_meta( page_title: "#{@recipe.title} )°( AMRAP Life", description: @recipe.description.html_safe )
+		set_page_meta( @recipe.page_meta )
 	end
 
 
