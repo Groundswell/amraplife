@@ -24,6 +24,35 @@ class Recipe < ActiveRecord::Base
 	acts_as_taggable_array_on :tags
 
 
+	def page_meta
+		if self.title.present?
+			title = "#{self.title} | #{SwellMedia.app_name}"
+		else
+			title = SwellMedia.app_name
+		end
+
+		return {
+			page_title: title,
+			title: self.title,
+			description: self.sanitized_description,
+			image: self.avatar,
+			url: self.url,
+			twitter_format: 'summary_large_image',
+			type: 'Recipe',
+			og: {
+				"article:published_time" => self.publish_at.iso8601,
+			},
+			data: {
+				'url' => self.url,
+				'name' => self.title,
+				'description' => self.sanitized_description,
+				'datePublished' => self.publish_at.iso8601,
+				'image' => self.avatar
+			}
+
+		}
+	end
+
 	def self.published( args = {} )
 		where( "publish_at <= :now", now: Time.zone.now ).active
 	end
@@ -32,7 +61,13 @@ class Recipe < ActiveRecord::Base
 		active? && publish_at < Time.zone.now
 	end
 
+	def sanitized_content
+		ActionView::Base.full_sanitizer.sanitize( self.content )
+	end
 
+	def sanitized_description
+		ActionView::Base.full_sanitizer.sanitize( self.description )
+	end
 
 	def slugger
 		if self.slug_pref.present?

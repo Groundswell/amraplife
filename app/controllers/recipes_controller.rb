@@ -14,7 +14,7 @@ class RecipesController < ApplicationController
 	def show
 		@media = @recipe
 
-		set_page_meta( title: @recipe.title, description: @recipe.description.html_safe )
+		set_page_meta( @recipe.page_meta )
 	end
 
 
