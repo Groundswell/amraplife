@@ -73,20 +73,19 @@
 				.col-md-4.col-lg-4.md-pull-right
 					%aside.widget
 						%h2.widget-title.ribbon.ribbon-focus
-							%a{ href: main_app.workouts_path }
-								%span Workouts
+							%a{ href: main_app.recipes_path }
+								%span Recipes
 						.entries.row
-							- @workouts.each do |workout|
+							- @recipes.each do |recipe|
 								%article.type-post.style-media-list.media.col-sm-6.col-md-12
-									%a{ href: main_app.workout_path( workout ) }
-										%img.media-object.pull-left{ src: workout.avatar, width: 80, height: 80 }
+									%a{ href: main_app.recipe_path( recipe ) }
+										%img.media-object.pull-left{ src: recipe.avatar, width: 80, height: 80 }
 									.media-body{ style: 'padding-left: 1em;' }
 										.entry-title
-											%a{ href: main_app.workout_path( workout ) }
-												= workout.title
-										-# if workout.duration.present?
-											.entry-meta
-												= workout.duration
+											%a{ href: main_app.recipe_path( recipe ) }
+												= recipe.title
+										.entry-description{ style: 'font-size:85%;' }
+											= raw recipe.description
 
 				.bg-base.col-md-8.col-lg-8
 					%h2.section-title.ribbon.ribbon-highlight

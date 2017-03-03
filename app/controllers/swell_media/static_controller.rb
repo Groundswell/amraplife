@@ -15,7 +15,9 @@ module SwellMedia
 			else
 				@trending = SwellMedia::Article.published.last 
 			end
-			@workouts = Workout.published.order( publish_at: :desc ).limit( 10 )
+			
+			@recipes = Recipe.published.order( publish_at: :desc ).limit( 5 )
+			#@workouts = Workout.published.order( publish_at: :desc ).limit( 10 )
 
 			set_page_meta( title: 'AMRAP Life Home' )
 

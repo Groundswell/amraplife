@@ -9,16 +9,14 @@
 				%li.active
 					%a{ href: '/recipes' }
 						Recipes
+		.entries
+		
+			= paginate @recipes
 
-		%h2
-			= pluralize @count, 'Recipe'
+			- @recipes.each do |recipe|
+				= render 'row', recipe: recipe
 
-		= paginate @recipes
-
-		- @recipes.each do |recipe|
-			= render 'row', recipe: recipe
-
-		= paginate @recipes
+			= paginate @recipes
 		
 	.sidebar.col-md-4.col-lg-4.col-xl-3
 		= render 'application/sidebar'
