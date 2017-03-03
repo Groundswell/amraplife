@@ -12,6 +12,7 @@ class RecipesController < ApplicationController
 	end
 
 	def show
+		@media = @recipe
 	end
 
 
