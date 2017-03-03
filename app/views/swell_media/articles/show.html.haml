@@ -41,8 +41,9 @@
 						%li
 							%a{:href => swell_media.browse_index_path( category_id: @media.category.slug ) }=@media.category.name
 					%li.active{:title => @media.title}=@media.title.truncate(32)
+			.flipboard-startArticle
 			%header.page-header
-				%h2.page-title
+				%h2.page-title.flipboard-title
 					= @media.title
 			%article.entry.style-single.type-post
 				- if @media.cover_image.present?
@@ -51,13 +52,13 @@
 						%img{:alt => "", "data-src" => @media.cover_image, "data-src-retina" => @media.cover_image, :height => "452", :src => @media.cover_image, :width => "680"}/
 						/ fallback for no javascript browsers
 						%noscript
-							%img{:alt => "", :src => @media.cover_image}/
+							%img.flipboard-image{:alt => "", :src => @media.cover_image}/
 					.addthis_inline_share_toolbox.hidden-xs.hidden-sm
 				- elsif @media.avatar.present?
 					.col-sm-6
-						%img.img.img-responsive{:alt => @media.title, src: @media.avatar, style: 'padding-right: 2em;' }
+						%img.img.img-responsive.flipboard-image{:alt => @media.title, src: @media.avatar, style: 'padding-right: 2em;' }
 						.addthis_inline_share_toolbox.hidden-xs.hidden-sm
-				.entry-meta
+				.entry-meta.flipboard-remove
 					%span.author
 						Posted
 					%span.entry-date
@@ -73,6 +74,7 @@
 								=@media.category.name
 				.entry-content
 					= raw @media.content
+			.flipboard-endArticle
 			.after-entry
 				.addthis_inline_share_toolbox.hidden-xs.hidden-sm
 				- if @media.tags.present?
