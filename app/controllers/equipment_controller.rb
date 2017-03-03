@@ -4,7 +4,7 @@ class EquipmentController < ApplicationController
 
 	def index
 		@equipment = Equipment.published.order( title: :asc ).page( params[:page] )
-		set_page_meta( title: 'Equipment )°( AMRAP Life' )
+		set_page_meta( page_title: 'Equipment )°( AMRAP Life' )
 	end
 
 	def show

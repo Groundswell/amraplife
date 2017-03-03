@@ -5,11 +5,11 @@ class WorkoutsController < ApplicationController
 	def index
 		@workouts = Workout.published.order( :title )
 		@workouts = @workouts.page( params[:page] )
-		set_page_meta( title: 'Workouts )°( AMRAP Life' )
+		set_page_meta( page_title: 'Workouts )°( AMRAP Life' )
 	end
 
 	def show
-		set_page_meta( title: @workout.title, description: @workout.content.html_safe )
+		set_page_meta( page_title: "#{@workout.title} )°( AMRAP Life", description: @workout.content.html_safe )
 	end
 
 
