@@ -1,4 +1,3 @@
-
 #content.content.section.row
 	- cache( "show-#{@recipe.cache_key}" ) do
 		.col-md-8.bg-base.col-lg-8.col-xl-9
@@ -6,10 +5,11 @@
 				%ol.breadcrumb.ribbon-inner
 					%li
 						%a{:href => swell_media.root_path()} Home
-					
+
 					%li.active{:title => @recipe.title}=@recipe.title.truncate(32)
+			.flipboard-startArticle
 			%header.page-header
-				%h2.page-title
+				%h2.page-title.flipboard-title
 					= @recipe.title
 			%article.entry.style-single.type-post
 				- if @recipe.cover_image.present?
@@ -18,17 +18,18 @@
 						%img{:alt => "", "data-src" => @recipe.cover_image, "data-src-retina" => @recipe.cover_image, :height => "452", :src => @recipe.cover_image, :width => "680"}/
 						/ fallback for no javascript browsers
 						%noscript
-							%img{:alt => "", :src => @recipe.cover_image}/
+							%img.flipboard-image{:alt => "", :src => @recipe.cover_image}/
 					.addthis_inline_share_toolbox.hidden-xs.hidden-sm
 				- elsif @recipe.avatar.present?
 					.col-sm-4
-						%img.img.img-responsive{:alt => @recipe.title, src: @recipe.avatar, style: 'padding-right: 2em;' }
-				
+						%img.img.img-responsive.flipboard-image{:alt => @recipe.title, src: @recipe.avatar, style: 'padding-right: 2em;' }
+
 				.entry-content
 					= raw @recipe.content
+			.flipboard-endArticle
 			.after-entry
 				.addthis_inline_share_toolbox.hidden-xs.hidden-sm
-				
+
 				%hr/
 			= render 'application/fb_comments'
 
