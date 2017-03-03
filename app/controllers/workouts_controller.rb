@@ -9,7 +9,7 @@ class WorkoutsController < ApplicationController
 	end
 
 	def show
-		set_page_meta( page_title: "#{@workout.title} )°( AMRAP Life", description: @workout.content.html_safe )
+		set_page_meta( page_title: @workout.title, description: @workout.content.html_safe )
 	end
 
 
