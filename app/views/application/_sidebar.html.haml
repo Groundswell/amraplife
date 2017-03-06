@@ -24,6 +24,15 @@
 
 %script{ src: "//z-na.amazon-adsystem.com/widgets/onejs?MarketPlace=US&adInstanceId=9b863990-4462-4a7a-867d-9c30c6fb51cd" }
 
+%aside.widget
+	%h3.widget-title.ribbon
+		%span Just a Thought
+	.entries.row
+		- SwellMedia::Page.published.order( 'random()' ).limit( 1 ).each do |maxim|
+			%a{ :href => maxim.path }
+				%img.img.img-responsive{ src: maxim.avatar }
+
+
 - if SwellMedia::Media.published.media_tag_cloud.present?
 	%aside.widget
 		%h3.widget-title.ribbon
