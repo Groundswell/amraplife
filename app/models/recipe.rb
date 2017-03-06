@@ -61,6 +61,10 @@ class Recipe < ActiveRecord::Base
 		}
 	end
 
+	def sanitized_content
+		ActionView::Base.full_sanitizer.sanitize( self.content )
+	end
+
 	def sanitized_description
 		ActionView::Base.full_sanitizer.sanitize( self.description )
 	end
