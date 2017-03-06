@@ -94,6 +94,16 @@
 					.entries
 						- if @trending.present?
 							= render 'swell_media/articles/post', article: @trending, args: {}
+
+					%h2.section-title.ribbon.ribbon-highlight
+						%span
+							Just a Thought...
+					.entries
+						- SwellMedia::Page.published.order( 'random()' ).limit( 1 ).each do |maxim|
+							%a{ :href => maxim.path }
+								%img.img.img-responsive{ src: maxim.avatar }
+
+
 		-#.sidebar.col-md-3.col-lg-3 todo with ads
 			%aside.widget
 				%h2.widget-title.ribbon
