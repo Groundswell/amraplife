@@ -30,13 +30,13 @@ SitemapGenerator::Sitemap.create do
 	Product.published.each do |product|
 		add product.path, lastmod: product.updated_at
 	end
-	Equipment.active.each do |equipment|
+	Equipment.published.each do |equipment|
 	 	add equipment.path, lastmod: equipment.updated_at
 	end
-	Recipe.active.each do |recipe|
+	Recipe.published.each do |recipe|
 	 	add recipe.path, lastmod: recipe.updated_at
 	end
-	Movement.active.each do |movement|
+	Movement.published.each do |movement|
 	 	add movement.path, lastmod: movement.updated_at
 	end
 	# Workout.active.each do |workout|

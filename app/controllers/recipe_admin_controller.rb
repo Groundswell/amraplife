@@ -1,6 +1,6 @@
 
 class RecipeAdminController < SwellMedia::AdminController
-	before_action :set_recipe, only: [:show, :edit, :update, :destroy]
+	before_action :set_recipe, only: [:show, :edit, :preview, :update, :destroy]
 
 	def create
 		@recipe = Recipe.new( recipe_params )
@@ -25,6 +25,12 @@ class RecipeAdminController < SwellMedia::AdminController
 		@recipe_count = @recipes.count
 		@recipes = @recipes.page( params[:page] )
 
+	end
+
+	def preview
+		@media = @recipe
+		set_page_meta( @recipe.page_meta )
+		render "recipes/show", layout: 'application'
 	end
 
 	def update

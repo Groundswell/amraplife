@@ -12,7 +12,7 @@
 						Edit
 						= @recipe.title
 		.col-xs-2
-			%a.pull-right.btn.btn-primary{ href: recipe_path( @recipe ) }
+			%a.pull-right.btn.btn-primary{ href: preview_recipe_admin_path( @recipe.id ) }
 				%i.fa.fa-eye
 				Preview
 

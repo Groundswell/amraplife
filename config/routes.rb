@@ -25,7 +25,9 @@ Rails.application.routes.draw do
 	end
 
 	resources :recipes
-	resources :recipe_admin
+	resources :recipe_admin do
+		get :preview, on: :member 
+	end
 
 	resources :workouts
 	resources :workout_admin
