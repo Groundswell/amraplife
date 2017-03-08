@@ -85,6 +85,14 @@
 						- @media.tags.each do |tag|
 							%a{:href => swell_media.browse_index_path( category_id: :all, tag: tag )}=tag
 				%hr/
+			.well
+				%p
+					At least we don't have an obnoxious popup or screen take-over, but if you've made it this far, please consider joining our email list. We'll send you once-in-a-while updates chock-full of great health and lifestyle tips sprinkled with inspiration and discounts on cool stuff!
+
+				= render 'swell_media/optins/form'
+				.clearfix
+
+
 			= render 'application/fb_comments'
 			=# render 'application/disqus_comments'
 	/ /.col-md-8.col-lg-8.col-xl-9
