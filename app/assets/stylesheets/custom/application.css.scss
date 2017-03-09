@@ -17,6 +17,11 @@
 	margin-bottom: 5px;
 }
 .zoom-gallery .gallery img {
-	min-width: 100px;
-	max-width: 150px;
+	width: 50px;
+}
+
+.zoom-gallery.hide-gallery .gallery,
+.zoom-gallery.hide-gallery .gallery-title
+{
+	display: none;
 }

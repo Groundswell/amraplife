@@ -14,14 +14,18 @@ DOMEvents: {
 
 	  $('.buy-btn').trigger('change.option', { option: $(target).attr('name'), value: $( target ).val() || $( "option:selected", target ).text(), ui: product } )
   }
+},
+events: {
+	'afterRender': function(evt) {
+		$('.buy-btn').trigger('afterRender.ui.shopify', { evt: evt, model: evt.model } )
+	}
 }
 JSON
 
 		new_json_string = json_string.sub( '"product": {', "\"product\": { \n#{json_addition.strip}," )
-		# new_json_string = new_json_string.sub( '"img": false', '"img": true' )
 
-
-		code.sub( json_string, new_json_string )
+		code = code.sub( json_string, new_json_string )
+		code = code.sub( "ShopifyBuy.UI.onReady(client).then(function (ui) {\n", "ShopifyBuy.UI.onReady(client).then(function (ui) {\n$(document).trigger('ready.ui.shopify', { ui: ui, client: client } )\n" )
 
 	end
 

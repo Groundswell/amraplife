@@ -26,16 +26,19 @@
 				%article.entry.style-single.type-post
 					.row
 						.col-sm-6
-							.zoom-gallery
+							.zoom-gallery{ class: ( @images.present? ? '' : 'hide-gallery' ) }
 								%img{"data-zoom-image" => @product.avatar, :src => @product.avatar}/
 								- if @images.present?
-									%h3 More Views
+									%h3.gallery-title More Views
 									.gallery
 										%a{"data-image" => @product.avatar, "data-zoom-image" => @product.avatar, :href => "#"}
 											%img#img_01{:src => @product.avatar, style: 'width: 150px;' }
 										- @images.each do |image|
 											%a{"data-image" => image.url, "data-zoom-image" => image.url, :href => "#"}
 												%img{:src => image.url }/
+								- else
+									%h3.gallery-title More Views
+									.gallery
 						.col-sm-6
 							%header.page-header
 								%h2.page-title
