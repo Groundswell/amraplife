@@ -83,6 +83,7 @@ GEM
     bcrypt (3.1.11)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
+    bonsai-elasticsearch-rails (0.0.4)
     browser (2.3.0)
     builder (3.2.3)
     byebug (9.0.6)
@@ -112,6 +113,19 @@ GEM
       warden (~> 1.2.3)
     domain_name (0.5.20170223)
       unf (>= 0.0.5, < 1.0.0)
+    elasticsearch (1.0.14)
+      elasticsearch-api (= 1.0.14)
+      elasticsearch-transport (= 1.0.14)
+    elasticsearch-api (1.0.14)
+      multi_json
+    elasticsearch-model (0.1.8)
+      activesupport (> 3)
+      elasticsearch (> 0.4)
+      hashie
+    elasticsearch-rails (0.1.8)
+    elasticsearch-transport (1.0.14)
+      faraday
+      multi_json
     erubis (2.7.0)
     excon (0.55.0)
     execjs (2.7.0)
@@ -414,10 +428,14 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  bonsai-elasticsearch-rails
   byebug
   carrierwave
   coffee-rails (~> 4.1.0)
   dalli
+  elasticsearch
+  elasticsearch-model
+  elasticsearch-rails
   gibbon
   jbuilder (~> 2.0)
   jquery-rails
