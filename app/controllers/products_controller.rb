@@ -5,14 +5,30 @@ class ProductsController < ApplicationController
 
 
 	def index
-		@products = Product.published
 
-		if params[:category].present? && cat = ProductCategory.friendly.find( params[:category] )
-			@products = @products.where( category_id: cat.id )
-			@title_mod = "in #{cat.name}"
+		if params[:query].present?
+			query = { text: params[:query], published?: true, page: params[:page] }
+
+			@title_mod = "found for \"#{params[:query].truncate(20)}\""
+
+			if params[:category].present? && cat = ProductCategory.friendly.find( params[:category] )
+				query[:category_id] = cat.id
+				@title_mod = "in #{cat.name}"
+			end
+
+			@products = Product.record_search query
+
+		else
+
+			@products = Product.published
+
+			if params[:category].present? && cat = ProductCategory.friendly.find( params[:category] )
+				@products = @products.where( category_id: cat.id )
+				@title_mod = "in #{cat.name}"
+			end
+			@products = @products.page( params[:page] )
+
 		end
-		@products = @products.page( params[:page] )
-
 	end
 
 	def show

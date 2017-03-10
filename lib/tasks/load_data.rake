@@ -1,6 +1,28 @@
 # desc "Explaining what the task does"
 namespace :amraplife do
 
+	task load_elasticsearch: :environment do
+
+		puts Product.__elasticsearch__.client.indices.delete index: Product.index_name rescue nil
+
+		puts Product.__elasticsearch__.client.indices.create \
+			index: Product.index_name,
+			body: { settings: Product.settings.to_hash, mappings: Product.mappings.to_hash }
+
+
+		Product.all.find_each( batch_size: 500 ) do |product|
+
+			begin
+				product.__elasticsearch__.index_document #if self.published?
+			rescue Exception => e
+				NewRelic::Agent.notice_error(e) if defined? NewRelic::Agent
+				puts e
+			end
+
+		end
+
+	end
+
 	task load_products: :environment do
 
 
@@ -17,7 +39,7 @@ namespace :amraplife do
 
 	task load_data: :environment do
 		puts "Loading Data"
-		
+
 		puts "Adding some Metrics"
 		ht = Metric.create title: 'Height', aliases: ['ht'], unit: 'in'
 		wt = Metric.create title: 'Weight', aliases: ['wt', 'lbs'], unit: 'lbs'
