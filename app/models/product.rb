@@ -101,6 +101,8 @@ class Product < ActiveRecord::Base
 	# e.g. Product.record_search( 'live amrap' )
 	def self.record_search( options = {} )
 		options = { text: options } if options.is_a? String
+		page = options.delete(:page)
+		per = options.delete(:per) || 10
 
 		query = Jbuilder.encode do |json|
 			json.query do
@@ -126,6 +128,14 @@ class Product < ActiveRecord::Base
 								end
 							end
 
+						end
+
+						if options.has_key? :published?
+							json.child! do
+								json.term do
+									json.published? options[:published?]
+								end
+							end
 						end
 
 						if options[:category_name].present?
@@ -164,6 +174,14 @@ class Product < ActiveRecord::Base
 									end
 								end
 							end
+
+							json.child! do
+								json.match do
+									json.category_name do
+										json.query options[:text]
+									end
+								end
+							end
 						end
 
 					end
@@ -176,7 +194,9 @@ class Product < ActiveRecord::Base
 
 		# puts query.to_json
 
-		self.search( query ).records
+
+
+		self.search( query ).page( page ).per( per ).records
 
 	end
 
