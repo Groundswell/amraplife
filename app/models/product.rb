@@ -42,6 +42,8 @@ class Product < ActiveRecord::Base
 
 	belongs_to :product_category, foreign_key: :category_id
 
+	after_create :on_create
+	after_update :on_update
 	before_save	:set_publish_at
 
 	attr_accessor	:slug_pref
@@ -227,6 +229,18 @@ class Product < ActiveRecord::Base
 		def set_publish_at
 			# set publish_at
 			self.publish_at ||= Time.zone.now
+		end
+
+		def on_create
+			if defined?( Elasticsearch::Model )
+				__elasticsearch__.index_document
+			end
+		end
+
+		def on_update
+		 	if defined?( Elasticsearch::Model )
+				__elasticsearch__.index_document rescue Article.first.__elasticsearch__.update_document
+			end
 		end
 
 end
