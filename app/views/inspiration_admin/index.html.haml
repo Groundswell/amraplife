@@ -1,0 +1,84 @@
+
+
+.container-fluid
+	.row
+		.col-xs-10
+			%ul.breadcrumb
+				%li
+					= link_to 'Admin', swell_media.admin_index_path
+				%li
+					%strong
+						Inspiration Admin
+						= "(#{pluralize @inspirations.total_count, 'Inspiration'})"
+		.col-xs-2
+			%a.btn.btn-success{ data: { toggle: :modal, target: '#new_inspiration' } }
+				%i.fa.fa-plus-square
+				New
+	
+	.row
+		.col-xs-6
+			= raw paginate @inspirations
+		.col-xs-6
+			= form_tag inspiration_admin_index_path, method: :get, class: 'pull-right form-inline' do
+				= select_tag :status, options_from_collection_for_select( Inspiration.statuses, :first, :first, params[:status] ), { prompt: "-- All --", class: 'form-control' }
+				= text_field_tag :q, params[:q], class: 'form-control'
+				= submit_tag 'Search', class: 'btn btn-primary'
+				= link_to 'Clear', inspiration_admin_index_path, class: 'btn btn-default btn-xs'
+
+	.row
+		.col-xs-12
+			%table.table
+				%thead
+					%th
+					%th
+					%th 
+						URL
+						%a{ href: inspiration_admin_index_path( sort_by: 'slug', sort_dir: 'asc' ) }
+							%i.fa.fa-arrow-up
+						%a{ href: inspiration_admin_index_path( sort_by: 'slug', sort_dir: 'desc' ) }
+							%i.fa.fa-arrow-down
+					%th 
+						Publish At
+						%a{ href: inspiration_admin_index_path( sort_by: 'publish_at', sort_dir: 'asc' ) }
+							%i.fa.fa-arrow-up
+						%a{ href: inspiration_admin_index_path( sort_by: 'publish_at', sort_dir: 'desc' ) }
+							%i.fa.fa-arrow-down
+					%th Status
+					%th
+				%tbody
+					- @inspirations.each do |inspiration|
+						%tr
+							%td
+								%a{ href: edit_inspiration_admin_path( inspiration.id ) }
+									= image_tag inspiration.avatar, width: 50, class: 'img img-rounded'
+							%td
+								= link_to inspiration.to_s, edit_inspiration_admin_path( inspiration.id )
+							%td
+								= inspiration.slug
+							%td
+								= inspiration.publish_at.to_s( :slashed_time )
+							%td
+								.badge{ class: inspiration.status }
+									= inspiration.status
+							%td
+								.btn-group
+									%button.btn.btn-mini.btn-default.dropdown-toggle{ data: { toggle: :dropdown } }
+										%i.fa.fa-cog
+										%b.caret
+									%ul.dropdown-menu
+										%li
+											%a{ href: edit_inspiration_admin_path( inspiration.id ) }
+												%i.fa.fa-pencil
+												Edit
+										%li
+											%a{ href: preview_inspiration_admin_path( inspiration.id ) }
+												%i.fa.fa-eye
+												Preview
+										%li.divider
+										%li
+											%a{ href: inspiration_admin_path( inspiration ), data: { method: 'delete', confirm: 'Are you sure?' } }
+												%i.fa.fa-trash-o
+												Delete!
+
+
+= render 'new_modal'

@@ -9,6 +9,10 @@ Rails.application.routes.draw do
 	resources :equipment
 	resources :equipment_admin
 
+	resources :inspiration_admin do
+		get :preview, on: :member 
+	end
+
 	resources :movements
 	resources :movement_admin
 

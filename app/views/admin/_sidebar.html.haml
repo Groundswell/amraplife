@@ -97,6 +97,19 @@
 
 							%li.parent_open
 								%a{ href: '#' }
+									Inpsirations
+								%ul.sub-menu
+									%li
+										%a{ href: main_app.inspiration_admin_index_path }
+											%i.fa.fa-gear
+											Admin
+									%li
+										%a{ data: { toggle: :modal, target: '#new_inspiration' } }
+											%i.fa.fa-plus
+											New
+
+							%li.parent_open
+								%a{ href: '#' }
 									Pages
 								%ul.sub-menu
 									%li
@@ -149,6 +162,7 @@
 = render 'equipment_admin/new_modal'
 = render 'movement_admin/new_modal'
 =# render 'swell_ecom/product_admin/new_modal'
+= render 'inspiration_admin/new_modal'
 = render 'place_admin/new_modal'
 = render 'product_admin/new_modal'
 = render 'recipe_admin/new_modal'

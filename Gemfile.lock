@@ -1,6 +1,5 @@
-GIT
-  remote: git://github.com/Groundswell/swell_media.git
-  revision: b9d6935ab1ca0c5285a7e37f2a4004ee1e0b02a8
+PATH
+  remote: ../../engines/swell_media
   specs:
     swell_media (0.0.1)
       acts-as-taggable-array-on
@@ -27,9 +26,8 @@ GIT
       sitemap_generator
       staccato
 
-GIT
-  remote: git://github.com/Groundswell/swell_theme_summarize.git
-  revision: 248a36e8a15cdb3572a8f9af4b5d9cd50f7e6e13
+PATH
+  remote: ../../engines/swell_theme_summarize
   specs:
     swell_theme_summarize (0.0.1)
       rails (~> 4.2.3)
