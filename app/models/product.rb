@@ -229,8 +229,8 @@ class Product < ActiveRecord::Base
 		{
 			id:					self.id,
 			category_id:		self.category_id,
-			category_name:		self.product_category.name,
-			raw_category_name:	self.product_category.name,
+			category_name:		self.product_category.try( :name ),
+			raw_category_name:	self.product_category.try( :name ),
 			slug:				self.slug,
 			created_at:			self.created_at,
 			title: 				self.title,
