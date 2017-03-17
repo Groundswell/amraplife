@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/Groundswell/swell_media.git
-  revision: 889fff6c7499f51bc1ad44b6b3a1c61692ddcb01
+  revision: 6680bb9f617a6a430400c77f7f5e6712fbdf995f
   specs:
     swell_media (0.0.1)
       acts-as-taggable-array-on
@@ -266,7 +266,7 @@ GEM
     fog-voxel (0.1.0)
       fog-core
       fog-xml
-    fog-vsphere (1.7.1)
+    fog-vsphere (1.8.0)
       fog-core
       rbvmomi (~> 1.9)
     fog-xenserver (0.3.0)

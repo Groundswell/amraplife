@@ -36,9 +36,6 @@ class ProductAdminController < SwellMedia::AdminController
 
 	def edit
 
-		# touch product to update cache key, when asset is added
-		@product.touch if params[:asset_url].present?
-
 		@images = SwellMedia::Asset.where( parent_obj: @product, use: 'gallery' ).active
 
 	end
