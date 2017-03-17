@@ -45,12 +45,15 @@
 						.pull-right
 							%a.btn.btn-primary{ href: '#', data: { toggle: :modal, target: '#new_gallery_asset_modal' } } Add Gallery Image
 						%h3{ style: 'margin: 0 0 1em 0;' } Gallery
-						- if @product.avatar
-							%a{"data-image" => @product.avatar, "data-zoom-image" => @product.avatar, :href => "#"}
-								%img{:src => @product.avatar, style: 'width: 70px;' }
-						- @images.each do |image|
-							%a{"data-image" => image.url, "data-zoom-image" => image.url, :href => "#"}
-								%img{:src => image.url, style: 'width: 70px;' }
+						.row
+							- if @product.avatar
+								.pull-left{ style: 'padding-bottom: 0.5em;' }
+									%img{:src => @product.avatar, style: 'width: 70px;' }
+							- @images.each do |image|
+								.pull-left{ style: 'padding-bottom: 0.5em;' }
+									%img{:src => image.url, style: 'width: 70px;' }
+									.text-center
+										%a{ href: asset_admin_path( image ), data: { method: :DELETE }, style: 'font-size: 0.8em;' } Delete
 
 				.form-group
 					= f.label :description
