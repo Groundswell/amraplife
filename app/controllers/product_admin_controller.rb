@@ -2,7 +2,7 @@
 class ProductAdminController < SwellMedia::AdminController
 
 	before_filter :get_product, except: [ :create, :index ]
-	
+
 	def index
 		sort_by = params[:sort_by] || 'publish_at'
 		sort_dir = params[:sort_dir] || 'desc'
@@ -32,6 +32,14 @@ class ProductAdminController < SwellMedia::AdminController
 			set_flash 'Product could not be created', :error, @product
 			redirect_to :back
 		end
+	end
+
+	def edit
+
+
+		@images = SwellMedia::Asset.where( parent_obj: @product, use: 'gallery' ).active
+
+
 	end
 
 	def destroy
