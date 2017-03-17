@@ -53,7 +53,7 @@
 								.pull-left{ style: 'padding-bottom: 0.5em;' }
 									%img{:src => image.url, style: 'width: 70px;' }
 									.text-center
-										%a{ href: asset_admin_path( image ), data: { method: :DELETE }, style: 'font-size: 0.8em;' } Delete
+										%a{ href: swell_media.asset_admin_path( image ), data: { method: :DELETE }, style: 'font-size: 0.8em;' } Delete
 
 				.form-group
 					= f.label :description
