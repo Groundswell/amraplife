@@ -11,15 +11,28 @@ $( document ).ready ->
 
 		$( change.ui.carouselImages ).each (index,image)->
 			if image.isSelected
-				console.log image.src
 				$('[data-shopify-carousel='+image.position+']').click()
 
 		$('.product-show .price-info .price').html(change.ui.formattedPrice+' ')
 
+	$(document).on 'addVariantToCart.ui.shopify', '.buy-btn', (e, options)->
+		price = options.evt.formattedPrice.substring(1)
+		name = options.evt.selectedVariantTrackingInfo.name
+		dataLayer.push({ 'event': 'AddToCart', 'price': price, 'value': price, 'name': name });
+
+	$(document).on 'clickCheckout.ui.shopify', '.buy-btn', (e, options)->
+		if options.evt && ( checkout_btn = options.evt.target ) && checkout_btn.className.indexOf('checkout') >= 0
+			cart = options.ui.components.cart[0]
+			dataLayer.push({ 'event': 'InitiateCheckout', 'value': cart.formattedTotal.substring(1) });
+
+
+	$(document).on 'openCheckout.ui.shopify', '.buy-btn', (e, options)->
+		cart = options.cart
+		#dataLayer.push({ 'event': 'Checkout', 'value': cart.formattedTotal.substring(1) });
+
 	$(document).on 'afterRender.ui.shopify', '.buy-btn', (e, options)->
 		return if $(this).data( 'ui.shopify' )
 		$(this).data( 'ui.shopify', options.evt )
-		console.log( 'afterRender.ui.shopify', e, options.evt.carouselImages )
 
 		if options.evt.carouselImages.length > 1
 			# add shopify images to carousel
