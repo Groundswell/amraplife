@@ -26,6 +26,11 @@ class ProductsController < ApplicationController
 				@products = @products.where( category_id: cat.id )
 				@title_mod = "in #{cat.name}"
 			end
+
+			if params[:tag].present?
+				@products = @products.with_any_tags( params[:tag] )
+			end
+
 			@products = @products.page( params[:page] )
 
 		end

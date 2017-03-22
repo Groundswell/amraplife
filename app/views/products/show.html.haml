@@ -22,6 +22,11 @@
 
 				- ProductCategory.order( name: :asc ).each do |cat|
 					.cat= link_to cat.name, products_path( category: cat.slug )
+				.cat
+					= link_to 'Men', products_path( tag: 'men' )
+				.cat
+					= link_to 'Women', products_path( tag: 'women' )
+
 			.col-md-10.col-lg-10.col-xl-11{ style: 'border-left:1px #ddd solid; '}
 				%article.entry.style-single.type-post
 					.row

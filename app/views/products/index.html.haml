@@ -14,6 +14,10 @@
 			.col-md-12.col-sm-2.col-xs-3= link_to 'Everything', products_path
 			- ProductCategory.order( name: :asc ).each do |cat|
 				.col-md-12.col-sm-2.col-xs-3= link_to cat.name, products_path( category: cat.slug )
+			.col-md-12.col-sm-2.col-xs-3
+				= link_to 'Men', products_path( tag: 'men' )
+			.col-md-12.col-sm-2.col-xs-3
+				= link_to 'Women', products_path( tag: 'women' )
 
 			.clearfix
 
