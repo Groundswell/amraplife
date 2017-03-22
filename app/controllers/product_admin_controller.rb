@@ -74,7 +74,7 @@ class ProductAdminController < SwellMedia::AdminController
 
 	private
 		def product_params
-			params.require( :product ).permit( :title, :subtitle, :slug_pref, :category_id, :description, :content, :price, :suggested_price, :status, :publish_at, :tags, :tags_csv, :avatar, :avatar_asset_file, :avatar_asset_url, :cover_image, :avatar_urls, :shopify_code )
+			params.require( :product ).permit( :title, :subtitle, :slug_pref, :category_id, :description, :content, :price, :suggested_price, :status, :publish_at, :tags, :tags_csv, :avatar, :avatar_asset_file, :avatar_asset_url, :cover_image, :avatar_urls, :shopify_code, :size_info )
 		end
 
 		def get_product

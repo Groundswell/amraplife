@@ -99,6 +99,9 @@
 						= f.label :tags_csv, 'Tags:'
 						= f.text_field :tags_csv, placeholder: 'Separate tags with commas', class: 'form-control'
 					.form-group
+						= f.label :size_info
+						= f.text_field :size_info, class: 'form-control'
+					.form-group
 						= f.submit 'Update', class: 'btn btn-primary'
 
 = render 'new_gallery_asset'
