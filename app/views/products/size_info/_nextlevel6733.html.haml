@@ -1,0 +1,70 @@
+
+#size_info.modal.fade
+	.modal-dialog
+		.modal-content
+			.modal-header
+				%button.close{ type: :button, 'data-dismiss' => 'modal', 'aria-hidden' => 'true' }
+					&times;
+				%h3.modal-title
+					Sizing and Care
+			
+			.modal-body
+				%table.table
+					%thead
+						%th
+						%th
+							XS
+						%th
+							S
+						%th
+							M
+						%th
+							L
+						%th
+							XL
+
+					%tbody
+						%tr
+							%td
+								Length (inches)
+							%td
+								26 7/8
+							%td
+								27 1/2
+							%td
+								28 1/8
+							%td
+								28 3/4
+							%td
+								29 3/8
+						%tr
+							%td
+								Width (inches)
+							%td
+								15
+							%td
+								16
+							%td
+								17
+							%td
+								18
+							%td
+								19 1/2
+
+				%h4
+					Care Instructions
+				%ul
+					%li
+						Machine wash cold, inside-out, gentle cycle with mild detergent and similar colors. Use non-chlorine bleach, only when necessary. No fabric softeners.
+					%li
+						Tumble dry low, or hang-dry for longest life.
+					%li
+						Cool iron inside-out if necessary. Do not iron decoration.
+					%li
+						Do not dry clean.
+
+			.modal-footer
+				%button.btn.btn-default{ type: :button, 'data-dismiss' => 'modal' }
+					Close
+
+

@@ -54,6 +54,9 @@
 											- if @product.suggested_price > 0
 												%span.strikethrough{ style: 'text-decoration:line-through;font-size:90%;' }
 													= number_to_currency( @product.suggested_price.to_f / 100 )
+										- if @product.size_info.present?
+											%a.btn{ data: { toggle: :modal, target: '#size_info' } }
+												Size & Care
 									.col-xs-4
 										- if @product.product_category.present?
 											%span.category{ style: 'margin-right: 2em;'}
@@ -69,8 +72,13 @@
 							.entry-content
 								.addthis_inline_share_toolbox.hidden-xs.hidden-sm
 
+
 								= raw @product.content
 
 
 		.sidebar.col-md-2.col-lg-2.col-xl-1
 			= render 'products/sidebar'
+
+- if @product.size_info.present?
+	= render "products/size_info/#{@product.size_info}"
+

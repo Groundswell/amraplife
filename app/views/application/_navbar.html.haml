@@ -46,13 +46,15 @@
 				%a{ href: '#' }
 					Trainers
 			%li
-				%a{ href: '/store' }
-					Store
-			-#%li
 				%a{ href: '#', data: { toggle: :li } }
-					Categories
+					Store
 				.subnav-wrapper
 					%ul.subnav
-						- SwellMedia::Category.all.each do |cat|
+						%li
+							%a{ href: '/store' }
+								Everything
+
+						- ProductCategory.all.each do |cat|
 							%li
-								= link_to cat, swel_media.browse_index_path( category_id: cat.id )
+								= link_to cat, products_path( category: cat )
+

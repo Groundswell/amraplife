@@ -259,7 +259,7 @@ class Product < ActiveRecord::Base
 
 		def on_update
 		 	if defined?( Elasticsearch::Model )
-				__elasticsearch__.index_document rescue Article.first.__elasticsearch__.update_document
+				__elasticsearch__.index_document rescue Product.first.__elasticsearch__.update_document
 			end
 		end
 
