@@ -9,7 +9,7 @@
 							Standby...
 					%header.entry-header
 						%h1.entry-title{ style: 'margin-left:90px;'}
-							Coming Soon... 
+							Coming Soon...
 						%h4{ style: 'margin-left:90px;'}
 							Life is a Team Sport.... Live AMRAP
 
@@ -38,7 +38,7 @@
 							Welcome to AMRAPLife.com
 						%p
 							Life is a Team Sport.... Live AMRAP
-					
+
 					.row{ style: 'margin-top:1em;'}
 						.col-sm-12.hidden-xs
 							%p.entry-header
@@ -62,8 +62,8 @@
 						= render 'swell_media/articles/card', article: article, args: { desc_style: 'color: #ddd;font-size:90%;line-height:1.33em;' }
 		.col-lg-6.col-xl-7
 			.row
-				- if @articles.present? && @articles[2..4].present?
-					- @articles[2..4].each do |article|
+				- if @articles.present? && @articles[2..7].present?
+					- @articles[2..7].each do |article|
 						= render 'swell_media/articles/card', article: article, args: { desc_style: 'color: #ddd;font-size:90%;line-height:1.33em;' }
 
 	#content.content.section.row
@@ -109,22 +109,3 @@
 				%h2.widget-title.ribbon
 					%a{ href: '#' }
 						Thanks...
-
-
-
-
-
-
-						
-
-
-
-
-
-
-						
-
-
-
-
-
