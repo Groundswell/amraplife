@@ -56,7 +56,7 @@
 										.price-info{ style: 'font-size:150%;' }
 											%span.price{ style: 'font-weight:600;color:#000;'}
 												= number_to_currency( @product.price.to_f / 100 )
-											- if @product.suggested_price > 0
+											-# if @product.suggested_price > 0
 												%span.strikethrough{ style: 'text-decoration:line-through;font-size:90%;' }
 													= number_to_currency( @product.suggested_price.to_f / 100 )
 										- if @product.size_info.present?
