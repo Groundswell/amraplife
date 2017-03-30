@@ -21,6 +21,24 @@ namespace :amraplife do
 
 		end
 
+		puts Place.__elasticsearch__.client.indices.delete index: Place.index_name rescue nil
+
+		puts Place.__elasticsearch__.client.indices.create \
+			index: Place.index_name,
+			body: { settings: Place.settings.to_hash, mappings: Place.mappings.to_hash }
+
+
+		Place.all.find_each( batch_size: 500 ) do |place|
+
+			begin
+				place.__elasticsearch__.index_document #if self.published?
+			rescue Exception => e
+				NewRelic::Agent.notice_error(e) if defined? NewRelic::Agent
+				puts e
+			end
+
+		end
+
 	end
 
 	task load_products: :environment do

@@ -16,7 +16,7 @@ class Place < ActiveRecord::Base
 				indexes :content, analyzer: 'english', index_options: 'offsets'
 				indexes :published?, type: 'boolean'
 
-				indexes :location, type: 'geo_point'
+				indexes :location, type: 'geo_point', as: 'location'
 
 				indexes :zip, analyzer: 'english', index_options: 'offsets'
 				indexes :city, analyzer: 'english', index_options: 'offsets'
@@ -66,6 +66,110 @@ class Place < ActiveRecord::Base
 
 	def published?
 		active?
+	end
+
+
+
+	# e.g. Place.record_search( lat: 1, lon: 9, text: 'live amrap' )
+	# e.g. Place.record_search( text: 'live amrap' )
+	# e.g. Place.record_search( 'live amrap' )
+	def self.record_search( options = {} )
+		options = { text: options } if options.is_a? String
+		page = options.delete(:page)
+		per = options.delete(:per) || 10
+
+		query = Jbuilder.encode do |json|
+			json.query do
+				json.filtered do
+					json.query do
+
+						json.bool do
+							json.must do
+								if options[:tags].present?
+
+									json.child! do
+										json.nested do
+											json.path 'tags'
+											json.query do
+												if options[:tags].is_a? Array
+													json.terms do
+														json.set! 'tags.raw_name_downcase', options[:tags].collect(&:downcase)
+													end
+												else
+													json.term do
+														json.set! 'tags.raw_name_downcase', options[:tags].downcase
+													end
+												end
+											end
+										end
+									end
+
+								end
+
+								if options.has_key? :published?
+									json.child! do
+										json.term do
+											json.published? options[:published?]
+										end
+									end
+								end
+
+							end
+
+							json.should do
+
+								if options[:text].present?
+									json.child! do
+										json.match do
+											json.title do
+												json.query options[:text]
+												json.boost 10
+											end
+										end
+									end
+
+									json.child! do
+										json.match do
+											json.description do
+												json.query options[:text]
+											end
+										end
+									end
+
+								end
+
+							end
+
+							json.minimum_should_match 1
+
+						end
+					end
+
+					json.filter do
+						if options.has_key? :lat
+							json.geo_distance do
+								json.distance options[:distance] || '12km'
+
+								json.location do
+									json.lat options[:lat].to_f
+									json.lon options[:lon].to_f
+								end
+
+							end
+						end
+
+					end
+
+				end
+			end
+		end
+
+		puts query
+
+
+
+		self.search( query ).page( page ).per( per ).records
+
 	end
 
 
