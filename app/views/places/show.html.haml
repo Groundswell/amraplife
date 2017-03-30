@@ -1,0 +1,58 @@
+#content.content.section.row
+	- cache( "show-#{@place.cache_key}" ) do
+		.col-md-8.bg-base.col-lg-8.col-xl-9
+			.ribbon.ribbon-highlight
+				%ol.breadcrumb.ribbon-inner
+					%li
+						%a{:href => swell_media.root_path()} Home
+
+					%li.active{:title => @place.title}=@place.title.truncate(32)
+			.flipboard-startArticle
+			%header.page-header
+				%h2.page-title.flipboard-title
+					= @place.title
+					%small
+						#{@place.address1}#{ @place.address2.present? ? " #{@place.address2}" : ''},
+						#{@place.city}, #{@place.state}
+				.row
+					- if @featured_video.present?
+						.col-xs-7
+							.embed-container
+								%iframe#place-video{ allowfullscreen: true, frameborder: 0, src: "//www.youtube.com/embed/#{@featured_video.origin_identifier}?rel=0" }
+						.col-xs-5
+							.embed-container
+								#place-map
+					- else
+						.col-xs-12
+							#place-map
+			%article.entry.style-single.type-post
+
+				.entry-content
+					= raw @place.content
+			.flipboard-endArticle
+			.after-entry
+				.addthis_inline_share_toolbox.hidden-xs.hidden-sm
+
+				%hr
+
+			= render 'application/fb_comments'
+
+	/ /.col-md-8.col-lg-8.col-xl-9
+	.sidebar.col-md-4.col-lg-4.col-xl-3
+		= render 'application/sidebar'
+	/ /.sidebar col-md-4 col-lg-4 col-xl-3
+/ /#content
+
+:javascript
+	function initMap() {
+		var uluru = {lat: #{@place.lat}, lng: #{@place.lon}};
+		var map = new google.maps.Map(document.getElementById('place-map'), {
+			zoom: 15,
+			center: uluru
+		});
+		var marker = new google.maps.Marker({
+			position: uluru,
+			map: map
+		});
+	}
+%script{:async => "", :defer => "defer", :src => "https://maps.googleapis.com/maps/api/js?key=AIzaSyAjrWJrpSapVwH21j2qlwbUErWKNDjbVEA&callback=initMap"}

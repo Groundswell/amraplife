@@ -10,14 +10,16 @@ class PlacesController < ApplicationController
 	end
 
 	def show
-		set_page_meta( title: @place.title, description: (@place.description || @place.content).html_safe )
+		@featured_video = @place.featured_video
+
+		set_page_meta( title: "#{@place.title} - #{@place.city}, #{@place.state}", description: (@place.description || @place.content).html_safe )
 	end
 
 
   private
 	# Use callbacks to share common setup or constraints between actions.
 	def set_place
-		@place = Place.published.friendly.find(params[:id])
+		@media = @place = Place.published.friendly.find(params[:id])
 	end
 
 end
