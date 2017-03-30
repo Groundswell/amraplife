@@ -37,7 +37,7 @@
 									%h3.gallery-title More Views
 									.gallery
 										%a{"data-image" => @product.avatar, "data-zoom-image" => @product.avatar, :href => "#"}
-											%img#img_01{:src => @product.avatar, style: 'width: 150px;' }
+											%img{:src => @product.avatar }
 										- @images.each do |image|
 											%a{"data-image" => image.url, "data-zoom-image" => image.url, :href => "#"}
 												%img{:src => image.url }/
@@ -86,4 +86,3 @@
 
 - if @product.size_info.present?
 	= render "products/size_info/#{@product.size_info}"
-
