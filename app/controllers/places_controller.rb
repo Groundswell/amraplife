@@ -4,7 +4,7 @@ class PlacesController < ApplicationController
 
 
 	def index
-		@places = Places.published.order( :title )
+		@places = Place.published.order( :title )
 		@places = @places.page( params[:page] )
 		set_page_meta( title: 'Places )°( AMRAP Life' )
 	end
