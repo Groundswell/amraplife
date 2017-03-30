@@ -35,11 +35,11 @@
 								%img{"data-zoom-image" => @product.avatar, :src => @product.avatar}/
 								- if @images.present?
 									%h3.gallery-title More Views
-									.gallery
-										%a{"data-image" => @product.avatar, "data-zoom-image" => @product.avatar, :href => "#"}
+									.gallery><
+										%a{"data-image" => @product.avatar, "data-zoom-image" => @product.avatar, :href => "#"}><
 											%img{:src => @product.avatar }
 										- @images.each do |image|
-											%a{"data-image" => image.url, "data-zoom-image" => image.url, :href => "#"}
+											%a{"data-image" => image.url, "data-zoom-image" => image.url, :href => "#"}><
 												%img{:src => image.url }/
 								- else
 									%h3.gallery-title More Views
