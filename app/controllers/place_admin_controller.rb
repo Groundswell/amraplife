@@ -4,7 +4,7 @@ class PlaceAdminController < SwellMedia::AdminController
 
 	def create
 		@place = Place.new( place_params )
-		@place.save 
+		@place.save
 		redirect_to edit_place_admin_path( @place )
 	end
 
@@ -24,7 +24,7 @@ class PlaceAdminController < SwellMedia::AdminController
 		end
 		@place_count = @places.count
 		@places = @places.page( params[:page] )
-		
+
 	end
 
 	def update
@@ -35,7 +35,7 @@ class PlaceAdminController < SwellMedia::AdminController
 
 	private
 		def place_params
-			params.require( :place ).permit( :title, :description, :content, :status, :lat, :long, :address1, :address2, :city, :state, :zip, :phone, :hours, :cost ) 	
+			params.require( :place ).permit( :title, :description, :content, :status, :lat, :lon, :address1, :address2, :city, :state, :zip, :phone, :hours, :cost, :avatar, :cover_image ) 	
 		end
 
 		def set_place

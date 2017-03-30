@@ -21,22 +21,28 @@
 				.form-group
 					= f.text_field :title, class: 'form-control'
 				.form-group
-					
-					.col-xs-10
-						= f.label :address1, 'Address'
-						= f.text_field :address1, class: 'form-control'
-					.col-xs-10
-						= f.text_field :address2, class: 'form-control'
-					.col-xs-5
-						= f.text_field :city, class: 'form-control'
-					.col-xs-2
-						= f.text_field :state, class: 'form-control'
-					.col-xs-3
-						= f.text_field :zip, class: 'form-control'
-					.col-xs-10
-						= f.label :phone
-						= f.text_field :phone, class: 'form-control'
-					.clearfix
+					.row
+						.col-xs-10
+							= f.label :address1, 'Address'
+							= f.text_field :address1, class: 'form-control', placeholder: 'address 1'
+						.col-xs-10
+							= f.text_field :address2, class: 'form-control', placeholder: 'address 2'
+						.col-xs-5
+							= f.text_field :city, class: 'form-control', placeholder: 'city'
+						.col-xs-2
+							= f.text_field :state, class: 'form-control', placeholder: 'state'
+						.col-xs-3
+							= f.text_field :zip, class: 'form-control', placeholder: 'zip'
+						.col-xs-10
+							= f.label :Location
+							.row{ style: 'margin-top: 0;' }
+								.col-xs-6
+									= f.text_field :lat, class: 'form-control', placeholder: 'latitude'
+								.col-xs-6
+									= f.text_field :lon, class: 'form-control', placeholder: 'longitude'
+						.col-xs-10
+							= f.label :phone
+							= f.text_field :phone, class: 'form-control'
 				.form-group
 					= f.label :hours
 					= f.text_field :hours, class: 'form-control'
@@ -66,5 +72,3 @@
 					%hr
 					= link_to 'Show', @place
 					= link_to 'Back', place_admin_index_path
-
-
