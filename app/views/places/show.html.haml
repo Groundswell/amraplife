@@ -9,6 +9,9 @@
 					%li.active{:title => @place.title}=@place.title.truncate(32)
 			.flipboard-startArticle
 			%header.page-header
+				- if @place.avatar.present?
+					.text-center
+						%img.center-block{ src: @place.avatar, style: 'max-width: 100%;' }
 				%h2.page-title.flipboard-title
 					= @place.title
 					%small

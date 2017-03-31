@@ -1,0 +1,17 @@
+- cache( "row-#{place.cache_key}" ) do
+	.entry.style-media.media.type-post
+		%figure.media-object.pull-left.entry-thumbnail.hidden-xs
+			%a{ href: place.url }
+				%img{ src: place.avatar, width: 230, height: 230 }
+		.media-body
+			%header.entry-header
+				%h3.entry-title
+					= link_to place.title, place.url
+				.entry-meta
+					%span.entry-date
+						= place.created_at.strftime('%B %e, %Y')
+			%p
+				= raw place.description
+				%a.more-link{ href: place.url }
+					Continue
+					%i.fa.fa-arrow-right
