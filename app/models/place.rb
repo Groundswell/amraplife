@@ -179,7 +179,7 @@ class Place < ActiveRecord::Base
 			self.slug = nil # friendly_id 5.0 only updates slug if slug field is nil
 			return self.slug_pref
 		else
-			return self.title
+			return "#{self.title} #{self.city} #{self.state}".strip
 		end
 	end
 

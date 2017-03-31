@@ -4,6 +4,7 @@ class PlaceAdminController < SwellMedia::AdminController
 
 	def create
 		@place = Place.new( place_params )
+		@place.status = 'draft'
 		@place.save
 		redirect_to edit_place_admin_path( @place )
 	end
@@ -29,13 +30,20 @@ class PlaceAdminController < SwellMedia::AdminController
 
 	def update
 		@place.update( place_params )
+
+		if @place.active? && @place.previous_changes.include?('status')
+			# reslug when going active
+			@place.slug = nil
+			@place.save
+		end
+
 		redirect_to :back
 	end
 
 
 	private
 		def place_params
-			params.require( :place ).permit( :title, :description, :content, :status, :lat, :lon, :address1, :address2, :city, :state, :zip, :phone, :hours, :cost, :avatar, :cover_image ) 	
+			params.require( :place ).permit( :title, :description, :content, :status, :lat, :lon, :address1, :address2, :city, :state, :zip, :phone, :hours, :cost, :avatar, :cover_image )
 		end
 
 		def set_place

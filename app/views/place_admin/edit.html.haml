@@ -20,6 +20,27 @@
 			.col-xs-8
 				.form-group
 					= f.text_field :title, class: 'form-control'
+				.row
+					.col-xs-4
+						.form-group
+							= f.label :avatar, 'Image (default):'
+							= image_tag @place.avatar, class: 'img-responsive', id: 'place_avatar_img'
+							%div{ style: 'text-align:center;padding:0.3em;' }
+								%a{ href: '#', data: { toggle: :assetup, for: '#place_avatar,#place_avatar_img', asset: { asset_type: 'image', use: 'avatar', status: 'active', parent_obj_id: @place.id, parent_obj_type: @place.class.base_class.name }.to_json, params: { authenticity_token: form_authenticity_token() }.to_json } }
+									%i.fa.fa-upload
+									upload
+							= f.hidden_field :avatar, class: 'form-control', id: 'place_avatar'
+
+					.col-xs-8
+						.form-group
+							= f.label :cover_image, 'Cover (default):'
+							= image_tag @place.cover_image, class: 'img-responsive', id: 'place_cover_image_img'
+							%div{ style: 'text-align:center;padding:0.3em;' }
+								%a{ href: '#', data: { toggle: :assetup, for: '#place_cover_image,#place_cover_image_img', asset: { asset_type: 'image', use: 'cover_image', status: 'active', parent_obj_id: @place.id, parent_obj_type: @place.class.base_class.name }.to_json, params: { authenticity_token: form_authenticity_token() }.to_json } }
+									%i.fa.fa-upload
+									upload
+							= f.hidden_field :cover_image, class: 'form-control', id: 'place_cover_image'
+
 				.form-group
 					.row
 						.col-xs-10
