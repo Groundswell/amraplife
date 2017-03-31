@@ -14,11 +14,17 @@
 						.col-xs-12
 							.row{ style: 'background: rgba(0,0,0,0.4);' }
 								.col-xs-12
+									- if @place.phone
+										%a.color-white.pull-right{ href: "tel:#{@place.phone.gsub(/^\(/,'+1-').gsub(')','-').gsub(/[^0-9\+\-]/,'')}" }
+											%i.fa.fa-phone
+											#{@place.phone}
+
 									%h2.page-title.flipboard-title{ style: 'color: #fff;' }
 										= @place.title
 										%small{ style: 'color: #fff;display: block;' }
 											#{@place.address1}#{ @place.address2.present? ? " #{@place.address2}" : ''},
 											#{@place.city}, #{@place.state}
+
 				- else
 					%h2.page-title.flipboard-title
 						= @place.title
@@ -81,7 +87,7 @@
 	function initMap() {
 		var uluru = {lat: #{@place.lat}, lng: #{@place.lon}};
 		var map = new google.maps.Map(document.getElementById('place-map'), {
-			zoom: 15,
+			zoom: 13,
 			center: uluru
 		});
 		var marker = new google.maps.Marker({
