@@ -61,7 +61,7 @@ class Place < ActiveRecord::Base
 	end
 
 	def featured_video_id
-		featured_video.origin_identifier
+		featured_video.try(:origin_identifier)
 	end
 
 	def featured_video_id=(video_id)
@@ -69,6 +69,14 @@ class Place < ActiveRecord::Base
 		video = self.assets.where( asset_type: 'video', origin_identifier: video_id, use: 'featured' ).first_or_create
 		video.active!
 		return
+	end
+
+	def image_assets
+		self.assets.where( asset_type: 'image' )
+	end
+
+	def image_gallery
+		image_assets.where( use: 'gallery' )
 	end
 
 	def self.published( args = {} )

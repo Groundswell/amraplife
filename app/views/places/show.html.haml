@@ -9,14 +9,22 @@
 					%li.active{:title => @place.title}=@place.title.truncate(32)
 			.flipboard-startArticle
 			%header.page-header
-				- if @place.avatar.present?
-					.text-center
-						%img.center-block{ src: @place.avatar, style: 'max-width: 100%;' }
-				%h2.page-title.flipboard-title
-					= @place.title
-					%small
-						#{@place.address1}#{ @place.address2.present? ? " #{@place.address2}" : ''},
-						#{@place.city}, #{@place.state}
+				- if @place.cover_image.present?
+					.row{ style: "background: url(#{@place.cover_image}) no-repeat center;background-size: cover;padding-top: 20%;margin-top: -20px;margin-bottom: 15px;" }
+						.col-xs-12
+							.row{ style: 'background: rgba(0,0,0,0.4);' }
+								.col-xs-12
+									%h2.page-title.flipboard-title{ style: 'color: #fff;' }
+										= @place.title
+										%small{ style: 'color: #fff;display: block;' }
+											#{@place.address1}#{ @place.address2.present? ? " #{@place.address2}" : ''},
+											#{@place.city}, #{@place.state}
+				- else
+					%h2.page-title.flipboard-title
+						= @place.title
+						%small
+							#{@place.address1}#{ @place.address2.present? ? " #{@place.address2}" : ''},
+							#{@place.city}, #{@place.state}
 				.row
 					- if @featured_video.present?
 						.col-xs-7
@@ -26,7 +34,7 @@
 							.embed-container
 								#place-map
 					- else
-						.col-xs-12
+						.col-xs-6.col-sm-offset-3
 							#place-map
 			%article.entry.style-single.type-post
 
@@ -35,10 +43,35 @@
 			.flipboard-endArticle
 			.after-entry
 				.addthis_inline_share_toolbox.hidden-xs.hidden-sm
+			.after-entry
+				.row
+					.col-xs-6.text-left
+						- if @previous_place
+							.row
+								.col-xs-4
+									- if @previous_place.avatar.present?
+										%img.img.img-circle.img-responsive.center-block{ src: @previous_place.avatar }
+								.col-xs-8
+									%div{ style: 'font-size: 0.9em;color: #ccc;' } PREVIOUS PLACE
+									%a{ href: @previous_place.url, style: 'font-size: 1.2em;font-weight: bold;display: block;' }
+										%i.fa.fa-arrow-left
+										= @previous_place.title
+					.col-xs-6.text-right
+						- if @next_place
+							.row
+								.col-xs-8
+									%div{ style: 'font-size: 0.9em;color: #ccc;' } NEXT PLACE
+									%a{ href: @next_place.url, style: 'font-size: 1.2em;font-weight: bold;display: block;' }
+										= @next_place.title
+										%i.fa.fa-arrow-right
+								.col-xs-4
+									- if @next_place.avatar.present?
+										%img.img.img-circle.img-responsive.center-block{ src: @next_place.avatar }
+
 
 				%hr
-
-			= render 'application/fb_comments'
+			.after-entry
+				= render 'application/fb_comments'
 
 	/ /.col-md-8.col-lg-8.col-xl-9
 	.sidebar.col-md-4.col-lg-4.col-xl-3
