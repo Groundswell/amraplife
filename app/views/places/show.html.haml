@@ -27,12 +27,10 @@
 							#{@place.city}, #{@place.state}
 				.row
 					- if @featured_video.present?
-						.col-xs-7
-							.embed-container
-								%iframe#place-video{ allowfullscreen: true, frameborder: 0, src: "//www.youtube.com/embed/#{@featured_video.origin_identifier}?rel=0" }
-						.col-xs-5
-							.embed-container
-								#place-map
+						.col-xs-12.col-sm-7{ style: 'padding-bottom: 5px;' }
+							%iframe#place-video{ allowfullscreen: true, frameborder: 0, src: "//www.youtube.com/embed/#{@featured_video.origin_identifier}?rel=0" }
+						.col-xs-12.col-sm-5{ style: 'padding-bottom: 5px;' }
+							#place-map
 					- else
 						.col-xs-6.col-sm-offset-3
 							#place-map
