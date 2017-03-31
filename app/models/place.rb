@@ -60,6 +60,17 @@ class Place < ActiveRecord::Base
 		video_assets.active.where( use: 'featured' ).first
 	end
 
+	def featured_video_id
+		featured_video.origin_identifier
+	end
+
+	def featured_video_id=(video_id)
+		self.assets.where( asset_type: 'video', use: 'featured' ).update_all( status: SwellMedia::Asset.statuses['archive'] )
+		video = self.assets.where( asset_type: 'video', origin_identifier: video_id, use: 'featured' ).first_or_create
+		video.active!
+		return
+	end
+
 	def self.published( args = {} )
 		self.active
 	end

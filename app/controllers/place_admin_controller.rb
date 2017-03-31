@@ -43,7 +43,7 @@ class PlaceAdminController < SwellMedia::AdminController
 
 	private
 		def place_params
-			params.require( :place ).permit( :title, :description, :content, :status, :lat, :lon, :address1, :address2, :city, :state, :zip, :phone, :hours, :cost, :avatar, :cover_image )
+			params.require( :place ).permit( :title, :description, :content, :status, :lat, :lon, :address1, :address2, :city, :state, :zip, :phone, :hours, :cost, :avatar, :cover_image, :featured_video_id )
 		end
 
 		def set_place

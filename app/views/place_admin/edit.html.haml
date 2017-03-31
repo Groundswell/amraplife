@@ -31,7 +31,7 @@
 									upload
 							= f.hidden_field :avatar, class: 'form-control', id: 'place_avatar'
 
-					.col-xs-8
+					.col-xs-4
 						.form-group
 							= f.label :cover_image, 'Cover (default):'
 							= image_tag @place.cover_image, class: 'img-responsive', id: 'place_cover_image_img'
@@ -40,6 +40,11 @@
 									%i.fa.fa-upload
 									upload
 							= f.hidden_field :cover_image, class: 'form-control', id: 'place_cover_image'
+
+					.col-xs-4
+						.form-group
+							= f.label :featured_video_id, 'Featured Youtube Video:'
+							= f.text_field :featured_video_id, class: 'form-control', placeholder: 'Youtube Video Id'
 
 				.form-group
 					.row
