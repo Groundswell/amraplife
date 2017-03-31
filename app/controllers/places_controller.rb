@@ -14,7 +14,7 @@ class PlacesController < ApplicationController
 		@previous_place = Place.where.not( id: @place.id ).where( 'created_at < ?', @place.created_at ).order(created_at: :desc).first
 		@next_place 	= Place.where.not( id: @place.id ).where( 'created_at > ?', @place.created_at ).order(created_at: :asc).first
 
-		set_page_meta( title: "#{@place.title} - #{@place.city}, #{@place.state}", description: (@place.description || @place.content).html_safe )
+		set_page_meta( title: "#{@place.title} - #{@place.city}, #{@place.state}", description: (@place.description || @place.content || '').html_safe )
 	end
 
 
