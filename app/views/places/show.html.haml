@@ -75,7 +75,22 @@
 
 				%hr
 			.after-entry
-				= render 'application/fb_comments'
+				Contact
+				%i #{@place.title}
+				to learn more about their services and special offers.
+				.row
+					.col-xs-12.col-md-6
+						= form_for SwellMedia::ContactUs.new, url: swell_media.contacts_path do |f|
+							.form-group
+								= f.label :email, 'Message'
+								= f.text_field :email, placeholder: 'Your Email', class: 'form-control'
+							= f.hidden_field :subject, value: "@#{@place.title}"
+							.form-group
+								= f.text_area :message, rows: 3, class: 'form-control', placeholder: 'Message'
+							.form-group
+								= f.submit 'Send', class: 'btn btn-primary'
+
+				-# = render 'application/fb_comments'
 
 	/ /.col-md-8.col-lg-8.col-xl-9
 	.sidebar.col-md-4.col-lg-4.col-xl-3
