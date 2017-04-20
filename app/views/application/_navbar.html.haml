@@ -29,6 +29,46 @@
 					%span.search-toggled-out-icon
 						%i.fa.fa-search
 		%ul.nav.navbar-nav
+			%li.nav-all.pull-right.full-subnav-wrapper.hidden-md.hidden-lg
+				%a{"data-toggle" => "li", :href => "#"}
+					%span.text
+					%i.toggle.fa.fa-bars
+				.row.subnav-wrapper
+					.col-sm-6
+						%strong.subnav-header Site
+						%ul.subnav-full
+							%li
+								%a{ href: swell_media.articles_path }
+									Articles
+							- if Recipe.published.count >= 5
+								%li
+									%a{ href: '/recipes' }
+										Recipes
+							-#%li
+								%a{ href: '#' }
+									Places
+							- if Workout.published.count >= 5
+								%a{ href: '/workouts' }
+									Workouts
+							-#%li
+								%a{ href: '#' }
+									Trainers
+					.col-sm-6
+						%strong.subnav-header Store
+						%ul.subnav-full
+							%li
+								%a{ href: '/store' }
+									Everything
+
+							- ProductCategory.all.each do |cat|
+								%li
+									= link_to cat, main_app.products_path( category: cat )
+
+							%li
+								= link_to 'Men', main_app.products_path( tag: 'men' )
+							%li
+								= link_to 'Women', main_app.products_path( tag: 'women' )
+
 			%li
 				%a{ href: swell_media.articles_path }
 					Articles
@@ -62,4 +102,3 @@
 							= link_to 'Men', main_app.products_path( tag: 'men' )
 						%li
 							= link_to 'Women', main_app.products_path( tag: 'women' )
-
