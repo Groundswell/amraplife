@@ -40,6 +40,11 @@ class ProductsController < ApplicationController
 
 		@images = SwellMedia::Asset.where( parent_obj: @product, use: 'gallery' ).active
 
+		@product_category = @product.product_category
+
+		@related_products = Product.none
+		@related_products = @product_category.products.published.where.not( id: @product.id ).limit(6)
+
 		set_page_meta( @product.page_meta )
 	end
 
