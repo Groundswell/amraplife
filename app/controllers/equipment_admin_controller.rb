@@ -6,7 +6,7 @@ class EquipmentAdminController < SwellMedia::AdminController
 	def create
 		@equipment = Equipment.new( equipment_params )
 		@equipment.save
-		redirect_to edit_equipment_admin_path( @movement )
+		redirect_to edit_equipment_admin_path( @equipment )
 	end
 
 	def destroy
