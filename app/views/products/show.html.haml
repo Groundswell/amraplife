@@ -77,10 +77,11 @@
 										.addthis_inline_share_toolbox.hidden-xs.hidden-sm
 						.row
 							.col-sm-12
-								.entry-content
+								- unless @product.content.blank?
+									.entry-content
 
 
-									= raw @product.content
+										= raw @product.content
 
 
 - if @product.size_info.present?
