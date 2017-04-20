@@ -1,16 +1,28 @@
 .buy-btn {
 	min-height: 120px;
+	border: 1px solid #ccc;
+    padding: 15px 0 15px 0;
+	margin-bottom: 15px;
 }
 .buy-btn .shopify-buy-frame {
 	margin: auto;
 }
 
+.product-description {
+	padding-bottom: 15px;
+}
+
 .entry-meta .price-info .price {
-	font-size: 1.5em;
+	font-size: 47px;
+	color: #9c27b0 !important;
 }
 
 .style-single .zoom-gallery>img {
 	margin-bottom: 0;
+	border: 1px solid #eee;
+}
+.style-single .gallery {
+	margin-top: 4px;
 }
 
 .zoom-gallery h3, .style-single .zoom-gallery h3 {
@@ -20,8 +32,7 @@
 	height: 50px;
 }
 
-.zoom-gallery.hide-gallery .gallery,
-.zoom-gallery.hide-gallery .gallery-title
+.zoom-gallery.hide-gallery .gallery
 {
 	display: none;
 }
@@ -53,4 +64,14 @@ a.color-white:hover, a.color-white:active {
 
 .header-navbar .nav.navbar-nav > li.nav-all > a {
 	color: #9c27b0 !important;
+}
+
+.product-show .page-title {
+	font-size: 24px;
+	line-height: 1.3em;
+	font-weight: 600;
+	text-transform: uppercase;
+	border-bottom: none;
+	padding-bottom: 0;
+	margin-top: 0;
 }

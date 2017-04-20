@@ -1,6 +1,6 @@
 #content.content.section.row
 	- cache( "show-#{@product.cache_key}" ) do
-		.col-md-10.bg-base.col-lg-10.col-xl-11.product-show
+		.col-md-12.bg-base.product-show
 			.ribbon.ribbon-highlight
 				%ol.breadcrumb.ribbon-inner
 					%li
@@ -14,75 +14,74 @@
 
 
 
-			.col-md-2.col-lg-2.col-xl-1
-				%h4{ style: 'border-bottom: 1px #ddd solid;margin-bottom: 0.25em;'}
-					Shop
+			.row
+				.col-md-2.col-lg-2.col-xl-1.hidden-xs.hidden-sm
+					%h4{ style: 'border-bottom: 1px #ddd solid;margin-bottom: 0.25em;'}
+						Shop
 
-				.cat= link_to 'Everything', products_path
+					.cat= link_to 'Everything', products_path
 
-				- ProductCategory.order( name: :asc ).each do |cat|
-					.cat= link_to cat.name, products_path( category: cat.slug )
-				.cat
-					= link_to 'Men', products_path( tag: 'men' )
-				.cat
-					= link_to 'Women', products_path( tag: 'women' )
+					- ProductCategory.order( name: :asc ).each do |cat|
+						.cat= link_to cat.name, products_path( category: cat.slug )
+					.cat
+						= link_to 'Men', products_path( tag: 'men' )
+					.cat
+						= link_to 'Women', products_path( tag: 'women' )
 
-			.col-md-10.col-lg-10.col-xl-11{ style: 'border-left:1px #ddd solid; '}
-				%article.entry.style-single.type-post
-					.row
-						.col-sm-6
-							.zoom-gallery{ class: ( @images.present? ? '' : 'hide-gallery' ) }
-								%img{"data-zoom-image" => @product.avatar, :src => @product.avatar}/
-								- if @images.present?
-									%h3.gallery-title More Views
-									.gallery><
-										%a{"data-image" => @product.avatar, "data-zoom-image" => @product.avatar, :href => "#"}><
-											%img{:src => @product.avatar }
-										- @images.each do |image|
-											%a{"data-image" => image.url, "data-zoom-image" => image.url, :href => "#"}><
-												%img{:src => image.url }/
-								- else
-									%h3.gallery-title More Views
-									.gallery
-						.col-sm-6
-							%header.page-header
-								%h2.page-title
-									= @product.title
+				.col-md-10.col-lg-10.col-xl-11{ style: 'border-left:1px #ddd solid; '}
+					%article.entry.style-single.type-post
+						.row
+							.col-sm-5
+								.zoom-gallery{ class: ( @images.present? ? '' : 'hide-gallery' ) }
+									%img{"data-zoom-image" => @product.avatar, :src => @product.avatar}/
+									- if @images.present?
+										.gallery><
+											%a{"data-image" => @product.avatar, "data-zoom-image" => @product.avatar, :href => "#"}><
+												%img{:src => @product.avatar }
+											- @images.each do |image|
+												%a{"data-image" => image.url, "data-zoom-image" => image.url, :href => "#"}><
+													%img{:src => image.url }/
+									- else
+										.gallery
+							.col-sm-7
+								%header.page-header
+									%h2.page-title
+										= @product.title
 
-
-
-								.row.entry-meta
-									.col-xs-8
-										.price-info{ style: 'font-size:150%;' }
-											%span.price{ style: 'font-weight:600;color:#000;'}
-												= number_to_currency( @product.price.to_f / 100 )
-											-# if @product.suggested_price > 0
-												%span.strikethrough{ style: 'text-decoration:line-through;font-size:90%;' }
-													= number_to_currency( @product.suggested_price.to_f / 100 )
-										- if @product.size_info.present?
-											%a.btn{ data: { toggle: :modal, target: '#size_info' } }
-												Size & Care
-									.col-xs-4
-										- if @product.product_category.present?
-											%span.category{ style: 'margin-right: 2em;'}
-												In
-												%a{:href => products_path( category: @product.product_category.slug ) }
-													= @product.product_category.name
-
-								.entry-meta{ style: 'margin-bottom: 0;opacity: 1.0;' }
-									.buy-btn
-										= raw shopify_code @product.shopify_code
-					.row
-						.col-sm-12
-							.entry-content
-								.addthis_inline_share_toolbox.hidden-xs.hidden-sm
+									.row.entry-meta
+										.col-xs-8
+											.price-info{ style: 'font-size:150%;' }
+												%span.price{ style: 'font-weight:600;color:#000;'}
+													= number_to_currency( @product.price.to_f / 100 )
+												-# if @product.suggested_price > 0
+													%span.strikethrough{ style: 'text-decoration:line-through;font-size:90%;' }
+														= number_to_currency( @product.suggested_price.to_f / 100 )
+											- if @product.size_info.present?
+												%a.btn{ data: { toggle: :modal, target: '#size_info' } }
+													Size & Care
+										.col-xs-4
+											- if @product.product_category.present?
+												%span.category{ style: 'margin-right: 2em;'}
+													In
+													%a{:href => products_path( category: @product.product_category.slug ) }
+														= @product.product_category.name
 
 
-								= raw @product.content
+									.product-description
+
+										- unless @product.description.blank?
+											= raw @product.description
+									.entry-meta{ style: 'margin-bottom: 0;opacity: 1.0;' }
+										.buy-btn
+											= raw shopify_code @product.shopify_code
+										.addthis_inline_share_toolbox.hidden-xs.hidden-sm
+						.row
+							.col-sm-12
+								.entry-content
 
 
-		.sidebar.col-md-2.col-lg-2.col-xl-1
-			= render 'products/sidebar'
+									= raw @product.content
+
 
 - if @product.size_info.present?
 	= render "products/size_info/#{@product.size_info}"

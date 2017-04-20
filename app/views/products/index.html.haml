@@ -1,5 +1,5 @@
 #content.content.section.row
-	.col-md-10.bg-base.col-lg-10.col-xl-11
+	.col-md-12.bg-base
 		.ribbon.ribbon-highlight
 			%ol.breadcrumb.ribbon-inner
 				%li
@@ -8,43 +8,40 @@
 				%li.active
 					Store
 
-		.col-md-2.col-lg-2.col-xl-1
-			%h4{ style: 'border-bottom: 1px #ddd solid;margin-bottom: 0.25em;'}
-				Shop
-			.col-md-12.col-sm-2.col-xs-3= link_to 'Everything', products_path
-			- ProductCategory.order( name: :asc ).each do |cat|
-				.col-md-12.col-sm-2.col-xs-3= link_to cat.name, products_path( category: cat.slug )
-			.col-md-12.col-sm-2.col-xs-3
-				= link_to 'Men', products_path( tag: 'men' )
-			.col-md-12.col-sm-2.col-xs-3
-				= link_to 'Women', products_path( tag: 'women' )
+		.row
+			.col-md-2.col-lg-2.col-xl-1
+				%h4{ style: 'border-bottom: 1px #ddd solid;margin-bottom: 0.25em;'}
+					Shop
+				.col-md-12.col-sm-2.col-xs-3= link_to 'Everything', products_path
+				- ProductCategory.order( name: :asc ).each do |cat|
+					.col-md-12.col-sm-2.col-xs-3= link_to cat.name, products_path( category: cat.slug )
+				.col-md-12.col-sm-2.col-xs-3
+					= link_to 'Men', products_path( tag: 'men' )
+				.col-md-12.col-sm-2.col-xs-3
+					= link_to 'Women', products_path( tag: 'women' )
 
-			.clearfix
+				.clearfix
 
-		.col-md-10.col-lg-10.col-xl-11{ style: 'border-left:1px #ddd solid; '}
-			.row
-				.col-md-8.col-md-offset-2{ style: 'margin-bottom:1em;' }
-					= form_tag '', method: :get, class: 'form-inline' do
-						= hidden_field_tag :category, params[:category]
-						.input-group
-							= text_field_tag :query, params[:query], placeholder: 'What are you looking for?', class: 'form-control mb-2 mr-sm-2 mb-sm-0'
-							.input-group-btn
-								= submit_tag 'Search', class: 'btn btn-primary'
-			.entries
-				-#%h2.page-header
-					= pluralize @products.total_count, 'Product'
-					= @title_mod
-
-
-
+			.col-md-10.col-lg-10.col-xl-11{ style: 'border-left:1px #ddd solid; '}
+				.row
+					.col-md-8.col-md-offset-2{ style: 'margin-bottom:1em;' }
+						= form_tag '', method: :get, class: 'form-inline' do
+							= hidden_field_tag :category, params[:category]
+							.input-group
+								= text_field_tag :query, params[:query], placeholder: 'What are you looking for?', class: 'form-control mb-2 mr-sm-2 mb-sm-0'
+								.input-group-btn
+									= submit_tag 'Search', class: 'btn btn-primary'
+				.entries
+					-#%h2.page-header
+						= pluralize @products.total_count, 'Product'
+						= @title_mod
 
 
-			= raw paginate @products
-
-			.row.grid
-				- @products.each do |product|
-					= render 'card', product: product
 
 
-	.sidebar.col-md-2.col-lg-2.col-xl-1
-		= render 'products/sidebar'
+
+				= raw paginate @products
+
+				.row.grid
+					- @products.each do |product|
+						= render 'card', product: product
