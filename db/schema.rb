@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170321224025) do
+ActiveRecord::Schema.define(version: 20170420164500) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -509,6 +509,8 @@ ActiveRecord::Schema.define(version: 20170321224025) do
     t.string   "f_rx"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "workout_segment_id"
+    t.integer  "seq",                default: 1
   end
 
   add_index "workout_movements", ["equipment_id"], name: "index_workout_movements_on_equipment_id", using: :btree

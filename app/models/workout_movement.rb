@@ -1,8 +1,9 @@
-class WorkoutMovement < ActiveRecord::Base 
+class WorkoutMovement < ActiveRecord::Base
 
-	belongs_to :movement 
+	belongs_to :movement
 	belongs_to :workout
 	belongs_to :equipment
+	belongs_to :workout_segment
 
 	before_save :set_equipment
 
