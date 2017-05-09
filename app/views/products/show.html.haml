@@ -71,6 +71,15 @@
 
 										- unless @product.description.blank?
 											= raw @product.description
+									
+									.row
+										.col-md-10.col-md-offset-1{ style: 'border: 1px #aaa solid;padding: 0.5em 0 0 0;margin-bottom:1em;margin-top:-0.5em;background-color:#393;color:#fff;'}
+											%center
+												%p{ style: 'font-size: 150%;' }
+													Free Shipping on All Orders
+												%p
+													No minimum. Continental US only.
+
 									.entry-meta{ style: 'margin-bottom: 0;opacity: 1.0;' }
 										.buy-btn
 											= raw shopify_code @product.shopify_code
