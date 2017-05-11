@@ -5,6 +5,9 @@ module SwellMedia
 			set_page_meta( title: 'About Us' )
 		end
 
+		def crossfit_terms
+		end
+
 
 		def home
 			# the homepage
