@@ -15,10 +15,15 @@
  *= require_self
  */
 
+.entries a {
+	color: #428bca;
+	text-decoration: underline;
+}
+
 ul.crossfit-terms{
 	list-style:none;
 }
-.crossfit-terms li{
+.crossfit-terms li {
 	margin: 1em auto;
 }
 .anchor{
