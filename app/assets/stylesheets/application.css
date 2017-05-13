@@ -26,6 +26,9 @@ ul.crossfit-terms{
 .crossfit-terms li {
 	margin: 1em auto;
 }
+.crossfit-terms p{ 
+	margin-top: 1em;
+}
 .anchor{
 	display: block;
 	position: relative;
