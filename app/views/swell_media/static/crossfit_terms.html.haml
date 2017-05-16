@@ -10,11 +10,19 @@
 		.entries
 			%h1
 				The Ultimate Guide to CrossFit Terms
+
+			.addthis_inline_share_toolbox.hidden-xs.hidden-sm
+
 			%p
 				CrossFit is an entire subculture onto itself. Walking into a CrossFit gym can be intimidating enough without having to know a TABATA from an EMOM. CrossFit is filled with all kinds of crazy jargon that can be confusing and disorienting to newcomers. More importantly, if you don't have a grasp on some of the cues your coach is providing, you can get yourself injured. Luckily, we've got you covered. Here is the most comprehensive guide to CrossFit-speak ever compiled. We've got over 300 terms (and growing!) defined for you. If you feel we've missed something, or there's a term you still don't understand, please 
+				%a{ href: '#comments' }
+					leave a comment below
+				or
 				%a{ href: '/contacts/new' }
 					drop us a line 
 				and let us know!
+
+
 
 			.anchor#top
 			%a{ href: '#a', style: 'margin-left: 0.66em;' }
@@ -1618,6 +1626,7 @@
 						Pistol Squat
 					): Also known as single leg squats, pistols require half the legs, but twice the effort. Crazy hard!
 
+
 				.anchor#plank
 				%li
 					%strong
@@ -2477,12 +2486,25 @@
 						Top
 						%i.fa.fa-arrow-up
 					.clearfix
-					
+
 				.anchor#zone
 				%li
 					%strong
 						Zone: 
 					a diet. The zone diet is the official Crossfit prescription for how to eat. Zone requires a balance of protein, fats, and carbohydrates at every meal. The diet also dictates a maximum amount of food per meal and per day (usually measured in terms of 'blocks'). CrossFit recommends Zone, because it is not as restrictive in terms of types of foods as Paleo, and it is very measurable, trackable, and therefore highly empirical as is CrossFit itself. 
+
+
+
+		.well
+			%p
+				Hi there! Please consider joining our email list. We'll send you once-in-a-while updates chock-full of great health and lifestyle tips sprinkled with inspiration and discounts on cool stuff!
+
+			= render 'swell_media/optins/form'
+			.clearfix
+
+		%hr/
+		.anchor#comments
+		.fb-comments{ data: { href: "http://amraplife.com/crossfit-terms", numposts: 5 } }
 		
 	.sidebar.col-md-4.col-lg-4.col-xl-3
 		= render 'application/sidebar'

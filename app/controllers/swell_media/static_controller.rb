@@ -6,6 +6,11 @@ module SwellMedia
 		end
 
 		def crossfit_terms
+			set_page_meta( 
+				title: "The Ultimate Guide to CrossFit Terms  )°( AMRAP Life",
+				image: 'https://s3.amazonaws.com/cdn1.amraplife.com/assets/ultimate-crossfit-dictionary.png',
+				description: "Every crazy CrossFit term, slang, lingo, and jargon we've ever heard. Over 300 terms defined."
+			)
 		end
 
 
