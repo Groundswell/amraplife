@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170321224025) do
+ActiveRecord::Schema.define(version: 20170516153349) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -314,6 +314,7 @@ ActiveRecord::Schema.define(version: 20170321224025) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "cover_image"
+    t.string   "movement_type"
   end
 
   add_index "movements", ["equipment_id"], name: "index_movements_on_equipment_id", using: :btree
@@ -393,19 +394,55 @@ ActiveRecord::Schema.define(version: 20170321224025) do
 
   add_index "places", ["slug"], name: "index_places_on_slug", unique: true, using: :btree
 
+  create_table "product_options", force: :cascade do |t|
+    t.integer "product_id"
+    t.string  "name",       default: "size"
+    t.string  "values",     default: [],     array: true
+  end
+
+  add_index "product_options", ["product_id"], name: "index_product_options_on_product_id", using: :btree
+  add_index "product_options", ["values"], name: "index_product_options_on_values", using: :gin
+
+  create_table "product_variants", force: :cascade do |t|
+    t.integer  "product_id"
+    t.string   "title"
+    t.string   "slug"
+    t.integer  "seq",            default: 1
+    t.string   "sku"
+    t.string   "avatar"
+    t.integer  "status",         default: 0
+    t.text     "description"
+    t.datetime "publish_at"
+    t.integer  "price",          default: 0
+    t.integer  "shipping_price", default: 0
+    t.integer  "inventory",      default: -1
+    t.string   "tags",           default: [], array: true
+    t.hstore   "options",        default: {}
+    t.hstore   "properties",     default: {}
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "product_variants", ["product_id"], name: "index_product_variants_on_product_id", using: :btree
+  add_index "product_variants", ["seq"], name: "index_product_variants_on_seq", using: :btree
+  add_index "product_variants", ["slug"], name: "index_product_variants_on_slug", unique: true, using: :btree
+
   create_table "products", force: :cascade do |t|
     t.integer  "category_id"
     t.text     "shopify_code"
     t.string   "title"
     t.string   "caption"
+    t.integer  "seq",             default: 1
     t.string   "slug"
     t.string   "avatar"
+    t.string   "brand_model"
     t.integer  "status",          default: 0
     t.text     "description"
     t.text     "content"
     t.datetime "publish_at"
     t.integer  "price",           default: 0
     t.integer  "suggested_price", default: 0
+    t.integer  "shipping_price",  default: 0
     t.string   "currency",        default: "USD"
     t.string   "tags",            default: [],    array: true
     t.hstore   "properties",      default: {}
@@ -417,6 +454,7 @@ ActiveRecord::Schema.define(version: 20170321224025) do
   end
 
   add_index "products", ["category_id"], name: "index_products_on_category_id", using: :btree
+  add_index "products", ["seq"], name: "index_products_on_seq", using: :btree
   add_index "products", ["slug"], name: "index_products_on_slug", unique: true, using: :btree
   add_index "products", ["status"], name: "index_products_on_status", using: :btree
   add_index "products", ["tags"], name: "index_products_on_tags", using: :gin
@@ -439,6 +477,16 @@ ActiveRecord::Schema.define(version: 20170321224025) do
   end
 
   add_index "recipes", ["slug"], name: "index_recipes_on_slug", unique: true, using: :btree
+
+  create_table "terms", force: :cascade do |t|
+    t.string   "title"
+    t.string   "slug"
+    t.text     "content"
+    t.text     "aliases",    default: [], array: true
+    t.integer  "status",     default: 1
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "users", force: :cascade do |t|
     t.string   "name"
