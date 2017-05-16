@@ -3,14 +3,24 @@ class WorkoutSegment < ActiveRecord::Base
 	before_save :initialize_fields
 	before_save :insert_seq
 	before_save :parse_content
-	
+
 
 	before_destroy :update_seqs_on_destroy
 
-	belongs_to :workout 
-	
+	belongs_to :workout
+	has_many :workout_movements
+
 	def formatted_duration
 		sprintf( '%02d', self.duration / 60 ) + ':' + sprintf( '%02d', self.duration % 60 )
+	end
+
+	def full_title
+		"#{self.seq} #{self.title}".strip
+	end
+
+	def max_movement_seq
+		return 1 if self.workout_movements.empty?
+		self.workout_movements.maximum( :seq ) + 1
 	end
 
 	def to_s
@@ -23,7 +33,7 @@ class WorkoutSegment < ActiveRecord::Base
 		def initialize_fields
 			if self.workout.workout_type.nil?
 				self.workout.update( workout_type: self.segment_type )
-			end 
+			end
 
 			self.to_record = 'time'
 			self.to_record = 'reps' if self.segment_type == 'amrap'
@@ -55,10 +65,10 @@ class WorkoutSegment < ActiveRecord::Base
 						# duration entered in clock format e.g. '3:00'
 						duration = ( matches.captures[0].split(':')[0] * 60 ) + matches.captures[0].split(':')[1].to+i
 					else
-						# assume duration entered as '4 mins' or '30 sec' 
+						# assume duration entered as '4 mins' or '30 sec'
 						# we don't account for blended case e.g. 30:00 minutes
 						if matches.captures[1].match( /\Am/i )
-							duration = matches.captures[0].to_i * 60 
+							duration = matches.captures[0].to_i * 60
 						elsif matches.captures[1].match( /\As/i )
 							duration = matches.captures[0].to_i
 						end
@@ -72,26 +82,26 @@ class WorkoutSegment < ActiveRecord::Base
 					reps = rep_match.to_s.strip.split( /\s/ )
 					if reps.size > 1
 						reps = reps.inject(0){ |sum, i| sum + i.to_i }
-					else reps.size == 1 
+					else reps.size == 1
 						reps = reps.first.to_i
 					end
 
 					self.total_reps += reps
-					
+
 					movement_match = rep_match.post_match.match( /\A[^\d@rx]*/ ) # everything up to an @ or rx or a number
 					movement = movement_match.to_s.strip
-					
+
 					rx = movement_match.post_match.split( '/' )
 					m_rx = rx[0]
 					if m_rx.present?
 						m_rx.gsub!( '@', '' )
 						m_rx.strip!
-					end 
+					end
 					f_rx = rx[1]
 					if f_rx.present?
 						f_rx.strip!
 					elsif m_rx.present?
-						f_rx = m_rx 
+						f_rx = m_rx
 					end
 
 					term = movement.downcase.singularize.gsub( /\s+/, '' )
@@ -104,7 +114,7 @@ class WorkoutSegment < ActiveRecord::Base
 		end
 
 
-		
+
 
 
 		def update_seqs_on_destroy
