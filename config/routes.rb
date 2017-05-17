@@ -33,6 +33,11 @@ Rails.application.routes.draw do
 		get :preview, on: :member 
 	end
 
+	resources :terms, only: :index
+	resources :term_admin do 
+		delete :empty_trash, on: :collection
+	end
+
 	resources :workouts
 	resources :workout_admin
 

@@ -1,0 +1,63 @@
+
+.container-fluid
+	.row
+		.col-xs-10
+			%ul.breadcrumb
+				%li
+					= link_to 'Admin', swell_media.admin_index_path
+				%li
+					%strong
+						Term Admin
+						= "(#{pluralize @terms.total_count, 'Term'})"
+
+		.col-xs-2
+			%a.btn.btn-success{ data: { toggle: :modal, target: '#new_term' } }
+				%i.fa.fa-plus-square
+				New
+
+	.row
+		.col-xs-6
+			
+			= raw paginate @terms
+		.col-xs-6
+			= form_tag term_admin_index_path, method: :get, class: 'pull-right form-inline' do
+				=# select_tag :status, options_from_collection_for_select( Movement.statuses, :first, :first, params[:status] ), { prompt: "-- All --", class: 'form-control' }
+				= text_field_tag :q, params[:q], class: 'form-control'
+				= submit_tag 'Search', class: 'btn btn-primary'
+				= link_to 'Clear', term_admin_index_path, class: 'btn btn-default btn-xs'
+
+	.row
+		%table.table.table-striped
+			%thead
+				%th
+					Term
+				%th
+					Aliases
+				%th
+					Status
+
+
+			%tbody
+				- @terms.each do |term|
+					%tr
+						%td
+							= link_to term.title, edit_term_admin_path( term )
+						%td
+							= term.aliases_csv
+						%td
+							- if term.published?
+								.badge{ class: term.status }
+									Live
+							- elsif term.draft?
+								.badge{ class: term.status }
+									Draft
+							- elsif term.active?
+								.badge{ class: 'pending' }
+									Pending
+							- else
+								.badge{ class: term.status }
+									= term.status
+
+
+
+= render 'new_modal'
