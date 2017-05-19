@@ -1,16 +1,18 @@
 Rails.application.routes.draw do
 
-	resources :cards do 	
+	resources :cards do
 		get :success, on: :member
 	end
-	
+
 	resources :dash, only: :index
 
 	resources :equipment
 	resources :equipment_admin
 
+	resources :feed, only: :index
+
 	resources :inspiration_admin do
-		get :preview, on: :member 
+		get :preview, on: :member
 	end
 
 	resources :movements
@@ -30,11 +32,11 @@ Rails.application.routes.draw do
 
 	resources :recipes
 	resources :recipe_admin do
-		get :preview, on: :member 
+		get :preview, on: :member
 	end
 
 	resources :terms, only: :index
-	resources :term_admin do 
+	resources :term_admin do
 		delete :empty_trash, on: :collection
 	end
 
@@ -59,7 +61,7 @@ Rails.application.routes.draw do
 	devise_for :users, :controllers => { :omniauth_callbacks => 'oauth', :registrations => 'registrations', :sessions => 'sessions' }
 
 	#mount SwellEcom::Engine, :at => '/'
-	
+
 	mount SwellMedia::Engine, :at => '/'
 
 end

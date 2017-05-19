@@ -1,0 +1,28 @@
+- if ( img = result.try(:avatar_url) ).present?
+	%a{ href: result.url }
+		%img.webfeedsFeaturedVisual{ src: img.gsub(/^\/\//, 'http://') }
+- if ( content = sanitize( result.try(:content) || result.try(:description) || '', tags: %w(strong em a ul ol li blockquote p br), attributes: %w(href) ).gsub(/\s*<p>(<br>|<br\/>|&nbsp;|\s)*<\/p>\s*/i, '') ).present? && ( paragraphs = content.split(/<\/p>/i).collect{|string| "#{string.strip}</p>".strip} ).present?
+	- if paragraphs.count > 3
+		= raw paragraphs[0..2].join('')
+	- elsif paragraphs.count > 2
+		= raw paragraphs[0..1].join('')
+	- else
+		= raw paragraphs.first
+%p{ style: 'text-align: center;' }
+	%a{ href: result.url }
+		continue reading
+
+%br
+-# if args[:related] != false && ( recommended = QueryService.types([:user_articles,:lists,:reviews]).where( published?: true, editorialized: true, public_content?: true, tags: result.related_tags ).sort(:record_score).page(1).per(3) ).present?
+	%p
+		%b
+			Like what you see? How about some more AMRAPLife goodness, right here?
+	- recommended.each do |result|
+		%p
+			%a{ href: result.url }=result.title.truncate(50)
+			-# by #{result.user.full_name.split(' ').first}
+- unless args[:upsell] == false
+	%p
+		Like what you see?
+		%a{ href: swell_media.root_url() } Visit AMRAPLife
+		for more content chock-full of great health and lifestyle tips sprinkled with inspiration and cool stuff!
