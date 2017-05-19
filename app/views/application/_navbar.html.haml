@@ -4,6 +4,7 @@
 			%a{ href: '/' }
 				= image_tag 'amrap_logo_wht.png', width: 244, height: 56, style: 'border-left: 5px solid #9c27b0;border-right: 5px solid #9c27b0;'
 		%ul.nav.nav-pages.hidden-xs
+
 			%li{ style: 'font-size:110%;' }
 				%a{ href: 'http://facebook.com/amraplife', target: '_new' }
 					%i.fa.fa-facebook-square
@@ -16,7 +17,9 @@
 			%li{ style: 'font-size:110%;' }
 				%a{ href: 'https://www.instagram.com/amrap_life/', target: '_new' }
 					%i.fa.fa-instagram
-
+			%li{ style: 'font-size:110%;' }
+				%a.brand-color-dark{:href => main_app.feed_index_url( source: 'website', v: '1.0', format: 'rss' ), :target => "blank"}
+					%i.fa.fa-rss-square
 			%li
 				%a{ href: '/about' }
 					About

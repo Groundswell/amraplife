@@ -2,9 +2,11 @@ class FeedController < ApplicationController
 
 	def index
 
-		@url = main_app.feed_index_url()
 		@title = 'AMRAPLife'
 		@description = 'Chock-full of great recipes and health tips sprinkled with inspiration and cool stuff.'
+		@source = 'Feedly' if (request.user_agent || '').include?('Feedly/')
+		@source = params[:source] if params[:source].present?
+		@url = main_app.feed_index_url(source: @source, v: params[:version] || '1.0')
 
 		@articles = SwellMedia::Article.published.order(publish_at: :desc).page(params[:page]).per(100).to_a
 		@first_article = @articles.first

@@ -37,7 +37,11 @@
 								%a{ href: 'https://www.instagram.com/amrap_life/', target: '_new' }
 									%i.fa.fa-instagram{ style: 'font-size:110%;' }
 									Instagram
-			
+							%li
+								%a{:href => "http://cloud.feedly.com/#subscription%2Ffeed%2F#{CGI.escape( main_app.feed_index_url( source: 'feedly', v: '1.0' ))}", :target => "blank"}
+									%img#feedlyFollow{:alt => "follow us in feedly", :src => "http://s3.feedly.com/img/follows/feedly-follow-logo-black_2x.png", style: 'height: 1.2em;opacity: 0.4;vertical-align: middle'}
+									Feedly
+
 			-#.widget.col-xs-6.col-sm-4
 
 			.widget.col-xs-12.col-sm-6
