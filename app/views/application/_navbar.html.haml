@@ -25,9 +25,15 @@
 					Contact
 		%ul.nav.nav-icons
 			%li
-				%a.btn-icon
-					%span.search-toggled-out-icon
-						%i.fa.fa-search
+				%a.btn-icon{"data-toggle" => ".header-navbar-inner", "data-toggle-class" => "search-toggled-in", :href => "#"}
+					%span.search-toggled-out-icon.fa.fa-search
+					%span.search-toggled-in-icon.fa.fa-times
+		.search-wrapper.js-stoppropagation
+			.search-wrapper-inner
+				= form_tag main_app.products_path(), method: :get do
+					%input{:placeholder => "search ... ", name: :query, :type => "text", :value => ""}/
+					%button.btn-icon{:type => "submit"}
+						%span.fa.fa-search
 		%ul.nav.navbar-nav
 			%li.nav-all.pull-right.full-subnav-wrapper.hidden-md.hidden-lg
 				%a{"data-toggle" => "li", :href => "#"}

@@ -46,6 +46,10 @@
 
 
 
+				- if params[:query].present?
+					%div
+						Showing results for "#{params[:query].truncate(100)}"
+
 				= raw paginate @products
 
 				.row.grid
