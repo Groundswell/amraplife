@@ -1,7 +1,7 @@
 %aside.widget
 	= render 'application/adsense_sidebar'
 
-	- if controller_name == 'recipes'
+	- if controller_name == 'recipes' && action_name == 'show'
 		%h2.widget-title.ribbon
 			%span Featured Recipes
 		.entries.row{ style: 'margin-bottom: 1em;' }
