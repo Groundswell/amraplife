@@ -41,7 +41,7 @@
 			= render 'application/fb_comments'
 
 
-		- cache( "show-#{@recipe.cache_key}", expires_in: 1.day ) do
+		- cache( "more-great-recipes", expires_in: 1.day ) do
 			.ribbon.ribbon-highlight{ style: 'margin-top: 5em;' }
 				%ol.breadcrumb.ribbon-inner
 					%li.active
