@@ -14,6 +14,8 @@ class RecipesController < ApplicationController
 	def show
 		@media = @recipe
 
+		@more_recipes = Recipe.published.order('random()').limit(5)
+
 		set_page_meta( @recipe.page_meta )
 	end
 

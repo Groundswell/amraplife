@@ -1,6 +1,6 @@
 #content.content.section.row
-	- cache( "show-#{@recipe.cache_key}" ) do
-		.col-md-8.bg-base.col-lg-8.col-xl-9
+	.col-md-8.bg-base.col-lg-8.col-xl-9
+		- cache( "show-#{@recipe.cache_key}" ) do
 			.ribbon.ribbon-highlight
 				%ol.breadcrumb.ribbon-inner
 					%li
@@ -39,6 +39,20 @@
 				.clearfix
 
 			= render 'application/fb_comments'
+
+
+		- cache( "show-#{@recipe.cache_key}", expires_in: 1.day ) do
+			.ribbon.ribbon-highlight{ style: 'margin-top: 5em;' }
+				%ol.breadcrumb.ribbon-inner
+					%li.active
+						More Great Recipes
+			.entries
+				- @more_recipes.each do |recipe|
+					= render 'row', recipe: recipe
+			.text-center{ style: 'margin: 0 0 1em 0;' }
+				%a.btn.btn-default{ href: main_app.recipes_path() } Even More Recipes
+
+
 
 	/ /.col-md-8.col-lg-8.col-xl-9
 	.sidebar.col-md-4.col-lg-4.col-xl-3

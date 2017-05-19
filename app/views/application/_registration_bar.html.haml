@@ -15,9 +15,9 @@
 					.col-xs-12.col-lg-6.col-lg-offset-3.text-center{ style: 'font-size: 1em;margin-bottom: 1em;line-height: 1.3em' }
 
 						- if controller_name == 'recipes'
-							If you've enjoyed this recipe, please consider passing it along using the share buttons above. And consider joining our email list. We'll send you once-in-a-while updates chock-full of great health and lifestyle tips sprinkled with inspiration and discounts on cool stuff!
+							If you've enjoyed this recipe, please consider passing it along using the share buttons. And consider joining our email list. We'll send you once-in-a-while updates chock-full of great health and lifestyle tips sprinkled with inspiration and discounts on cool stuff!
 						- else
-							Sign up to see more great articles and recipes.
+							If you've enjoyed this, please consider passing it along using the share buttons. And consider joining our email list. We'll send you once-in-a-while updates chock-full of great health and lifestyle tips sprinkled with inspiration and discounts on cool stuff!
 			.text-center
 				= form_for SwellMedia::Optin.new, url: swell_media.optins_path, html: { role: :form, class: 'form-inline' }  do |f|
 					.form-group{ style: 'min-width: 33vw;' }

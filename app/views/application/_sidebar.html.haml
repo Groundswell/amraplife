@@ -4,11 +4,12 @@
 	- if controller_name == 'recipes'
 		%h2.widget-title.ribbon
 			%span Featured Recipes
-		.entries.row
+		.entries.row{ style: 'margin-bottom: 1em;' }
 			- Recipe.published.order( publish_at: :desc ).limit( 5 ).each do |featured_recipe|
 				%article.type-post.style-media-list.media.col-sm-6.col-md-12
 					/ to disable lazy loading, remove data-src and data-src-retina
-					%img.media-object.pull-left{:alt => "", "data-src" => featured_recipe.avatar, "data-src-retina" => featured_recipe.avatar, :height => "80", :src => image_path('placeholder.gif'), :width => "80"}/
+					%a.media-object.pull-left{:href => featured_recipe.url, :rel => "bookmark"}
+						%img{:alt => "", "data-src" => featured_recipe.avatar, "data-src-retina" => featured_recipe.avatar, :height => "80", :src => image_path('placeholder.gif'), :width => "80"}/
 					/ fallback for no javascript browsers
 					%noscript
 						%img{:alt => "", :src => featured_recipe.avatar}/
@@ -30,7 +31,8 @@
 		- SwellMedia::Article.published.order( publish_at: :desc ).limit( 5 ).each do |featured_article|
 			%article.type-post.style-media-list.media.col-sm-6.col-md-12
 				/ to disable lazy loading, remove data-src and data-src-retina
-				%img.media-object.pull-left{:alt => "", "data-src" => featured_article.avatar, "data-src-retina" => featured_article.avatar, :height => "80", :src => image_path('placeholder.gif'), :width => "80"}/
+				%a.media-object.pull-left{:href => featured_article.url, :rel => "bookmark"}
+					%img{:alt => "", "data-src" => featured_article.avatar, "data-src-retina" => featured_article.avatar, :height => "80", :src => image_path('placeholder.gif'), :width => "80"}/
 				/ fallback for no javascript browsers
 				%noscript
 					%img{:alt => "", :src => featured_article.avatar}/
@@ -48,13 +50,14 @@
 									=featured_article.category.name
 
 	- if controller_name != 'recipes'
-		%h2.widget-title.ribbon
+		%h2.widget-title.ribbon{ style: 'margin-top: 1em;' }
 			%span Featured Recipes
 		.entries.row
 			- Recipe.published.order( publish_at: :desc ).limit( 5 ).each do |featured_recipe|
 				%article.type-post.style-media-list.media.col-sm-6.col-md-12
 					/ to disable lazy loading, remove data-src and data-src-retina
-					%img.media-object.pull-left{:alt => "", "data-src" => featured_recipe.avatar, "data-src-retina" => featured_recipe.avatar, :height => "80", :src => image_path('placeholder.gif'), :width => "80"}/
+					%a.media-object.pull-left{:href => featured_recipe.url, :rel => "bookmark"}
+						%img{:alt => "", "data-src" => featured_recipe.avatar, "data-src-retina" => featured_recipe.avatar, :height => "80", :src => image_path('placeholder.gif'), :width => "80"}/
 					/ fallback for no javascript browsers
 					%noscript
 						%img{:alt => "", :src => featured_recipe.avatar}/
