@@ -11,6 +11,7 @@
  * file per style scope.
  *
  *= require ./custom/application
+ *= require ./custom/registration-bar
  *= require custom/jquery.fancybox
  *= require_self
  */
@@ -26,7 +27,7 @@ ul.crossfit-terms{
 .crossfit-terms li {
 	margin: 1em auto;
 }
-.crossfit-terms p{ 
+.crossfit-terms p{
 	margin-top: 1em;
 }
 .anchor{

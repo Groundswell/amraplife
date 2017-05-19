@@ -1,0 +1,25 @@
+- unless current_user.present?
+	.registration-bar.dismissible-parent.registration-bar-with-addthis
+		%a.registration-bar-dismiss{ href: '#', data: { dismiss: 'dismissible-parent' } }
+			%i.fa.fa-times
+		.text-center
+			%h3{ style: 'margin-bottom: 0.5em;' }
+				.registration-bar-title.hidden-xs{ style: 'font-size: 1.5em;line-height: 1.3em;font-weight:lighter;' }
+					There's more to see and do...
+				.registration-bar-title.hidden-sm.hidden-md.hidden-lg{ style: 'font-size: 1.1em;line-height: 1.4em;font-weight:lighter;' }
+					There's more to see
+					%span{ style: 'white-space: nowrap;' } and do...
+
+			.container
+				.row
+					.col-xs-12.text-center{ style: 'font-size: 1em;margin-bottom: 1em;line-height: 1.3em' }
+						Sign up to see more great articles and recipes.
+			.text-center
+				= form_for SwellMedia::Optin.new, url: swell_media.optins_path, html: { role: :form, class: 'form-inline' }  do |f|
+					.form-group{ style: 'min-width: 33vw;' }
+						= f.text_field :email, placeholder: 'Your Email', class: 'form-control'
+					= f.submit 'Join', class: 'btn btn-info'
+			-# %div
+				%a.btn.btn-your-answer{ href: '#', data: { dismiss: 'dismissible-parent' }, style: 'width: 40vw;max-width: 150px;border-radius: 5px;color: #fff;' } CONTINUE
+				&nbsp;
+				%a.btn.btn-color.btn-info.btn-your-answer{ href: '#', data: { toggle: :modal, target: '#registration_modal' }, style: 'width: 40vw;max-width: 150px;border-radius: 5px;' } JOIN US

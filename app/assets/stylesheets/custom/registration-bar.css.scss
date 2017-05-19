@@ -1,0 +1,73 @@
+
+.registration-bar
+{
+  z-index: 500;
+  position: fixed;
+  right: 0;
+  bottom: -100%;
+  left: 0;
+  background: no-repeat center rgba(43, 48, 62, 0.95);
+  background-size: cover;
+  color: #eee;
+  padding: 1em;
+  -webkit-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
+  -ms-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+}
+.registration-bar h3
+{
+  font-weight: bold;
+  margin: 0.2em 0 0.75em 0;
+  line-height: 1.3em;
+  font-size: 20px;
+  color: #fff;
+}
+.registration-bar-title.double-line-ellipsis
+{
+  overflow:hidden;
+  text-overflow: ellipsis;
+  line-height: 28px;
+  height: auto;
+  max-height: 58px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.registration-bar-with-addthis
+{
+  padding: 1em 1em 60px 1em;
+}
+.registration-bar-dismiss
+{
+  position: absolute;
+  top: 0.3em;
+  right: 0.5em;
+  color: #fff;
+  font-size: 1.3em;
+}
+.registration-bar-dismiss:hover
+{
+  color: #f3f3f3;
+}
+body.window-page-0_5-plus .registration-bar
+{
+  bottom: 0;
+}
+
+@media (min-width: 980px) {
+  .registration-bar h3
+  {
+	font-size: 25px;
+  }
+  .registration-bar-title
+  {
+	line-height: 32px;
+	max-height: 64px;
+  }
+  .registration-bar, .registration-bar.registration-bar-with-addthis
+  {
+	padding: 5vh 1em;
+  }
+}

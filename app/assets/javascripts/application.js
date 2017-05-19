@@ -16,4 +16,5 @@
 //= require ./plugins/jquery.elevatezoom
 //= require ./plugins/fancybox/jquery.fancybox
 //= require ./custom/application
+//= require ./custom/registration-bar
 //= require_self
