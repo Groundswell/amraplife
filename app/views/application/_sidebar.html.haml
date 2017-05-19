@@ -1,6 +1,29 @@
 %aside.widget
 	= render 'application/adsense_sidebar'
-	
+
+	- if controller_name == 'recipes'
+		%h2.widget-title.ribbon
+			%span Featured Recipes
+		.entries.row
+			- Recipe.published.order( publish_at: :desc ).limit( 5 ).each do |featured_recipe|
+				%article.type-post.style-media-list.media.col-sm-6.col-md-12
+					/ to disable lazy loading, remove data-src and data-src-retina
+					%img.media-object.pull-left{:alt => "", "data-src" => featured_recipe.avatar, "data-src-retina" => featured_recipe.avatar, :height => "80", :src => image_path('placeholder.gif'), :width => "80"}/
+					/ fallback for no javascript browsers
+					%noscript
+						%img{:alt => "", :src => featured_recipe.avatar}/
+					.media-body
+						%h3.entry-title
+							%a{:href => featured_recipe.url, :rel => "bookmark"}=featured_recipe.title
+						.entry-meta
+							%span.entry-date
+								on
+								%time{:datetime => featured_recipe.publish_at.strftime("%B %e %Y")}=featured_recipe.publish_at.strftime("%B %e %Y")
+							%span.category
+								In
+								%a{:href => main_app.recipes_path() }
+									Recipes
+
 	%h2.widget-title.ribbon
 		%span Featured Posts
 	.entries.row
@@ -23,6 +46,29 @@
 								In
 								%a{:href => swell_media.browse_index_path( category_id: featured_article.category.slug) }
 									=featured_article.category.name
+
+	- if controller_name != 'recipes'
+		%h2.widget-title.ribbon
+			%span Featured Recipes
+		.entries.row
+			- Recipe.published.order( publish_at: :desc ).limit( 5 ).each do |featured_recipe|
+				%article.type-post.style-media-list.media.col-sm-6.col-md-12
+					/ to disable lazy loading, remove data-src and data-src-retina
+					%img.media-object.pull-left{:alt => "", "data-src" => featured_recipe.avatar, "data-src-retina" => featured_recipe.avatar, :height => "80", :src => image_path('placeholder.gif'), :width => "80"}/
+					/ fallback for no javascript browsers
+					%noscript
+						%img{:alt => "", :src => featured_recipe.avatar}/
+					.media-body
+						%h3.entry-title
+							%a{:href => featured_recipe.url, :rel => "bookmark"}=featured_recipe.title
+						.entry-meta
+							%span.entry-date
+								on
+								%time{:datetime => featured_recipe.publish_at.strftime("%B %e %Y")}=featured_recipe.publish_at.strftime("%B %e %Y")
+							%span.category
+								In
+								%a{:href => main_app.recipes_path() }
+									Recipes
 
 %script{ src: "//z-na.amazon-adsystem.com/widgets/onejs?MarketPlace=US&adInstanceId=9b863990-4462-4a7a-867d-9c30c6fb51cd" }
 
