@@ -8,6 +8,11 @@ $( document ).ready ->
 				$(window).trigger('scroll.amraplife')
 		, 250);
 
+
+	$(document).on 'click', '[data-dismiss=dismissible-parent]', ->
+		$(this).parents('.dismissible-parent').addClass('dismiss')
+		return false
+
 	$(window).on 'scroll.amraplife', ()->
 		window_page = $(window).scrollTop() / $(window).height()
 		# $('body').attr("class", ($('body').attr("class") || '').replace(/\s*window\-page\-\d+(\-plus)?/,'') ).addClass('window-page-'+Math.floor(window_page))
