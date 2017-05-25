@@ -28,6 +28,10 @@ ul.crossfit-terms{
 	margin: 1em auto;
 }
 .crossfit-terms p{
+	display: inline;
+}
+.crossfit-terms p + p{
+	display: block;
 	margin-top: 1em;
 }
 .anchor{

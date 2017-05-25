@@ -5,6 +5,7 @@ class TermsMigration < ActiveRecord::Migration
 		create_table :terms do |t|
 			t.string	:title
 			t.string	:slug
+			t.text 		:description
 			t.text 		:content
 			t.text		:aliases, array: true, default: []
 			t.integer 	:status, default: 1

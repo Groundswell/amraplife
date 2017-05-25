@@ -22,6 +22,7 @@ SitemapGenerator::Sitemap.create do
 	add '/equipment'
 	add '/store'
 	add '/recipes'
+	add '/crossfit-terms'
 	#add '/places'
 	#add '/workouts'
 	SwellMedia::Media.published.each do |media|

@@ -1,1 +1,61 @@
-index.html.haml
+#content.content.section.row
+	.col-md-8.bg-base.col-lg-8.col-xl-9
+		.ribbon.ribbon-highlight
+			%ol.breadcrumb.ribbon-inner
+				%li
+					%a{ href: swell_media.root_path() }
+						Home
+				%li.active
+					CrossFit Terms
+		.entries
+			%h1
+				The Ultimate Guide to CrossFit Terms
+
+			.addthis_inline_share_toolbox.hidden-xs.hidden-sm
+
+			%p
+				CrossFit is an entire subculture onto itself. Walking into a CrossFit gym can be intimidating enough without having to know a TABATA from an EMOM. CrossFit is filled with all kinds of crazy jargon that can be confusing and disorienting to newcomers. More importantly, if you don't have a grasp on some of the cues your coach is providing, you can get yourself injured. Luckily, we've got you covered. Here is the most comprehensive guide to CrossFit-speak ever compiled. We've got over 300 terms (and growing!) defined for you. If you feel we've missed something, or there's a term you still don't understand, please 
+				%a{ href: '#comments' }
+					leave a comment below
+				or
+				%a{ href: '/contacts/new' }
+					drop us a line 
+				and let us know!
+
+			.anchor#top
+			%a{ href: '#a', style: 'margin-left: 0.66em;' }
+				A
+			%a{ href: '#b', style: 'margin-left: 0.66em;' }
+				B
+			%a{ href: '#c', style: 'margin-left: 0.66em;' }
+				C
+			%a{ href: '#d', style: 'margin-left: 0.66em;' }
+				D
+			%a{ href: '#e', style: 'margin-left: 0.66em;' }
+				E
+			%a{ href: '#f', style: 'margin-left: 0.66em;' }
+
+			-# form_tag terms_path, method: :get, class: 'form-horizontal' do 
+				.row
+					.col-sm-5.col-sm-offset-2
+						.form-group
+							= text_field_tag :q, params[:q], style: 'form-control'
+					.col-sm-2
+						.form-group
+							= submit_tag 'Search', class: 'btn'
+
+
+			%ul.crossfit-terms
+				.anchor#a
+				- @terms.each do |term|
+					.anchor{ id: term.slug }
+					%li
+						%strong 
+							= "#{term.title}:"
+						- if term.aliases.present?
+							( aka:
+							%strong
+								= term.aliases_csv
+							)
+						= raw term.content
+
