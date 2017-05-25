@@ -12,7 +12,9 @@
 						Edit
 						= @term.title
 		.col-xs-2
-			
+			%a.btn.btn-success{ data: { toggle: :modal, target: '#new_term' } }
+				%i.fa.fa-plus-square
+				New
 
 	= form_for @term, url: term_admin_path( @term ) do |f|
 		.row
@@ -41,3 +43,5 @@
 
 					%hr
 					= link_to 'Back', term_admin_index_path
+
+= render 'new_modal'
