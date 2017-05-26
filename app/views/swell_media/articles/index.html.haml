@@ -1,21 +1,6 @@
 
 - cache( "articles/index" ) do
-	%section.lightSection.clearfix.pageHeader
-		.container
-			.row
-				.col-xs-6
-					.page-title
-						%h2
-							AMRAP Blog
-				.col-xs-6
-					%ol.breadcrumb.pull-right
-						%li
-							%a{:href => swell_media.root_path()} Home
-						%li.active{:title => "About Us" }
-							Blog
-
-
-	%section.mainContent.clearfix.blogPage
+	%section.clearfix.blogPage{ style: 'padding-top: 50px;' }
 		.container
 			.row
 				.col-md-9.col-sm-8.col-xs-12
