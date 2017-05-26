@@ -1,19 +1,30 @@
-#content.content.section.row
-	.col-md-8.bg-base.col-lg-8.col-xl-9
-		.ribbon.ribbon-highlight
-			%ol.breadcrumb.ribbon-inner
-				%li
-					%a{ href: '/' }
-						Home
-				%li.active
-					Articles
 
-		.entries
-			= raw paginate @articles
+- cache( "articles/index" ) do
+	%section.lightSection.clearfix.pageHeader
+		.container
+			.row
+				.col-xs-6
+					.page-title
+						%h2
+							AMRAP Blog
+				.col-xs-6
+					%ol.breadcrumb.pull-right
+						%li
+							%a{:href => swell_media.root_path()} Home
+						%li.active{:title => "About Us" }
+							Blog
+
+
+	%section.mainContent.clearfix.blogPage
+		.container
+			.row
+				.col-md-9.col-sm-8.col-xs-12
+
+					= raw paginate @articles
 			
-			- @articles.each do |article|
-				= render 'row', article: article
+					- @articles.each do |article|
+						= render 'row', article: article
 
 	
-	.sidebar.col-md-4.col-lg-4.col-xl-3
-		= render 'application/sidebar'
+				.sideBar.col-md-3.col-sm-4.col-xs-12
+					= render 'application/sidebar'

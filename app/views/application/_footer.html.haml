@@ -1,77 +1,116 @@
-#footer.footer-area
-	.footer-top.container
+.footer.clearfix
+	.container
 		.row
-			.widget.col-xs-6.col-sm-6
-				%h4.widget-title
-					Information
-				.row
-					.col-sm-6
-						%ul.entries.links
-							%li
-								%a{ href: '/about' }
-									About
-							%li
-								%a{ href: '/blog' }
-									Blog
-							%li
-								%a{ href: '/contacts/new' }
-									Contact
-							%li
-								%a{ href: '/admin' }
-									Admin
-					.col-sm-6
-						%ul.entries.links
-							%li
-								%a{ href: 'http://facebook.com/amraplife', target: '_new' }
-									%i.fa.fa-facebook-square{ style: 'font-size:110%;' }
-									Facebook
-							%li
-								%a{ href: 'http://twitter.com/amraplife', target: '_new' }
-									%i.fa.fa-twitter-square{ style: 'font-size:110%;' }
-									Twitter
-							%li
-								%a{ href: 'http://pinterest.com/amraplife', target: '_new' }
-									%i.fa.fa-pinterest-square{ style: 'font-size:110%;' }
-									Pinterest
-							%li
-								%a{ href: 'https://www.instagram.com/amrap_life/', target: '_new' }
-									%i.fa.fa-instagram{ style: 'font-size:110%;' }
-									Instagram
-							%li
-								%a{:href => "http://cloud.feedly.com/#subscription%2Ffeed%2F#{CGI.escape( main_app.feed_index_url( source: 'feedly', v: '1.0' ))}", :target => "blank"}
-									%img#feedlyFollow{:alt => "follow us in feedly", :src => "http://s3.feedly.com/img/follows/feedly-follow-logo-black_2x.png", style: 'height: 1.2em;opacity: 0.4;vertical-align: middle'}
-									Feedly
+			.col-sm-2.col-xs-12
+				.footerLink
+					%h5
+						Stuff
+					%ul.list-unstyled
+						%li
+							%a{ href: '/about' }
+								About
+						%li
+							%a{ href: '/blog' }
+								Blog
+						%li
+							%a{ href: '/contacts/new' }
+								Contact
+						%li
+							%a{ href: '/admin' }
+								Admin
+			.col-sm-2.col-xs-12
+				.footerLink
+					%h5
+						Shop
+					%ul.list-unstyled
+						%li
+							%a{ href: '' }
+								Women
+						%li
+							%a{ href: '' }
+								Men
+						%li
+							%a{ href: '' }
+								Hats
+						%li
+							%a{ href: '' }
+								Shirts
+						%li
+							%a{ href: '' }
+								Accessories
+			.col-sm-2.col-xs-12
+				.footerLink
+					%h5
+						Get in Touch
+					%ul.list-unstyled
+						%li
+							%a{ href: 'http://facebook.com/amraplife', target: '_new' }
+								.fa.fa-facebook{ style: 'font-size:115%;' }
+								Facebook
+						%li
+							%a{ href: 'https://www.instagram.com/amrap_life/', target: '_new' }
+								.fa.fa-instagram{ style: 'font-size:115%;' }
+								Instagram
+						%li
+							%a{ href: 'http://pinterest.com/amraplife', target: '_new' }
+								.fa.fa-pinterest{ style: 'font-size:115%;' }
+								Pinterest
+						%li
+							%a{ href: 'http://twitter.com/amraplife', target: '_new' }
+								.fa.fa-twitter{ style: 'font-size:115%;' }
+								Twitter
+						%li
+							%a{:href => main_app.feed_index_url( source: 'website', v: '1.0', format: 'rss' ), :target => "blank"}
+								.fa.fa-rss{ style: 'font-size:115%;' }
+								Feedly
 
-			-#.widget.col-xs-6.col-sm-4
+			.col-sm-6.col-xs-12
+				.newsletter.clearfix
+					%h4 Newsletter
+					%h3 Sign Up Now
+					%p
+						Enter your email address and get notified about new products. Don't worry - we hate spam too!
+					.input-group
+						%input{ type: "text", class: "form-control", placeholder: "your email address", 'aria-describedby' => "basic-addon2" }
+						%a{ href: "#", class: "input-group-addon", id: "basic-addon2" }
+							Go
+							%i.fa.fa-chevron-right
 
-			.widget.col-xs-12.col-sm-6
-				%h4.widget-title
-					Subscribe
+.copyRight.clearfix
+	.container
+		.row
+			.col-sm-7.col-xs-12
 				%p
-					Get new product announcements, helpful tips for getting the most out of life, and crazy discounts on workout apparel.
-				= render 'swell_media/optins/form'
+					©
+					= Time.now.year
+					= ENV['APP_NAME']
+					All Rights Reserved
+				
 
-	.footer-bottom
-		.container.aligncenter
-			%p
-				©
-				= Time.now.year
-				= ENV['APP_NAME']
-				All Rights Reserved
+			.col-sm-5.col-xs-12
+				%ul.list-inline
+					%li
+						= image_tag "app_theme/home/footer/card1.png"
+					%li
+						= image_tag "app_theme/home/footer/card2.png"
+					%li
+						= image_tag "app_theme/home/footer/card3.png"
+					%li
+						= image_tag "app_theme/home/footer/card4.png"
 
-			%p
-				AMRAP Life is hand-crafted with Loving Kindness by Groundswell Enterprises, LLC in Del Mar, CA
+.postFooter.clearfix{ style: 'margin-top:1em;' }
+	.container
+		.row
+			.col-sm-7.col-xs-12
+				%p
+					AMRAP Life is hand-crafted with Loving Kindness by Groundswell Enterprises, LLC in Del Mar, CA
 
-			%p
-				AMRAP Life &trade;, Live AMRAP &trade;, and Life is a Team Sport &trade;, are trademarks of Groundswell Enterprises, LLC
+				%p
+					AMRAP Life &trade;, Live AMRAP &trade;, and Life is a Team Sport &trade;, are trademarks of Groundswell Enterprises, LLC
+			.col-sm-5.col-xs-12
+				%p.small{ style: 'font-size:85%;' }
+					= SwellMedia.app_name
+					is a participant in the Amazon Services LLC Associates Program, an affiliate advertising program designed to provide a means for us to earn fees by linking to Amazon.com and affiliated sites.
 
-			%hr{ style: 'border-color: #999' }
-			%p.small
-				= SwellMedia.app_name
-				is a participant in the Amazon Services LLC Associates Program, an affiliate advertising program designed to provide a means for us to earn fees by linking to Amazon.com and affiliated sites.
-			%br
-			%br
-			%br
 
-%script{:src => "//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-4e3df87108d6d523", :type => "text/javascript"}
-= render 'application/shopify_cart'
+

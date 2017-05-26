@@ -16,6 +16,16 @@
  *= require_self
  */
 
+.navbar-main{
+	padding-top: 30px;
+	padding-bottom: 30px;
+}
+.navbar-default .navbar-collapse li a {
+  font-size: 16px;
+}
+
+
+
 .entries a {
 	color: #428bca;
 	text-decoration: underline;

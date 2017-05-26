@@ -1,0 +1,94 @@
+.header.clearfix
+	.topBar
+		.container
+			.row
+				.col-md-6.col-sm-5.hidden-xs
+					%ul.list-inline
+						%li
+							%a{ href: 'http://facebook.com/amraplife', target: '_new' }
+								.fa.fa-facebook
+						%li
+							%a{ href: 'https://www.instagram.com/amrap_life/', target: '_new' }
+								.fa.fa-instagram
+						%li
+							%a{ href: 'http://pinterest.com/amraplife', target: '_new' }
+								.fa.fa-pinterest
+						%li
+							%a{ href: 'http://twitter.com/amraplife', target: '_new' }
+								.fa.fa-twitter
+						%li
+							%a{:href => main_app.feed_index_url( source: 'website', v: '1.0', format: 'rss' ), :target => "blank"}
+								.fa.fa-rss
+
+				.col-md-6.col-sm-7.col-xs-12
+					%ul.list-inline.pull-right.top-right
+						%li.account-login
+							%span
+								%a{ href: '.login-modal', data: { toggle: "modal" } }
+									Log in
+									%small
+										or
+								%a{ href: '#signup', data: { toggle: "modal" } } 
+									Create an account
+						%li.searchBox
+							%a{ href: '' }
+								%i.fa.fa-search
+							%ul.dropdown-menu.dropdown-menu-right
+								%li
+									%span.input-group
+										%input.form-control{ type: :text, placeholder: 'Search...'}
+										%button.input-group-addon{ type: :submit }
+											Submit
+						%li.dropdown.cart-dropdown
+							%a.dropdown-toggle{ href: "javascript:void(0)", data: { toggle: "dropdown" } }
+								%i.fa.fa-shopping-cart
+								0
+							%ul.dropdown-menu.dropdown-menu-right
+								%li
+									Items in Your Cart
+
+
+	%nav.navbar.navbar-main.navbar-default{ role: 'navigation' }
+		.container
+			.navbar-header
+				%button.navbar-toggle{ type: "button", data: { toggle: "collapse", target: ".navbar-ex1-collapse" } }
+					%span.sr-only
+						Toggle navigation
+					%span.icon-bar
+					%span.icon-bar
+					%span.icon-bar
+				%a.navbar-brand{ href: '/' }
+					= image_tag 'amrap_logo_blk.png'
+			
+			.collapse.navbar-collapse.navbar-ex1-collapse
+				%ul.nav.navbar-nav.navbar-right
+					%li
+						%a{ href: '/store' }
+							Shop
+					%li
+						%a{ href: '/articles' }
+							Blog
+					%li
+						%a{ href: '/recipes' }
+							Recipes
+					%li
+						%a{ href: '/about' }
+							About
+					%li.dropdown
+						%a.dropdown-toggle{ href: "javascript:void(0)", role: :button, 'aria-haspopup' => true, 'aria-expanded' => false, data: { toggle: "dropdown" } } 
+							More
+							%i.fa.fa-chevron-down
+						%ul.dropdown-menu.dropdown-menu-right
+							%li
+								%a{ href: '#' }
+									Inspirations
+							%li
+								%a{ href: '#' }
+									Places
+							%li
+								%a{ href: '#' }
+									Workouts
+
+
+
+
