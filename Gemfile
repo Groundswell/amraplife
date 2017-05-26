@@ -2,7 +2,6 @@ ruby '2.3.2'
 
 source 'https://rubygems.org'
 
-
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.7'
 # Use postgresql as the database for Active Record
@@ -44,15 +43,15 @@ gem 'sendgrid-ruby'
 gem 'unicorn'
 
 # dev
-gem 'swell_media', path: '../../engines/swell_media'
-gem 'swell_theme_store', path: '../../engines/swell_theme_store'
+# gem 'swell_media', path: '../../engines/swell_media'
+# gem 'swell_theme_store', path: '../../engines/swell_theme_store'
 
 # gem 'swell_ecom', path: '../../engines/swell_ecom'
 
 
 # prod
 # gem 'swell_media', git: 'git://github.com/Groundswell/swell_media.git'
-# gem 'swell_theme_summarize', git: 'git://github.com/Groundswell/swell_theme_summarize.git'
+# gem 'swell_theme_store', git: 'git://github.com/Groundswell/swell_theme_store.git'
 
 # gem 'swell_ecom', git: 'git://github.com/Groundswell/swell_ecom.git'
 
