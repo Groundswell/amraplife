@@ -50,8 +50,8 @@ gem 'unicorn'
 
 
 # prod
-# gem 'swell_media', git: 'git://github.com/Groundswell/swell_media.git'
-# gem 'swell_theme_store', git: 'git://github.com/Groundswell/swell_theme_store.git'
+gem 'swell_media', git: 'git://github.com/Groundswell/swell_media.git'
+gem 'swell_theme_store', git: 'git://github.com/Groundswell/swell_theme_store.git'
 
 # gem 'swell_ecom', git: 'git://github.com/Groundswell/swell_ecom.git'
 
