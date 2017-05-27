@@ -13,6 +13,8 @@ class Recipe < ActiveRecord::Base
 	include SwellMedia::Concerns::AvatarAsset
 	#include SwellMedia::Concerns::ExpiresCache
 
+	belongs_to :recipe_category, foreign_key: :category_id
+
 	has_many :ingredients
 	has_many :foods, through: :ingredients
 

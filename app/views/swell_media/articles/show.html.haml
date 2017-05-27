@@ -9,12 +9,32 @@
 								= @media.title
 							.thumbnail
 								%img{ src: @media.cover_image, alt: @media.title }
-
-								.addthis_inline_share_toolbox.hidden-xs.hidden-sm
 								
-								%caption
-									.row
-										.col-xs-12.content
-											= raw @media.content
+								%caption{ style: 'margin-bottom: 1em;' }
+									By
+									%a{ href: swell_media.browse_index_path( author: @media.user ) }
+										= @media.user
+									- if @media.category.present?
+										in
+										%a{:href => swell_media.browse_index_path( category_id: @media.category.slug ) }
+											= @media.category.name
+
+									- if @media.tags.present?
+										%i.icon-tags
+										Tags:
+										- @media.tags.each do |tag|
+											%a{:href => swell_media.browse_index_path( category_id: :all, tag: tag )}
+												= tag
+												
+							.addthis_inline_share_toolbox.hidden-xs.hidden-sm
+					.row
+						.col-xs-12.content
+							= raw @media.content
+				
+					.row
+						.col-xs-12
+							= render 'application/fb_comments'
+
+
 				.sideBar.col-md-3.col-sm-4.col-xs-12
-					= render 'application/sidebar'
+					= render 'swell_media/articles/sidebar'

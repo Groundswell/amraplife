@@ -1,0 +1,48 @@
+
+.panel.panel-default
+	.panel-heading
+		Categories
+	.panel-body
+		%ul.list-unstyle.sidebar-list
+			- RecipeCategory.published.each do |cat|
+				%li
+					%a{ href: recipes_path( cat: cat.slug ) }
+						%i.fa.fa-caret-right{ 'aria-hidden' => "true" }
+						= cat.to_s
+						%span
+							= "(#{Recipe.published.where( category_id: cat.id ).count})"
+	
+.panel.panel-default.recentBlogPosts
+	.panel-heading
+		Featured Recipes
+	.panel-body
+		- Recipe.published.order( "random()" ).limit( 5 ).each do |recipe|
+			.media
+				%a.media-left{ href: recipe.url }
+					%img.img.img-responsive.media-object{ src: recipe.avatar }
+				.media-body
+					%h4.media-heading
+						%a{ href: recipe.url }
+							= recipe.title
+
+.panel.panel-default
+	.panel-heading
+		Just a Thought
+	.panel-body
+		- Inspiration.published.order( 'random()' ).limit( 1 ).each do |inspiration|
+			%a{ :href => inspiration.path }
+				%img.img.img-responsive{ src: inspiration.avatar }
+
+
+.panel.panel-default
+	.panel-heading
+		Related Products
+	.panel-body
+		%script{ src: "//z-na.amazon-adsystem.com/widgets/onejs?MarketPlace=US&adInstanceId=9b863990-4462-4a7a-867d-9c30c6fb51cd" }
+
+.panel.panel-default
+	.panel-heading
+		Sponsors
+	.panel-body
+		= render 'application/adsense_sidebar'
+

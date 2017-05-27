@@ -1,4 +1,68 @@
-#content.content.section.row
+
+
+- cache( "show-#{@recipe.cache_key}" ) do
+	%section.clearfix.blogPage.singleBlog{ style: 'padding-top: 50px;' }
+		.container
+			.row
+				.col-md-9.col-sm-8.col-xs-12
+					.row
+						.col-xs-12
+							%h1.text-center
+								= @recipe.title
+							.thumbnail
+								%img{ src: @recipe.avatar, alt: @recipe.title }
+
+								.addthis_inline_share_toolbox.hidden-xs.hidden-sm
+								
+								%caption
+									.row
+										.col-xs-12.content
+											= raw @recipe.content
+
+
+					.row
+						.col-xs-12
+							.jumbotron
+								%p
+									If you've enjoyed this recipe, please consider passing it along using the share buttons above. And consider joining our email list. We'll send you once-in-a-while updates chock-full of great health and lifestyle tips sprinkled with inspiration and discounts on cool stuff!
+						.col-xs-12
+							= render 'application/fb_comments'
+
+						.col-xs-12
+							.page-header
+								%h4
+									More Great Recipes
+							
+							- @more_recipes.each do |recipe|
+								.col-sm-4.col-xs-12
+									.productBox
+										.productImage.clearfix
+											%a{ href: recipe.url }
+												%img{ src: recipe.avatar, alt: recipe.title }
+										.recipeCaption.clearfix
+											%a{ href: recipe.url }
+												%h5
+													= recipe.title
+	
+
+							.text-center{ style: 'margin: 0 0 1em 0;' }
+								%a.btn.btn-default{ href: main_app.recipes_path() } 
+									Even More Recipes
+									%i.fa.fa-chevron-right
+
+				.sideBar.col-md-3.col-sm-4.col-xs-12
+					= render 'recipes/sidebar'
+
+
+
+
+
+
+
+
+
+
+-##content.content.section.row
 	.col-md-8.bg-base.col-lg-8.col-xl-9
 		- cache( "show-#{@recipe.cache_key}" ) do
 			.ribbon.ribbon-highlight
@@ -59,4 +123,4 @@
 		= render 'application/sidebar'
 	/ /.sidebar col-md-4 col-lg-4 col-xl-3
 / /#content
-= render 'application/registration_bar'
+=# render 'application/registration_bar'
