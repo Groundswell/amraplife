@@ -26,16 +26,27 @@
 				
 					.row
 						.col-xs-12
-							= render 'application/fb_comments'
-
-					.row
-						.col-xs-12
 							- if @media.tags.present?
 								%i.fa.fa-tags
 								Tags:
 								- @media.tags.each do |tag|
 									%a{:href => swell_media.browse_index_path( category_id: :all, tag: tag )}
 										= tag
+
+					.row
+						.col-xs-12
+							= render 'application/fb_comments'
+
+					
+					.row
+						.col-xs-12
+							.page-header
+								%h4
+									Related Articles
+							
+							- SwellMedia::Article.published.where( category_id: @media.category_id ).each do |article|
+								= render "swell_media/articles/card", article: article, args: {}
+
 
 				.sideBar.col-md-3.col-sm-4.col-xs-12
 					= render 'swell_media/articles/sidebar'
