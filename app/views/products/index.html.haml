@@ -1,16 +1,16 @@
 
-.jumbotron
+.jumbotron{ style: 'background-color: #e9fbfe;' }
 	.container
 		.row
-			.col-xs-12
+			.col-xs-12.text-center
 				%h1
 					Free Shipping on All Orders
 				%p
 					No minimum purchase required. Continental US only.
-				%a.btn.btn-lg.btn-success{ href: 'faq' }
+				%a.btn.btn-lg.btn-info.btn-filled{ href: 'faq' }
 					Learn More
 
-%section.clearfix.productsContent{ style: 'padding-top:50px;' }
+%section.clearfix.productsContent{ style: 'padding-top:25px;' }
 	.container
 		.row
 			- @products.each do |product|

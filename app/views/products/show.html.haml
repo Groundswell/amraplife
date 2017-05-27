@@ -1,103 +1,93 @@
-#content.content.section.row
-	- cache( "show-#{@product.cache_key}" ) do
-		.col-md-12.bg-base.product-show
-			.ribbon.ribbon-highlight
-				%ol.breadcrumb.ribbon-inner
-					%li
-						%a{ href: swell_media.root_path() }
-							Home
-					%li
-						%a{ href: '/store' }
-							Store
-					%li.active
-						= @product.title
-
-
-
-			.row
-				.col-md-2.col-lg-2.col-xl-1.hidden-xs.hidden-sm
-					%h4{ style: 'border-bottom: 1px #ddd solid;margin-bottom: 0.25em;'}
-						Shop
-
-					.cat= link_to 'Everything', products_path
-
-					- ProductCategory.order( name: :asc ).each do |cat|
-						.cat= link_to cat.name, products_path( category: cat.slug )
-					.cat
-						= link_to 'Men', products_path( tag: 'men' )
-					.cat
-						= link_to 'Women', products_path( tag: 'women' )
-
-				.col-md-10.col-lg-10.col-xl-11{ style: 'border-left:1px #ddd solid; '}
-					%article.entry.style-single.type-post
-						.row
-							.col-sm-5
-								.zoom-gallery{ class: ( @images.present? ? '' : 'hide-gallery' ) }
-									%img{"data-zoom-image" => @product.avatar, :src => @product.avatar}/
-									- if @images.present?
-										.gallery><
-											%a{"data-image" => @product.avatar, "data-zoom-image" => @product.avatar, :href => "#"}><
-												%img{:src => @product.avatar }
-											- @images.each do |image|
-												%a{"data-image" => image.url, "data-zoom-image" => image.url, :href => "#"}><
-													%img{:src => image.url }/
-									- else
-										.gallery
-								.shipping{ style: 'border: 1px #aaa solid;padding: 0.5em 0 0 0;margin-bottom:1em;margin-top:-0.5em;background-color:#393;color:#fff;'}
-									%center
-										%p{ style: 'font-size: 150%;' }
-											Free Shipping on All Orders
-										%p
-											No minimum. Continental US only.
-
-							.col-sm-7
-								%header.page-header
-									%h2.page-title
-										= @product.title
-
-									.row.entry-meta
-										.col-xs-8
-											.price-info{ style: 'font-size:150%;' }
-												%span.price{ style: 'font-weight:600;color:#000;'}
-													= number_to_currency( @product.price.to_f / 100 )
-												-# if @product.suggested_price > 0
-													%span.strikethrough{ style: 'text-decoration:line-through;font-size:90%;' }
-														= number_to_currency( @product.suggested_price.to_f / 100 )
-											- if @product.size_info.present?
-												%a.btn{ data: { toggle: :modal, target: '#size_info' } }
-													Size & Care
-										.col-xs-4
-											- if @product.product_category.present?
-												%span.category{ style: 'margin-right: 2em;'}
-													In
-													%a{:href => products_path( category: @product.product_category.slug ) }
-														= @product.product_category.name
-
-
-									.product-description
-
-										- unless @product.description.blank?
-											= raw @product.description
-									
-									
-
-									.entry-meta{ style: 'margin-bottom: 0;opacity: 1.0;' }
-										.buy-btn
-											= raw shopify_code @product.shopify_code
-										.addthis_inline_share_toolbox.hidden-xs.hidden-sm
-						.row
-							.col-sm-12
-								- unless @product.content.blank?
-									.entry-content
-										= raw @product.content
-		- if @related_products.present?
-			.row{ style: 'margin-top: 15px;' }
+- cache( "show-#{@product.cache_key}" ) do
+	%section.clearfix{ style: 'padding-top: 50px;' }
+		.container
+			.row.singleProduct
 				.col-xs-12
-					%h3{ style: 'margin-bottom: 5px;' } RELATED PRODUCTS
-			.row.grid
-				- @related_products.each do |product|
-					= render 'card', product: product, args: { size: 'col-sm-3 col-lg-2' }
+					.media
+						.media-left.productSlider
+							#carousel.carousel.slide{ data: { ride: "carousel" }	}
+								.carousel-inner
+									.item.active{ data: { thumb: 0 } }
+										%img{ src: @product.avatar }
+									- @images.each_with_index do |image, idx|
+										.item{ data: { thumb: idx } }
+											%img{ src: image.url }
+							.clearfix
+								#thumbcarousel.carousel.slide{ data: { interval: "false" } }
+									.carousel-inner
+										.thumb{ data: { target: "#carousel", 'slide-to' => "0" } }
+											%img{ src: @product.avatar }
+										- @images.each_with_index do |image, idx|
+											.thumb{ data: { target: "#carousel", 'slide-to' => idx } }
+												%img{ src: image.url }
+									%a.left.carousel-control{ href: "#thumbcarousel", role: "button", data: { slide: "prev" } }
+										%span.glyphicon.glyphicon-chevron-left
+									%a.right.carousel-control{ href: "#thumbcarousel", role: "button", data: { slide: "next" } }
+										%span.glyphicon.glyphicon-chevron-right
+						.media-body
+							- if @product.product_category.present?
+								%ul.list-inline
+									%li
+										in
+										%a{:href => products_path( category: @product.product_category.slug ) }
+											= @product.product_category.name
 
+							%h2
+								= @product.title
+							%h3
+								= number_to_currency( @product.price / 100.to_f )
+							%p
+								= @product.description
 
-- if @product.size_info.present?
-	= render "products/size_info/#{@product.size_info}"
+							
+							%span.quick-drop
+								%select.select-drop#guiest_id3{ name: "guiest_id3" } 
+									%option{ value: "1" }
+										Small
+									%option{ value: "2" }
+										Medium
+									%option{ value: "3" }
+										Large
+
+							%span.quick-drop.resizeWidth
+								%select.select-drop#guiest_id4{ name: "guiest_id4" }	
+									%option{ value: "1" }
+										1
+									%option{ value: "2" }
+										2
+									%option{ value: "3" }
+										3
+							.btn-area
+								%a.btn.btn-primary.btn-block
+									Add to Cart
+									%i.fa.fa-angle-right{ 'aria-hidden' => true}
+							.tabArea
+								%ul.nav.nav-tabs
+									%li.active
+										%a{ href: "#details", data: { toggle: "tab" } }
+											details
+									%li
+										%a{ href: "#about", data: { toggle: "tab" } }
+											about design
+									%li
+										%a{ href: "#sizing", data: { toggle: "tab" } }
+											sizing & care
+								.tab-content
+									#details.tab-pane.fade.in.active
+										= raw @product.content
+									#about.tab-pane.fade
+										%p
+											Burpees are great - TODO
+									#sizing.tab-pane.fade
+										- if @product.size_info.present?
+											= render "products/size_info/#{@product.size_info}"
+
+			- if @related_products.present?
+				.row.productsContent
+					.col-xs-12
+						.page-header
+							%h4
+								Related Products
+						- @related_products.each do |product|
+							= render 'card', product: product, args: { size: 'col-md-3 col-sm-6 col-xs-12' }
+

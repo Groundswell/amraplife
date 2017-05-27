@@ -43,7 +43,8 @@ class ProductsController < ApplicationController
 		@product_category = @product.product_category
 
 		@related_products = Product.none
-		@related_products = @product_category.products.published.where.not( id: @product.id ).limit(6)
+
+		@related_products = @product_category.products.published.where.not( id: @product.id ).limit(6) if @product_category.present?
 
 		set_page_meta( @product.page_meta )
 	end
