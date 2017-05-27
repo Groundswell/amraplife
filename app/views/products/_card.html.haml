@@ -9,5 +9,8 @@
 					%h5
 						= product.title
 					%h3
-						= number_to_currency( product.price / 100.to_f )
-		
+						- if product.price % 100 == 0
+							= number_to_currency( product.price / 100.to_f, precision: 0 )
+						- else
+							= number_to_currency( product.price / 100.to_f )
+

@@ -5,7 +5,7 @@ class Recipe < ActiveRecord::Base
 
 	validates		:title, presence: true, unless: :allow_blank_title?
 
-	attr_accessor	:slug_pref
+	attr_accessor	:slug_pref, :category_name
 
 	before_save	:set_publish_at
 

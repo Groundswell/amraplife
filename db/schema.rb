@@ -476,10 +476,12 @@ ActiveRecord::Schema.define(version: 20170527050130) do
     t.datetime "updated_at"
     t.text     "cover_image"
     t.integer  "category_id"
+    t.string   "tags",        default: [], array: true
   end
 
   add_index "recipes", ["category_id"], name: "index_recipes_on_category_id", using: :btree
   add_index "recipes", ["slug"], name: "index_recipes_on_slug", unique: true, using: :btree
+  add_index "recipes", ["tags"], name: "index_recipes_on_tags", using: :gin
 
   create_table "terms", force: :cascade do |t|
     t.string   "title"

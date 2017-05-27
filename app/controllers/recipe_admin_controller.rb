@@ -34,14 +34,27 @@ class RecipeAdminController < SwellMedia::AdminController
 	end
 
 	def update
-		@recipe.update( recipe_params )
-		redirect_to :back
+
+		@recipe.attributes = recipe_params
+		
+		if params[:recipe][:category_name].present?
+			@recipe.category_id = RecipeCategory.where( name: params[:recipe][:category_name] ).first_or_create( status: 'active' ).id
+		end
+		
+		if @recipe.save
+			set_flash 'Recipe Updated'
+			redirect_to edit_recipe_admin_path( id: @recipe.id )
+		else
+			set_flash 'Recipe could not be Updated', :error, @recipe
+			render :edit
+		end
+
 	end
 
 
 	private
 		def recipe_params
-			params.require( :recipe ).permit( :title, :description, :avatar, :content, :status, :prep_time, :cook_time, :serves, :tags_csv ) 	
+			params.require( :recipe ).permit( :title, :description, :avatar, :content, :status, :prep_time, :cook_time, :serves, :tags_csv, :category_id ) 	
 		end
 
 		def set_recipe

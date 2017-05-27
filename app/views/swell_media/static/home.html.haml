@@ -23,7 +23,10 @@
 								= image_tag product.avatar
 								.masking
 									%a.btn.viewBtn{ href: product.url }
-										= number_to_currency( product.price.to_f / 100 )
+										- if product.price % 100 == 0
+											= number_to_currency( product.price / 100.to_f, precision: 0 )
+										- else
+											= number_to_currency( product.price / 100.to_f )
 										Buy
 										%i.fa.fa-chevron-right
 							.caption
