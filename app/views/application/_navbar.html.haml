@@ -34,11 +34,12 @@
 							%a{ href: '' }
 								%i.fa.fa-search
 							%ul.dropdown-menu.dropdown-menu-right
-								%li
-									%span.input-group
-										%input.form-control{ type: :text, placeholder: 'Search...'}
-										%button.input-group-addon{ type: :submit }
-											Submit
+								= form_tag '/store', method: :get do
+									%li
+										%span.input-group
+											%input.form-control{ type: :text, placeholder: 'Search...'}
+											%button.input-group-addon{ type: :submit }
+												Submit
 						%li.dropdown.cart-dropdown
 							%a.dropdown-toggle{ href: "javascript:void(0)", data: { toggle: "dropdown" } }
 								%i.fa.fa-shopping-cart
