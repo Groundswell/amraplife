@@ -1,32 +1,13 @@
 - cache( "row-#{product.cache_key}-#{args[:size]}" ) do
-	.grid-item{ class: args[:size] || 'col-sm-4 col-lg-3' }
-		.thumbnail
-			%a{ href: product.url }
-				%img.img.img-responsive.center-block{ src: product.avatar }
-				%h4{ style: 'text-align: center;' }
-					= product.title
-
-			%a{ href: product.url }
-				.price-info{ style: 'font-size:100%;text-align:center;' }
-					%span.price{ style: 'font-weight:600;color:#555;'}
-						= number_to_currency( product.price.to_f / 100 )
-					-# if product.suggested_price > 0
-						%span.strikethrough{ style: 'text-decoration:line-through;font-size:90%;' }
-							= number_to_currency( product.suggested_price.to_f / 100 )
-
-
-
-
-
-	-#.entry.style-media.media.type-post
-		%figure.media-object.pull-left.entry-thumbnail.hidden-xs
-			%img{ src: product.avatar, width: 230, height: 230 }
-		.media-body
-			%header.entry-header
-				%h3.entry-title
-					= link_to product.title, product.url
-			%p
-				= raw product.description
-				%a.more-link{ href: product.url }
-					Continue
-					%i.fa.fa-arrow-right
+	.col-sm-4.col-xs-12
+		.productBox
+			.productImage.clearfix
+				%a{ href: product.url }
+					%img{ src: product.avatar, alt: product.title }
+			.productCaption.clearfix
+				%a{ href: product.url }
+					%h5
+						= product.title
+					%h3
+						= number_to_currency( product.price / 100.to_f )
+		
