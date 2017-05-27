@@ -19,13 +19,6 @@
 										%a{:href => swell_media.browse_index_path( category_id: @media.category.slug ) }
 											= @media.category.name
 
-									- if @media.tags.present?
-										%i.icon-tags
-										Tags:
-										- @media.tags.each do |tag|
-											%a{:href => swell_media.browse_index_path( category_id: :all, tag: tag )}
-												= tag
-												
 							.addthis_inline_share_toolbox.hidden-xs.hidden-sm
 					.row
 						.col-xs-12.content
@@ -35,6 +28,12 @@
 						.col-xs-12
 							= render 'application/fb_comments'
 
+							- if @media.tags.present?
+								%i.fa.fa-tags
+								Tags:
+								- @media.tags.each do |tag|
+									%a{:href => swell_media.browse_index_path( category_id: :all, tag: tag )}
+										= tag
 
 				.sideBar.col-md-3.col-sm-4.col-xs-12
 					= render 'swell_media/articles/sidebar'
