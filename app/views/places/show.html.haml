@@ -12,11 +12,19 @@
 								%img{ src: @place.avatar, alt: @place.title }
 
 								.addthis_inline_share_toolbox.hidden-xs.hidden-sm
-								
-								%caption
-									.row
-										.col-xs-12.content
-											= raw @place.content
+					.row
+						- if @featured_video.present?
+							.col-xs-12.col-sm-7{ style: 'padding-bottom: 5px;' }
+								%iframe#place-video{ allowfullscreen: true, frameborder: 0, src: "//www.youtube.com/embed/#{@featured_video.origin_identifier}?rel=0" }
+							.col-xs-12.col-sm-5{ style: 'padding-bottom: 5px;' }
+								#place-map
+						- else
+							.col-xs-6.col-sm-offset-3
+								#place-map
+
+					.row
+						.col-xs-12.content
+							= raw @place.content
 					.row
 						.col-xs-12
 							Contact
