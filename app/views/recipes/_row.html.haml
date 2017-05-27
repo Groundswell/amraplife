@@ -1,3 +1,23 @@
+.col-xs-12
+	.media
+		.media-left
+			%a{ href: recipe.url }
+				%img.media-object{ src: recipe.avatar, alt: recipe.title }
+		.media-body
+			%h4.media-heading
+				%a{ href: recipe.url }
+					= recipe.title
+			%p
+				= raw recipe.description
+
+				%a.btn.btn-lg{ href: recipe_path( recipe ) }
+					Continue
+					%i.fa.fa-chevron-right
+
+
+
+
+
 %article.entry.style-media.media.type-post
 	%figure.media-object.pull-left.entry-thumbnail.hidden-xs
 		/ to disable lazy loading, remove data-src and data-src-retina
