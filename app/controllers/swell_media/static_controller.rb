@@ -16,6 +16,7 @@ module SwellMedia
 
 		def home
 			# the homepage
+			@products = Product.published.order( "random()" ).limit( 3 )
 			@articles = SwellMedia::Article.published.order( publish_at: :desc ).limit( 8 )
 			
 

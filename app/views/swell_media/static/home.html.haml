@@ -16,47 +16,21 @@
 					%h2.text-center{ style: 'margin-top:2em;' }
 						Best Sellers
 
-				.col-sm-4.col-xs-12
-					.thumbnail
-						.imageWrapper
-							= image_tag 'http://cdn1.amraplife.com/assets/1303f4c8-0b22-43ad-9b53-462f0caaee9c.jpg'
-							.masking
+				- @products.each do |product|
+					.col-sm-4.col-xs-12
+						.thumbnail
+							.imageWrapper
+								= image_tag product.avatar
+								.masking
+									%a.btn.viewBtn{ href: product.url }
+										= number_to_currency( product.price.to_f / 100 )
+										Buy
+										%i.fa.fa-chevron-right
+							.caption
+								%a{ href: product.url }
+									%h4
+										GTO AMRAP Men's T
 
-								%a.btn.viewBtn{ href: '' }
-									$24
-									Buy
-									%i.fa.fa-chevron-right
-						.caption
-							%h4
-								GTO AMRAP Men's T
-
-				.col-sm-4.col-xs-12
-					.thumbnail
-						.imageWrapper
-							= image_tag 'http://cdn1.amraplife.com/assets/ff5aef0f-112c-41ed-85c8-ff164cbd0c1a.jpg'
-							.masking
-
-								%a.btn.viewBtn{ href: '' }
-									$24
-									Buy
-									%i.fa.fa-chevron-right
-						.caption
-							%h4
-								Woke Sore Ladies Tank
-
-				.col-sm-4.col-xs-12
-					.thumbnail
-						.imageWrapper
-							= image_tag 'http://cdn1.amraplife.com/assets/9e246e48-8131-498e-a09c-9963f76a312c.jpg'
-							.masking
-
-								%a.btn.viewBtn{ href: '' }
-									$24
-									Buy
-									%i.fa.fa-chevron-right
-						.caption
-							%h4
-								Grip It & Kip It Men's T
 
 		.row.featuredProducts.margin-bottom
 			.col-xs-12
