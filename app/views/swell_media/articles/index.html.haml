@@ -8,7 +8,8 @@
 					- @articles.each do |article|
 						= render 'row', article: article
 
-					= raw paginate @articles
+					.paginator{ style: 'margin-bottom: 2em;' }
+						= raw paginate @articles
 					
 				.sideBar.col-md-3.col-sm-4.col-xs-12
 					= render 'application/sidebar'
