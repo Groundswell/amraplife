@@ -1,4 +1,54 @@
-#content.content.section.row
+
+- cache( "show-#{@place.cache_key}" ) do
+	%section.clearfix.blogPage.singleBlog{ style: 'padding-top: 50px;' }
+		.container
+			.row
+				.col-md-9.col-sm-8.col-xs-12
+					.row
+						.col-xs-12
+							%h1.text-center
+								= @place.title
+							.thumbnail
+								%img{ src: @place.avatar, alt: @place.title }
+
+								.addthis_inline_share_toolbox.hidden-xs.hidden-sm
+								
+								%caption
+									.row
+										.col-xs-12.content
+											= raw @place.content
+					.row
+						.col-xs-12
+							Contact
+							%i
+								= @place.title
+							to learn more about their services, special offers and get fitness advice.
+							.row
+								.col-xs-12.col-md-6
+									= form_for SwellMedia::ContactUs.new, url: swell_media.contacts_path do |f|
+										.form-group
+											= f.label :email, 'Message'
+											= f.text_field :email, placeholder: 'Your Email', class: 'form-control'
+										= f.hidden_field :subject, value: "@#{@place.title}"
+										.form-group
+											= f.text_area :message, rows: 3, class: 'form-control', placeholder: 'Message'
+										.form-group
+											= f.submit 'Send', class: 'btn btn-primary'
+
+				.sideBar.col-md-3.col-sm-4.col-xs-12
+					= render 'places/sidebar'
+
+
+
+
+
+
+
+
+
+
+
+-##content.content.section.row
 	- cache( "show-#{@place.cache_key}" ) do
 		.col-md-8.bg-base.col-lg-8.col-xl-9
 			.ribbon.ribbon-highlight
@@ -94,7 +144,7 @@
 
 	/ /.col-md-8.col-lg-8.col-xl-9
 	.sidebar.col-md-4.col-lg-4.col-xl-3
-		= render 'application/sidebar'
+		= render 'swell_media/articles/sidebar'
 	/ /.sidebar col-md-4 col-lg-4 col-xl-3
 / /#content
 
