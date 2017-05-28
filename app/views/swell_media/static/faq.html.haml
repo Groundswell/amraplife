@@ -1,4 +1,109 @@
-#content.content.section.row
+
+- cache( "faq" ) do
+	%section.clearfix.blogPage.singleBlog{ style: 'padding-top: 50px;' }
+		.container{ style: 'position: relative;' }
+			.row
+				.sideBar.col-md-3.col-sm-4.col-xs-12{ style: 'border-right: 1px solid #ddd;' }
+				
+					%h3 
+						Scroll Nav
+					%nav
+						%ul.list-unstyled.nav.sidebar-nav
+							%li
+								%a{ href: '#top' }
+									Top
+							%li
+								%a{ href: '#section1' }
+									Section 1
+							%li
+								%a{ href: '#section2' }
+									Section 2
+							%li
+								%a{ href: '#section3' }
+									Section 3
+							%li
+								%a{ href: '#section4' }
+									Section 4
+				
+				#content.col-md-9.col-sm-8.col-xs-12{ data: { spy: 'scroll', target: '#spy', offset: 50 } }
+
+					%h1#top
+						FAQs
+					
+
+					%p
+						Here are some questions that we get asked sometimes. We hope that the answers to these questions are helpful or interesting to you. You may have your own questions. If so, 
+						%a{ href: swell_media.new_contact_path, style: 'text-decoration:underline;' }
+							please do get in touch. 
+						The answers to your questions might be intersting for other readers, too! Besides, we just love hearing from you - that's why we're paying for all these pixels to be here in the first place.
+
+					%h3#section1
+						Site
+
+					%h4
+						Who Are you?
+					%p{ style: 'margin-left:2em;' }
+						Read about us here
+					%h4
+						How should I care for my tees, crewnecks, and hoodies? Will they shrink?
+					%p{ style: 'margin-left:2em;' }
+						We recommend turning them inside out and machine or hand washing on cold. Since all of the shirts have some percentage of cotton, they will tend to shrink a little after being washed and dried. To minimize the shrinking, machine dry low or hang dry.
+
+					%h4
+						What type of printing process is used on your clothing?
+					%p{ style: 'margin-left:2em;' }
+						All of our shirts and hoodies are screenprinted. Most of the shirts are printed with water-based or discharge ink which leaves an extremely soft print. A few of the shirts use a soft-hand plastisol ink to get a bright white print. Check the product pages for the specific type of printing for each individual product.
+
+					%h4
+						Where Are you?
+					%p{ style: 'margin-left:2em;' }
+						We are in Californai, df sd ai sfdfl df but we often like to ski in nevada
+
+					%h4
+						Will the printing on the tees fade?
+					%p{ style: 'margin-left:2em;' }
+						We use high quality water-based inks to produce the softest printing possible. Some of the printing may fade a little after multiple washes.
+
+					%h3#section2
+						Store
+
+					%h4
+						What is your return policy?
+					%p
+						We want you to be 100% satisfied with your Ugmonk purchase. Items in new condition (unworn/unwashed) can be returned or exchanged within 30 days of delivery. Please note that original shipping charges are non-refundable. If we made a mistake or the item arrived defective, please contact us here and we’ll make things right.
+
+					%h4
+						What forms of payment do you accept?
+					%p{ style: 'margin-left:2em;' }
+						We accept major credit cards such as Visa, MasterCard, American Express, and Discover or directly payment through PayPal.
+
+					%h4
+						Who Are you?
+					%p{ style: 'margin-left:2em;' }
+						Read about us here
+
+					%h4
+						Who Are you?
+					%p{ style: 'margin-left:2em;' }
+						Read about us here
+
+					%h4
+						Who Are you?
+					%p{ style: 'margin-left:2em;' }
+						Read about us here
+
+					%h3#section3
+						Shipping
+
+					%h3#section3
+						Section4
+					%h5
+						I love the design of your website. Where did you get your template?
+					%p{ style: 'margin-left:2em;' }
+						Thanks, we’re glad you like it. We designed our site from scratch and spent hundreds of hours (and cups of coffee) building it. We put a lot of thought and time into creating a unique experience to communicate what our brand is all about. Please do not copy or use any parts of our site as your own.
+
+
+-##content.content.section.row
 	- cache( "faq" ) do
 		.col-md-8.bg-base.col-lg-8.col-xl-9
 			.ribbon.ribbon-highlight
@@ -10,7 +115,7 @@
 
 			%article.entry.style-single.type-post
 				.entry-content
-					%h2
+					%h1
 						FAQs
 					
 

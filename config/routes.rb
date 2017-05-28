@@ -35,7 +35,7 @@ Rails.application.routes.draw do
 		get :preview, on: :member
 	end
 
-	resources :terms, only: :index, path: 'terms'
+	resources :terms, only: :index, path: 'xfit-terms'
 	resources :term_admin do
 		delete :empty_trash, on: :collection
 	end
