@@ -43,27 +43,30 @@
 								= raw @product.description
 
 							
-							%span.quick-drop
-								%select.select-drop#guiest_id3{ name: "guiest_id3" } 
-									%option{ value: "1" }
-										Small
-									%option{ value: "2" }
-										Medium
-									%option{ value: "3" }
-										Large
+							= form_tag cart_items_path do 
+								= hidden_field_tag :product_id, @product.id
 
-							%span.quick-drop.resizeWidth
-								%select.select-drop#guiest_id4{ name: "guiest_id4" }	
-									%option{ value: "1" }
-										1
-									%option{ value: "2" }
-										2
-									%option{ value: "3" }
-										3
-							.btn-area
-								%a.btn.btn-primary.btn-block
-									Add to Cart
-									%i.fa.fa-angle-right{ 'aria-hidden' => true}
+								%span.quick-drop
+									%select.select-drop#size{ name: "size" } 
+										%option{ value: :s }
+											Small
+										%option{ value: :m }
+											Medium
+										%option{ value: :l }
+											Large
+
+								%span.quick-drop.resizeWidth
+									%select.select-drop#quantity{ name: "quantity" }	
+										%option{ value: "1" }
+											1
+										%option{ value: "2" }
+											2
+										%option{ value: "3" }
+											3
+								.btn-area
+									= submit_tag 'Add to Cart', class: 'btn btn-primary btn-block'
+	
+
 							.tabArea
 								%ul.nav.nav-tabs
 									%li.active
@@ -83,7 +86,7 @@
 											Burpees are great - TODO
 									#sizing.tab-pane.fade
 										- if @product.size_info.present?
-											= render "products/size_info/#{@product.size_info}"
+											= render "swell_ecom/products/size_info/#{@product.size_info}"
 
 			- if @related_products.present?
 				.row.productsContent

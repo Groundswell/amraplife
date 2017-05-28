@@ -1,0 +1,71 @@
+%section.mainContent.clearfix.cartListWrapper
+	.container
+		.row
+			.col-xs-12
+				.cartListInner
+					- if @cart.nil? || @cart.cart_items.empty?
+						.jumbotron
+							%h1.text-center
+								Nothing in Your Cart
+					- else
+						= form_tag swell_ecom.cart_path( @cart ), method: :patch do
+							.table-responsive
+								%table.table
+									%thead
+										%tr
+											%th
+											%th
+												Item
+											%th
+												Price
+											%th
+												Quantity
+											%th
+												Subtotal
+									%tbody
+										%tr
+											%td.col-xs-2
+												%img.img.img-responsive{ src: "http://cdn1.amraplife.com/assets/39bdc110-fe4e-49b0-bae1-54aa5c460850.png" }
+											%td.col-xs-4
+												Never Tell Me the WODS shirt
+											%td.col-xs-2
+												$29.99
+											%td.col.xs-2
+												= text_field_tag :quantity, 1, calass: 'form-control'
+											%td.col-xs-2
+												$29.99
+							.updateArea
+								.input-group
+									= text_field_tag :coupon, '', placeholder: 'I have a coupon', class: 'form-control'
+									= submit_tag 'Apply', class: 'btn input-group-addon' 
+
+								= submit_tag 'Update Cart', class: 'btn'
+									
+
+							.row.totalAmountArea
+								.col-sm-4.col-sm-offset-8.col-xs-12
+									%ul.list-unstyled
+										%li
+											Sub Total
+											%span
+												$29.99
+										%li
+											Tax
+											%span 
+												$3.00
+										%li
+											Total
+											%span.grandTotal
+												$32.99
+							.checkBtnArea
+								%a.btn.btn-primary.btn-block{ href: swell_ecom.new_checkout_path, style: 'color:#fff;' }
+									Checkout
+									%i.fa.fa-arrow-circle-right
+
+
+
+
+
+
+
+

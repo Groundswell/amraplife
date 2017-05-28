@@ -1,6 +1,13 @@
-GIT
-  remote: git://github.com/Groundswell/swell_media.git
-  revision: 7b3dde087c1538f9ac2e22c266ddc7d7b08a872f
+PATH
+  remote: ../../engines/swell_ecom
+  specs:
+    swell_ecom (0.0.1)
+      stripe
+      swell_media
+      tax_cloud
+
+PATH
+  remote: ../../engines/swell_media
   specs:
     swell_media (0.0.1)
       acts-as-taggable-array-on
@@ -27,9 +34,8 @@ GIT
       sitemap_generator
       staccato
 
-GIT
-  remote: git://github.com/Groundswell/swell_theme_store.git
-  revision: ee5a969cb976ad2c4273b8bf06032f871ac599ad
+PATH
+  remote: ../../engines/swell_theme_store
   specs:
     swell_theme_store (0.0.1)
       rails (~> 4.2.7)
@@ -76,6 +82,9 @@ GEM
     acts-as-taggable-array-on (0.4.0)
       activerecord (>= 4)
       activesupport (>= 4)
+    akami (1.3.1)
+      gyoku (>= 0.4.0)
+      nokogiri
     arel (6.0.4)
     attr_required (1.0.1)
     awesome_nested_set (3.0.3)
@@ -283,6 +292,8 @@ GEM
       multi_json (>= 1.11.0)
     globalid (0.3.7)
       activesupport (>= 4.1.0)
+    gyoku (1.3.1)
+      builder (>= 2.1.2)
     haml (5.0.1)
       temple (>= 0.8.0)
       tilt
@@ -290,6 +301,9 @@ GEM
     http-cookie (1.0.3)
       domain_name (~> 0.5)
     httpclient (2.8.3)
+    httpi (2.4.2)
+      rack
+      socksify
     i18n (0.8.0)
     inflecto (0.0.2)
     ipaddress (0.8.3)
@@ -332,6 +346,7 @@ GEM
     newrelic_rpm (3.18.1.330)
     nokogiri (1.7.0.1)
       mini_portile2 (~> 2.1.0)
+    nori (2.6.0)
     omniauth (1.6.1)
       hashie (>= 3.4.6, < 3.6.0)
       rack (>= 1.6.2, < 3)
@@ -395,6 +410,14 @@ GEM
       sprockets (>= 2.8, < 4.0)
       sprockets-rails (>= 2.0, < 4.0)
       tilt (>= 1.1, < 3)
+    savon (2.11.1)
+      akami (~> 1.2)
+      builder (>= 2.1.2)
+      gyoku (~> 1.2)
+      httpi (~> 2.3)
+      nokogiri (>= 1.4.0)
+      nori (~> 2.4)
+      wasabi (~> 3.4)
     sdoc (0.4.2)
       json (~> 1.7, >= 1.7.7)
       rdoc (~> 4.0)
@@ -402,6 +425,7 @@ GEM
       ruby_http_client (~> 3.0.1)
     sitemap_generator (5.2.0)
       builder (~> 3.0)
+    socksify (1.7.1)
     sprockets (3.7.1)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
@@ -410,6 +434,12 @@ GEM
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
     staccato (0.5.1)
+    stripe (2.1.0)
+      faraday (~> 0)
+    tax_cloud (0.3.0)
+      activesupport (>= 3.0)
+      i18n
+      savon (>= 2.0)
     temple (0.8.0)
     thor (0.19.4)
     thread_safe (0.3.5)
@@ -431,6 +461,9 @@ GEM
     uuidtools (2.1.5)
     warden (1.2.7)
       rack (>= 1.0)
+    wasabi (3.5.0)
+      httpi (~> 2.0)
+      nokogiri (>= 1.4.2)
     web-console (2.3.0)
       activemodel (>= 4.0)
       binding_of_caller (>= 0.7.2)
@@ -463,6 +496,7 @@ DEPENDENCIES
   sdoc (~> 0.4.0)
   sendgrid-ruby
   sitemap_generator
+  swell_ecom!
   swell_media!
   swell_theme_store!
   turbolinks

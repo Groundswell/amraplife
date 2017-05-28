@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170527050130) do
+ActiveRecord::Schema.define(version: 20170528005426) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -76,6 +76,28 @@ ActiveRecord::Schema.define(version: 20170527050130) do
   add_index "cards", ["card_design_id"], name: "index_cards_on_card_design_id", using: :btree
   add_index "cards", ["pub_id"], name: "index_cards_on_pub_id", using: :btree
   add_index "cards", ["to_email"], name: "index_cards_on_to_email", using: :btree
+
+  create_table "cart_items", force: :cascade do |t|
+    t.integer  "item_id"
+    t.string   "item_type"
+    t.integer  "quantity",   default: 1
+    t.hstore   "properties", default: {}
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "cart_items", ["item_id", "item_type"], name: "index_cart_items_on_item_id_and_item_type", using: :btree
+
+  create_table "carts", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "status",     default: 1
+    t.string   "ip"
+    t.hstore   "properties", default: {}
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "carts", ["user_id"], name: "index_carts_on_user_id", using: :btree
 
   create_table "categories", force: :cascade do |t|
     t.integer  "user_id"
@@ -197,6 +219,47 @@ ActiveRecord::Schema.define(version: 20170527050130) do
   add_index "friendly_id_slugs", ["slug", "sluggable_type"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type", using: :btree
   add_index "friendly_id_slugs", ["sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_id", using: :btree
   add_index "friendly_id_slugs", ["sluggable_type"], name: "index_friendly_id_slugs_on_sluggable_type", using: :btree
+
+  create_table "geo_addresses", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "geo_state_id"
+    t.integer  "geo_country_id"
+    t.integer  "status"
+    t.string   "address_type"
+    t.string   "title"
+    t.string   "first_name"
+    t.string   "last_name"
+    t.string   "street"
+    t.string   "street2"
+    t.string   "city"
+    t.string   "state"
+    t.string   "zip"
+    t.string   "phone"
+    t.boolean  "preferred",      default: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "geo_addresses", ["geo_country_id", "geo_state_id"], name: "index_geo_addresses_on_geo_country_id_and_geo_state_id", using: :btree
+  add_index "geo_addresses", ["user_id"], name: "index_geo_addresses_on_user_id", using: :btree
+
+  create_table "geo_countries", force: :cascade do |t|
+    t.string   "name"
+    t.string   "abbrev"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "geo_states", force: :cascade do |t|
+    t.integer  "geo_country_id"
+    t.string   "name"
+    t.string   "abbrev"
+    t.string   "country"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "geo_states", ["geo_country_id"], name: "index_geo_states_on_geo_country_id", using: :btree
 
   create_table "ingredients", force: :cascade do |t|
     t.integer  "recipe_id"
@@ -368,6 +431,45 @@ ActiveRecord::Schema.define(version: 20170527050130) do
   add_index "observations", ["parent_id"], name: "index_observations_on_parent_id", using: :btree
   add_index "observations", ["user_id", "tmp_id"], name: "index_observations_on_user_id_and_tmp_id", using: :btree
 
+  create_table "order_items", force: :cascade do |t|
+    t.integer  "order_id"
+    t.integer  "item_id"
+    t.string   "item_type"
+    t.integer  "order_item_type", default: 1
+    t.integer  "quantity",        default: 1
+    t.integer  "amount",          default: 0
+    t.string   "tax_code"
+    t.string   "label"
+    t.hstore   "properties",      default: {}
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "order_items", ["item_id", "item_type", "order_id"], name: "index_order_items_on_item_id_and_item_type_and_order_id", using: :btree
+  add_index "order_items", ["order_item_type", "order_id"], name: "index_order_items_on_order_item_type_and_order_id", using: :btree
+
+  create_table "orders", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "cart_id"
+    t.integer  "billing_address_id"
+    t.integer  "shipping_address_id"
+    t.string   "code"
+    t.string   "email"
+    t.integer  "status",              default: 0
+    t.integer  "total"
+    t.string   "currency",            default: "USD"
+    t.text     "customer_comment"
+    t.datetime "fulfilled_at"
+    t.hstore   "properties",          default: {}
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "orders", ["code"], name: "index_orders_on_code", unique: true, using: :btree
+  add_index "orders", ["email", "billing_address_id", "shipping_address_id"], name: "email_addr_indx", using: :btree
+  add_index "orders", ["email", "status"], name: "index_orders_on_email_and_status", using: :btree
+  add_index "orders", ["user_id", "billing_address_id", "shipping_address_id"], name: "user_id_addr_indx", using: :btree
+
   create_table "places", force: :cascade do |t|
     t.string   "title"
     t.string   "slug"
@@ -450,7 +552,7 @@ ActiveRecord::Schema.define(version: 20170527050130) do
     t.datetime "updated_at"
     t.string   "brand"
     t.string   "model"
-    t.string   "size_info"
+    t.text     "size_info"
     t.text     "notes"
   end
 

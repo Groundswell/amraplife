@@ -14,44 +14,64 @@
 				%ul.cl-vnavigation
 
 					%li
-						%a{ href: swell_media.article_admin_index_path }
-							Articles
-					%li
-						%a{ href: swell_media.asset_admin_index_path }
-							Assets
-					%li
-						%a{ href: swell_media.category_admin_index_path }
-							Categories
-					%li
 						%a{ href: swell_media.contact_admin_index_path }
 							Contacts
-					%li
-						%a{ href: main_app.equipment_admin_index_path }
-							Equipment
-					%li
-						%a{ href: main_app.inspiration_admin_index_path }
-							Inspirations
-					%li
-						%a{ href: main_app.movement_admin_index_path }
-							Movements
-					%li
-						%a{ href: swell_media.page_admin_index_path }
-							Pages
-					%li
-						%a{ href: main_app.place_admin_index_path }
-							Places
-					%li
-						%a{ href: main_app.recipe_admin_index_path }
-							Recipes
-					%li
-						%a{ href: main_app.product_admin_index_path }
+
+					%li.parent
+						%a{ href: '#' }
+							Content
+						%ul.sub-menu
+							%li
+								%a{ href: swell_media.article_admin_index_path }
+									Articles
+							%li
+								%a{ href: swell_media.asset_admin_index_path }
+									Assets
+							%li
+								%a{ href: swell_media.category_admin_index_path }
+									Categories
+							%li
+								%a{ href: main_app.inspiration_admin_index_path }
+									Inspirations
+							%li
+								%a{ href: swell_media.page_admin_index_path }
+									Pages
+							%li
+								%a{ href: main_app.place_admin_index_path }
+									Places
+							%li
+								%a{ href: main_app.recipe_admin_index_path }
+									Recipes
+
+					%li.parent
+						%a{ href: '#' }
+							Exersize
+						%ul.sub-menu
+							%li
+								%a{ href: main_app.term_admin_index_path }
+									CrossFit Terms
+							%li
+								%a{ href: main_app.equipment_admin_index_path }
+									Equipment
+							%li
+								%a{ href: main_app.movement_admin_index_path }
+									Movements
+							%li
+								%a{ href: main_app.workout_admin_index_path }
+									Workouts
+					
+					%li.parent
+						%a{ href: '#' }
 							Store
-					%li
-						%a{ href: main_app.term_admin_index_path }
-							Terms
-					%li
-						%a{ href: main_app.workout_admin_index_path }
-							Workouts
+						%ul.sub-menu
+							%li
+								%a{ href: swell_ecom.order_admin_index_path }
+									Orders
+							%li
+								%a{ href: swell_ecom.product_admin_index_path }
+									Products
+					
+					
 
 
 
@@ -217,9 +237,8 @@
 = render 'swell_media/page_admin/new_modal'
 = render 'equipment_admin/new_modal'
 = render 'movement_admin/new_modal'
-=# render 'swell_ecom/product_admin/new_modal'
+= render 'swell_ecom/product_admin/new_modal'
 = render 'inspiration_admin/new_modal'
 = render 'place_admin/new_modal'
-= render 'product_admin/new_modal'
 = render 'recipe_admin/new_modal'
 = render 'workout_admin/new_modal'
