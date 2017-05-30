@@ -24,12 +24,9 @@
   font-size: 16px;
 }
 
-/*@media (min-width: 480px){
+@media (min-width: 480px){
 	.mainContent{ 
 		padding-top: 30px;
-	}
-	.navbar-brand img{
-		max-width: 60%;
 	}
 }
 
@@ -37,10 +34,7 @@
 	.mainContent{ 
 		padding-top: 50px;
 	}
-	.navbar-brand img{
-		max-width: 100%;
-	}
-}*/
+}
 
 
 .content p{
