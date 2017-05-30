@@ -2,10 +2,15 @@ class SwellEcomTake2Migration < ActiveRecord::Migration
 	def change
 
 		change_column :products, :size_info, :text
+		add_column :products, :collection_id, :integer
+
+		# drop_table :product_options
+		# drop_table :product_variants
 
 		create_table :carts do |t|
 			t.references	:user
 			t.integer		:status, default: 1
+			t.integer		:subtotal, default: 0
 			t.string		:ip
 			t.hstore		:properties, 	default: {}
 			t.timestamps
@@ -13,11 +18,15 @@ class SwellEcomTake2Migration < ActiveRecord::Migration
 		add_index :carts, :user_id
 
 		create_table :cart_items do |t|
+			t.references 	:cart
 			t.references 	:item, polymorphic: true
 			t.integer 		:quantity, default: 1
+			t.integer 		:price, default: 0 
+			t.integer 		:subtotal, default: 0
 			t.hstore		:properties, 	default: {}
 			t.timestamps
 		end
+		add_index :cart_items, :cart_id
 		add_index :cart_items, [ :item_id, :item_type ]
 
 		create_table :geo_addresses do |t|
@@ -64,7 +73,9 @@ class SwellEcomTake2Migration < ActiveRecord::Migration
 			t.string 		:code
 			t.string 		:email
 			t.integer 		:status, default: 0
-
+			t.integer 		:subtotal, default: 0
+			t.integer 		:tax, default: 0 
+			t.integer 		:shipping, default: 0
 			t.integer 		:total, defualt: 0
 			t.string 		:currency, default: 'USD'
 
@@ -92,6 +103,27 @@ class SwellEcomTake2Migration < ActiveRecord::Migration
 		add_index :order_items, [ :item_id, :item_type, :order_id ]
 		add_index :order_items, [ :order_item_type, :order_id ]
 
-		
+		create_table :product_variants do |t|
+			t.references 	:product 
+			t.string 		:title 
+			t.string 		:slug 
+			t.string 		:avatar
+			t.string 		:option_name, default: :size
+			t.string 		:option_value
+			t.text 			:description
+			t.integer 		:status, default: 1
+			t.integer 		:seq, default: 1
+			t.integer 		:price, default: 0
+			t.integer 		:shipping_price, default: 0
+			t.integer 		:inventory, default: -1
+			t.hstore 		:properties, default: {}
+			t.datetime 		:publish_at
+			t.timestamps
+		end
+		add_index :product_variants, :product_id
+		add_index :product_variants, :seq
+		add_index :product_variants, :slug, unique: true
+		add_index :product_variants, [ :option_name, :option_value ]
+
 	end
 end

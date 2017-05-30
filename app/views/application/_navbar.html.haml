@@ -43,10 +43,34 @@
 						%li.dropdown.cart-dropdown
 							%a.dropdown-toggle{ href: "javascript:void(0)", data: { toggle: "dropdown" } }
 								%i.fa.fa-shopping-cart
-								0
+								= session[:cart_count] || 0
 							%ul.dropdown-menu.dropdown-menu-right
-								%li
-									Items in Your Cart
+								- if @cart.nil? || @cart.cart_items.empty?
+									%li
+										Nothing in your cart.
+								- else
+									%li
+										Item(s) in Your Cart
+									- @cart.cart_items.each do |line_item|
+										%li
+											%a{ href: line_item.item.url }
+												.media
+													%img.media-left.media-object{ src: line_item.item.avatar, style: 'max-width:50px;' }
+													.media-body
+														%h6.media-heading{ style: 'font-weight:bold;' }
+															= line_item.item.title
+															%br
+															%span
+																= line_item.quantity
+																X
+																= number_to_currency( line_item.price / 100.to_f )
+									%li
+										.btn-group{ role: :group }
+											%a.btn.btn-default{ href: '/cart', style: 'color: #333;' }
+												Cart
+											%a.btn.btn-default{ href: '/checkout', style: 'color: #333;' }
+												Checkout
+													
 
 
 	%nav.navbar.navbar-main.navbar-default{ role: 'navigation' }

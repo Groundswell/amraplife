@@ -44,16 +44,15 @@
 
 							
 							= form_tag cart_items_path do 
-								= hidden_field_tag :product_id, @product.id
+								= hidden_field_tag :item_type, @product.class.name
+								= hidden_field_tag :item_id, @product.id
 
-								%span.quick-drop
-									%select.select-drop#size{ name: "size" } 
-										%option{ value: :s }
-											Small
-										%option{ value: :m }
-											Medium
-										%option{ value: :l }
-											Large
+								- if @product.product_variants.published.present?
+									%span.quick-drop
+										%select.select-drop{ name: "variant_id" }
+											- @product.product_variants.published.each do |var|
+												%option{ value: var.id }
+													= var.option_value
 
 								%span.quick-drop.resizeWidth
 									%select.select-drop#quantity{ name: "quantity" }	
@@ -63,6 +62,14 @@
 											2
 										%option{ value: "3" }
 											3
+										%option{ value: "4" }
+											4
+										%option{ value: "5" }
+											5
+										%option{ value: "6" }
+											6
+										%option{ value: "7" }
+											7
 								.btn-area
 									= submit_tag 'Add to Cart', class: 'btn btn-primary btn-block'
 	

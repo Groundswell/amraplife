@@ -78,19 +78,24 @@ ActiveRecord::Schema.define(version: 20170528005426) do
   add_index "cards", ["to_email"], name: "index_cards_on_to_email", using: :btree
 
   create_table "cart_items", force: :cascade do |t|
+    t.integer  "cart_id"
     t.integer  "item_id"
     t.string   "item_type"
     t.integer  "quantity",   default: 1
+    t.integer  "price",      default: 0
+    t.integer  "subtotal",   default: 0
     t.hstore   "properties", default: {}
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
+  add_index "cart_items", ["cart_id"], name: "index_cart_items_on_cart_id", using: :btree
   add_index "cart_items", ["item_id", "item_type"], name: "index_cart_items_on_item_id_and_item_type", using: :btree
 
   create_table "carts", force: :cascade do |t|
     t.integer  "user_id"
     t.integer  "status",     default: 1
+    t.integer  "subtotal",   default: 0
     t.string   "ip"
     t.hstore   "properties", default: {}
     t.datetime "created_at"
@@ -456,6 +461,9 @@ ActiveRecord::Schema.define(version: 20170528005426) do
     t.string   "code"
     t.string   "email"
     t.integer  "status",              default: 0
+    t.integer  "subtotal",            default: 0
+    t.integer  "tax",                 default: 0
+    t.integer  "shipping",            default: 0
     t.integer  "total"
     t.string   "currency",            default: "USD"
     t.text     "customer_comment"
@@ -496,35 +504,26 @@ ActiveRecord::Schema.define(version: 20170528005426) do
 
   add_index "places", ["slug"], name: "index_places_on_slug", unique: true, using: :btree
 
-  create_table "product_options", force: :cascade do |t|
-    t.integer "product_id"
-    t.string  "name",       default: "size"
-    t.string  "values",     default: [],     array: true
-  end
-
-  add_index "product_options", ["product_id"], name: "index_product_options_on_product_id", using: :btree
-  add_index "product_options", ["values"], name: "index_product_options_on_values", using: :gin
-
   create_table "product_variants", force: :cascade do |t|
     t.integer  "product_id"
     t.string   "title"
     t.string   "slug"
-    t.integer  "seq",            default: 1
-    t.string   "sku"
     t.string   "avatar"
-    t.integer  "status",         default: 0
+    t.string   "option_name",    default: "size"
+    t.string   "option_value"
     t.text     "description"
-    t.datetime "publish_at"
+    t.integer  "status",         default: 1
+    t.integer  "seq",            default: 1
     t.integer  "price",          default: 0
     t.integer  "shipping_price", default: 0
     t.integer  "inventory",      default: -1
-    t.string   "tags",           default: [], array: true
-    t.hstore   "options",        default: {}
     t.hstore   "properties",     default: {}
+    t.datetime "publish_at"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
+  add_index "product_variants", ["option_name", "option_value"], name: "index_product_variants_on_option_name_and_option_value", using: :btree
   add_index "product_variants", ["product_id"], name: "index_product_variants_on_product_id", using: :btree
   add_index "product_variants", ["seq"], name: "index_product_variants_on_seq", using: :btree
   add_index "product_variants", ["slug"], name: "index_product_variants_on_slug", unique: true, using: :btree
@@ -554,6 +553,7 @@ ActiveRecord::Schema.define(version: 20170528005426) do
     t.string   "model"
     t.text     "size_info"
     t.text     "notes"
+    t.integer  "collection_id"
   end
 
   add_index "products", ["category_id"], name: "index_products_on_category_id", using: :btree
