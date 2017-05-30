@@ -4,7 +4,6 @@ class SwellEcomTake2Migration < ActiveRecord::Migration
 		change_column :products, :size_info, :text
 		add_column :products, :collection_id, :integer
 
-		drop_table :product_options
 		drop_table :product_variants
 
 		create_table :carts do |t|
