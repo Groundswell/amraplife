@@ -24,6 +24,25 @@
   font-size: 16px;
 }
 
+/*@media (min-width: 480px){
+	.mainContent{ 
+		padding-top: 30px;
+	}
+	.navbar-brand img{
+		max-width: 60%;
+	}
+}
+
+@media (min-width: 768px){
+	.mainContent{ 
+		padding-top: 50px;
+	}
+	.navbar-brand img{
+		max-width: 100%;
+	}
+}*/
+
+
 .content p{
 	font-family: 'Merriweather', Cambria, "Times New Roman", Times, serif;
 	font-size: 18px;

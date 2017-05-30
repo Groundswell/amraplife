@@ -11,6 +11,9 @@ class SwellEcomTake2Migration < ActiveRecord::Migration
 			t.references	:user
 			t.integer		:status, default: 1
 			t.integer		:subtotal, default: 0
+			t.integer 		:tax 
+			t.integer 		:shipping, default: 0
+			t.integer 		:total, default: 0
 			t.string		:ip
 			t.hstore		:properties, 	default: {}
 			t.timestamps

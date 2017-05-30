@@ -32,7 +32,7 @@
 												%td.col-xs-2
 													= number_to_currency( line_item.price / 100.to_f )
 												%td.col.xs-2
-													= text_field_tag :quantity, line_item.quantity, class: 'form-control'
+													= text_field_tag "item_quantity[#{line_item.id}]", line_item.quantity, class: 'form-control'
 												%td.col-xs-2
 													= number_to_currency( line_item.subtotal / 100.to_f )
 													%a{ href: swell_ecom.cart_item_path( line_item ), style: 'color: #f00;' , data: { method: :delete, confirm: 'Are you sure?' } }
@@ -52,15 +52,15 @@
 										%li
 											Sub Total
 											%span
-												$29.99
+												= number_to_currency( @cart.cart_items.sum( :subtotal ) / 100.to_f )
 										%li
 											Tax
 											%span 
-												$3.00
+												$0.00
 										%li
 											Total
 											%span.grandTotal
-												$32.99
+												=# number_to_currency( @cart.total / 100.to_f )
 							.checkBtnArea
 								%a.btn.btn-primary.btn-block{ href: swell_ecom.new_checkout_path, style: 'color:#fff;' }
 									Checkout

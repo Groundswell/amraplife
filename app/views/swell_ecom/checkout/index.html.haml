@@ -1,0 +1,59 @@
+%section.clearfix.stepsWrapper.mainContent
+	.container
+		.row
+			.col-xs-12
+				.innerWrpper.clearfix.stepsPage
+					.row.progress-wizard{ style: "border-bottom:0;" }
+						.col-xs-4.progress-wizard-step.complete
+							.text-center.progress-wizard-stepnum
+								Billing &amp; Shipping Address
+							.progress
+								.progress-bar
+							%a.progress-wizard-dot{ href: '' }
+						
+						.col-xs-4.progress-wizard-step.disabled
+							.text-center.progress-wizard-stepnum
+								Payment Method
+							.progress
+								.progress-bar
+							%a.progress-wizard-dot{ href: '' }
+
+						.col-xs-4.progress-wizard-step.disabled
+							.text-center.progress-wizard-stepnum
+								Review & Confirm
+							.progress
+								.progress-bar
+							%a.progress-wizard-dot{ href: '' }
+
+					%form.row{ role: :form }
+						.col-xs-12
+							.page-header
+								%h4
+									Billing Info
+						.form-group.col-sm-6.col-xs-12
+							%label First Name
+							%input.form-control{ type: :text }
+						.form-group.col-sm-6.col-xs-12
+							%label Last Name
+							%input.form-control{ type: :text }
+						.form-group.col-sm-6.col-xs-12
+							%label Email
+							%input.form-control{ type: :text }
+						.form-group.col-sm-6.col-xs-12
+							%label Phone
+							%input.form-control{ type: :text }
+						.form-group.col-sm-6.col-xs-12
+							%label Address1
+							%input.form-control{ type: :text }
+						.form-group.col-sm-6.col-xs-12
+							%label Address2
+							%input.form-control{ type: :text }
+						.form-group.col-sm-6.col-xs-12
+							%label City
+							%input.form-control{ type: :text }
+						.form-group.col-sm-3.col-xs-6
+							%label State
+							%input.form-control{ type: :text }
+						.form-group.col-sm-3.col-xs-6
+							%label Zip
+							%input.form-control{ type: :text }
