@@ -32,9 +32,9 @@
 										%a{:href => products_path( category: @product.product_category.slug ) }
 											= @product.product_category.name
 
-							%h2
+							%h1
 								= @product.title
-							%h3
+							%h2{ style: "font-family: 'PT Serif' ;"}
 								- if @product.price % 100 == 0
 									= number_to_currency( @product.price / 100.to_f, precision: 0 )
 								- else

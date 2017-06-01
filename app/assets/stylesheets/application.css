@@ -20,13 +20,23 @@
 	padding-top: 20px;
 	padding-bottom: 20px;
 }
-.navbar-default .navbar-collapse li a {
-  font-size: 16px;
+
+
+.home-about-quote{
+	font-family: 'PT Serif', Cambria, "Times New Roman", Times, serif;
+	font-weight: bold;
+	line-height: 1.5;
+	margin-bottom: 1.5em;
+	text-transform: none;
+	color: #555;
 }
 
 @media (min-width: 480px){
 	.mainContent{ 
 		padding-top: 30px;
+	}
+	.home-about-quote{
+		font-size: 24px;
 	}
 }
 
@@ -34,13 +44,19 @@
 	.mainContent{ 
 		padding-top: 50px;
 	}
+	.home-about-quote{
+		font-size: 30px;
+	}
 }
 
 
+
 .content p{
-	font-family: 'Merriweather', Cambria, "Times New Roman", Times, serif;
-	font-size: 18px;
-	line-height: 1.8;
+	font-family: 'PT Serif', Cambria, "Times New Roman", Times, serif;
+	font-size: 20px;
+	color:#444;
+	line-height: 1.5;
+	margin-bottom: 2em;
 }
 
 .privacy, .terms{
@@ -57,6 +73,11 @@ ul.crossfit-terms{
 }
 .crossfit-terms li {
 	margin: 1em auto;
+	font-family: 'PT Serif', Cambria, "Times New Roman", Times, serif;
+	font-size: 20px;
+	color:#444;
+	line-height: 1.5;
+	margin-bottom: 2em;
 }
 .crossfit-terms p{
 	display: inline;

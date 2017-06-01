@@ -58,16 +58,16 @@
 							%a{ href: '' }
 								Places
 						%li
-							%a{ href: '' }
+							%a{ href: '/xfit-terms' }
 								Crossfit Terms
 						%li
 							%a{ href: '' }
 								Workouts
 						%li
-							%a{ href: '' }
+							%a{ href: '/recipes' }
 								Recipes
 						%li
-							%a{ href: '' }
+							%a{ href: '/inspirations' }
 								Free Wallpapers
 
 			.col-sm-2.col-xs-12
@@ -102,11 +102,11 @@
 					%h3 Sign Up Now
 					%p
 						Enter your email address and get notified about new products. Don't worry - we hate spam too!
-					.input-group
-						%input{ type: "text", class: "form-control", placeholder: "your email address", 'aria-describedby' => "basic-addon2" }
-						%a{ href: "#", class: "input-group-addon", id: "basic-addon2" }
-							Go
-							%i.fa.fa-chevron-right
+					= form_for SwellMedia::Optin.new, url: swell_media.optins_path, role: :form, class: 'form-horizontal'  do |f|
+						.input-group
+							= f.text_field :email, placeholder: 'Enter Your Email', class: 'form-control'
+							= f.submit 'Do It', class: 'input-group-addon'
+
 
 .copyRight.clearfix
 	.container

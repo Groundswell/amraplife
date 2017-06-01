@@ -16,7 +16,11 @@ class TermAdminController < SwellMedia::AdminController
 	def index
 		by = params[:by] || 'title'
 		dir = params[:dir] || 'asc'
-		@terms = Term.order( "#{by} #{dir}" )
+
+		@terms = Term.all
+
+		@terms = Kaminari.paginate_array( @terms.sort_by{ |t| t.title.sub(/^the /i, '' ).sub(/^a /i, '' ).downcase } )
+
 		if params[:q]
 			match = params[:q].downcase.singularize.gsub( /\s+/, '' )
 			@terms = @terms.where( "lower(REGEXP_REPLACE(title, '\s', '' )) = :m", m: match )

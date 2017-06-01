@@ -26,9 +26,9 @@
 							%span
 								%a{ href: '.login-modal', data: { toggle: "modal" } }
 									Log in
-									%small
+									-#%small
 										or
-								%a{ href: '#signup', data: { toggle: "modal" } } 
+								-#%a{ href: '#signup', data: { toggle: "modal" } } 
 									Create an account
 						%li.searchBox
 							%a{ href: '' }
@@ -48,6 +48,9 @@
 								- if @cart.nil? || @cart.cart_items.empty?
 									%li
 										Nothing in your cart.
+									%li
+										%a{ href: '/store', style: 'margin-top:0.5em;font-size:100%;text-decoration: underline;' }
+											Shop AMRAP
 								- else
 									%li
 										Item(s) in Your Cart
@@ -66,9 +69,9 @@
 																= number_to_currency( line_item.price / 100.to_f )
 									%li
 										.btn-group{ role: :group }
-											%a.btn.btn-default{ href: '/cart', style: 'color: #333;' }
+											%a.btn.btn-default{ href: '/cart', style: 'color: #333;padding-left:1em;padding-right:1em;margin-right:2em;' }
 												Cart
-											%a.btn.btn-default{ href: '/checkout', style: 'color: #333;' }
+											%a.btn.btn-default{ href: '/checkout', style: 'color: #333;padding-left:1em;padding-right:1em;' }
 												Checkout
 													
 

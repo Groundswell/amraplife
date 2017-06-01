@@ -7,6 +7,11 @@
 						.jumbotron
 							%h1.text-center
 								Nothing in Your Cart
+							.text-center
+								%a.btn.btn-info{ href: '/store' }
+									Shop AMRAP
+									%i.fa.fa-chevron-right
+
 					- else
 						= form_tag swell_ecom.cart_path( @cart ), method: :patch do
 							.table-responsive
