@@ -10,7 +10,7 @@
 									.item.active{ data: { thumb: 0 } }
 										%img{ src: @product.avatar }
 									- @images.each_with_index do |image, idx|
-										.item{ data: { thumb: idx } }
+										.item{ data: { thumb: (idx + 1) } }
 											%img{ src: image.url }
 							.clearfix
 								#thumbcarousel.carousel.slide{ data: { interval: "false" } }
@@ -18,7 +18,7 @@
 										.thumb{ data: { target: "#carousel", 'slide-to' => "0" } }
 											%img{ src: @product.avatar }
 										- @images.each_with_index do |image, idx|
-											.thumb{ data: { target: "#carousel", 'slide-to' => idx } }
+											.thumb{ data: { target: "#carousel", 'slide-to' => (idx + 1) } }
 												%img{ src: image.url }
 									%a.left.carousel-control{ href: "#thumbcarousel", role: "button", data: { slide: "prev" } }
 										%span.glyphicon.glyphicon-chevron-left
@@ -46,8 +46,8 @@
 							- else
 								%br
 
-							
-							= form_tag cart_items_path do 
+
+							= form_tag cart_items_path do
 								= hidden_field_tag :item_type, @product.class.name
 								= hidden_field_tag :item_id, @product.id
 
@@ -59,7 +59,7 @@
 													= var.option_value
 
 								%span.quick-drop.resizeWidth
-									%select.select-drop#quantity{ name: "quantity" }	
+									%select.select-drop#quantity{ name: "quantity" }
 										%option{ value: "1" }
 											1
 										%option{ value: "2" }
@@ -76,7 +76,7 @@
 											7
 								.btn-area
 									= submit_tag 'Add to Cart', class: 'btn btn-primary btn-block'
-	
+
 
 							.tabArea
 								%ul.nav.nav-tabs
@@ -106,4 +106,3 @@
 								Related Products
 						- @related_products.each do |product|
 							= render 'card', product: product, args: { size: 'col-md-3 col-sm-6 col-xs-12' }
-
