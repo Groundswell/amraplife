@@ -38,7 +38,7 @@ GIT
 
 GIT
   remote: git://github.com/Groundswell/swell_theme_store.git
-  revision: 3e78e23bc0de9ba17854b79bd14f9c7b53479e7b
+  revision: c6223e3fb5fed8d8d2634b32b2ac595836e57429
   specs:
     swell_theme_store (0.0.1)
       rails (~> 4.2.7)

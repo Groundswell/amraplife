@@ -7,12 +7,16 @@
 				.col-md-9.col-sm-8.col-xs-12
 					.row
 						.col-xs-12
-							%h1.text-center
+							%h1.content-title.text-center
 								= @recipe.title
 							.thumbnail
 								%img{ src: @recipe.avatar, alt: @recipe.title }
 
-								.addthis_inline_share_toolbox.hidden-xs.hidden-sm
+								.caption{ style: 'margin-bottom: 1em;border-bottom:1px #ddd solid;' }
+									in
+									= link_to @recipe.recipe_category, recipes_path( cat: @recipe.recipe_category.slug)
+									.addthis_inline_share_toolbox.hidden-xs.hidden-sm.pull-right
+									.clearfix
 								
 								%caption
 									.row
@@ -41,7 +45,7 @@
 												%img.img.img-responsive{ src: recipe.avatar, alt: recipe.title }
 										.recipeCaption.clearfix
 											%a{ href: recipe.url }
-												%h5
+												%h5.text-center
 													= recipe.title
 	
 
