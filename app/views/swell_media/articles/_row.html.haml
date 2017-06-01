@@ -2,13 +2,14 @@
 	.row
 		.col-xs-12
 			.thumbnail
+				.caption
+					%h3.text-center
+						= link_to article.title, article.url, style: "line-height:1.25;font-family:'PT Serif', serif;"
 				%a{ href: article.url }
 					%img{ src: article.cover_image, alt: article.title }
 					.caption
 						.row
 							.col-xs-12
-								%h3
-									= link_to article.title, article.url
 								%p
 									= raw article.description
 									

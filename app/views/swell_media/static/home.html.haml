@@ -3,7 +3,7 @@
 		.row
 			.col-xs-12
 				%h2.text-center.home-about-quote
-					Our Passion is Living as Well as Possible. We want to inspire you to blah blaha lsd asldjaslkdjasldj s
+					We started with a simple idea: Create high-quality inspiring fitness products that aren't about masochism or frat-humor.
 				.text-center
 					%a.btn.btn-primary{ href: '/about' }
 						Read More
@@ -31,7 +31,7 @@
 										%i.fa.fa-chevron-right
 							.caption
 								%a{ href: product.url }
-									%h4
+									%h4.text-center
 										= product.title
 
 
@@ -50,7 +50,7 @@
 									= image_tag article.avatar
 							.productCaption.clearfix
 								%a{ href: article.url }
-									%h5
+									%h4.text-center{ style: 'font-size:16px;line-height:1.25' }
 										= article.title
 								%p
 									= raw article.description

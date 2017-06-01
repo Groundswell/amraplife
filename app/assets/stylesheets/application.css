@@ -26,9 +26,34 @@
 	font-family: 'PT Serif', Cambria, "Times New Roman", Times, serif;
 	font-weight: bold;
 	line-height: 1.5;
-	margin-bottom: 1.5em;
+	/*margin-bottom: 1.5em;*/
 	text-transform: none;
 	color: #555;
+}
+
+
+h1{
+  font-size: 44px;
+}
+
+h2{
+  font-size: 40px;
+}
+
+h3{
+  font-size: 36px;
+}
+
+h4 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 25px;
+}
+
+h5 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 25px;
 }
 
 @media (min-width: 480px){
@@ -50,6 +75,16 @@
 }
 
 
+
+.blogPage .thumbnail img{
+	margin-bottom:25px;
+}
+
+h1.content-title{
+	font-family: 'PT Serif', Cambria, "Times New Roman", Times, serif;
+	line-height: 1.25;
+	font-weight: 700;
+}
 
 .content p{
 	font-family: 'PT Serif', Cambria, "Times New Roman", Times, serif;

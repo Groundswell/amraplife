@@ -3,7 +3,7 @@
 		.row
 			.col-sm-2.col-xs-12
 				.footerLink
-					%h5
+					%h5{ style: 'font-size: 16px;' }
 						Stuff
 					%ul.list-unstyled
 						%li
@@ -27,7 +27,7 @@
 								Admin
 			.col-sm-2.col-xs-12
 				.footerLink
-					%h5
+					%h5{ style: 'font-size: 16px;' }
 						Shop
 					%ul.list-unstyled
 						%li
@@ -48,7 +48,7 @@
 
 			.col-sm-2.col-xs-12
 				.footerLink
-					%h5
+					%h5{ style: 'font-size: 16px;' }
 						More to see
 					%ul.list-unstyled
 						%li
@@ -72,7 +72,7 @@
 
 			.col-sm-2.col-xs-12
 				.footerLink
-					%h5
+					%h5{ style: 'font-size: 16px;' }
 						Get in Touch
 					%ul.list-unstyled
 						%li
@@ -98,8 +98,8 @@
 
 			.col-sm-4.col-xs-12
 				.newsletter.clearfix
-					%h4 Newsletter
-					%h3 Sign Up Now
+					%h4{ style: 'font-size: 18px;' } Newsletter
+					%h3{ style: 'font-size: 22px;' } Sign Up Now
 					%p
 						Enter your email address and get notified about new products. Don't worry - we hate spam too!
 					= form_for SwellMedia::Optin.new, url: swell_media.optins_path, role: :form, class: 'form-horizontal'  do |f|

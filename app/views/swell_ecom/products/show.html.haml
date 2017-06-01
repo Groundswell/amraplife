@@ -32,15 +32,19 @@
 										%a{:href => products_path( category: @product.product_category.slug ) }
 											= @product.product_category.name
 
-							%h1
+							%h1.content-title
 								= @product.title
-							%h2{ style: "font-family: 'PT Serif' ;"}
+							%h2{ style: 'color:#777;border-bottom: 1px #ddd solid;' }
 								- if @product.price % 100 == 0
 									= number_to_currency( @product.price / 100.to_f, precision: 0 )
 								- else
 									= number_to_currency( @product.price / 100.to_f )
-							%p
-								= raw @product.description
+							
+							- if @product.description.present?
+								%p
+									= raw @product.description
+							- else
+								%br
 
 							
 							= form_tag cart_items_path do 
@@ -89,8 +93,7 @@
 									#details.tab-pane.fade.in.active
 										= raw @product.content
 									#about.tab-pane.fade
-										%p
-											Burpees are great - TODO
+										= raw @product.notes
 									#sizing.tab-pane.fade
 										- if @product.size_info.present?
 											= render "swell_ecom/products/size_info/#{@product.size_info}"

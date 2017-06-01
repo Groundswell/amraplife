@@ -6,9 +6,9 @@
 					%img{ src: product.avatar, alt: product.title }
 			.productCaption.clearfix
 				%a{ href: product.url }
-					%h5
+					%h4.text-center{ style: 'margin-bottom:12px;' }
 						= product.title
-					%h3
+					%h4.text-center{ style: 'color: #777;' }
 						- if product.price % 100 == 0
 							= number_to_currency( product.price / 100.to_f, precision: 0 )
 						- else
