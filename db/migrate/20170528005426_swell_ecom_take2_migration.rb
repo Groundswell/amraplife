@@ -12,7 +12,7 @@ class SwellEcomTake2Migration < ActiveRecord::Migration
 			t.references	:user
 			t.integer		:status, default: 1
 			t.integer		:subtotal, default: 0
-			t.integer 		:tax 
+			t.integer 		:tax
 			t.integer 		:shipping, default: 0
 			t.integer 		:total, default: 0
 			t.string		:ip
@@ -25,7 +25,7 @@ class SwellEcomTake2Migration < ActiveRecord::Migration
 			t.references 	:cart
 			t.references 	:item, polymorphic: true
 			t.integer 		:quantity, default: 1
-			t.integer 		:price, default: 0 
+			t.integer 		:price, default: 0
 			t.integer 		:subtotal, default: 0
 			t.hstore		:properties, 	default: {}
 			t.timestamps
@@ -78,7 +78,7 @@ class SwellEcomTake2Migration < ActiveRecord::Migration
 			t.string 		:email
 			t.integer 		:status, default: 0
 			t.integer 		:subtotal, default: 0
-			t.integer 		:tax, default: 0 
+			t.integer 		:tax, default: 0
 			t.integer 		:shipping, default: 0
 			t.integer 		:total, defualt: 0
 			t.string 		:currency, default: 'USD'
@@ -108,9 +108,9 @@ class SwellEcomTake2Migration < ActiveRecord::Migration
 		add_index :order_items, [ :order_item_type, :order_id ]
 
 		create_table :product_variants do |t|
-			t.references 	:product 
-			t.string 		:title 
-			t.string 		:slug 
+			t.references 	:product
+			t.string 		:title
+			t.string 		:slug
 			t.string 		:avatar
 			t.string 		:option_name, default: :size
 			t.string 		:option_value
@@ -129,5 +129,7 @@ class SwellEcomTake2Migration < ActiveRecord::Migration
 		add_index :product_variants, :slug, unique: true
 		add_index :product_variants, [ :option_name, :option_value ]
 
+
+		SwellMedia::Asset.where(parent_obj_type: 'Product').update_all( parent_obj_type: 'SwellEcom::Product' )
 	end
 end
