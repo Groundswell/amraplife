@@ -40,9 +40,8 @@
 													= text_field_tag "item_quantity[#{line_item.id}]", line_item.quantity, class: 'form-control'
 												%td.col-xs-2
 													= number_to_currency( line_item.subtotal / 100.to_f )
-													%a{ href: swell_ecom.cart_item_path( line_item ), style: 'color: #f00;' , data: { method: :delete, confirm: 'Are you sure?' } }
+													%a{ href: swell_ecom.cart_item_path( line_item ), style: 'color: #f00;margin-left:1em;' , data: { method: :delete, confirm: 'Are you sure?' } }
 														%i.fa.fa-trash-o
-														Remove
 							.updateArea
 								.input-group
 									= text_field_tag :coupon, '', placeholder: 'I have a coupon', class: 'form-control'
