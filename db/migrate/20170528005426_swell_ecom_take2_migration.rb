@@ -1,7 +1,16 @@
 class SwellEcomTake2Migration < ActiveRecord::Migration
 	def change
 
-		change_column :products, :size_info, :text
+
+		reversible do |dir|
+			dir.up do
+				change_column :products, :size_info, :text
+			end
+			dir.down do
+				change_column :products, :size_info, :string
+			end
+		end
+
 		add_column :products, :collection_id, :integer
 		add_column :products, :shipping_price, :integer, default: 0
 
@@ -95,11 +104,12 @@ class SwellEcomTake2Migration < ActiveRecord::Migration
 
 		create_table :order_items do |t|
 			t.references 	:order
-			t.references 	:item, polymorphic: true #sku, plan
-			t.integer		:order_item_type, default: 1
+			t.references 	:item, polymorphic: true
 			t.integer 		:quantity, default: 1
-			t.integer 		:amount, default: 0
+			t.integer 		:price, default: 0
+			t.integer 		:subtotal, default: 0
 			t.string		:tax_code, default: nil
+			t.integer		:order_item_type, default: 1
 			t.string		:label
 			t.hstore		:properties, 	default: {}
 			t.timestamps

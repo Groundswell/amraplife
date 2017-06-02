@@ -443,10 +443,11 @@ ActiveRecord::Schema.define(version: 20170528005426) do
     t.integer  "order_id"
     t.integer  "item_id"
     t.string   "item_type"
-    t.integer  "order_item_type", default: 1
     t.integer  "quantity",        default: 1
-    t.integer  "amount",          default: 0
+    t.integer  "price",           default: 0
+    t.integer  "subtotal",        default: 0
     t.string   "tax_code"
+    t.integer  "order_item_type", default: 1
     t.string   "label"
     t.hstore   "properties",      default: {}
     t.datetime "created_at"

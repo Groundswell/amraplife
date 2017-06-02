@@ -11,5 +11,5 @@
 // about supported directives.
 //
 //= require app_theme
+//= require swell_ecom/checkout
 //= require_self
-

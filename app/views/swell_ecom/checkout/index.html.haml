@@ -10,7 +10,7 @@
 							.progress
 								.progress-bar
 							%a.progress-wizard-dot{ href: '' }
-						
+
 						.col-xs-4.progress-wizard-step.disabled
 							.text-center.progress-wizard-stepnum
 								Payment Method
@@ -25,49 +25,169 @@
 								.progress-bar
 							%a.progress-wizard-dot{ href: '' }
 
-					%form.row{ role: :form }
-						.col-xs-12
-							.page-header
-								%h4
-									Billing Info
-						.form-group.col-sm-6.col-xs-12
-							%label First Name
-							%input.form-control{ type: :text }
-						.form-group.col-sm-6.col-xs-12
-							%label Last Name
-							%input.form-control{ type: :text }
-						.form-group.col-sm-6.col-xs-12
-							%label Email
-							%input.form-control{ type: :text }
-						.form-group.col-sm-6.col-xs-12
-							%label Phone
-							%input.form-control{ type: :text }
-						.form-group.col-sm-6.col-xs-12
-							%label Address1
-							%input.form-control{ type: :text }
-						.form-group.col-sm-6.col-xs-12
-							%label Address2
-							%input.form-control{ type: :text }
-						.form-group.col-sm-6.col-xs-12
-							%label City
-							%input.form-control{ type: :text }
-						.form-group.col-sm-3.col-xs-6
-							%label State
-							%input.form-control{ type: :text }
-						.form-group.col-sm-3.col-xs-6
-							%label Zip
-							%input.form-control{ type: :text }
 
+					%table.table
+						%thead
+							%tr
+								-# %th{ style: 'width: 100px' } &nbsp;
+								%th &nbsp;
+								%th{ style: 'width: 100px' } Price
+								%th.text-right{ style: 'width: 100px' } Quantity
+						%tbody
+							- @order.order_items.each do |order_item|
+								- if order_item.sku?
+									%tr
+										-# %td avatar
+										%td
+											=order_item.label
+										%td= number_to_currency order_item.item.price.to_f / 100
+										%td.text-right
+											= order_item.quantity
+
+
+					= form_for @order, as: :order, url: swell_ecom.confirm_checkout_index_path(), method: 'POST', html: { class: 'stripe_form validate_form checkout_form row' } do |f|
+
+						= f.fields_for :billing_address do |billing_address_form|
+							.col-xs-12
+								.page-header
+									%h4
+										Billing Info
+
+
+							.form-group.col-sm-6.col-xs-12
+								%label First Name
+								= billing_address_form.text_field :first_name, class: 'form-control', required: true
+								.help-block.with-errors
+							.form-group.col-sm-6.col-xs-12
+								%label Last Name
+								= billing_address_form.text_field :last_name, class: 'form-control', required: true
+								.help-block.with-errors
+							.form-group.col-sm-6.col-xs-12
+								%label Email
+								= f.email_field :email, class: 'form-control', required: true
+								.help-block.with-errors
+							.form-group.col-sm-6.col-xs-12
+								%label Phone
+								= billing_address_form.telephone_field :phone, value: (@order.billing_address.phone || '+1'), class: 'form-control telephone_formatted', required: true
+								.help-block.with-errors
+							.form-group.col-sm-6.col-xs-12
+								%label Address1
+								= billing_address_form.text_field :street, class: 'form-control', required: true
+								.help-block.with-errors
+							.form-group.col-sm-6.col-xs-12
+								%label Address2
+								= billing_address_form.text_field :street2, class: 'form-control'
+								.help-block.with-errors
+							.form-group.col-sm-6.col-xs-12
+								%label City
+								= billing_address_form.text_field :city, class: 'form-control', required: true
+								.help-block.with-errors
+							.form-group.col-sm-3.col-xs-6
+								.hidden
+									- if @billing_countries.count == 1
+										= billing_address_form.hidden_field :geo_country_id, value: @billing_countries.first.id
+										.form-control= @billing_countries.first.name
+									- else
+										= billing_address_form.collection_select :geo_country_id, @billing_countries, :id, :name, { prompt: @billing_countries.count > 1 }, { class: "form-control", data: { 'geostateupdate-target' => '#order_billing_address_state', 'geostateupdate-data' => { address_attribute: :billing_address }.to_json }, required: true }
+
+								%label State
+								= render 'state_input', f: billing_address_form, states: @billing_states, id: 'order_billing_address_state'
+								.help-block.with-errors
+							.form-group.col-sm-3.col-xs-6
+								%label Zip
+								= billing_address_form.text_field :zip, class: 'form-control', "data-stripe" => "address_zip", required: true
+								.help-block.with-errors
+
+
+							.col-xs-12
+								.payment-errors.alert.alert-danger.hide
+
+							.form-group.col-sm-3.col-xs-6
+								%label
+									%span Card Number
+								%input.form-control{"data-stripe" => "number", :size => "20", :type => "text", :autocomplete => "cc-number", :required => true, 'data-minlength' => '19' }/
+								.help-block.with-errors
+
+							.form-group.col-sm-3.col-xs-6
+								%label
+									%span Expiration (MM/YY)
+								%div
+									%input.form-control{"data-stripe" => "exp", :size => "9", :type => "text", style: 'width: auto;display:inline-block;', :autocomplete => "cc-exp", required: true, 'data-minlength' => '7' }/
+								.help-block.with-errors
+
+							.form-group.col-sm-3.col-xs-6
+								%label
+									%span CVC
+								%input.form-control{"data-stripe" => "cvc", :size => "4", :type => "text", style: 'width: auto;', :autocomplete => "off", required: true, 'data-minlength' => '3' }/
+								.help-block.with-errors
+
+						= f.fields_for :shipping_address do |shipping_address_form|
+							.col-xs-12
+								.page-header
+									%h4
+										Shipping Info
+								.form-group
+									%label
+										%input{ type: :checkbox, 'data-toggle'=>"collapse", 'data-target'=>"#shipping_info", checked: :checked }
+										same as billing info
+
+
+							.collapse#shipping_info
+								.form-group.col-sm-6.col-xs-12
+									%label First Name
+									= shipping_address_form.text_field :first_name, class: 'form-control', required: true
+									.help-block.with-errors
+								.form-group.col-sm-6.col-xs-12
+									%label Last Name
+									= shipping_address_form.text_field :last_name, class: 'form-control', required: true
+									.help-block.with-errors
+								.form-group.col-sm-6.col-xs-12
+									%label Email
+									= f.email_field :email, class: 'form-control', required: true
+									.help-block.with-errors
+								.form-group.col-sm-6.col-xs-12
+									%label Phone
+									= shipping_address_form.telephone_field :phone, value: (@order.shipping_address.phone || '+1'), class: 'form-control telephone_formatted', required: true
+									.help-block.with-errors
+								.form-group.col-sm-6.col-xs-12
+									%label Address1
+									= shipping_address_form.text_field :street, class: 'form-control', required: true
+									.help-block.with-errors
+								.form-group.col-sm-6.col-xs-12
+									%label Address2
+									= shipping_address_form.text_field :street2, class: 'form-control'
+									.help-block.with-errors
+								.form-group.col-sm-6.col-xs-12
+									%label City
+									= shipping_address_form.text_field :city, class: 'form-control', required: true
+									.help-block.with-errors
+								.form-group.col-sm-3.col-xs-6
+									.hidden
+										- if @shipping_countries.count == 1
+											= shipping_address_form.hidden_field :geo_country_id, value: @shipping_countries.first.id
+											.form-control= @shipping_countries.first.name
+										- else
+											= shipping_address_form.collection_select :geo_country_id, @shipping_countries, :id, :name, { prompt: @shipping_countries.count > 1 }, { class: "form-control", data: { 'geostateupdate-target' => '#order_shipping_address_state', 'geostateupdate-data' => { address_attribute: :shipping_address }.to_json }, required: true }
+
+
+									%label State
+									= render 'state_input', f: shipping_address_form, states: @shipping_states, id: 'order_shipping_address_state'
+									.help-block.with-errors
+								.form-group.col-sm-3.col-xs-6
+									%label Zip
+									= shipping_address_form.text_field :zip, class: 'form-control', "data-stripe" => "address_zip", required: true
+									.help-block.with-errors
 
 
 
 						.col-xs-12
 							.well.well-lg.clearfix
-								%a.btn.btn-primary.pull-right{ href: '/checkout/thank-you' }
+								%button.btn.btn-primary.pull-right
 									Confirm
 
 
 
+%script{:src => "https://js.stripe.com/v2/", :type => "text/javascript"}
 
-
-
+:javascript
+	Stripe.setPublishableKey('#{Rails.configuration.stripe[:publishable_key]}');
