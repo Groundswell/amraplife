@@ -32,29 +32,6 @@
 }
 
 
-h1{
-  font-size: 44px;
-}
-
-h2{
-  font-size: 40px;
-}
-
-h3{
-  font-size: 36px;
-}
-
-h4 {
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 25px;
-}
-
-h5 {
-  font-size: 20px;
-  font-weight: 700;
-  margin-bottom: 25px;
-}
 
 @media (min-width: 320px){
 	.mainContent{ 
@@ -62,6 +39,26 @@ h5 {
 	}
 	.home-about-quote{
 		font-size: 24px;
+	}
+	h1{
+	  font-size: 32px;
+	}
+	h2{
+	  font-size: 28px;
+	}
+	h3{
+	  font-size: 24px;
+	}
+	h4 {
+	  font-size: 20px;
+	  font-weight: 700;
+	  margin-bottom: 25px;
+	}
+
+	h5 {
+	  font-size: 16px;
+	  font-weight: 700;
+	  margin-bottom: 25px;
 	}
 }
 
@@ -71,6 +68,28 @@ h5 {
 	}
 	.home-about-quote{
 		font-size: 30px;
+	}
+	h1{
+	  font-size: 44px;
+	}
+
+	h2{
+	  font-size: 40px;
+	}
+
+	h3{
+	  font-size: 36px;
+	}
+	h4 {
+	  font-size: 24px;
+	  font-weight: 700;
+	  margin-bottom: 25px;
+	}
+
+	h5 {
+	  font-size: 20px;
+	  font-weight: 700;
+	  margin-bottom: 25px;
 	}
 }
 
