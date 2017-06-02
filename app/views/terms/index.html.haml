@@ -13,7 +13,7 @@
 
 				.addthis_inline_share_toolbox.hidden-xs.hidden-sm
 
-				%p
+				%p{ style: 'margin-top:2em;' }
 					CrossFit is an entire subculture onto itself. Walking into a CrossFit gym can be intimidating enough without having to know a TABATA from an EMOM. CrossFit is filled with all kinds of crazy jargon that can be confusing and disorienting to newcomers. More importantly, if you don't have a grasp on some of the cues your coach is providing, you can get yourself injured. Luckily, we've got you covered. Here is the most comprehensive guide to CrossFit-speak ever compiled. We've got over 300 terms (and growing!) defined for you. If you feel we've missed something, or there's a term you still don't understand, please 
 					%a{ href: '#comments' }
 						leave a comment below
@@ -23,17 +23,10 @@
 					and let us know!
 
 				.anchor#top
-				%a{ href: '#a', style: 'margin-left: 0.66em;' }
-					A
-				%a{ href: '#b', style: 'margin-left: 0.66em;' }
-					B
-				%a{ href: '#c', style: 'margin-left: 0.66em;' }
-					C
-				%a{ href: '#d', style: 'margin-left: 0.66em;' }
-					D
-				%a{ href: '#e', style: 'margin-left: 0.66em;' }
-					E
-				%a{ href: '#f', style: 'margin-left: 0.66em;' }
+				- @letters.each do |letter|
+					%a{ href: "##{letter}", style: 'margin-left: 0.66em;' }
+						= letter.capitalize
+				
 
 				-# form_tag terms_path, method: :get, class: 'form-horizontal' do 
 					.row
@@ -48,9 +41,21 @@
 				%ul.crossfit-terms
 					.anchor#a
 					- @terms.each do |term|
+
+						- if not( term.title.sub(/^the /i, '' ).sub(/^a /i, '' )[0] == @letters[@anchor_idx] )
+
+							- @anchor_idx += 1
+							.anchor{ id: @letters[@anchor_idx] }
+							.top-link{ style: 'padding:0.5em auto;border-bottom: 1px #ddd solid;'}
+								%a.pull-right{ href: '#top'}
+									Top
+									%i.fa.fa-arrow-up
+								.clearfix
+							
 						.anchor{ id: term.slug }
 						%li
 							%strong 
+								
 								= "#{term.title}:"
 							- if term.aliases.present?
 								( aka:
