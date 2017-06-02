@@ -129,7 +129,5 @@ class SwellEcomTake2Migration < ActiveRecord::Migration
 		add_index :product_variants, :slug, unique: true
 		add_index :product_variants, [ :option_name, :option_value ]
 
-
-		SwellMedia::Asset.where(parent_obj_type: 'Product').update_all( parent_obj_type: 'SwellEcom::Product' )
 	end
 end
