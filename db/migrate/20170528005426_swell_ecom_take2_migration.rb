@@ -13,6 +13,7 @@ class SwellEcomTake2Migration < ActiveRecord::Migration
 
 		add_column :products, :collection_id, :integer
 		add_column :products, :shipping_price, :integer, default: 0
+		add_column :products, :tax_code, :string, default: '00000'
 
 		# drop_table :product_options
 		# drop_table :product_variants

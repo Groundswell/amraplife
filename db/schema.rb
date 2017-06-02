@@ -546,7 +546,7 @@ ActiveRecord::Schema.define(version: 20170528005426) do
     t.integer  "price",           default: 0
     t.integer  "suggested_price", default: 0
     t.string   "currency",        default: "USD"
-    t.string   "tags",            default: [],    array: true
+    t.string   "tags",            default: [],      array: true
     t.hstore   "properties",      default: {}
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -556,6 +556,7 @@ ActiveRecord::Schema.define(version: 20170528005426) do
     t.text     "notes"
     t.integer  "collection_id"
     t.integer  "shipping_price",  default: 0
+    t.string   "tax_code",        default: "00000"
   end
 
   add_index "products", ["category_id"], name: "index_products_on_category_id", using: :btree
