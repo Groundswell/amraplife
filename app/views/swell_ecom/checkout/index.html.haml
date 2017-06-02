@@ -45,7 +45,7 @@
 											= order_item.quantity
 
 
-					= form_for @order, as: :order, url: swell_ecom.confirm_checkout_index_path(), method: 'POST', html: { class: 'stripe_form validate_form checkout_form row' } do |f|
+					= form_for @order, as: :order, url: swell_ecom.checkout_index_path(), method: 'POST', html: { class: 'stripe_form validate_form checkout_form row' } do |f|
 
 						= f.fields_for :billing_address do |billing_address_form|
 							.col-xs-12
