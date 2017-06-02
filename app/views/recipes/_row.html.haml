@@ -4,10 +4,10 @@
 			%a{ href: recipe.url }
 				%img.media-object{ src: recipe.avatar, alt: recipe.title }
 		.media-body
-			%h4.media-heading
-				%a{ href: recipe.url }
+			%h4.media-heading{ style: "font-family: 'PT Serif', serf;" }
+				%a{ href: recipe.url, style: "font-size:30px;" }
 					= recipe.title
-			%p
+			.content-preview
 				= raw recipe.description
 
 				%a.btn.btn-lg{ href: recipe_path( recipe ) }

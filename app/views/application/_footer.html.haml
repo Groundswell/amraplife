@@ -100,7 +100,7 @@
 				.newsletter.clearfix
 					%h4{ style: 'font-size: 18px;' } Newsletter
 					%h3{ style: 'font-size: 22px;' } Sign Up Now
-					%p
+					%p{ style: "font-size:12px;line-height:18px;" }
 						Enter your email address and get notified about new products. Don't worry - we hate spam too!
 					= form_for SwellMedia::Optin.new, url: swell_media.optins_path, role: :form, class: 'form-horizontal'  do |f|
 						.input-group
@@ -134,13 +134,13 @@
 	.container
 		.row
 			.col-sm-7.col-xs-12
-				%p
+				%p{ style: "font-size:12px;line-height:18px;" }
 					AMRAP Life is hand-crafted with Loving Kindness by Groundswell Enterprises, LLC in Del Mar, CA
 
-				%p
+				%p{ style: "font-size:12px;line-height:18px;" }
 					AMRAP Life &trade;, Live AMRAP &trade;, and Life is a Team Sport &trade;, are trademarks of Groundswell Enterprises, LLC
 			.col-sm-5.col-xs-12
-				%p.small{ style: 'font-size:85%;' }
+				%p.small{ style: 'font-size:75%;' }
 					= SwellMedia.app_name
 					is a participant in the Amazon Services LLC Associates Program, an affiliate advertising program designed to provide a means for us to earn fees by linking to Amazon.com and affiliated sites.
 

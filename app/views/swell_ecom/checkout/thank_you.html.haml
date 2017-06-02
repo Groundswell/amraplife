@@ -4,11 +4,11 @@
 		.row
 			.col-xs-12
 				.thanksContent
-					%h2
-						Thank You For Your Order
-						%small
-							You will receive an email of your order details
-					%h3
+					%h1.text-center.content-title
+						Thank You For Your Order!
+					%p.text-center
+						You will receive an email confirming your order details. Please be sure to check your promotion and spam folders.
+					%h3{ style: 'margin-top:2em;' }
 						Shipping Details
 
 					.thanksInner
@@ -29,3 +29,19 @@
 										%small
 											Order ID:
 										1234SomeID
+
+					%p{ style: 'margin-top:1em;' }
+						We'd love to see your new gear! Please share pics and tag #amraplife.
+						
+						%a{ href: 'http://facebook.com/amraplife', target: '_new', style: 'color:#555;font-size:18px;margin-left:0.5em;' }
+							%i.fa.fa-facebook-square
+
+						%a{ href: 'https://www.instagram.com/amrap_life/', target: '_new', style: 'color:#555;font-size:18px;margin-left:0.5em;' }
+							%i.fa.fa-instagram
+		
+						%a{ href: 'http://pinterest.com/amraplife', target: '_new', style: 'color:#555;font-size:18px;margin-left:0.5em;' }
+							%i.fa.fa-pinterest
+		
+						%a{ href: 'http://twitter.com/amraplife', target: '_new', style: 'color:#555;font-size:18px;margin-left:0.5em;' }
+							%i.fa.fa-twitter
+
