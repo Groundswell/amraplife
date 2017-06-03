@@ -24,40 +24,77 @@
 							.progress
 								.progress-bar
 							%a.progress-wizard-dot{ href: '' }
-
-					%a{ href: '#', data: { toggle: :collapse, target: "#order_info" } }
-						Order Details
-						%i.fa.fa-chevron-down
+					.row
+						.col.xs-12
+							.page-header
+								.row
+									.col-xs-8
+										%h4
+											Order Summary:
+										= pluralize @cart.cart_items.sum( :quantity ), 'Item'
+										%strong
+											= number_to_currency( @cart.subtotal / 100.to_f )
+											Total
+									.col-xs-4
+										%a{ href: '#', data: { toggle: :collapse, target: "#order_info" } }
+											View Details
+											%i.fa.fa-chevron-down
 
 					.collapse#order_info
 						%table.table
 							%thead
 								%tr
-									-# %th{ style: 'width: 100px' } &nbsp;
-									%th &nbsp;
-									%th{ style: 'width: 100px' } Price
-									%th.text-right{ style: 'width: 100px' } Quantity
+									%th.col-xs-2.col-sm-1 &nbsp;
+									%th.col-xs-7 &nbsp;
+									%th.col-xs-2.text-right{ style: 'width: 100px' } Quantity
+									%th.col-xs-2.text-right Price
+									
 							%tbody
-								- @order.order_items.each do |order_item|
-									- if order_item.item?
-										%tr
-											-# %td avatar
-											%td
-												= order_item.label
-											%td
-												= number_to_currency order_item.item.price.to_f / 100
-											%td.text-right
-												= order_item.quantity
+								- @cart.cart_items.each do |cart_item|
+									%tr
+										%td.col-xs-1
+											%img.img.img-responsive{ src: cart_item.item.avatar }
+										%td.col-xs-7
+											- if cart_item.item.is_a?( SwellEcom::ProductVariant )
+												%strong
+													= cart_item.item.product.title
+												%br
+												= cart_item.item.option_title
+
+											- else
+												%strong
+													= cart_item.item.title
+										%td.col-xs-2.text-right
+											= cart_item.quantity
+										%td.col-xs-2.text-right
+											= number_to_currency cart_item.item.price.to_f / 100
+								%tr
+									%td.col-xs-1
+
+									%td.col-xs-7
+										%a.btn.btn-info{ href: '/cart' }
+											Change
+									%td.col-xs-2.text-right
+										Subtotal:
+									%td.col-xs-2.text-right
+										= number_to_currency( @cart.subtotal.to_f / 100 )
+
+											
 						.clearfix
 
 
 					= form_for @order, as: :order, url: swell_ecom.checkout_index_path(), method: 'POST', html: { class: 'stripe_form validate_form checkout_form row' } do |f|
 
+						.col.xs-12
+							.page-header
+								%h4
+									Customer Info:
 						.form-group.col-sm-6.col-xs-12
 							%label Email (required)
 							= f.email_field :email, class: 'form-control', required: true
 							.help-block.with-errors
-							= check_box_tag :newsletter, '', class: 'form-control', checked: true
+							%input{ type: :checkbox, name: 'newsletter', checked: :checked, class: '', style: '' }
+							=# check_box_tag :newsletter, '', class: 'form-control', checked: true
 							%small Sign-up for AMRAP Life news & discounts.
 
 
@@ -136,16 +173,14 @@
 								.help-block.with-errors
 
 						= f.fields_for :shipping_address do |shipping_address_form|
-							.col-xs-4
+							.col-xs-12
 								.page-header
 									%h4
 										Shipping Info
-							.col-xs-8
-								.form-group
-									.col-xs-1
-										%input{ type: :checkbox, name: 'same_as_billing', 'data-toggle'=>"collapse", 'data-target'=>"#shipping_info", checked: :checked, class: 'form-control', style: '' }
-									.col-xs-11
-										%label{ for: :same_as_billing, style: 'font-size:110%;margin-top: 0.85em;' }
+
+										%input{ type: :checkbox, name: 'same_as_billing', 'data-toggle'=>"collapse", 'data-target'=>"#shipping_info", checked: :checked, class: '', style: 'margin-left:1em;' }
+									
+										%span{ style: 'font-size:50%;' }
 											same as billing address
 							.clearfix
 

@@ -7,23 +7,68 @@
 					%h1.text-center.content-title
 						Thank You For Your Order!
 					%p.text-center
-						You will receive an email confirming your order details. Please be sure to check your promotion and spam folders.
-					%h3{ style: 'margin-top:2em;' }
-						Shipping Details
+						We will send an email to 
+						%strong= @order.email
+						confirming your order details. Please be sure to check your promotion and spam folders. Your order number is:
+						%strong= "#{@order.code}."
+						Please include it in any corrrespandence concerning your order.
+
+					%h3{ style: 'margin-top:1em;' }
+						Order Details
 
 					.thanksInner
 						.row
 							.col-sm-6.col-xs-12.tableBlcok
-								%address
-									%strong
-										Email:
-									%br
-									= @order.email
+								%table.table
+									%thead
+										%tr
+											%th.col-xs-8 &nbsp;
+											%th.col-xs-2.text-right{ style: 'width: 100px' } Quantity
+											%th.col-xs-2.text-right Price
+											
+									%tbody
+										- @order.order_items.prod.each do |order_item|
+											%tr
+												%td.col-xs-8
+													- if order_item.item.is_a?( SwellEcom::ProductVariant )
+														%strong
+															= order_item.item.product.title
+														%br
+														= order_item.item.option_title
 
-									%strong
-										Shipping:
-									%br
-									= raw @order.shipping_address.to_html
+													- else
+														%strong
+															= order_item.item.title
+												%td.col-xs-2.text-right
+													= order_item.quantity
+												%td.col-xs-2.text-right
+													= number_to_currency order_item.item.price.to_f / 100
+										%tr
+											%td.col-xs-2
+											%td.col-xs-8.text-left
+												Subtotal:
+											%td.col-xs-2.text-right
+												= number_to_currency( @order.subtotal.to_f / 100 )
+										%tr
+											%td.col-xs-2
+											%td.col-xs-8
+												Shipping:
+											%td.col-xs-2.text-right
+												= number_to_currency( @order.shipping.to_f / 100 )
+										%tr
+											%td.col-xs-2
+											%td.col-xs-8
+												Tax:	
+											%td.col-xs-2.text-right
+												= number_to_currency( @order.tax.to_f / 100 )
+										%tr
+											%td.col-xs-2
+											%td.col-xs-8
+												%strong
+													Total:
+											%td.col-xs-2.text-right
+												%strong
+													= number_to_currency( @order.total.to_f / 100 )
 
 							.col-sm-6.col-xs-12
 								.well
@@ -31,6 +76,19 @@
 										%small
 											Order ID:
 										= @order.code
+						.row
+							.col-sm-6.col-xs-12
+								%address
+									%strong
+										Ship To:
+									%br
+									= raw @order.shipping_address.to_html
+							.col-sm-6.col-xs-12
+								- if @order.customer_notes.present?
+									%strong
+										Notes
+									%br
+									= raw @order.customer_notes
 
 					%p{ style: 'margin-top:1em;' }
 						We'd love to see your new gear! Please share pics and tag #amraplife.

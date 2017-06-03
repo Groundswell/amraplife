@@ -32,8 +32,15 @@
 											%tr
 												%td.col-xs-2
 													%img.img.img-responsive{ src: line_item.item.avatar }
-												%td.col-xs-4
-													= line_item.item.title
+												%td.col-xs-4{ style: 'text-transform: none;font-weight:normal;'}
+													- if line_item.item.is_a?( SwellEcom::ProductVariant )
+														%strong
+															= line_item.item.product.title
+														%br
+														= line_item.item.option_title
+													- else
+														%strong
+															= line_item.item.title
 												%td.col-xs-2
 													= number_to_currency( line_item.price / 100.to_f )
 												%td.col.xs-2
@@ -56,7 +63,7 @@
 										%li
 											Sub Total
 											%span
-												= number_to_currency( @cart.cart_items.sum( :subtotal ) / 100.to_f )
+												= number_to_currency( @cart.subtotal / 100.to_f )
 										%li
 											Tax
 											%span 

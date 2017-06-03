@@ -94,13 +94,13 @@ ActiveRecord::Schema.define(version: 20170528005426) do
 
   create_table "carts", force: :cascade do |t|
     t.integer  "user_id"
-    t.integer  "status",     default: 1
-    t.integer  "subtotal",   default: 0
-    t.integer  "tax"
-    t.integer  "shipping",   default: 0
-    t.integer  "total",      default: 0
+    t.integer  "status",             default: 1
+    t.integer  "subtotal",           default: 0
+    t.integer  "estimated_tax",      default: 0
+    t.integer  "estimated_shipping", default: 0
+    t.integer  "estimated_total",    default: 0
     t.string   "ip"
-    t.hstore   "properties", default: {}
+    t.hstore   "properties",         default: {}
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -443,12 +443,12 @@ ActiveRecord::Schema.define(version: 20170528005426) do
     t.integer  "order_id"
     t.integer  "item_id"
     t.string   "item_type"
+    t.string   "title"
     t.integer  "quantity",        default: 1
     t.integer  "price",           default: 0
     t.integer  "subtotal",        default: 0
     t.string   "tax_code"
     t.integer  "order_item_type", default: 1
-    t.string   "label"
     t.hstore   "properties",      default: {}
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -459,7 +459,6 @@ ActiveRecord::Schema.define(version: 20170528005426) do
 
   create_table "orders", force: :cascade do |t|
     t.integer  "user_id"
-    t.integer  "cart_id"
     t.integer  "billing_address_id"
     t.integer  "shipping_address_id"
     t.string   "code"
@@ -470,7 +469,8 @@ ActiveRecord::Schema.define(version: 20170528005426) do
     t.integer  "shipping",            default: 0
     t.integer  "total"
     t.string   "currency",            default: "USD"
-    t.text     "customer_comment"
+    t.text     "customer_notes"
+    t.text     "support_notes"
     t.datetime "fulfilled_at"
     t.hstore   "properties",          default: {}
     t.datetime "created_at"
