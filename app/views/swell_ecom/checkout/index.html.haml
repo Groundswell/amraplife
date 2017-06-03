@@ -96,6 +96,9 @@
 							%input{ type: :checkbox, name: 'newsletter', checked: :checked, class: '', style: '' }
 							=# check_box_tag :newsletter, '', class: 'form-control', checked: true
 							%small Sign-up for AMRAP Life news & discounts.
+						.form-group.col-sm-6.col-xs-12
+							= f.label :customer_notes, 'Notes:'
+							= f.text_area :customer_notes, class: 'form-control', style: "height:6em;"
 
 
 						= f.fields_for :billing_address do |billing_address_form|
@@ -231,11 +234,10 @@
 									.help-block.with-errors
 
 
-
 						.col-xs-12
-							.well.well-lg.clearfix
-								%button.btn.btn-primary.pull-right
-									Confirm
+							.well.well-lg.clearfix			
+								%button.btn.btn-lg.btn-primary.pull-right
+									Place Order
 
 
 
