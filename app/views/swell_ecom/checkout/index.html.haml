@@ -25,28 +25,41 @@
 								.progress-bar
 							%a.progress-wizard-dot{ href: '' }
 
+					%a{ href: '#', data: { toggle: :collapse, target: "#order_info" } }
+						Order Details
+						%i.fa.fa-chevron-down
 
-					%table.table
-						%thead
-							%tr
-								-# %th{ style: 'width: 100px' } &nbsp;
-								%th &nbsp;
-								%th{ style: 'width: 100px' } Price
-								%th.text-right{ style: 'width: 100px' } Quantity
-						%tbody
-							- @order.order_items.each do |order_item|
-								- if order_item.item?
-									%tr
-										-# %td avatar
-										%td
-											= order_item.label
-										%td
-											= number_to_currency order_item.item.price.to_f / 100
-										%td.text-right
-											= order_item.quantity
+					.collapse#order_info
+						%table.table
+							%thead
+								%tr
+									-# %th{ style: 'width: 100px' } &nbsp;
+									%th &nbsp;
+									%th{ style: 'width: 100px' } Price
+									%th.text-right{ style: 'width: 100px' } Quantity
+							%tbody
+								- @order.order_items.each do |order_item|
+									- if order_item.item?
+										%tr
+											-# %td avatar
+											%td
+												= order_item.label
+											%td
+												= number_to_currency order_item.item.price.to_f / 100
+											%td.text-right
+												= order_item.quantity
+						.clearfix
 
 
 					= form_for @order, as: :order, url: swell_ecom.checkout_index_path(), method: 'POST', html: { class: 'stripe_form validate_form checkout_form row' } do |f|
+
+						.form-group.col-sm-6.col-xs-12
+							%label Email (required)
+							= f.email_field :email, class: 'form-control', required: true
+							.help-block.with-errors
+							= check_box_tag :newsletter, '', class: 'form-control', checked: true
+							%small Sign-up for AMRAP Life news & discounts.
+
 
 						= f.fields_for :billing_address do |billing_address_form|
 							.col-xs-12
@@ -63,11 +76,8 @@
 								%label Last Name
 								= billing_address_form.text_field :last_name, class: 'form-control', required: true
 								.help-block.with-errors
-							.form-group.col-sm-6.col-xs-12
-								%label Email
-								= f.email_field :email, class: 'form-control', required: true
-								.help-block.with-errors
-							.form-group.col-sm-6.col-xs-12
+							
+							-#.form-group.col-sm-6.col-xs-12
 								%label Phone
 								= billing_address_form.telephone_field :phone, value: (@order.billing_address.phone || '+1'), class: 'form-control telephone_formatted', required: true
 								.help-block.with-errors
@@ -101,6 +111,9 @@
 
 
 							.col-xs-12
+								.page-header
+									%h4
+										Payment Info
 								.payment-errors.alert.alert-danger.hide
 
 							.form-group.col-sm-3.col-xs-6
