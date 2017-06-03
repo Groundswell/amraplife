@@ -15,20 +15,22 @@
 						.row
 							.col-sm-6.col-xs-12.tableBlcok
 								%address
-									%span
+									%strong
 										Email:
-										%a{ href: '' }
-											some@email.com
 									%br
-									%span
+									= @order.email
+
+									%strong
 										Shipping:
-										addy1 city, ST 11111
+									%br
+									= raw @order.shipping_address.to_html
+
 							.col-sm-6.col-xs-12
 								.well
 									%h2
 										%small
 											Order ID:
-										1234SomeID
+										= @order.code
 
 					%p{ style: 'margin-top:1em;' }
 						We'd love to see your new gear! Please share pics and tag #amraplife.

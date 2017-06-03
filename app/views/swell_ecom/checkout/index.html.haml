@@ -3,7 +3,7 @@
 		.row
 			.col-xs-12
 				.innerWrpper.clearfix.stepsPage
-					.row.progress-wizard{ style: "border-bottom:0;" }
+					-#.row.progress-wizard{ style: "border-bottom:0;" }
 						.col-xs-4.progress-wizard-step.complete
 							.text-center.progress-wizard-stepnum
 								Billing &amp; Shipping Address
@@ -35,12 +35,13 @@
 								%th.text-right{ style: 'width: 100px' } Quantity
 						%tbody
 							- @order.order_items.each do |order_item|
-								- if order_item.sku?
+								- if order_item.item?
 									%tr
 										-# %td avatar
 										%td
-											=order_item.label
-										%td= number_to_currency order_item.item.price.to_f / 100
+											= order_item.label
+										%td
+											= number_to_currency order_item.item.price.to_f / 100
 										%td.text-right
 											= order_item.quantity
 
@@ -122,15 +123,18 @@
 								.help-block.with-errors
 
 						= f.fields_for :shipping_address do |shipping_address_form|
-							.col-xs-12
+							.col-xs-4
 								.page-header
 									%h4
 										Shipping Info
+							.col-xs-8
 								.form-group
-									%label
-										%input{ type: :checkbox, name: 'same_as_billing', 'data-toggle'=>"collapse", 'data-target'=>"#shipping_info", checked: :checked }
-										same as billing info
-
+									.col-xs-1
+										%input{ type: :checkbox, name: 'same_as_billing', 'data-toggle'=>"collapse", 'data-target'=>"#shipping_info", checked: :checked, class: 'form-control', style: '' }
+									.col-xs-11
+										%label{ for: :same_as_billing, style: 'font-size:110%;margin-top: 0.85em;' }
+											same as billing address
+							.clearfix
 
 							.collapse#shipping_info
 								.form-group.col-sm-6.col-xs-12
