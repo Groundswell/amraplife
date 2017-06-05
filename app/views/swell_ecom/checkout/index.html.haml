@@ -47,6 +47,11 @@
 
 					= form_for @order, as: :order, url: swell_ecom.checkout_index_path(), method: 'POST', html: { class: 'stripe_form validate_form checkout_form row' } do |f|
 
+						.form-group.col-sm-6.col-xs-12
+							%label Email
+							= f.email_field :email, class: 'form-control', required: true
+							.help-block.with-errors
+							
 						= f.fields_for :billing_address do |billing_address_form|
 							.col-xs-12
 								.page-header
@@ -61,10 +66,6 @@
 							.form-group.col-sm-6.col-xs-12
 								%label Last Name
 								= billing_address_form.text_field :last_name, class: 'form-control', required: true
-								.help-block.with-errors
-							.form-group.col-sm-6.col-xs-12
-								%label Email
-								= f.email_field :email, class: 'form-control', required: true
 								.help-block.with-errors
 							.form-group.col-sm-6.col-xs-12
 								%label Phone
@@ -140,10 +141,6 @@
 								.form-group.col-sm-6.col-xs-12
 									%label Last Name
 									= shipping_address_form.text_field :last_name, class: 'form-control', required: true
-									.help-block.with-errors
-								.form-group.col-sm-6.col-xs-12
-									%label Email
-									= f.email_field :email, class: 'form-control', required: true
 									.help-block.with-errors
 								.form-group.col-sm-6.col-xs-12
 									%label Phone
