@@ -149,5 +149,19 @@ class SwellEcomTake2Migration < ActiveRecord::Migration
 		add_index :product_variants, :slug, unique: true
 		add_index :product_variants, [ :option_name, :option_value ]
 
+		create_table :transactions do |t|
+			t.references	:parent_obj, polymorphic: true  # order, refund, etc.
+			t.integer		:transaction_type, default: 1 # payment, refund, chargeback
+			t.string 		:provider
+			t.string 		:reference_code
+			t.integer 		:amount, default: 0
+			t.string 		:currency, default: 'USD'
+			t.integer 		:status, default: 1
+			t.hstore 		:properties, default: {}
+			t.timestamps
+		end
+		add_index :transactions, [ :parent_obj_id, :parent_obj_type ]
+		add_index :transactions, :reference_code
+
 	end
 end
