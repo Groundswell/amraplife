@@ -22,9 +22,9 @@ class SwellEcomTake2Migration < ActiveRecord::Migration
 			t.references	:user
 			t.integer		:status, default: 1
 			t.integer		:subtotal, default: 0
-			t.integer 		:tax
-			t.integer 		:shipping, default: 0
-			t.integer 		:total, default: 0
+			t.integer 		:estimated_tax, default: 0
+			t.integer 		:estimated_shipping, default: 0
+			t.integer 		:estimated_total, default: 0
 			t.string		:ip
 			t.hstore		:properties, 	default: {}
 			t.timestamps
@@ -81,7 +81,6 @@ class SwellEcomTake2Migration < ActiveRecord::Migration
 
 		create_table :orders do |t|
 			t.references 	:user
-			t.references 	:cart
 			t.references 	:billing_address
 			t.references 	:shipping_address
 			t.string 		:code
@@ -92,8 +91,8 @@ class SwellEcomTake2Migration < ActiveRecord::Migration
 			t.integer 		:shipping, default: 0
 			t.integer 		:total, defualt: 0
 			t.string 		:currency, default: 'USD'
-
-			t.text 			:customer_comment
+			t.text 			:customer_notes
+			t.text 			:support_notes
 			t.datetime 		:fulfilled_at
 			t.hstore		:properties, 	default: {}
 			t.timestamps
@@ -106,12 +105,12 @@ class SwellEcomTake2Migration < ActiveRecord::Migration
 		create_table :order_items do |t|
 			t.references 	:order
 			t.references 	:item, polymorphic: true
+			t.string 		:title
 			t.integer 		:quantity, default: 1
 			t.integer 		:price, default: 0
 			t.integer 		:subtotal, default: 0
 			t.string		:tax_code, default: nil
 			t.integer		:order_item_type, default: 1
-			t.string		:label
 			t.hstore		:properties, 	default: {}
 			t.timestamps
 		end

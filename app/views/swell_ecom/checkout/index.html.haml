@@ -3,7 +3,7 @@
 		.row
 			.col-xs-12
 				.innerWrpper.clearfix.stepsPage
-					.row.progress-wizard{ style: "border-bottom:0;" }
+					-#.row.progress-wizard{ style: "border-bottom:0;" }
 						.col-xs-4.progress-wizard-step.complete
 							.text-center.progress-wizard-stepnum
 								Billing &amp; Shipping Address
@@ -24,34 +24,81 @@
 							.progress
 								.progress-bar
 							%a.progress-wizard-dot{ href: '' }
+					.row
+						.col.xs-12
+							.page-header
+								.row
+									.col-xs-8
+										%h4
+											Order Summary:
+										= pluralize @cart.cart_items.sum( :quantity ), 'Item'
+										%strong
+											= number_to_currency( @cart.subtotal / 100.to_f )
+											Total
+									.col-xs-4
+										%a{ href: '#', data: { toggle: :collapse, target: "#order_info" } }
+											View Details
+											%i.fa.fa-chevron-down
 
+					.collapse#order_info
+						%table.table
+							%thead
+								%tr
+									%th.col-xs-2.col-sm-1 &nbsp;
+									%th.col-xs-7 &nbsp;
+									%th.col-xs-2.text-right{ style: 'width: 100px' } Quantity
+									%th.col-xs-2.text-right Price
 
-					%table.table
-						%thead
-							%tr
-								-# %th{ style: 'width: 100px' } &nbsp;
-								%th &nbsp;
-								%th{ style: 'width: 100px' } Price
-								%th.text-right{ style: 'width: 100px' } Quantity
-						%tbody
-							- @order.order_items.each do |order_item|
-								- if order_item.sku?
+							%tbody
+								- @cart.cart_items.each do |cart_item|
 									%tr
-										-# %td avatar
-										%td
-											=order_item.label
-										%td= number_to_currency order_item.item.price.to_f / 100
-										%td.text-right
-											= order_item.quantity
+										%td.col-xs-1
+											%img.img.img-responsive{ src: cart_item.item.avatar }
+										%td.col-xs-7
+											- if cart_item.item.is_a?( SwellEcom::ProductVariant )
+												%strong
+													= cart_item.item.product.title
+												%br
+												= cart_item.item.option_title
+
+											- else
+												%strong
+													= cart_item.item.title
+										%td.col-xs-2.text-right
+											= cart_item.quantity
+										%td.col-xs-2.text-right
+											= number_to_currency cart_item.item.price.to_f / 100
+								%tr
+									%td.col-xs-1
+
+									%td.col-xs-7
+										%a.btn.btn-info{ href: '/cart' }
+											Change
+									%td.col-xs-2.text-right
+										Subtotal:
+									%td.col-xs-2.text-right
+										= number_to_currency( @cart.subtotal.to_f / 100 )
+
+
+						.clearfix
 
 
 					= form_for @order, as: :order, url: swell_ecom.checkout_index_path(), method: 'POST', html: { class: 'stripe_form validate_form checkout_form row' } do |f|
-
+						.col.xs-12
+							.page-header
+								%h4
+									Customer Info:
 						.form-group.col-sm-6.col-xs-12
-							%label Email
+							%label Email (required)
 							= f.email_field :email, class: 'form-control', required: true
 							.help-block.with-errors
-							
+							%input{ type: :checkbox, name: 'newsletter', checked: :checked, class: '', style: '' }
+							=# check_box_tag :newsletter, '', class: 'form-control', checked: true
+							%small Sign-up for AMRAP Life news & discounts.
+						.form-group.col-sm-6.col-xs-12
+							= f.label :customer_notes, 'Notes:'
+							= f.text_area :customer_notes, class: 'form-control', style: "height:6em;"
+
 						= f.fields_for :billing_address do |billing_address_form|
 							.col-xs-12
 								.page-header
@@ -67,7 +114,7 @@
 								%label Last Name
 								= billing_address_form.text_field :last_name, class: 'form-control', required: true
 								.help-block.with-errors
-							.form-group.col-sm-6.col-xs-12
+							-#.form-group.col-sm-6.col-xs-12
 								%label Phone
 								= billing_address_form.telephone_field :phone, value: (@order.billing_address.phone || '+1'), class: 'form-control telephone_formatted', required: true
 								.help-block.with-errors
@@ -101,6 +148,9 @@
 
 
 							.col-xs-12
+								.page-header
+									%h4
+										Payment Info
 								.payment-errors.alert.alert-danger.hide
 
 							.form-group.col-sm-3.col-xs-6
@@ -127,11 +177,12 @@
 								.page-header
 									%h4
 										Shipping Info
-								.form-group
-									%label
-										%input{ type: :checkbox, name: 'same_as_billing', 'data-toggle'=>"collapse", 'data-target'=>"#shipping_info", checked: :checked }
-										same as billing info
 
+										%input{ type: :checkbox, name: 'same_as_billing', 'data-toggle'=>"collapse", 'data-target'=>"#shipping_info", checked: :checked, class: '', style: 'margin-left:1em;' }
+
+										%span{ style: 'font-size:50%;' }
+											same as billing address
+							.clearfix
 
 							.collapse#shipping_info
 								.form-group.col-sm-6.col-xs-12
@@ -176,11 +227,10 @@
 									.help-block.with-errors
 
 
-
 						.col-xs-12
 							.well.well-lg.clearfix
-								%button.btn.btn-primary.pull-right
-									Confirm
+								%button.btn.btn-lg.btn-primary.pull-right
+									Place Order
 
 
 

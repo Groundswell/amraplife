@@ -54,7 +54,7 @@
 								- if @product.product_variants.published.present?
 									%span.quick-drop
 										%select.select-drop{ name: "variant_id" }
-											- @product.product_variants.published.each do |var|
+											- @product.product_variants.published.order( seq: :asc ).each do |var|
 												%option{ value: var.id }
 													= var.option_value
 
