@@ -48,35 +48,6 @@ ActiveRecord::Schema.define(version: 20170528005426) do
   add_index "assets", ["parent_obj_type", "parent_obj_id"], name: "index_assets_on_parent_obj_type_and_parent_obj_id", using: :btree
   add_index "assets", ["tags"], name: "index_assets_on_tags", using: :gin
 
-  create_table "card_designs", force: :cascade do |t|
-    t.string   "title"
-    t.string   "slug"
-    t.text     "avatar"
-    t.text     "description"
-    t.integer  "status",      default: 1
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "card_designs", ["slug"], name: "index_card_designs_on_slug", unique: true, using: :btree
-
-  create_table "cards", force: :cascade do |t|
-    t.integer  "card_design_id"
-    t.string   "pub_id"
-    t.string   "from_name"
-    t.string   "from_email"
-    t.string   "to_name"
-    t.string   "to_email"
-    t.text     "message"
-    t.boolean  "viewed",         default: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "cards", ["card_design_id"], name: "index_cards_on_card_design_id", using: :btree
-  add_index "cards", ["pub_id"], name: "index_cards_on_pub_id", using: :btree
-  add_index "cards", ["to_email"], name: "index_cards_on_to_email", using: :btree
-
   create_table "cart_items", force: :cascade do |t|
     t.integer  "cart_id"
     t.integer  "item_id"
@@ -146,8 +117,10 @@ ActiveRecord::Schema.define(version: 20170528005426) do
     t.hstore   "properties",    default: {}
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "code"
   end
 
+  add_index "contacts", ["code"], name: "index_contacts_on_code", unique: true, using: :btree
   add_index "contacts", ["email", "type"], name: "index_contacts_on_email_and_type", using: :btree
 
   create_table "equipment", force: :cascade do |t|
@@ -537,8 +510,10 @@ ActiveRecord::Schema.define(version: 20170528005426) do
     t.text     "shopify_code"
     t.string   "title"
     t.string   "caption"
+    t.integer  "seq",             default: 1
     t.string   "slug"
     t.string   "avatar"
+    t.string   "brand_model"
     t.integer  "status",          default: 0
     t.text     "description"
     t.text     "content"
@@ -560,6 +535,7 @@ ActiveRecord::Schema.define(version: 20170528005426) do
   end
 
   add_index "products", ["category_id"], name: "index_products_on_category_id", using: :btree
+  add_index "products", ["seq"], name: "index_products_on_seq", using: :btree
   add_index "products", ["slug"], name: "index_products_on_slug", unique: true, using: :btree
   add_index "products", ["status"], name: "index_products_on_status", using: :btree
   add_index "products", ["tags"], name: "index_products_on_tags", using: :gin
@@ -590,9 +566,10 @@ ActiveRecord::Schema.define(version: 20170528005426) do
   create_table "terms", force: :cascade do |t|
     t.string   "title"
     t.string   "slug"
+    t.text     "description"
     t.text     "content"
-    t.text     "aliases",    default: [], array: true
-    t.integer  "status",     default: 1
+    t.text     "aliases",     default: [], array: true
+    t.integer  "status",      default: 1
     t.datetime "created_at"
     t.datetime "updated_at"
   end

@@ -64,11 +64,11 @@
 											Sub Total
 											%span
 												= number_to_currency( @cart.subtotal / 100.to_f )
-										%li
+										-#%li
 											Tax
 											%span 
 												$0.00
-										%li
+										-#%li
 											Total
 											%span.grandTotal
 												=# number_to_currency( @cart.total / 100.to_f )

@@ -3,12 +3,12 @@
 	%section.clearfix.blogPage.singleBlog.mainContent
 		.container{ style: 'position: relative;' }
 			.row
-				.sideBar.col-md-3.col-sm-4.col-xs-12{ style: 'border-right: 1px solid #ddd;' }
+				.sideBar.col-md-3.col-sm-4.col-xs-12
 				
 					%h3 
 						Scroll Nav
 					%nav
-						%ul.list-unstyled.nav.sidebar-nav
+						%ul.list-unstyled.nav.sidebar-nav.affix
 							%li
 								%a{ href: '#top' }
 									Top
@@ -25,9 +25,9 @@
 								%a{ href: '#section4' }
 									Section 4
 				
-				#content.col-md-9.col-sm-8.col-xs-12{ data: { spy: 'scroll', target: '#spy', offset: 50 } }
+				#content.col-md-9.col-sm-8.col-xs-12{ style: 'border-left: 1px solid #ddd;', data: { spy: 'scroll', target: '#spy', offset: 50 } }
 
-					%h1#top
+					%h1#top.content-title
 						FAQs
 					
 

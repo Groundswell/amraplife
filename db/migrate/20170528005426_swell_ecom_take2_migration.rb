@@ -11,6 +11,16 @@ class SwellEcomTake2Migration < ActiveRecord::Migration
 			end
 		end
 
+		# remove cruft from the launch
+		drop_table :cards
+		drop_table :card_designs
+
+
+		# swell_media adds ability to semi-obsure optin-lookup
+		# so can more easily msg opt-in thx e.g. with giveaway downloads, etc
+		add_column :contacts, :code, :string
+		add_index :contacts, :code, unique: true
+
 		add_column :products, :collection_id, :integer
 		add_column :products, :shipping_price, :integer, default: 0
 		add_column :products, :tax_code, :string, default: '00000'

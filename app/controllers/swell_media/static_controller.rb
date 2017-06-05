@@ -13,6 +13,12 @@ module SwellMedia
 			)
 		end
 
+		def faq
+			set_page_meta( 
+				title: "AMRAP Life )°(  FAQ",
+				description: "You have frequently questions, we have frequent answers."
+			)
+		end
 
 		def home
 			# the homepage
