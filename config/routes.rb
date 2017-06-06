@@ -28,7 +28,7 @@ Rails.application.routes.draw do
 		get :preview, on: :member
 	end
 
-	resources :terms, only: :index, path: 'xfit-terms'
+	resources :terms, only: :index, path: 'crossfit-terms'
 	resources :term_admin do
 		delete :empty_trash, on: :collection
 	end
@@ -42,7 +42,7 @@ Rails.application.routes.draw do
 	resources :workout_segments
 
 	get '/about' => 'swell_media/static#about', as: 'about'
-	get '/crossfit-terms' => 'swell_media/static#crossfit_terms'
+
 	get '/faq' => 'swell_media/static#faq', as: 'faq'
 	get '/inspirations' => 'swell_media/static#inspirations', as: 'inspirations'
 	get '/deleteGAPPSnotBefore20170225utc.html' => 'swell_media/static#goog_verify'
