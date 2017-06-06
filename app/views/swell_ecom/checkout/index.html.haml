@@ -83,7 +83,7 @@
 						.clearfix
 
 
-					= form_for @order, as: :order, url: swell_ecom.checkout_index_path(), method: 'POST', html: { class: 'stripe_form validate_form checkout_form row submit-once' } do |f|
+					= form_for @order, as: :order, url: swell_ecom.checkout_index_path(), method: 'POST', html: { class: 'stripe_form validate_form checkout_form row disable_submit_after_submit' } do |f|
 						.col.xs-12
 							.page-header
 								%h4
@@ -97,7 +97,7 @@
 							%small Sign-up for AMRAP Life news & discounts.
 						.form-group.col-sm-6.col-xs-12
 							= f.label :customer_notes, 'Notes:'
-							= f.text_area :customer_notes, class: 'form-control', style: "height:6em;"
+							= f.text_area :customer_notes, class: 'form-control', style: "height:6em;", data: { validate: "false" }
 
 						= f.fields_for :billing_address do |billing_address_form|
 							.col-xs-12
@@ -184,7 +184,7 @@
 											same as billing address
 							.clearfix
 
-							.collapse#shipping_info
+							.collapse.collapse-ignore#shipping_info
 								.form-group.col-sm-6.col-xs-12
 									%label First Name
 									= shipping_address_form.text_field :first_name, class: 'form-control', required: true
