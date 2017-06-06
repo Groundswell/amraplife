@@ -510,10 +510,8 @@ ActiveRecord::Schema.define(version: 20170528005426) do
     t.text     "shopify_code"
     t.string   "title"
     t.string   "caption"
-    t.integer  "seq",             default: 1
     t.string   "slug"
     t.string   "avatar"
-    t.string   "brand_model"
     t.integer  "status",          default: 0
     t.text     "description"
     t.text     "content"
@@ -535,7 +533,6 @@ ActiveRecord::Schema.define(version: 20170528005426) do
   end
 
   add_index "products", ["category_id"], name: "index_products_on_category_id", using: :btree
-  add_index "products", ["seq"], name: "index_products_on_seq", using: :btree
   add_index "products", ["slug"], name: "index_products_on_slug", unique: true, using: :btree
   add_index "products", ["status"], name: "index_products_on_status", using: :btree
   add_index "products", ["tags"], name: "index_products_on_tags", using: :gin
@@ -566,13 +563,29 @@ ActiveRecord::Schema.define(version: 20170528005426) do
   create_table "terms", force: :cascade do |t|
     t.string   "title"
     t.string   "slug"
-    t.text     "description"
     t.text     "content"
-    t.text     "aliases",     default: [], array: true
-    t.integer  "status",      default: 1
+    t.text     "aliases",    default: [], array: true
+    t.integer  "status",     default: 1
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "transactions", force: :cascade do |t|
+    t.integer  "parent_obj_id"
+    t.string   "parent_obj_type"
+    t.integer  "transaction_type", default: 1
+    t.string   "provider"
+    t.string   "reference_code"
+    t.integer  "amount",           default: 0
+    t.string   "currency",         default: "USD"
+    t.integer  "status",           default: 1
+    t.hstore   "properties",       default: {}
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "transactions", ["parent_obj_id", "parent_obj_type"], name: "index_transactions_on_parent_obj_id_and_parent_obj_type", using: :btree
+  add_index "transactions", ["reference_code"], name: "index_transactions_on_reference_code", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "name"
