@@ -38,9 +38,12 @@
 								= submit_tag 'Search', class: 'btn'
 
 
-				%ul.crossfit-terms
+				%ul.crossfit-terms{ style: 'margin-top:2em;' }
 					.anchor#a
-					- @terms.each do |term|
+					- @terms.each_with_index do |term, idx|
+
+						- if ( idx > 0 ) && ( idx % 30  == 0 )
+							= render 'application/adsense_sidebar'
 
 						- if not( term.title.sub(/^the /i, '' ).sub(/^a /i, '' )[0] == @letters[@anchor_idx] )
 

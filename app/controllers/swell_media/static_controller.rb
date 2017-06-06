@@ -26,7 +26,7 @@ module SwellMedia
 			@articles = SwellMedia::Article.published.order( publish_at: :desc ).limit( 8 )
 			
 
-			@recipes = Recipe.published.order( publish_at: :desc ).limit( 10 )
+			@recipes = Recipe.published.order( publish_at: :desc ).limit( 8 )
 			#@workouts = Workout.published.order( publish_at: :desc ).limit( 10 )
 
 			set_page_meta( title: 'AMRAP Life Home' )
