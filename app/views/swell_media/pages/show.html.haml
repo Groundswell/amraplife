@@ -1,3 +1,49 @@
+
+- cache( "show-#{@media.cache_key}" ) do
+	%section.clearfix.blogPage.singleBlog.mainContent
+		.container
+			.row
+				.col-md-9.col-sm-8.col-xs-12
+					.row
+						.col-xs-12
+							- if @media.show_title?
+								%h1.text-center
+									= @media.title
+							
+							- if @media.avatar.present?
+								.thumbnail
+									%img{ src: @media.avatar, alt: @media.title }
+					.row
+						.col-xs-12.content
+							.addthis_inline_share_toolbox.hidden-xs.hidden-sm
+
+							= raw @media.content
+				
+					- if @media.is_commentable?
+						.row
+							.col-xs-12
+								= render 'application/fb_comments'
+
+					.jumbotron
+						%p
+							Hi there! Please consider joining our email list. We'll send you once-in-a-while updates chock-full of great health and lifestyle tips sprinkled with inspiration and discounts on cool stuff!
+
+						= render 'swell_media/optins/form'
+
+				.sideBar.col-md-3.col-sm-4.col-xs-12
+					= render 'swell_media/articles/sidebar'
+
+
+
+
+
+
+
+
+
+
+
+
 #content.content.section.row
 	- cache( "show-#{@media.cache_key}" ) do
 		.col-md-8.bg-base.col-lg-8.col-xl-9
@@ -40,7 +86,7 @@
 					
 		
 	.sidebar.col-md-4.col-lg-4.col-xl-3
-		= render 'application/sidebar'
+		= render 'swell_media/articles/sidebar'
 	/ /.sidebar col-md-4 col-lg-4 col-xl-3
 / /#content
 

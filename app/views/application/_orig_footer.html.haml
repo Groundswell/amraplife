@@ -1,0 +1,77 @@
+#footer.footer-area
+	.footer-top.container
+		.row
+			.widget.col-xs-6.col-sm-6
+				%h4.widget-title
+					Information
+				.row
+					.col-sm-6
+						%ul.entries.links
+							%li
+								%a{ href: '/about' }
+									About
+							%li
+								%a{ href: '/blog' }
+									Blog
+							%li
+								%a{ href: '/contacts/new' }
+									Contact
+							%li
+								%a{ href: '/admin' }
+									Admin
+					.col-sm-6
+						%ul.entries.links
+							%li
+								%a{ href: 'http://facebook.com/amraplife', target: '_new' }
+									%i.fa.fa-facebook-square{ style: 'font-size:110%;' }
+									Facebook
+							%li
+								%a{ href: 'http://twitter.com/amraplife', target: '_new' }
+									%i.fa.fa-twitter-square{ style: 'font-size:110%;' }
+									Twitter
+							%li
+								%a{ href: 'http://pinterest.com/amraplife', target: '_new' }
+									%i.fa.fa-pinterest-square{ style: 'font-size:110%;' }
+									Pinterest
+							%li
+								%a{ href: 'https://www.instagram.com/amrap_life/', target: '_new' }
+									%i.fa.fa-instagram{ style: 'font-size:110%;' }
+									Instagram
+							%li
+								%a{:href => "http://cloud.feedly.com/#subscription%2Ffeed%2F#{CGI.escape( main_app.feed_index_url( source: 'feedly', v: '1.0' ))}", :target => "blank"}
+									%img#feedlyFollow{:alt => "follow us in feedly", :src => "https://s3.feedly.com/img/follows/feedly-follow-logo-black_2x.png", style: 'height: 1.2em;opacity: 0.4;vertical-align: middle'}
+									Feedly
+
+			-#.widget.col-xs-6.col-sm-4
+
+			.widget.col-xs-12.col-sm-6
+				%h4.widget-title
+					Subscribe
+				%p
+					Get new product announcements, helpful tips for getting the most out of life, and crazy discounts on workout apparel.
+				= render 'swell_media/optins/form'
+
+	.footer-bottom
+		.container.aligncenter
+			%p
+				©
+				= Time.now.year
+				= ENV['APP_NAME']
+				All Rights Reserved
+
+			%p
+				AMRAP Life is hand-crafted with Loving Kindness by Groundswell Enterprises, LLC in Del Mar, CA
+
+			%p
+				AMRAP Life &trade;, Live AMRAP &trade;, and Life is a Team Sport &trade;, are trademarks of Groundswell Enterprises, LLC
+
+			%hr{ style: 'border-color: #999' }
+			%p.small
+				= SwellMedia.app_name
+				is a participant in the Amazon Services LLC Associates Program, an affiliate advertising program designed to provide a means for us to earn fees by linking to Amazon.com and affiliated sites.
+			%br
+			%br
+			%br
+
+%script{:src => "//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-4e3df87108d6d523", :type => "text/javascript"}
+= render 'application/shopify_cart'

@@ -1,0 +1,103 @@
+- cache( "prev_next-#{@media.cache_key}" ) do
+	.section.section-no-margin-bottom.row.entries.bg-primary
+		%article.entry.style-grid.style-hero.hero-nav.type-post.col-xs-6.col-sm-6
+			- previous_article = SwellMedia::Article.published.where('publish_at < ?', @media.publish_at).order(publish_at: :desc).first
+			- previous_article ||= SwellMedia::Article.published.where('publish_at > ?', @media.publish_at).order(publish_at: :asc).last
+			- if previous_article.present?
+				%a{:href => previous_article.url}
+					%header.entry-header
+						%p.small Previous Story
+						%h3.entry-title=previous_article.title
+					%figure.entry-thumbnail
+						.overlay.overlay-primary
+						/ to disable lazy loading, remove data-src and data-src-retina
+						%img{:alt => "", "data-src" => previous_article.avatar, "data-src-retina" => previous_article.avatar, :height => "280", :src => image_path('placeholder.gif'), :width => "480"}/
+						/ fallback for no javascript browsers
+						%noscript
+							%img{:alt => "", :src => previous_article.avatar}/
+		%article.entry.style-grid.style-hero.hero-nav.type-post.col-xs-6.col-sm-6
+			- next_article = SwellMedia::Article.published.where('publish_at > ?', @media.publish_at).order(publish_at: :asc).first
+			- next_article ||= SwellMedia::Article.published.where('publish_at < ?', @media.publish_at).order(publish_at: :asc).first
+			- if next_article.present?
+				%a{:href => next_article.url}
+					%header.entry-header
+						%p.small Next Story
+						%h3.entry-title=next_article.title
+					%figure.entry-thumbnail
+						.overlay.overlay-primary
+						/ to disable lazy loading, remove data-src and data-src-retina
+						%img{:alt => "", "data-src" => next_article.avatar, "data-src-retina" => next_article.avatar, :height => "280", :src => image_path('placeholder.gif'), :width => "480"}/
+						/ fallback for no javascript browsers
+						%noscript
+							%img{:alt => "", :src => next_article.avatar}/
+#content.content.section.row
+	- cache( "show-#{@media.cache_key}" ) do
+		.col-md-8.bg-base.col-lg-8.col-xl-9
+			.ribbon.ribbon-highlight
+				%ol.breadcrumb.ribbon-inner
+					%li
+						%a{:href => swell_media.root_path()} Home
+					- if @media.category.present?
+						%li
+							%a{:href => swell_media.browse_index_path( category_id: @media.category.slug ) }=@media.category.name
+					%li.active{:title => @media.title}=@media.title.truncate(32)
+			.flipboard-startArticle
+			%header.page-header
+				%h2.page-title.flipboard-title
+					= @media.title
+			%article.entry.style-single.type-post
+				- if @media.cover_image.present?
+					%figure.entry-thumbnail
+						/ to disable lazy loading, remove data-src and data-src-retina
+						%img{:alt => "", "data-src" => @media.cover_image, "data-src-retina" => @media.cover_image, :height => "452", :src => @media.cover_image, :width => "680"}/
+						/ fallback for no javascript browsers
+						%noscript
+							%img.flipboard-image{:alt => "", :src => @media.cover_image}/
+					.addthis_inline_share_toolbox.hidden-xs.hidden-sm
+				- elsif @media.avatar.present?
+					.col-sm-6
+						%img.img.img-responsive.flipboard-image{:alt => @media.title, src: @media.avatar, style: 'padding-right: 2em;' }
+						.addthis_inline_share_toolbox.hidden-xs.hidden-sm
+				.entry-meta.flipboard-remove
+					%span.author
+						Posted
+					%span.entry-date
+						on
+						%time{:datetime => "2013-07-04T23:26:34+00:00"}=@media.publish_at.strftime("%B %e %Y")
+						by
+						%a{ href: swell_media.browse_index_path( author: @media.user ) }
+							= @media.user
+					- if @media.category.present?
+						%span.category
+							In
+							%a{:href => swell_media.browse_index_path( category_id: @media.category.slug ) }
+								=@media.category.name
+				.entry-content
+					= raw @media.content
+			.flipboard-endArticle
+			.after-entry
+				.addthis_inline_share_toolbox.hidden-xs.hidden-sm
+				- if @media.tags.present?
+					%hr/
+					%aside.widget.post-tags
+						%i.icon-tags
+						Tags:
+						- @media.tags.each do |tag|
+							%a{:href => swell_media.browse_index_path( category_id: :all, tag: tag )}=tag
+				%hr/
+			.well
+				%p
+					At least we don't have an obnoxious popup or screen take-over, but if you've made it this far, please consider joining our email list. We'll send you once-in-a-while updates chock-full of great health and lifestyle tips sprinkled with inspiration and discounts on cool stuff!
+
+				= render 'swell_media/optins/form'
+				.clearfix
+
+
+			= render 'application/fb_comments'
+			=# render 'application/disqus_comments'
+	/ /.col-md-8.col-lg-8.col-xl-9
+	.sidebar.col-md-4.col-lg-4.col-xl-3
+		= render 'application/sidebar'
+	/ /.sidebar col-md-4 col-lg-4 col-xl-3
+/ /#content
+= render 'application/registration_bar'

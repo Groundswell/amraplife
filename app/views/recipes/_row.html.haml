@@ -1,22 +1,15 @@
-%article.entry.style-media.media.type-post
-	%figure.media-object.pull-left.entry-thumbnail.hidden-xs
-		/ to disable lazy loading, remove data-src and data-src-retina
-		%img{:alt => "", "data-src" => recipe.avatar, "data-src-retina" => recipe.avatar, :height => "230", :src => image_path('app_theme/placeholder.gif'), :width => "230"}/
-		/ fallback for no javascript browsers
-		%noscript
-			%img{:alt => "", :src => recipe.avatar}/
-	.media-body
-		%header.entry-header
-			%h3.entry-title
-				%a{ href: recipe_path( recipe ), :rel => "bookmark"}
-					=recipe.title
-			.entry-meta
-				%span.entry-date
-					on
-					%time{:datetime => recipe.publish_at.to_formatted_s(:iso8601) }
-						= recipe.publish_at.strftime("%B %e %Y")
-		%p
-			= raw recipe.description
-			%a.more-link{ href: recipe_path( recipe ) }
-				Continue
-				%i.icon.icon-long-arrow-right
+.col-xs-12
+	.media
+		.media-left
+			%a{ href: recipe.url }
+				%img.media-object{ src: recipe.avatar, alt: recipe.title }
+		.media-body
+			%h4.media-heading{ style: "font-family: 'PT Serif', serf;" }
+				%a{ href: recipe.url, style: "font-size:30px;" }
+					= recipe.title
+			.content-preview
+				= raw recipe.description
+
+				%a.btn.btn-lg{ href: recipe_path( recipe ) }
+					Continue
+					%i.fa.fa-chevron-right

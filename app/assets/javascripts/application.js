@@ -11,10 +11,6 @@
 // about supported directives.
 //
 //= require app_theme
-//= require ./plugins/imagesloaded.pkgd
-//= require ./plugins/masonry.pkgd.min
-//= require ./plugins/jquery.elevatezoom
-//= require ./plugins/fancybox/jquery.fancybox
-//= require ./custom/application
-//= require ./custom/registration-bar
+//= require swell_ecom/checkout.js
+//= require custom/application
 //= require_self

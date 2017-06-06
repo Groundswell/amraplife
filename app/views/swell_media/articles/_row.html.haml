@@ -1,27 +1,21 @@
 - cache( "row-#{article.cache_key}" ) do
-	.entry.style-media.media.type-post
-		%figure.media-object.pull-left.entry-thumbnail.hidden-xs
-			%a{ href: article.url }
-				%img{ src: article.avatar, width: 230, height: 230 }
-		.media-body
-			%header.entry-header
-				%h3.entry-title
-					= link_to article.title, article.url
-				.entry-meta
-					%span.author
-						%a{href: swell_media.browse_index_path( author: article.user ) }
-							By:
-							= article.user
-					%span.entry-date
-						%a{ href: '#' }
-							= article.publish_at.strftime('%B %e, %Y')
-					%span.category
-						In
-						%a{ href: '#' }
-							= article.category
-			%p
-				= raw article.description
-				%a.more-link{ href: article.url }
-					Continue
-					%i.fa.fa-arrow-right
+	.row
+		.col-xs-12
+			.thumbnail
+				.caption
+					%h3.text-center
+						= link_to article.title, article.url, style: "line-height:1.25;font-family:'PT Serif', serif;"
+				%a{ href: article.url }
+					%img{ src: article.cover_image, alt: article.title }
+					.caption
+						.row
+							.col-xs-12
+								.content-preview
+									= raw article.description
+									
+									%a{ href: article.url, style: 'color:#337ab7;' }
+										Read More
+										%i.fa.fa-arrow-right
 
+
+		

@@ -1,77 +1,151 @@
-#footer.footer-area
-	.footer-top.container
+.footer.clearfix
+	.container
 		.row
-			.widget.col-xs-6.col-sm-6
-				%h4.widget-title
-					Information
-				.row
-					.col-sm-6
-						%ul.entries.links
-							%li
-								%a{ href: '/about' }
-									About
-							%li
-								%a{ href: '/blog' }
-									Blog
-							%li
-								%a{ href: '/contacts/new' }
-									Contact
-							%li
-								%a{ href: '/admin' }
-									Admin
-					.col-sm-6
-						%ul.entries.links
-							%li
-								%a{ href: 'http://facebook.com/amraplife', target: '_new' }
-									%i.fa.fa-facebook-square{ style: 'font-size:110%;' }
-									Facebook
-							%li
-								%a{ href: 'http://twitter.com/amraplife', target: '_new' }
-									%i.fa.fa-twitter-square{ style: 'font-size:110%;' }
-									Twitter
-							%li
-								%a{ href: 'http://pinterest.com/amraplife', target: '_new' }
-									%i.fa.fa-pinterest-square{ style: 'font-size:110%;' }
-									Pinterest
-							%li
-								%a{ href: 'https://www.instagram.com/amrap_life/', target: '_new' }
-									%i.fa.fa-instagram{ style: 'font-size:110%;' }
-									Instagram
-							%li
-								%a{:href => "http://cloud.feedly.com/#subscription%2Ffeed%2F#{CGI.escape( main_app.feed_index_url( source: 'feedly', v: '1.0' ))}", :target => "blank"}
-									%img#feedlyFollow{:alt => "follow us in feedly", :src => "http://s3.feedly.com/img/follows/feedly-follow-logo-black_2x.png", style: 'height: 1.2em;opacity: 0.4;vertical-align: middle'}
-									Feedly
+			.col-sm-2.col-xs-12
+				.footerLink
+					%h5{ style: 'font-size: 16px;' }
+						Stuff
+					%ul.list-unstyled
+						%li
+							%a{ href: '/about' }
+								About
+						%li
+							%a{ href: '/faq' }
+								FAQ
+						%li
+							%a{ href: '/blog' }
+								Blog
+						%li
+							%a{ href: '/contacts/new' }
+								Contact
+						%li
+							%a{ href: '/privacy' }
+								Privacy
 
-			-#.widget.col-xs-6.col-sm-4
+						%li
+							%a{ href: '/terms' }
+								Terms
+						%li
+							%a{ href: '/admin' }
+								Admin
+			.col-sm-2.col-xs-12
+				.footerLink
+					%h5{ style: 'font-size: 16px;' }
+						Shop
+					%ul.list-unstyled
+						%li
+							%a{ href: '/store?tag=women' }
+								Women
+						%li
+							%a{ href: '/store?tag=men' }
+								Men
+						%li
+							%a{ href: '/store?category=shirts' }
+								Shirts
+						%li
+							%a{ href: '/store?category=hats' }
+								Hats
+						
+						%li
+							%a{ href: '/store?category=equipment' }
+								Equipment
 
-			.widget.col-xs-12.col-sm-6
-				%h4.widget-title
-					Subscribe
+			.col-sm-2.col-xs-12
+				.footerLink
+					%h5{ style: 'font-size: 16px;' }
+						More to see
+					%ul.list-unstyled
+						-#%li
+							%a{ href: '' }
+								Inspirations
+						-#%li
+							%a{ href: '' }
+								Places
+						%li
+							%a{ href: '/xfit-terms' }
+								Crossfit Terms
+						-#%li
+							%a{ href: '' }
+								Workouts
+						%li
+							%a{ href: '/recipes' }
+								Recipes
+						%li
+							%a{ href: '/inspirations' }
+								Free Wallpapers
+
+			.col-sm-2.col-xs-12
+				.footerLink
+					%h5{ style: 'font-size: 16px;' }
+						Get in Touch
+					%ul.list-unstyled
+						%li
+							%a{ href: 'http://facebook.com/amraplife', target: '_new' }
+								.fa.fa-facebook-square{ style: 'font-size:125%;margin-right:6px;' }
+								Facebook
+						%li
+							%a{ href: 'https://www.instagram.com/amrap_life/', target: '_new' }
+								.fa.fa-instagram{ style: 'font-size:125%;margin-right:6px;' }
+								Instagram
+						%li
+							%a{ href: 'http://pinterest.com/amraplife', target: '_new' }
+								.fa.fa-pinterest{ style: 'font-size:125%;margin-right:6px;' }
+								Pinterest
+						%li
+							%a{ href: 'http://twitter.com/amraplife', target: '_new' }
+								.fa.fa-twitter{ style: 'font-size:125%;margin-right:6px;' }
+								Twitter
+						%li
+							%a{:href => main_app.feed_index_url( source: 'website', v: '1.0', format: 'rss' ), :target => "blank"}
+								.fa.fa-rss{ style: 'font-size:125%;margin-right:6px;' }
+								Feedly
+
+			.col-sm-4.col-xs-12
+				.newsletter.clearfix
+					%h4{ style: 'font-size: 18px;' } Newsletter
+					%h3{ style: 'font-size: 22px;' } Sign Up Now
+					%p{ style: "font-size:12px;line-height:18px;" }
+						Enter your email address and get notified about new products. Don't worry - we hate spam too!
+					= form_for SwellMedia::Optin.new, url: swell_media.optins_path, role: :form, class: 'form-horizontal'  do |f|
+						.input-group
+							= f.text_field :email, placeholder: 'Enter Your Email', class: 'form-control'
+							= f.submit 'Do It', class: 'input-group-addon'
+
+
+.copyRight.clearfix
+	.container
+		.row
+			.col-sm-7.col-xs-12
 				%p
-					Get new product announcements, helpful tips for getting the most out of life, and crazy discounts on workout apparel.
-				= render 'swell_media/optins/form'
+					©
+					= Time.now.year
+					= ENV['APP_NAME']
+					All Rights Reserved
 
-	.footer-bottom
-		.container.aligncenter
-			%p
-				©
-				= Time.now.year
-				= ENV['APP_NAME']
-				All Rights Reserved
 
-			%p
-				AMRAP Life is hand-crafted with Loving Kindness by Groundswell Enterprises, LLC in Del Mar, CA
+			.col-sm-5.col-xs-12
+				%ul.list-inline
+					%li
+						= image_tag "app_theme/home/footer/card1.png"
+					%li
+						= image_tag "app_theme/home/footer/card2.png"
+					%li
+						= image_tag "app_theme/home/footer/card3.png"
+					%li
+						= image_tag "app_theme/home/footer/card4.png"
 
-			%p
-				AMRAP Life &trade;, Live AMRAP &trade;, and Life is a Team Sport &trade;, are trademarks of Groundswell Enterprises, LLC
+.postFooter.clearfix{ style: 'margin-top:1em;' }
+	.container
+		.row
+			.col-sm-7.col-xs-12
+				%p{ style: "font-size:12px;line-height:18px;" }
+					AMRAP Life is hand-crafted with Loving Kindness by Groundswell Enterprises, LLC in Del Mar, CA
 
-			%hr{ style: 'border-color: #999' }
-			%p.small
-				= SwellMedia.app_name
-				is a participant in the Amazon Services LLC Associates Program, an affiliate advertising program designed to provide a means for us to earn fees by linking to Amazon.com and affiliated sites.
-			%br
-			%br
-			%br
+				%p{ style: "font-size:12px;line-height:18px;" }
+					AMRAP Life &trade;, Live AMRAP &trade;, and Life is a Team Sport &trade;, are trademarks of Groundswell Enterprises, LLC
+			.col-sm-5.col-xs-12
+				%p.small{ style: 'font-size:75%;' }
+					= SwellMedia.app_name
+					is a participant in the Amazon Services LLC Associates Program, an affiliate advertising program designed to provide a means for us to earn fees by linking to Amazon.com and affiliated sites.
 
 %script{:src => "//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-4e3df87108d6d523", :type => "text/javascript"}
-= render 'application/shopify_cart'

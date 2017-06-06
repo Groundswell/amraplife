@@ -5,13 +5,15 @@ class Recipe < ActiveRecord::Base
 
 	validates		:title, presence: true, unless: :allow_blank_title?
 
-	attr_accessor	:slug_pref
+	attr_accessor	:slug_pref, :category_name
 
 	before_save	:set_publish_at
 
 	include SwellMedia::Concerns::URLConcern
 	include SwellMedia::Concerns::AvatarAsset
 	#include SwellMedia::Concerns::ExpiresCache
+
+	belongs_to :recipe_category, foreign_key: :category_id
 
 	has_many :ingredients
 	has_many :foods, through: :ingredients

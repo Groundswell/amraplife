@@ -1,0 +1,16 @@
+- cache( "row-#{product.cache_key}-#{args[:size]}" ) do
+	.col-sm-4.col-xs-12
+		.productBox
+			.productImage.clearfix
+				%a{ href: product.url }
+					%img{ src: product.avatar, alt: product.title }
+			.productCaption.clearfix
+				%a{ href: product.url }
+					%h4.text-center{ style: 'margin-bottom:12px;' }
+						= product.title
+					%h4.text-center{ style: 'color: #777;' }
+						- if product.price % 100 == 0
+							= number_to_currency( product.price / 100.to_f, precision: 0 )
+						- else
+							= number_to_currency( product.price / 100.to_f )
+

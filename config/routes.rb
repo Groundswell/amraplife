@@ -23,19 +23,12 @@ Rails.application.routes.draw do
 	resources :places
 	resources :place_admin
 
-	resources :products, path: :store
-
-	resources :product_admin do
-		get :preview, on: :member
-		delete :empty_trash, on: :collection
-	end
-
 	resources :recipes
 	resources :recipe_admin do
 		get :preview, on: :member
 	end
 
-	resources :terms, only: :index, path: 'terms'
+	resources :terms, only: :index, path: 'xfit-terms'
 	resources :term_admin do
 		delete :empty_trash, on: :collection
 	end
@@ -51,6 +44,7 @@ Rails.application.routes.draw do
 	get '/about' => 'swell_media/static#about', as: 'about'
 	get '/crossfit-terms' => 'swell_media/static#crossfit_terms'
 	get '/faq' => 'swell_media/static#faq', as: 'faq'
+	get '/inspirations' => 'swell_media/static#inspirations', as: 'inspirations'
 	get '/deleteGAPPSnotBefore20170225utc.html' => 'swell_media/static#goog_verify'
 
 	devise_scope :user do
@@ -60,7 +54,7 @@ Rails.application.routes.draw do
 	end
 	devise_for :users, :controllers => { :omniauth_callbacks => 'oauth', :registrations => 'registrations', :sessions => 'sessions' }
 
-	#mount SwellEcom::Engine, :at => '/'
+	mount SwellEcom::Engine, :at => '/'
 
 	mount SwellMedia::Engine, :at => '/'
 

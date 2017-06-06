@@ -261,4 +261,25 @@ namespace :amraplife do
 		strength.workout_segments.create content: "Find 2RM DL", segment_type: :strength
 
 	end
+
+	task load_terms: :environment do
+		html_data = open('https://amraplife.com/crossfit-terms').read
+		nokogiri_doc = Nokogiri::HTML(html_data)
+		term_blocks = nokogiri_doc.css("ul.crossfit-terms > li")
+		term_blocks.each do |entry|
+			content = entry.text.gsub( /\n/, '' ).gsub( /(^.+:)/, '' )
+			
+			terms = entry.css("strong")
+			title = terms[0].text.gsub( /:/, '' ).gsub( /\(|\)/, '' ).strip
+			if Term.pluck( :title ).include?( title )
+				puts "--------- Skipping #{title}"
+				next
+			end
+			aliases_csv = ''
+			aliases_csv = terms[1].text.gsub( /aka/, '' ).strip unless terms[1].nil?
+			
+			t=Term.create( title: title, aliases_csv: aliases_csv, content: content )
+			puts "Created #{t.title}"
+		end
+	end
 end

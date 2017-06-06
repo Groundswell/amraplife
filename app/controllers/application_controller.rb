@@ -7,9 +7,17 @@ class ApplicationController < ActionController::Base
 
 	before_filter :set_page_meta
 	before_filter :allow_iframe_requests
+	before_filter :set_cart#, :clear_cart
 	
 	def allow_iframe_requests
 	  response.headers.delete('X-Frame-Options')
 	end
 
+	def set_cart
+		@cart = SwellEcom::Cart.find_by( id: session[:cart_id] )
+	end
+
+	def clear_cart
+		session[:cart_count] = 0
+	end
 end

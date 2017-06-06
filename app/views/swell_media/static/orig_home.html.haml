@@ -1,0 +1,111 @@
+
+- if false
+	.section.row.entries.bg-primary.section-no-margin-bottom
+		.col-lg-12.col-xl-12
+			.row
+				%article.entry.style-grid.style-hero.hero-md-largest.type-post.col-md-12.col-lg-12.colheight-sm-3.colheight-md-3.colheight-lg-3.colheight-xl-3{ style: 'height: auto;min-height:480px;'}
+					.ribbon.ribbon-pulled.ribbon-small.ribbon-highlight
+						%a{ href: '#' }
+							Standby...
+					%header.entry-header
+						%h1.entry-title{ style: 'margin-left:90px;'}
+							Coming Soon...
+						%h4{ style: 'margin-left:90px;'}
+							Life is a Team Sport.... Live AMRAP
+
+					.row{ style: 'margin-top:2em;'}
+						.col-sm-8.col-sm-offset-2
+							%p.entry-header
+								We're lacing up our sneakers. In the meantime, sign up to be one of the first in line for great tips, inspiration and discounts on cool gear when we launch.
+
+					= render 'swell_media/optins/form'
+
+
+					%figure.entry-thumbnail
+						%a.overlay.overlay-primary{ href: '#' }
+							%img{ src: 'https://s3.amazonaws.com/gkparishphilp/images/amrap-bg-1.png', style: 'opacity:0.66' }
+
+- else
+	.section.row.entries.bg-primary.section-no-margin-bottom
+		.col-lg-6.col-xl-5
+			.row
+				%article.entry.style-grid.style-hero.hero-md-largest.type-post.col-md-8.col-lg-12.colheight-sm-1.colheight-md-2.colheight-lg-2.colheight-xl-2
+					.ribbon.ribbon-pulled.ribbon-small.ribbon-highlight
+						%a{ href: '#' }
+							Ready Ready!
+					%header.entry-header
+						%h3.entry-title
+							Welcome to AMRAPLife.com
+						%p
+							Life is a Team Sport.... Live AMRAP
+
+					.row{ style: 'margin-top:1em;'}
+						.col-sm-12.hidden-xs
+							%p.entry-header
+								We're just lacing up our sneakers. Sign up to be one of the first in line for great tips, inspiration and discounts on cool gear when we launch.
+
+					= form_for SwellMedia::Optin.new, url: swell_media.optins_path, class: 'form-inline' do |f|
+						.row{ style: 'margin-top:1em;'}
+							.col-sm-5.hidden-xs
+								= f.text_field :name, class: 'form-control', placeholder: 'Name'
+							.col-sm-5.hidden-xs
+								= f.text_field :email, class: 'form-control', placeholder: 'Email'
+							.col-sm-2.hidden-xs
+								= f.submit 'Sign Up', class: 'btn btn-success'
+
+					%figure.entry-thumbnail
+						%a.overlay.overlay-primary{ href: '#' }
+							%img{ src: 'https://s3.amazonaws.com/gkparishphilp/images/amrap-bg-1.png', style: 'opacity:0.66' }
+
+				- if @articles.present? && @articles[0..1].present?
+					- @articles[0..1].each do |article|
+						= render 'swell_media/articles/card', article: article, args: { desc_style: 'color: #ddd;font-size:90%;line-height:1.33em;' }
+		.col-lg-6.col-xl-7
+			.row
+				- if @articles.present? && @articles[2..7].present?
+					- @articles[2..7].each do |article|
+						= render 'swell_media/articles/card', article: article, args: { desc_style: 'color: #ddd;font-size:90%;line-height:1.33em;' }
+
+	#content.content.section.row
+		-#.col-md-9.col-lg-9 -- todo 9 with ads
+		.col-md-12.col-lg-12
+			.row
+				.col-md-4.col-lg-4.md-pull-right
+					%aside.widget
+						%h2.widget-title.ribbon.ribbon-focus
+							%a{ href: main_app.recipes_path }
+								%span Recipes
+						.entries.row
+							- @recipes.each do |recipe|
+								%article.type-post.style-media-list.media.col-sm-6.col-md-12
+									%a{ href: main_app.recipe_path( recipe ) }
+										%img.media-object.pull-left{ src: recipe.avatar, width: 80, height: 80 }
+									.media-body{ style: 'padding-left: 1em;' }
+										.entry-title
+											%a{ href: main_app.recipe_path( recipe ) }
+												= recipe.title
+										.entry-description{ style: 'font-size:85%;' }
+											= raw recipe.description
+
+				.bg-base.col-md-8.col-lg-8
+					%h2.section-title.ribbon.ribbon-highlight
+						%span
+							Trending
+					.entries
+						- if @trending.present?
+							= render 'swell_media/articles/card', article: @trending, args: {}
+
+					%h2.section-title.ribbon.ribbon-highlight
+						%span
+							Just a Thought...
+					.entries
+						- Inspiration.published.order( 'random()' ).limit( 1 ).each do |inspiration|
+							%a{ :href => inspiration.path }
+								%img.img.img-responsive{ src: inspiration.avatar }
+
+
+		-#.sidebar.col-md-3.col-lg-3 todo with ads
+			%aside.widget
+				%h2.widget-title.ribbon
+					%a{ href: '#' }
+						Thanks...

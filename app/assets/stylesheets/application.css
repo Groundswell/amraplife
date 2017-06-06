@@ -16,6 +16,111 @@
  *= require_self
  */
 
+.navbar-main{
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+
+.home-about-quote{
+	font-family: 'PT Serif', Cambria, "Times New Roman", Times, serif;
+	font-weight: bold;
+	line-height: 1.5;
+	/*margin-bottom: 1.5em;*/
+	text-transform: none;
+	color: #555;
+}
+
+
+
+@media (min-width: 320px){
+	.mainContent{ 
+		padding-top: 30px;
+	}
+	.home-about-quote{
+		font-size: 24px;
+	}
+	h1{
+	  font-size: 32px;
+	}
+	h2{
+	  font-size: 28px;
+	}
+	h3{
+	  font-size: 24px;
+	}
+	h4 {
+	  font-size: 20px;
+	  font-weight: 700;
+	  margin-bottom: 25px;
+	}
+
+	h5 {
+	  font-size: 16px;
+	  font-weight: 700;
+	  margin-bottom: 25px;
+	}
+}
+
+@media (min-width: 768px){
+	.mainContent{ 
+		padding-top: 50px;
+	}
+	.home-about-quote{
+		font-size: 30px;
+	}
+	h1{
+	  font-size: 44px;
+	}
+
+	h2{
+	  font-size: 40px;
+	}
+
+	h3{
+	  font-size: 36px;
+	}
+	h4 {
+	  font-size: 24px;
+	  font-weight: 700;
+	  margin-bottom: 25px;
+	}
+
+	h5 {
+	  font-size: 20px;
+	  font-weight: 700;
+	  margin-bottom: 25px;
+	}
+}
+
+
+#flash-container{
+	margin-top:1em;
+}
+
+
+.blogPage .thumbnail img{
+	margin-bottom:25px;
+}
+
+h1.content-title{
+	font-family: 'PT Serif', Cambria, "Times New Roman", Times, serif;
+	line-height: 1.25;
+	font-weight: 700;
+}
+
+.content p{
+	font-family: 'PT Serif', Cambria, "Times New Roman", Times, serif;
+	font-size: 20px;
+	color:#444;
+	line-height: 1.5;
+	margin-bottom: 2em;
+}
+
+.privacy, .terms{
+	margin-top: 50px;
+}
+
 .entries a {
 	color: #428bca;
 	text-decoration: underline;
@@ -26,6 +131,11 @@ ul.crossfit-terms{
 }
 .crossfit-terms li {
 	margin: 1em auto;
+	font-family: 'PT Serif', Cambria, "Times New Roman", Times, serif;
+	font-size: 20px;
+	color:#444;
+	line-height: 1.5;
+	margin-bottom: 2em;
 }
 .crossfit-terms p{
 	display: inline;
@@ -37,6 +147,6 @@ ul.crossfit-terms{
 .anchor{
 	display: block;
 	position: relative;
-	top: -50px;
+	top: -145px;
 	visibility: hidden;
 }

@@ -1,25 +1,32 @@
 
-#content.content.section.row
-	.col-md-8.bg-base.col-lg-8.col-xl-9
-		.ribbon.ribbon-highlight
-			%ol.breadcrumb.ribbon-inner
-				%li
-					%a{ href: swell_media.root_path() }
-						Home
-				%li.active
-					%a{ href: '/recipes' }
-						Recipes
-		.entries
-		
-			= paginate @recipes
 
-			- @recipes.each do |recipe|
-				= render 'row', recipe: recipe
+- cache( "recipes/index" ) do
 
-			= paginate @recipes
-		
-	.sidebar.col-md-4.col-lg-4.col-xl-3
-		= render 'application/sidebar'
-	/ /.sidebar col-md-4 col-lg-4 col-xl-3
-/ /#content
+	%section.clearfix.blogPage.mainContent
+		.container
+			.row
+				.col-md-9.col-sm-8.col-xs-12
+					.jumbotron{ style: 'background-color: #e9fbfe;' }
+						.container
+							.row
+								.col-xs-12.text-center
+									%h1
+										Get Our Free Repice Book
+									%p
+										Cauliflower, brewer's yeast, protein powder, and more. Nutrition hacks galore
+									.input-group
+										= text_field_tag :email, '', placeholder: 'Email', class: 'form-control'
+										= submit_tag "Get It", class: "btn btn-lg btn-info btn-filled"
+											
+
+					.row.productListSingle
+						- @recipes.each do |recipe|
+							= render 'row', recipe: recipe
+
+					.paginator{ style: 'margin-bottom: 2em;' }
+						= raw paginate @recipes
+					
+				.sideBar.col-md-3.col-sm-4.col-xs-12
+					= render 'recipes/sidebar'
+
 

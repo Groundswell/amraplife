@@ -1,4 +1,30 @@
-#content.content.section.row
+
+.jumbotron{ style: 'background-color: #e9fbfe;' }
+	.container
+		.row
+			.col-xs-12.text-center
+				%h1
+					Free Shipping on All Orders
+				%p
+					No minimum purchase required. Continental US only.
+				%a.btn.btn-lg.btn-info.btn-filled{ href: 'faq' }
+					Learn More
+					%i.fa.fa-chevron-right
+
+%section.clearfix.productsContent{ style: 'padding-top:25px;' }
+	.container
+		.row
+			- @products.each do |product|
+				= render 'card', product: product, args: {}
+
+
+
+
+
+
+
+
+-##content.content.section.row
 	.col-md-12.bg-base
 		.ribbon.ribbon-highlight
 			%ol.breadcrumb.ribbon-inner
