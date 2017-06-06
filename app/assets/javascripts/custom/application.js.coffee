@@ -15,3 +15,10 @@ $( document ).ready ->
 				}
 			)
 	), 100
+
+	$('form.submit-once').submit ->
+		$form = $(this)
+		setTimeout (->
+			$form.children('input[type=submit]').addClass('disabled');
+		), 50
+		return false;

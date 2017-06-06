@@ -83,7 +83,7 @@
 						.clearfix
 
 
-					= form_for @order, as: :order, url: swell_ecom.checkout_index_path(), method: 'POST', html: { class: 'stripe_form validate_form checkout_form row' } do |f|
+					= form_for @order, as: :order, url: swell_ecom.checkout_index_path(), method: 'POST', html: { class: 'stripe_form validate_form checkout_form row submit-once' } do |f|
 						.col.xs-12
 							.page-header
 								%h4
@@ -229,8 +229,8 @@
 
 						.col-xs-12
 							.well.well-lg.clearfix
-								%button.btn.btn-lg.btn-primary.pull-right
-									Place Order
+								= f.submit 'Place Order', class: 'btn btn-lg btn-primary pull-right'
+
 
 
 
