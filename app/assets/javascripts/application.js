@@ -12,4 +12,5 @@
 //
 //= require app_theme
 //= require swell_ecom/checkout.js
+//= require custom/application
 //= require_self

@@ -4,11 +4,11 @@
 		.container{ style: 'position: relative;' }
 			.row
 				.sideBar.col-md-3.col-sm-4.col-xs-12
-				
-					%h3 
+
+					%h3
 						Scroll Nav
-					%nav
-						%ul.list-unstyled.nav.sidebar-nav.affix
+					%nav.sidebar-scroll-nav
+						%ul.list-unstyled.nav.sidebar-nav
 							%li
 								%a{ href: '#top' }
 									Top
@@ -24,17 +24,17 @@
 							%li
 								%a{ href: '#section4' }
 									Section 4
-				
+
 				#content.col-md-9.col-sm-8.col-xs-12{ style: 'border-left: 1px solid #ddd;', data: { spy: 'scroll', target: '#spy', offset: 50 } }
 
 					%h1#top.content-title
 						FAQs
-					
+
 
 					%p
-						Here are some questions that we get asked sometimes. We hope that the answers to these questions are helpful or interesting to you. You may have your own questions. If so, 
+						Here are some questions that we get asked sometimes. We hope that the answers to these questions are helpful or interesting to you. You may have your own questions. If so,
 						%a{ href: swell_media.new_contact_path, style: 'text-decoration:underline;' }
-							please do get in touch. 
+							please do get in touch.
 						The answers to your questions might be intersting for other readers, too! Besides, we just love hearing from you - that's why we're paying for all these pixels to be here in the first place.
 
 					%h3#section1
@@ -117,12 +117,12 @@
 				.entry-content
 					%h1
 						FAQs
-					
+
 
 					%p
-						Here are some questions that we get asked sometimes. We hope that the answers to these questions are helpful or interesting to you. You may have your own questions. If so, 
+						Here are some questions that we get asked sometimes. We hope that the answers to these questions are helpful or interesting to you. You may have your own questions. If so,
 						%a{ href: swell_media.new_contact_path, style: 'text-decoration:underline;' }
-							please do get in touch. 
+							please do get in touch.
 						The answers to your questions might be intersting for other readers, too! Besides, we just love hearing from you - that's why we're paying for all these pixels to be here in the first place.
 
 					%h3
@@ -150,7 +150,7 @@
 						What is your return policy?
 					%p
 						one is the loneliest number
-			
+
 				%hr/
 	.sidebar.col-md-4.col-lg-4.col-xl-3
 		= render 'swell_media/articles/sidebar'
