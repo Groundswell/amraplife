@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
 
 	helper SwellMedia::Engine.helpers
 
-	before_filter :force_cloudflare_sll
+	# before_filter :force_cloudflare_sll
 	before_filter :set_page_meta
 	before_filter :allow_iframe_requests
 	before_filter :set_cart#, :clear_cart
