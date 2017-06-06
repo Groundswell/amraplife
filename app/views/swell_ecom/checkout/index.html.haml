@@ -92,7 +92,7 @@
 							%label Email (required)
 							= f.email_field :email, class: 'form-control', required: true
 							.help-block.with-errors
-							%input{ type: :checkbox, name: 'newsletter', checked: :checked, class: '', style: '' }
+							%input{ type: :checkbox, name: 'newsletter', checked: :checked, style: '' }
 							=# check_box_tag :newsletter, '', class: 'form-control', checked: true
 							%small Sign-up for AMRAP Life news & discounts.
 						.form-group.col-sm-6.col-xs-12
@@ -193,7 +193,7 @@
 									%label Last Name
 									= shipping_address_form.text_field :last_name, class: 'form-control', required: true
 									.help-block.with-errors
-								.form-group.col-sm-6.col-xs-12
+								-#.form-group.col-sm-6.col-xs-12
 									%label Phone
 									= shipping_address_form.telephone_field :phone, value: (@order.shipping_address.phone || '+1'), class: 'form-control telephone_formatted', required: true
 									.help-block.with-errors
