@@ -5,10 +5,11 @@ class ApplicationController < ActionController::Base
 
 	helper SwellMedia::Engine.helpers
 
+	before_filter :force_cloudflare_sll
 	before_filter :set_page_meta
 	before_filter :allow_iframe_requests
 	before_filter :set_cart#, :clear_cart
-	
+
 	def allow_iframe_requests
 	  response.headers.delete('X-Frame-Options')
 	end
@@ -19,5 +20,12 @@ class ApplicationController < ActionController::Base
 
 	def clear_cart
 		session[:cart_count] = 0
+	end
+
+	private
+	def force_cloudflare_sll
+		if request.headers['X-Forwarded-Proto'].present? && request.headers['X-Forwarded-Proto'] == 'http'
+			redirect_to request.original_url.gsub('http:', 'https:')
+		end
 	end
 end
