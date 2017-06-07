@@ -24,14 +24,14 @@ class ApplicationController < ActionController::Base
 
 	private
 	def force_cloudflare_sll
-		puts "X-Forwarded-Proto: '#{request.headers['X-Forwarded-Proto']}'"
+		puts "force_cloudflare_sll X-Forwarded-Proto: '#{request.headers['X-Forwarded-Proto']}'"
+		puts "force_cloudflare_sll #{request.original_url}"
 		if request.headers['X-Forwarded-Proto'].present? && request.headers['X-Forwarded-Proto'].strip.downcase == 'http'
-			puts "redirecting to https"
+			puts "force_cloudflare_sll redirecting to https"
 			# redirect_to request.original_url.gsub('http:', 'https:')
 		end
-		puts request.original_url
-		request.headers.each do |key, value|
-			puts "REQUEST.HEADER['#{key}'] = '#{value}'"
-		end
+		# request.headers.each do |key, value|
+		# 	puts "REQUEST.HEADER['#{key}'] = '#{value}'"
+		# end
 	end
 end
