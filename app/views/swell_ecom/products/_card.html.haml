@@ -6,7 +6,7 @@
 					%img{ src: product.avatar, alt: product.title }
 			.productCaption.clearfix
 				%a{ href: product.url }
-					%h4.text-center{ style: 'margin-bottom:12px;' }
+					%h4.text-center{ style: 'margin-bottom:12px;min-height:2em;' }
 						= product.title
 					%h4.text-center{ style: 'color: #777;' }
 						- if product.price % 100 == 0

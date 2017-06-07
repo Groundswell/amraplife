@@ -79,5 +79,5 @@
 				= raw paginate @products
 
 				.row.grid
-					- @products.each do |product|
+					- @products.each_with_index do |product, idx|
 						= render 'card', product: product, args: {}
