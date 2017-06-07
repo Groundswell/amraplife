@@ -91,3 +91,16 @@ a.color-white:hover, a.color-white:active {
 .sidebar-scroll-nav.affix {
 	top: 300px;
 }
+
+
+.productsContent .productBox .productCaption {
+	height: 6em;
+}
+.productsContent .productBox .productImage {
+	padding-top: 100%;
+}
+.productsContent .productBox .productImage>a {
+	position: absolute;
+    display: block;
+    top: 0; right: 0; bottom: 0; left: 0;
+}
