@@ -5,9 +5,9 @@ namespace :amraplife do
 
 		puts Product.__elasticsearch__.client.indices.delete index: Product.index_name rescue nil
 
-		puts Product.__elasticsearch__.client.indices.create \
-			index: Product.index_name,
-			body: { settings: Product.settings.to_hash, mappings: Product.mappings.to_hash }
+		puts SwellEcom::Product.__elasticsearch__.client.indices.create \
+			index: SwellEcom::Product.index_name,
+			body: { settings: SwellEcom::Product.settings.to_hash, mappings: SwellEcom::Product.mappings.to_hash }
 
 
 		Product.all.find_each( batch_size: 500 ) do |product|
@@ -268,7 +268,7 @@ namespace :amraplife do
 		term_blocks = nokogiri_doc.css("ul.crossfit-terms > li")
 		term_blocks.each do |entry|
 			content = entry.text.gsub( /\n/, '' ).gsub( /(^.+:)/, '' )
-			
+
 			terms = entry.css("strong")
 			title = terms[0].text.gsub( /:/, '' ).gsub( /\(|\)/, '' ).strip
 			if Term.pluck( :title ).include?( title )
@@ -277,7 +277,7 @@ namespace :amraplife do
 			end
 			aliases_csv = ''
 			aliases_csv = terms[1].text.gsub( /aka/, '' ).strip unless terms[1].nil?
-			
+
 			t=Term.create( title: title, aliases_csv: aliases_csv, content: content )
 			puts "Created #{t.title}"
 		end

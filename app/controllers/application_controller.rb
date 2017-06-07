@@ -29,7 +29,7 @@ class ApplicationController < ActionController::Base
 			puts "redirecting to https"
 			# redirect_to request.original_url.gsub('http:', 'https:')
 		end
-
+		puts request.original_url
 		request.headers.each do |key, value|
 			puts "REQUEST.HEADER['#{key}'] = '#{value}'"
 		end
