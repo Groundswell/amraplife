@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/Groundswell/swell_ecom.git
-  revision: 0da7e5ee2ca44a368348102bf1baf22b1d3d2ca0
+  revision: 6dc99dbaad600f83119bbe962939adad3f19b555
   specs:
     swell_ecom (0.0.1)
       stripe
@@ -38,7 +38,7 @@ GIT
 
 GIT
   remote: git://github.com/Groundswell/swell_theme_store.git
-  revision: 6d026ac438604282893b4fa937cb2907749ee3b3
+  revision: 905eb57b87abe6379b447c61ff3dd2fbb47b4ee7
   specs:
     swell_theme_store (0.0.1)
       rails (~> 4.2.7)
