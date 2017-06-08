@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/Groundswell/swell_ecom.git
-  revision: 776fb9908658bd429f63e4a2f192775db0cbca3c
+  revision: e6f685d13cb9bfa02f97e0661788457cfd2fc7e5
   specs:
     swell_ecom (0.0.1)
       stripe
@@ -9,7 +9,7 @@ GIT
 
 GIT
   remote: git://github.com/Groundswell/swell_media.git
-  revision: c1354845c0bcd6a32289a63824850aea44bd995b
+  revision: 1fcc6314b96dbfb521d1e0bac042a69c39f09df5
   specs:
     swell_media (0.0.1)
       acts-as-taggable-array-on
