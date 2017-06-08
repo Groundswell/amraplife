@@ -2,26 +2,7 @@
 	.fullscreenbanner-container
 		.fullscreenbanner
 			%ul
-				%li{ data: { slotamaount: 5, masterspeed: 700, title: 'Slide1' } }
-					= image_tag "app_theme/home/banner-slider/slider-bg.jpg", alt: "slider-bg", 'data-bgfit' => "cover", 'data-bgposition' => "center center", 'data-bgrepeat' => "no-repeat"
-					.slider-caption.slider-captionV1.container
-						.tp-caption.rs-caption-1.sft.start{ data: { hoffset: 0, x: 570, y: 54, speed: 800, start: 1500, easing: "Back.easeInOut", endspeed: 300 } }
-							= image_tag "app_theme/home/banner-slider/shirt1.png", alt: "slider-image"
-						.tp-caption.rs-caption-2.sft{ data: { hoffset: 0, y: 119, speed: 800, start: 2000, easing: "Back.easeInOut", endspeed: 300 } }
-							Fit AF Ladies T
-						.tp-caption.rs-caption-3.sft{ data: { hoffset: 0, y: 185, speed: 1000, start: 3000, easing: "Power4.easeOut", endspeed: 300, endeasing: 'Power1.easeIn', captionhidden: 'off' } }
-							%small
-								Spring / Summer 2017
-							%br
-							AMRAP Life Exclusive
-							
-						.tp-caption.rs-caption-4.sft{ data: { hoffset: 0, y: 320, speed: 800, start: 3500, easing: "Power4.easeOut", endspeed: 300, endeasing: 'Power1.easeIn', captionhidden: 'off' } }
-							%span.page-scroll
-								%a.btn.primary-btn{ href: '/store' }
-									Buy Now
-									%i.fa.fa-chevron-right
-
-				%li{ data: { slotamaount: 5, masterspeed: 1000, title: 'Slide2' } }
+				%li{ data: { slotamaount: 5, masterspeed: 1000, title: 'Slide1' } }
 					= image_tag "app_theme/home/banner-slider/slider-bg.jpg", alt: "slider-bg", 'data-bgfit' => "cover", 'data-bgposition' => "center center", 'data-bgrepeat' => "no-repeat"
 					.slider-caption.slider-captionV1.container.captionCenter
 						.tp-caption.rs-caption-1.sft.start.text-center{ data: { x: -65, y: 128, speed: 800, start: 1500, easing: "Back.easeInOut", endspeed: 300 } }
@@ -31,7 +12,44 @@
 
 						.tp-caption.rs-caption-4.sft.text-center{ data: { x: 'center', y: 55, speed: 1000, start: 3000, easing: "Power4.easeOut", endspeed: 300, endeasing: 'Power1.easeIn', captionhidden: 'off' } }
 							%span.page-scroll
-								%a.btn.primary-btn{ href: '/store' }
+								%a.btn.primary-btn{ href: 'https://www.amraplife.com/store/burpee-amrap-women-s-tank-top' }
+									Buy Now
+									%i.fa.fa-chevron-right
+
+				%li{ data: { slotamaount: 5, masterspeed: 700, title: 'Slide2' } }
+					= image_tag "app_theme/home/banner-slider/slider-bg.jpg", alt: "slider-bg", 'data-bgfit' => "cover", 'data-bgposition' => "center center", 'data-bgrepeat' => "no-repeat"
+					.slider-caption.slider-captionV1.container
+						.tp-caption.rs-caption-1.sft.start{ data: { hoffset: 0, x: 570, y: 54, speed: 800, start: 1500, easing: "Back.easeInOut", endspeed: 300 } }
+							= image_tag "https://cdn1.amraplife.com/assets/fb361115-0b16-4f43-95b6-cb35fc638b9d.png"
+						.tp-caption.rs-caption-2.sft{ data: { hoffset: 0, y: 119, speed: 800, start: 2000, easing: "Back.easeInOut", endspeed: 300 } }
+							Never Tell Me The WODS
+						.tp-caption.rs-caption-3.sft{ data: { hoffset: 0, y: 185, speed: 1000, start: 3000, easing: "Power4.easeOut", endspeed: 300, endeasing: 'Power1.easeIn', captionhidden: 'off' } }
+							-#%small
+								Spring / Summer 2017
+							-#%br
+							AMRAP Life Exclusive
+							
+						.tp-caption.rs-caption-4.sft{ data: { hoffset: 0, y: 320, speed: 800, start: 3500, easing: "Power4.easeOut", endspeed: 300, endeasing: 'Power1.easeIn', captionhidden: 'off' } }
+							%span.page-scroll
+								%a.btn.primary-btn{ href: 'https://www.amraplife.com/store/never-tell-me-the-wods-short-sleeve-t-shirt' }
+									Buy Now
+									%i.fa.fa-chevron-right
+
+				
+
+				%li{ data: { transition: "slidehorizontal", slotamount: "5", masterspeed: "1000", title: "Slide 3" } }
+					= image_tag "app_theme/home/banner-slider/slider-bg.jpg", alt: "slider-bg", 'data-bgfit' => "cover", 'data-bgposition' => "center center", 'data-bgrepeat' => "no-repeat"
+					.slider-caption.slider-captionV1.container
+						.tp-caption.rs-caption-1.sft.start{ data: { hoffset: 0, y: 85, speed: 800, start: 1500, easing: "Back.easeInOut", endspeed: 300 } }
+							= image_tag "app_theme/home/banner-slider/kipit.png"
+							=# image_tag "https://cdn1.amraplife.com/assets/207a8256-a223-4869-b59e-220a40c46f4e.png", alt: "slider-image"
+						.tp-caption.rs-caption-2.sft{ data: { hoffset: 0, x: 800, y: 119, speed: 800, start: 2000, easing: "Back.easeInOut", endspeed: 300 } }
+							Grip It and Kip It
+							
+
+						.tp-caption.rs-caption-4.sft{ data: { hoffset: 0, x: 800, y: 235, speed: 1000, start: 3000, easing: "Power4.easeOut", endspeed: 300, endeasing: 'Power1.easeIn', captionhidden: 'off' } }
+							%span.page-scroll
+								%a.btn.primary-btn{ href: 'https://www.amraplife.com/store/grip-it-and-kip-it-short-sleeve-t-shirt' }
 									Buy Now
 									%i.fa.fa-chevron-right
 
