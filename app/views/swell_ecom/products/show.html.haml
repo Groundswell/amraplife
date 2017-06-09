@@ -39,7 +39,7 @@
 									= number_to_currency( @product.price / 100.to_f, precision: 0 )
 								- else
 									= number_to_currency( @product.price / 100.to_f )
-							
+
 							- if @product.description.present?
 								%p
 									= raw @product.description
@@ -47,7 +47,7 @@
 								%br
 
 
-							= form_tag cart_items_path do
+							= form_tag cart_items_path, data: { 'add-to-cart' => @product.page_event_data.merge( quantity: 1 ).to_json } do
 								= hidden_field_tag :item_type, @product.class.name
 								= hidden_field_tag :item_id, @product.id
 
