@@ -18,6 +18,10 @@ class Term < ActiveRecord::Base
 		where( ":q = ANY( aliases )", q: q ).first
 	end
 
+	def self.find_by_aliases( q )
+		where( ":q = ANY( aliases )", q: q )
+	end
+
 	def self.published( args = {} )
 		where( "char_length(content) > 0" ).active
 	end

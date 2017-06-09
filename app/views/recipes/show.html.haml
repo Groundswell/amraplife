@@ -29,6 +29,17 @@
 							.jumbotron
 								%p
 									If you've enjoyed this recipe, please consider passing it along using the share buttons above. And consider joining our email list. We'll send you once-in-a-while updates chock-full of great health and lifestyle tips sprinkled with inspiration and discounts on cool stuff!
+
+								= form_for SwellMedia::Optin.new, url: swell_media.optins_path, role: :form, class: 'form-inline'  do |f|
+									.row
+										.col-xs-12.col-sm-8.col-sm-offset-2
+											.form-group
+												= f.text_field :name, placeholder: 'Your Name', class: 'form-control'
+											.form-group
+												= f.text_field :email, placeholder: 'Email', class: 'form-control'
+
+											= f.submit "Do It", class: "btn btn-lg btn-info btn-filled pull-right"
+
 						.col-xs-12
 							= render 'application/fb_comments'
 

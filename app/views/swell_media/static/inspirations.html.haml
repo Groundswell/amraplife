@@ -2,7 +2,7 @@
 	
 	%section.mainContent.clearfix{ style: 'background: url(https://fitspiration.sg/wp-content/uploads/2015/04/background.jpg) no-repeat fixed center;' }
 
-		.jumbotron.text-center{ style: 'margin-top: 4em; margin-bottom: 6em; background-color:rgba(255, 255, 255, 0.85);' }
+		.jumbotron.text-center{ style: 'margin-top: 5em; margin-bottom: 10em; background-color:rgba(255, 255, 255, 0.85);' }
 			.container
 				.row
 					.col-xs-12
@@ -10,9 +10,18 @@
 							Free Inspirational Wallpapers
 						%p
 							Get 12 free motivational wallpapers delivered straight to your inbox. They look great as screensavers, wallpapers, or even posters for your gym.
-						%a.btn.btn-primary
-							Get Inspired
-							%i.fa.fa-chevron-right
+
+						= form_for SwellMedia::Optin.new, url: swell_media.optins_path, role: :form, class: 'form-inline'  do |f|
+							.row
+								.col-xs-12.col-sm-6.col-sm-offset-3
+									.form-group
+										= f.text_field :name, placeholder: 'Your Name', class: 'form-control'
+									.form-group
+										= f.text_field :email, placeholder: 'Email', class: 'form-control'
+
+									= f.submit "Get Inspired", class: "btn btn-lg btn-primary btn-filled"
+
+
 
 
 

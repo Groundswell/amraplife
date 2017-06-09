@@ -4,7 +4,7 @@
 			.col-xs-12
 				.page-header
 					%h1.content-title
-						The Ultimate Guide to CrossFit Terms
+						Our Ultimate Guide to CrossFit Terms
 
 
 
@@ -13,29 +13,42 @@
 
 				.addthis_inline_share_toolbox.hidden-xs.hidden-sm
 
-				%p{ style: 'margin-top:2em;' }
-					CrossFit is an entire subculture onto itself. Walking into a CrossFit gym can be intimidating enough without having to know a TABATA from an EMOM. CrossFit is filled with all kinds of crazy jargon that can be confusing and disorienting to newcomers. More importantly, if you don't have a grasp on some of the cues your coach is providing, you can get yourself injured. Luckily, we've got you covered. Here is the most comprehensive guide to CrossFit-speak ever compiled. We've got over 300 terms (and growing!) defined for you. If you feel we've missed something, or there's a term you still don't understand, please 
-					%a{ href: '#comments' }
-						leave a comment below
-					or
-					%a{ href: '/contacts/new' }
-						drop us a line 
-					and let us know!
+				- if params[:q].blank?
+					%p{ style: 'margin-top:2em;' }
+						CrossFit is an entire subculture onto itself. Walking into a CrossFit gym can be intimidating enough without having to know a TABATA from an EMOM. CrossFit is filled with all kinds of crazy jargon that can be confusing and disorienting to newcomers. More importantly, if you don't have a grasp on some of the cues your coach is providing, you can get yourself injured. Luckily, we've got you covered. Here is the most comprehensive guide to CrossFit-speak ever compiled. We've got over 300 terms (and growing!) defined for you. If you feel we've missed something, or there's a term you still don't understand, please 
+						%a{ href: '#comments' }
+							leave a comment below
+						or
+						%a{ href: '/contacts/new' }
+							drop us a line 
+						and let us know!
 
 				.anchor#top
-				- @letters.each do |letter|
-					%a{ href: "##{letter}", style: 'margin-left: 0.66em;' }
-						= letter.capitalize
-				
 
-				-# form_tag terms_path, method: :get, class: 'form-horizontal' do 
-					.row
-						.col-sm-5.col-sm-offset-2
-							.form-group
-								= text_field_tag :q, params[:q], style: 'form-control'
-						.col-sm-2
-							.form-group
-								= submit_tag 'Search', class: 'btn'
+				.row
+					.col-sm-4.col-xs-8
+						%h5
+							Search the Guide:
+						= form_tag terms_path, method: :get do 
+							= text_field_tag :q, params[:q], class: 'form-control'
+
+							= submit_tag 'Search', class: 'btn btn-info', style: 'margin-top:0.5em;'
+							%a.btn.btn-sm.btn-danger{ href: terms_path, style: 'margin-left:2em;margin-top:0.5em;' }
+								Clear
+				.row
+					.col-xs-12
+						- if params[:q].blank?
+							%h5{ style: 'margin-top:1.5em;' }
+								Browse the Guide:
+							- @letters.each do |letter|
+								%a{ href: "##{letter}", style: 'margin-left: 0.66em;' }
+									= letter.capitalize
+						- else
+							%h5{ style: 'margin-top:1.5em;' }
+								= pluralize @terms.count, 'Match'
+								for
+								= "'#{params[:q]}'"
+
 
 
 				%ul.crossfit-terms{ style: 'margin-top:2em;' }

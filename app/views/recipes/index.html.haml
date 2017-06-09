@@ -14,10 +14,21 @@
 										Get Our Free Repice Book
 									%p
 										Cauliflower, brewer's yeast, protein powder, and more. Nutrition hacks galore
-									.input-group
-										= text_field_tag :email, '', placeholder: 'Email', class: 'form-control'
-										= submit_tag "Get It", class: "btn btn-lg btn-info btn-filled"
-											
+									= form_for SwellMedia::Optin.new, url: swell_media.optins_path, role: :form, class: 'form-inline'  do |f|
+										.row
+											.col-xs-12.col-sm-8.col-sm-offset-2
+												.form-group
+													= f.text_field :name, placeholder: 'Your Name', class: 'form-control'
+												.form-group
+													= f.text_field :email, placeholder: 'Email', class: 'form-control'
+
+												= f.submit "Get It", class: "btn btn-lg btn-info btn-filled pull-right"
+
+					- if @category.present?
+						%h3
+							= pluralize @recipes.total_count, "Recipe"
+							in
+							= @category.name
 
 					.row.productListSingle
 						- @recipes.each do |recipe|
