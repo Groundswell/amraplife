@@ -6,6 +6,12 @@
 				.thanksContent
 					%h1.text-center.content-title
 						Thanks for signing up!
+					
+					- if @offer_optin.present?
+						%p
+							= raw @offer_optin.lead_offer.thank_you_msg
+
+
 					%p.text-center
 						We will send an email to 
 						%strong= @optin.email

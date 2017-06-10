@@ -23,7 +23,7 @@ SwellMedia.configure do |config|
 
 	config.froala_editor_key = ENV['FROALA_EDITOR_KEY']
 
-	# config.contact_email_to 	= false
-	# config.contact_email_from = false
+	config.contact_email_to 	= 'gk@amraplife.com'
+	config.contact_email_from 	= 'gk@amraplife.com'
 
 end

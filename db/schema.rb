@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170607141402) do
+ActiveRecord::Schema.define(version: 20170609170238) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -254,6 +254,39 @@ ActiveRecord::Schema.define(version: 20170607141402) do
 
   add_index "ingredients", ["food_id"], name: "index_ingredients_on_food_id", using: :btree
   add_index "ingredients", ["recipe_id"], name: "index_ingredients_on_recipe_id", using: :btree
+
+  create_table "lead_offer_optins", force: :cascade do |t|
+    t.integer  "lead_offer_id"
+    t.integer  "optin_id"
+    t.integer  "status",        default: 1
+    t.text     "notes"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "lead_offer_optins", ["lead_offer_id", "optin_id"], name: "index_lead_offer_optins_on_lead_offer_id_and_optin_id", using: :btree
+
+  create_table "lead_offers", force: :cascade do |t|
+    t.integer  "place_id"
+    t.string   "title"
+    t.string   "slug"
+    t.string   "avatar"
+    t.string   "cover_image"
+    t.text     "description"
+    t.string   "item_name"
+    t.string   "submit_label"
+    t.text     "thank_you_msg"
+    t.string   "email_subject"
+    t.text     "email_msg"
+    t.string   "download_url"
+    t.integer  "status",        default: 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "lead_offers", ["place_id"], name: "index_lead_offers_on_place_id", using: :btree
+  add_index "lead_offers", ["slug"], name: "index_lead_offers_on_slug", unique: true, using: :btree
+  add_index "lead_offers", ["status"], name: "index_lead_offers_on_status", using: :btree
 
   create_table "media", force: :cascade do |t|
     t.integer  "user_id"
@@ -510,8 +543,10 @@ ActiveRecord::Schema.define(version: 20170607141402) do
     t.text     "shopify_code"
     t.string   "title"
     t.string   "caption"
+    t.integer  "seq",             default: 1
     t.string   "slug"
     t.string   "avatar"
+    t.string   "brand_model"
     t.integer  "status",          default: 0
     t.text     "description"
     t.text     "content"
@@ -530,10 +565,10 @@ ActiveRecord::Schema.define(version: 20170607141402) do
     t.integer  "collection_id"
     t.integer  "shipping_price",  default: 0
     t.string   "tax_code",        default: "00000"
-    t.integer  "seq",             default: 1
   end
 
   add_index "products", ["category_id"], name: "index_products_on_category_id", using: :btree
+  add_index "products", ["seq"], name: "index_products_on_seq", using: :btree
   add_index "products", ["slug"], name: "index_products_on_slug", unique: true, using: :btree
   add_index "products", ["status"], name: "index_products_on_status", using: :btree
   add_index "products", ["tags"], name: "index_products_on_tags", using: :gin
@@ -564,9 +599,10 @@ ActiveRecord::Schema.define(version: 20170607141402) do
   create_table "terms", force: :cascade do |t|
     t.string   "title"
     t.string   "slug"
+    t.text     "description"
     t.text     "content"
-    t.text     "aliases",    default: [], array: true
-    t.integer  "status",     default: 1
+    t.text     "aliases",     default: [], array: true
+    t.integer  "status",      default: 1
     t.datetime "created_at"
     t.datetime "updated_at"
   end

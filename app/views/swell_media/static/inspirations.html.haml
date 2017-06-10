@@ -11,7 +11,8 @@
 						%p
 							Get 12 free motivational wallpapers delivered straight to your inbox. They look great as screensavers, wallpapers, or even posters for your gym.
 
-						= form_for SwellMedia::Optin.new, url: swell_media.optins_path, role: :form, class: 'form-inline'  do |f|
+						= form_for LeadOfferOptin.new, role: :form, class: 'form-inline'  do |f|
+							= f.hidden_field :lead_offer_id, value: LeadOffer.friendly.find( 'wallpapers' ).id
 							.row
 								.col-xs-12.col-sm-6.col-sm-offset-3
 									.form-group
