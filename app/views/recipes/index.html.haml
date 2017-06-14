@@ -1,6 +1,6 @@
 
 
-- cache( "recipes/index/#{@category.try(:id)}/#{param[:page]}" ) do
+- cache( "recipes/index/#{@category.try(:id)}/#{params[:page]}", expires_in: 1.day ) do
 
 	%section.clearfix.blogPage.mainContent
 		.container
