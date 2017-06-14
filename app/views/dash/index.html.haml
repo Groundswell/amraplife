@@ -1,1 +1,16 @@
-%h1 Hey hey
+
+.col-sm-12
+	.row
+		- if @observations.present?
+			%center
+				%h1
+					Activity Feed
+			.main-box.feed
+				.main-box-body.clearfix
+					%ul
+					- @observations.each do |observation|
+						= render 'observations/feed_item', observation: observation
+		- else
+			%center
+				%h1
+					No Activity Yet

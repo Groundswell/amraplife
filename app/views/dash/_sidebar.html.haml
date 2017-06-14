@@ -32,7 +32,7 @@
 				%ul.nav.nav-pills.nav-stacked
 					%li.hidden-sm
 						= form_for Observation.new, html: { style: 'margin: auto 1em;' } do |f|
-							= f.text_field :content, class: 'form-control', placeholder: 'Activity=Value Notes'
+							= f.text_field :content, class: 'form-control', placeholder: 'Metric=Value(units) Notes'
 							.pull-right= f.submit 'Quick Add', class: 'btn btn-primary btn-lg', style: 'margin-top: 0.5em;'
 				%ul.nav.nav-pills.nav-stacked
 					%li.nav-header.nav-header-first.hidden-sm.hidden-xs
@@ -44,20 +44,20 @@
 								Dashboard
 							%span.label.label-primary.label-circle.pull-right
 								28
-					%li{ class: set_css_if( controller: :activities ) }
-						%a{ href: main_app.workouts_path }
+					%li{ class: set_css_if( controller: :metrics ) }
+						%a{ href: main_app.metrics_path }
 							%i.fa.fa-bicycle
 							%span
-								Workouts
-					%li{ class: set_css_if( controller: :assignments ) }
-						%a{ href: main_app.movements_path }
+								Metrics
+					%li{ class: set_css_if( controller: :observations ) }
+						%a{ href: main_app.observations_path }
 							%i.fa.fa-th-large
 							%span
-								Movements
+								Observations
 							%span.label.label-success.pull-right
 								New
 					%li{ class: set_css_if( controller: :stats ) }
-						%a{ href: main_app.observations_path }
+						%a{ href: main_app.stats_path }
 							%i.fa.fa-line-chart
 							%span
 								Stats

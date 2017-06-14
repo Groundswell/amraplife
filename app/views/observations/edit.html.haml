@@ -1,0 +1,13 @@
+%h1
+	Observation of
+	= @observation.observed.title
+
+	= @observation.human_value
+
+%p
+	Recorded:
+	= @observation.recorded_at
+
+%p
+	Notes
+	= raw @observation.notes

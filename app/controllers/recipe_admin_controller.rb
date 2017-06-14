@@ -29,6 +29,7 @@ class RecipeAdminController < SwellMedia::AdminController
 
 	def preview
 		@media = @recipe
+		@more_recipes = Recipe.order( 'random()' ).limit( 3 )
 		set_page_meta( @recipe.page_meta )
 		render "recipes/show", layout: 'application'
 	end

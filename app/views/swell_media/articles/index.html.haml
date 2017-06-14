@@ -1,15 +1,15 @@
 
-- cache( "articles/index" ) do
-	%section.clearfix.blogPage.mainContent
-		.container
-			.row
-				.col-md-9.col-sm-8.col-xs-12
+-# cache( "articles/index" ) do
+%section.clearfix.blogPage.mainContent
+	.container
+		.row
+			.col-md-9.col-sm-8.col-xs-12
 
-					- @articles.each do |article|
-						= render 'row', article: article
+				- @articles.each do |article|
+					= render 'row', article: article
 
-					.paginator{ style: 'margin-bottom: 2em;' }
-						= raw paginate @articles
-					
-				.sideBar.col-md-3.col-sm-4.col-xs-12
-					= render 'swell_media/articles/sidebar'
+				.paginator{ style: 'margin-bottom: 2em;' }
+					= raw paginate @articles
+				
+			.sideBar.col-md-3.col-sm-4.col-xs-12
+				= render 'swell_media/articles/sidebar'

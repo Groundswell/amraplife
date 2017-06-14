@@ -1,0 +1,36 @@
+
+.main-box.clearfix
+	.main-box-header.clearfix
+		%h2
+			Metrics
+	.main-box-body.clearfix
+		%table.table.table-striped
+			%thead
+				%th Title
+				%th Unit
+				%th Observations
+				%th
+			%tbody
+				- @metrics.each do |metric|
+					%tr
+						%td
+							= link_to metric.title, edit_metric_path( metric )
+						%td
+							= metric.unit
+						%td
+							= metric.observations.count
+						%td
+							.btn-group
+								%button.btn.btn-mini.btn-default.dropdown-toggle{ data: { toggle: :dropdown } }
+									%i.fa.fa-cog
+									%b.caret
+								%ul.dropdown-menu
+									%li
+										%a{ href: edit_metric_path( metric.id ) }
+											%i.fa.fa-pencil
+											Edit
+									%li.divider
+									%li
+										%a{ href: metric_path( metric ), data: { method: 'delete', confirm: 'Are you sure? ALL related observations will also be deleted.' } }
+											%i.fa.fa-trash-o
+											Delete!

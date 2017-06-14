@@ -28,6 +28,7 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'sitemap_generator'
 
 gem 'carrierwave'
+gem 'chronic_duration'
 gem 'dalli'
 gem 'elasticsearch'
 gem 'elasticsearch-model'

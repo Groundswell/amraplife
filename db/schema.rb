@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170609170238) do
+ActiveRecord::Schema.define(version: 20170613222058) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -355,6 +355,9 @@ ActiveRecord::Schema.define(version: 20170609170238) do
     t.string  "slug"
     t.text    "aliases",     default: [], array: true
     t.string  "unit"
+    t.integer "user_id"
+    t.string  "metric_type"
+    t.text    "description"
   end
 
   add_index "metrics", ["movement_id"], name: "index_metrics_on_movement_id", using: :btree

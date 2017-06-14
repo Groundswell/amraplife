@@ -3,6 +3,7 @@ class User < SwellMedia::User
 	devise 		:database_authenticatable, :omniauthable, :registerable, :recoverable, :rememberable, :trackable, :authentication_keys => [:login]
 
 	# App declarations
+	has_many :metrics
 	has_many :observations
 
 

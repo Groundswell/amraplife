@@ -1,0 +1,50 @@
+
+	
+.row
+	.col-xs-12
+
+		= form_tag stats_path, method: :get do
+			.row
+				.form-group.col-xs-2
+					= label_tag :start_date, 'Start:'
+					= text_field_tag :start_date, @start_date.strftime( '%m/%d/%Y'), class: 'form-control datepicker'
+				.form-group.col-xs-2
+					= label_tag :end_date, 'End:'
+					= text_field_tag :end_date, @end_date.strftime( '%m/%d/%Y'), class: 'form-control datepicker'
+				.form-group.col-xs-2
+					= label_tag :stat, 'Stat:'
+					= select_tag :stat, options_for_select( current_user.metrics.pluck( :slug ).uniq, @stat.slug ), { prompt: "-- All --", class: 'form-control' }
+				.form-group.col-xs-2
+					= label_tag :comp_stat, 'Compared To:'
+					= select_tag :comp_stat, options_for_select( current_user.metrics.pluck( :slug ).uniq, @comp_stat.try( :slug ) ), { prompt: "-- None --", class: 'form-control' }
+				.form-group.col-xs-2{ style: 'margin-top:2em;' }
+					.checkbox-nice.normalizer
+						= check_box_tag :normalize, true, params[:normalize].present?
+						= label_tag :normalize, 'Normalize?'
+				.form-group.col-xs-2{ style: 'margin-top:1.5em;' }
+					= submit_tag 'View', class: 'btn btn-primary'
+
+
+.row
+	.col-xs-12
+		.main-box
+			%header.main-box-header.clearfix
+				%h2
+					= @stat.title
+					- if @comp_stat.present?
+						vs
+						= @comp_stat.title
+				for
+				= @start_date.strftime( '%m/%d/%Y')
+				to
+				= @end_date.strftime( '%m/%d/%Y')
+			.main-box-body.clearfix
+				#chart_container.flot-chart{ style: "width:100%;height:250px;"}
+			
+
+			
+
+
+=# render 'flot_chart', data: @chart_data
+
+= render 'morris_chart', data: @chart_data, comp_data: @comp_data

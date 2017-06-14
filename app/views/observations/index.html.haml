@@ -6,18 +6,34 @@
 	.main-box-body.clearfix
 		%table.table.table-striped
 			%thead
-				%th Workout
+				%th Observed
 				%th Value
 				%th Unit
 				%th Recorded
+				%th
 			%tbody
 				- @observations.each do |observation|
 					%tr
 						%td
-							= link_to observation.workout, observation.workout
+							= link_to observation.observed.title, edit_observation_path( observation )
 						%td
-							= observation.value
+							= observation.human_value
 						%td
 							= observation.unit
 						%td
 							= observation.recorded_at
+						%td
+							.btn-group
+								%button.btn.btn-mini.btn-default.dropdown-toggle{ data: { toggle: :dropdown } }
+									%i.fa.fa-cog
+									%b.caret
+								%ul.dropdown-menu
+									%li
+										%a{ href: edit_observation_path( observation.id ) }
+											%i.fa.fa-pencil
+											Edit
+									%li.divider
+									%li
+										%a{ href: observation_path( observation ), data: { method: 'delete', confirm: 'Are you sure?' } }
+											%i.fa.fa-trash-o
+											Delete!

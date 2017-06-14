@@ -1,0 +1,37 @@
+%h1
+	Editing
+	= @metric.title
+
+= form_for @metric do |f|
+	.row
+		.col-sm-8
+			.form-group
+				= f.label :title
+				= f.text_field :title, class: 'form-control'
+
+			.form-group
+				= f.label :description
+				= f.text_area :description, class: 'form-control'
+
+			%h3
+				Observations of this metric
+			- @metric.observations.each do |obs|
+				= render 'observations/feed_item', observation: obs
+
+		.col-sm-4
+			.well
+				.form-group
+					= f.label :unit
+					= f.text_field :unit, class: 'form-control'
+
+				.form-group
+					= f.label :aliases_csv, 'Aliases'
+					= f.text_field :aliases_csv, class: 'form-control'
+				.form-group
+					= f.submit :update, class: 'btn btn-primary'
+	
+
+
+
+
+

@@ -15,6 +15,9 @@ Rails.application.routes.draw do
 		get :preview, on: :member
 	end
 
+	resources :metrics
+	resources :metric_admin
+	
 	resources :movements
 	resources :movement_admin
 
@@ -27,6 +30,8 @@ Rails.application.routes.draw do
 	resources :recipe_admin do
 		get :preview, on: :member
 	end
+
+	resources :stats
 
 	resources :terms, only: :index, path: 'crossfit-terms'
 	resources :term_admin do

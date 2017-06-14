@@ -1,0 +1,38 @@
+%li.clearfix{ style: 'list-style: none;' }
+	.img
+		= image_tag observation.user.avatar
+	.title
+		- if observation.user == current_user
+			%strong
+				You
+		- else
+			%a{ href: people_path( observation.user ) }
+				= observation.user
+		- if observation.value.present?
+			%strong
+				Recorded:
+				= observation.human_value
+				for
+				= observation.observed.try( :title )
+		- else
+			%strong
+				Said:
+		= raw observation.notes
+	.post-time
+		= observation.recorded_at.to_s( :slashed_time )
+	.time-ago
+		%i.fa.fa-clock-o
+		= time_ago_in_words observation.recorded_at
+		ago.
+		.actions
+			%i.fa.fa-comment-o
+			%i.fa.fa-star-o
+	.comment-form{ style: 'margin-left:60px;display:none;' }
+		.input-group
+			%span.input-group-addon
+				= image_tag current_user.avatar, height: 18
+			= text_field_tag :comment, '', placeholder: "comment", class: 'form-control'
+		.input-group.pull-right
+			%a.cancel-comment{ href: '#' }
+				Cancel
+				= submit_tag 'Post', class: 'btn btn-x-small btn-primary'
