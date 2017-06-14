@@ -1,13 +1,46 @@
 %h1
-	Observation of
+	Editing Observation of
 	= @observation.observed.title
+.main-box.clearfix
+	.main-box-header.clearfix
+		
+	.main-box-body.clearfix
+		= form_for @observation do |f|
+			.row
+				.col-sm-8
+					.form-group
+						= f.label :value
+						.input-group
+							= f.text_field :value, value: @observation.input_value, class: 'form-control'
+							%span.input-group-addon
+								= @observation.unit
 
-	= @observation.human_value
+					.form-group
+						= f.label :notes
+						= f.text_area :notes, class: 'form-control'
+				.col-sm-4
+					.well
+						.form-group
+							= f.label :started_at
+							.input-group.date
+								= f.text_field :started_at, class: 'form-control'
+								%span.input-group-addon
+									%i.fa.fa-calendar
+						.form-group
+							= f.label :ended_at
+							.input-group.date
+								= f.text_field :ended_at, class: 'form-control'
+								%span.input-group-addon
+									%i.fa.fa-calendar
+							
+						.form-group
+							= f.label :recorded_at
+							.input-group.date
+								= f.text_field :recorded_at, class: 'form-control'
+								%span.input-group-addon
+									%i.fa.fa-calendar
 
-%p
-	Recorded:
-	= @observation.recorded_at
+						.form-group
+							= f.submit 'Update', class: 'btn btn-primary'
 
-%p
-	Notes
-	= raw @observation.notes
+	

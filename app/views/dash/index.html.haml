@@ -1,10 +1,13 @@
 
-.col-sm-12
-	.row
+.row
+	.col-sm-12
 		- if @observations.present?
 			%center
 				%h1
 					Activity Feed
+
+			= raw paginate @observations
+
 			.main-box.feed
 				.main-box-body.clearfix
 					%ul

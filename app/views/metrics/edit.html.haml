@@ -1,34 +1,50 @@
-%h1
-	Editing
-	= @metric.title
+.main-box.clearfix
+	.main-box-header.clearfix
+		%h1
+			Editing
+			= @metric.title
+	.main-box-body.clearfix
+		= form_for @metric do |f|
+			.row
+				.col-sm-8
+					.form-group
+						= f.label :title
+						= f.text_field :title, class: 'form-control'
 
-= form_for @metric do |f|
-	.row
-		.col-sm-8
-			.form-group
-				= f.label :title
-				= f.text_field :title, class: 'form-control'
+					.form-group
+						= f.label :description
+						= f.text_area :description, class: 'form-control'
 
-			.form-group
-				= f.label :description
-				= f.text_area :description, class: 'form-control'
+					%h3
+						Observations of this metric
+					%table.table
+						%thead
+							%th
+							%th
+							%th
+						%tbody
+							- @metric.observations.order( recorded_at: :desc ).limit( 50 ).each do |obs|
+								%tr
+									%td
+										= obs.human_value
+									%td
+										= obs.notes
+									%td
+										= obs.recorded_at.to_s( :slashed )
+									
 
-			%h3
-				Observations of this metric
-			- @metric.observations.each do |obs|
-				= render 'observations/feed_item', observation: obs
 
-		.col-sm-4
-			.well
-				.form-group
-					= f.label :unit
-					= f.text_field :unit, class: 'form-control'
+				.col-sm-4
+					.well
+						.form-group
+							= f.label :unit
+							= f.text_field :unit, class: 'form-control'
 
-				.form-group
-					= f.label :aliases_csv, 'Aliases'
-					= f.text_field :aliases_csv, class: 'form-control'
-				.form-group
-					= f.submit :update, class: 'btn btn-primary'
+						.form-group
+							= f.label :aliases_csv, 'Aliases'
+							= f.text_field :aliases_csv, class: 'form-control'
+						.form-group
+							= f.submit :update, class: 'btn btn-primary'
 	
 
 

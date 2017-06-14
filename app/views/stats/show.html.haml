@@ -1,0 +1,77 @@
+
+%h1
+	View
+	= @stat.title
+
+= form_tag stat_path( @stat ), method: :get do
+	.row
+		.form-group.col-xs-2
+			= label_tag :start_date, 'Start:'
+			= text_field_tag :start_date, @start_date.strftime( '%m/%d/%Y'), class: 'form-control datepicker'
+		.form-group.col-xs-2
+			= label_tag :end_date, 'End:'
+			= text_field_tag :end_date, @end_date.strftime( '%m/%d/%Y'), class: 'form-control datepicker'
+		.form-group.col-xs-2{ style: 'margin-top:1.5em;' }
+			= submit_tag 'View', class: 'btn btn-primary'
+
+			
+.main-box.clearfix
+	.main-box-header.clearfix
+	.main-box-body.clearfix
+		%h3
+			Summary
+		%table.table
+			%thead
+				%th
+				%th
+			%tbody
+				%tr
+					%td
+						Count
+					%td
+						= @stat_vector.count
+				%tr
+					%td
+						Min
+					%td
+						= @stat_vector.min
+				%tr
+					%td
+						Max
+					%td
+						= @stat_vector.max
+				%tr
+					%td
+						Range
+					%td
+						= @stat_vector.range
+				%tr
+					%td
+						Median
+					%td
+						= @stat_vector.median
+				%tr
+					%td
+						Mean
+					%td
+						= @stat_vector.mean
+				%tr
+					%td
+						Standard Deviation
+					%td
+						= @stat_vector.sd
+				%tr
+					%td
+						Skew
+					%td
+						= @stat_vector.skew
+				%tr
+					%td
+						Kurtosis
+					%td
+						= @stat_vector.kurtosis
+				%tr
+					%td
+						Standard Error
+					%td
+						= @stat_vector.standard_error

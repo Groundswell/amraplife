@@ -30,6 +30,8 @@
 
 //= require ./dash-theme/typeahead.min
 
+//= require moment
+//= require bootstrap-datetimepicker
 
 //= require ./dash-theme/scripts
 //= require ./dash-theme/pace.min

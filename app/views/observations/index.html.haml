@@ -1,9 +1,11 @@
+%h1
+	Observations
 
 .main-box.clearfix
 	.main-box-header.clearfix
-		%h2
-			Observations
+		
 	.main-box-body.clearfix
+		= raw paginate @observations
 		%table.table.table-striped
 			%thead
 				%th Observed
@@ -37,3 +39,4 @@
 										%a{ href: observation_path( observation ), data: { method: 'delete', confirm: 'Are you sure?' } }
 											%i.fa.fa-trash-o
 											Delete!
+		= raw paginate @observations

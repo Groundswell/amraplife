@@ -13,14 +13,15 @@
 					= text_field_tag :end_date, @end_date.strftime( '%m/%d/%Y'), class: 'form-control datepicker'
 				.form-group.col-xs-2
 					= label_tag :stat, 'Stat:'
-					= select_tag :stat, options_for_select( current_user.metrics.pluck( :slug ).uniq, @stat.slug ), { prompt: "-- All --", class: 'form-control' }
+					= select_tag :stat, options_from_collection_for_select( current_user.metrics, :slug, :title, @stat.slug ), { prompt: "-- All --", class: 'form-control' }
 				.form-group.col-xs-2
 					= label_tag :comp_stat, 'Compared To:'
-					= select_tag :comp_stat, options_for_select( current_user.metrics.pluck( :slug ).uniq, @comp_stat.try( :slug ) ), { prompt: "-- None --", class: 'form-control' }
+					= select_tag :comp_stat, options_from_collection_for_select( current_user.metrics, :slug, :title, @comp_stat.try( :slug ) ), { prompt: "-- None --", class: 'form-control' }
 				.form-group.col-xs-2{ style: 'margin-top:2em;' }
 					.checkbox-nice.normalizer
 						= check_box_tag :normalize, true, params[:normalize].present?
 						= label_tag :normalize, 'Normalize?'
+						
 				.form-group.col-xs-2{ style: 'margin-top:1.5em;' }
 					= submit_tag 'View', class: 'btn btn-primary'
 

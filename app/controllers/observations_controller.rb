@@ -24,7 +24,7 @@ class ObservationsController < ApplicationController
 	end
 
 	def index
-		@observations = current_user.observations.order( recorded_at: :desc )
+		@observations = current_user.observations.order( recorded_at: :desc ).page( params[:page] )
 	end
 
 	def update

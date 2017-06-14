@@ -8,7 +8,7 @@ class DashController < ApplicationController
 	def index
 		@day = ( params[:day].present? && params[:day].to_datetime ) || Time.zone.now
 
-		@observations = current_user.observations.order( recorded_at: :desc )
+		@observations = current_user.observations.order( recorded_at: :desc ).page( params[:page] )
 	end
 
 end

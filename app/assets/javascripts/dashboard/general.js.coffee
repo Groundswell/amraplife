@@ -15,6 +15,8 @@ ready = $ ->
 	$('.datepicker').datepicker
 		format: 'mm/dd/yyyy'
 
+	$('.datetimepicker').datetimepicker();
+
 
 	$('#activity_recurs').change ->
 		if $(@).val() is 'weekly'

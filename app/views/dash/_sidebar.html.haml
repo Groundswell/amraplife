@@ -56,22 +56,19 @@
 								Observations
 							%span.label.label-success.pull-right
 								New
-					%li{ class: set_css_if( controller: :stats ) }
-						%a{ href: main_app.stats_path }
+
+					%li
+						%a.dropdown-toggle{ href: '#' }
 							%i.fa.fa-line-chart
 							%span
 								Stats
-					%li
-						%a.dropdown-toggle{ href: '#' }
-							%i.fa.fa-users
-							%span
-								Team
 							%i.fa.fa-angle-right.drop-icon
 							%ul.submenu
 								%li
-									%a{ href: '#' }
-										Someone
-								%li
-									%a{ href: '#' }
-										Someone else
+									%a{ href: main_app.stats_path }
+										Charts
+								- current_user.metrics.each do |metric|
+									%li
+										%a{ href: stat_path( metric ) }
+											= metric.title
 	#nav-col-submenu
