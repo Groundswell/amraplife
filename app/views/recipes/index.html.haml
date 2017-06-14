@@ -1,6 +1,6 @@
 
 
-- cache( "recipes/index" ) do
+- cache( "recipes/index/#{@category.try(:id)}/#{param[:page]}" ) do
 
 	%section.clearfix.blogPage.mainContent
 		.container
@@ -36,8 +36,6 @@
 
 					.paginator{ style: 'margin-bottom: 2em;' }
 						= raw paginate @recipes
-					
+
 				.sideBar.col-md-3.col-sm-4.col-xs-12
 					= render 'recipes/sidebar'
-
-
