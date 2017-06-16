@@ -42,8 +42,8 @@
 							%i.fa.fa-dashboard
 							%span
 								Dashboard
-							%span.label.label-primary.label-circle.pull-right
-								28
+							-#%span.label.label-primary.label-circle.pull-right
+								= current_user.observations.count
 					%li{ class: set_css_if( controller: :metrics ) }
 						%a{ href: main_app.metrics_path }
 							%i.fa.fa-bicycle
@@ -54,7 +54,7 @@
 							%i.fa.fa-th-large
 							%span
 								Observations
-							%span.label.label-success.pull-right
+							-#%span.label.label-success.pull-right
 								New
 
 					%li

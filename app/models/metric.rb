@@ -1,8 +1,8 @@
 class Metric < ActiveRecord::Base
 
-	before_save	:set_aliases
+	before_create 	:set_aliases
 
-	validate :unique_aliases
+	validate 		:unique_aliases
 
 	belongs_to :movement
 	belongs_to :user
@@ -11,7 +11,7 @@ class Metric < ActiveRecord::Base
 
 
 	include FriendlyId
-	friendly_id :title, use: [ :slugged ]
+	friendly_id :slugger, use: [ :slugged ]
 
 	def self.find_by_alias( term )
 		where( ":term = ANY( aliases )", term: term ).first
@@ -29,13 +29,17 @@ class Metric < ActiveRecord::Base
 	end
 
 
+	def slugger
+		"#{self.title}#{self.user_id}"
+	end
+
 	private
 		def set_aliases
-			self.aliases << self.slug unless self.aliases.include?( self.slug )
+			self.aliases << self.title.parameterize unless self.aliases.include?( self.title.parameterize )
 		end
 
 		def unique_aliases
-			existing_aliases = Metric.where.not( id: self.id ).pluck( :aliases ).flatten
+			existing_aliases = Metric.where( user_id: self.user_id ).where.not( id: self.id ).pluck( :aliases ).flatten
 			self.aliases = self.aliases.uniq - existing_aliases
 		end
 	

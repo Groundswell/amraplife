@@ -1,6 +1,42 @@
 # desc "Explaining what the task does"
 namespace :amraplife do
 
+	task load_metrics: :environment do 
+		Metric.destroy_all
+		Observation.destroy_all
+		puts "Adding some Metrics"
+		ht = Metric.create title: 'Height', aliases: ['ht'], unit: 'in'
+		wt = Metric.create title: 'Weight', aliases: ['wt', 'lbs'], unit: 'lb'
+		wst = Metric.create title: 'Waist', aliases: ['wst'], unit: 'in'
+		wst = Metric.create title: 'Hips', aliases: ['hip'], unit: 'in'
+		rhr = Metric.create title: 'Resting Heart Rate', aliases: ['pulse', 'heart-rate', 'rhr'], unit: 'bpm'
+		systolic = Metric.create title: 'Systolic Blood Pressure', aliases: ['sbp', 'systolic'], unit: 'mm Hg'
+		diastolic = Metric.create title: 'Diastolic Blood Pressure', aliases: ['dbp', 'diastolic'], unit: 'mm Hg'
+		diastolic = Metric.create title: 'Blood Pressure', aliases: ['bp', 'blood-pressure'], unit: 'mm Hg' # use sub units for sys/dias observations
+		pbf = Metric.create title: 'Percent Body Fat', aliases: ['pbf', 'bodyfat'], unit: '%'
+		bmi = Metric.create title: 'Body Mass Index', aliases: ['bmi'], unit: 'bmi'
+		
+
+		bmi = Metric.create title: 'Calories', 	aliases: ['eat', 'ate', 'eating', 'cal', 'cals'], unit: 'kCal'
+		bmi = Metric.create title: 'Protein',	aliases: ['prot', 'grams-protein'], unit: 'g'
+		bmi = Metric.create title: 'Fat', 		aliases: ['fat', 'grams-fat'], unit: 'g'
+		bmi = Metric.create title: 'Carb', 		aliases: ['carb', 'carbs', 'carbohydrates', 'grams-carb'], unit: 'g'
+
+		bmi = Metric.create title: 'Sleep', 	aliases: ['slp', 'sleeping', 'slept', 'nap', 'napping', 'napped'], unit: 'sec'
+		bmi = Metric.create title: 'Meditation', aliases: ['med', 'meditating', 'meditated'], unit: 'sec'
+		bmi = Metric.create title: 'Drive', 	aliases: ['drv', 'driving', 'drove'], unit: 'sec'
+		bmi = Metric.create title: 'Work', 	aliases: ['wrk', 'working', 'worked'], unit: 'sec'
+		bmi = Metric.create title: 'Walk', 	aliases: ['wlk', 'walking', 'walked'], unit: 'sec'
+		bmi = Metric.create title: 'Cycle', aliases: ['cycling', 'cycled', 'bike', 'biked', 'biking', 'bicycling', 'bicycled', 'bicycle'], unit: 'sec'
+		bmi = Metric.create title: 'Swim', aliases: ['swimming', 'swam'], unit: 'sec'
+		bmi = Metric.create title: 'Run', aliases: ['running', 'ran', 'jog', 'jogging', 'jogged'], unit: 'sec'
+		
+		
+
+
+		bmi = Metric.create title: 'Workout', 	aliases: ['wkout']
+	end
+
 	task load_elasticsearch: :environment do
 
 		puts Product.__elasticsearch__.client.indices.delete index: Product.index_name rescue nil
@@ -58,17 +94,7 @@ namespace :amraplife do
 	task load_data: :environment do
 		puts "Loading Data"
 
-		puts "Adding some Metrics"
-		ht = Metric.create title: 'Height', aliases: ['ht'], unit: 'in'
-		wt = Metric.create title: 'Weight', aliases: ['wt', 'lbs'], unit: 'lbs'
-		wst = Metric.create title: 'Waist', aliases: ['wst'], unit: 'in'
-		rhr = Metric.create title: 'Resting Heart Rate', aliases: ['pulse', 'heart-rate', 'rhr'], unit: 'bpm'
-		systolic = Metric.create title: 'Systolic Blood Pressure', aliases: ['sbp', 'systolic'], unit: 'mm Hg'
-		diastolic = Metric.create title: 'Diastolic Blood Pressure', aliases: ['dbp', 'diastolic'], unit: 'mm Hg'
-		pbf = Metric.create title: 'Percent Body Fat', aliases: ['pbf', 'bodyfat'], unit: '%'
-		bmi = Metric.create title: 'Body Mass Index', aliases: ['bmi'], unit: 'bmi'
-		bmi = Metric.create title: 'Sleep', aliases: ['slp'], unit: 'hours'
-		bmi = Metric.create title: 'Workout', aliases: ['wkout']
+		
 
 		puts "Adding some Equipment"
 		am = Equipment.create title: 'Ab Mat', aliases: ['ab']

@@ -9,7 +9,7 @@ class Observation < ActiveRecord::Base
 	belongs_to 	:observed, polymorphic: true
 	belongs_to 	:user
 
-	TIME_UNITS = [ 'day', 'days', 'hr', 'hrs', 'hour', 'hours', 'minute', 'minutes', 'min', 'mins', 'sec', 'secs', 'seconds' ]
+	TIME_UNITS = [ 'day', 'hr', 'hour', 'minute', 'min', 'sec', 'second' ]
 
 	def self.dated_between( start_date=1.month.ago, end_date=Time.zone.now )
 		start_date = start_date.to_datetime.beginning_of_day
@@ -46,30 +46,99 @@ class Observation < ActiveRecord::Base
 			val = matches.captures[0].split( separator )[1].strip
 
 			if match = val.match( /[a-zA-Z%]+(\s|\z)/ )
-				unit = match.to_s.strip
+				unit = match.to_s.strip.singularize
 				val.gsub!( match.to_s, '' )
 			end
 			# always store time as secs
 			if val.match( /:/ )
 				val = ChronicDuration.parse( val )
-				unit ||= 'secs'
+				unit ||= 'sec'
 			elsif ['minute', 'minutes', 'min', 'mins'].include?( unit )
+				unit = 'sec'
 				val = val.to_i * 60
 			elsif ['hour', 'hours', 'hr', 'hrs'].include?( unit )
+				unit = 'sec'
 				val = val.to_i * 3600
 			end
 				
-
+			# get metric from the user's assigned metrics
 			observed = opts[:user].metrics.find_by_alias( key.downcase )
-			observed ||= opts[:user].metrics.create( title: key.downcase, unit: unit )
+			if observed.nil?
+				# check the factory metrics
+				default_metric = Metric.where( user_id: nil ).find_by_alias( key.downcase )
+				if default_metric.present?
+					# make a copy for the user
+					observed = default_metric.dup
+					observed.user = opts[:user]
+					observed.save
+				else
+					observed ||= opts[:user].metrics.create( title: key.downcase, unit: unit )
+				end
+			end
+
+			return Observation.new( user: opts[:user], observed: observed, value: val, notes: matches.post_match )
+
+		# verb condition - e.g. "ran 3miles"
+		# string begins with congruent word characters, then whitespace, 
+		# then numbers (optionally connected to unit)
+		elsif matches = str.match( /(\A\w+)\s+([0-9]+\w*)/ )
+			
+			key = matches.captures[0].strip
+			val = matches.captures[1].strip
+
+			if match = val.match( /[a-zA-Z%]+(\s|\z)/ )
+				unit = match.to_s.strip.singularize
+				val.gsub!( match.to_s, '' )
+			end
+			# always store time as secs
+			if val.match( /:/ )
+				val = ChronicDuration.parse( val )
+				unit ||= 'sec'
+			elsif ['minute', 'minutes', 'min', 'mins'].include?( unit )
+				unit = 'sec'
+				val = val.to_i * 60
+			elsif ['hour', 'hours', 'hr', 'hrs'].include?( unit )
+				unit = 'sec'
+				val = val.to_i * 3600
+			end
+
+			# get metric from the user's assigned metrics
+			observed = opts[:user].metrics.find_by_alias( key.downcase )
+			if observed.nil?
+				# check the factory metrics
+				default_metric = Metric.where( user_id: nil ).find_by_alias( key.downcase )
+				if default_metric.present?
+					# make a copy for the user
+					observed = default_metric.dup
+					observed.user = opts[:user]
+					observed.save
+				else
+					observed ||= opts[:user].metrics.create( title: key.downcase, unit: unit )
+				end
+			end
+
 
 			return Observation.new( user: opts[:user], observed: observed, value: val, notes: matches.post_match )
 
 		elsif matches = str.match( /(\Astarted|\Astart)\s+(\w+)/ )
 			# start something
-			observed = opts[:user].metrics.where( ":term = ANY( aliases )", term: matches.captures.second ).last
-			observed ||= Metric.create( title: matches.captures.second, user: opts[:user] )
+			# get metric from the user's assigned metrics
+			observed = opts[:user].metrics.find_by_alias( matches.captures.second )
+			if observed.nil?
+				# check the factory metrics
+				default_metric = Metric.where( user_id: nil ).find_by_alias( matches.captures.second )
+				if default_metric.present?
+					# make a copy for the user
+					observed = default_metric.dup
+					observed.user = opts[:user]
+					observed.save
+				else
+					observed ||= opts[:user].metrics.create( title: matches.captures.second, unit: unit )
+				end
+			end
+
 			return Observation.new( user: opts[:user], observed: observed, started_at: Time.zone.now, notes: matches.post_match )
+
 		elsif matches = str.match( /(\Astopped|\Astop)\s+(\w+)/ )
 			# stop something
 			observed = opts[:user].metrics.where( ":term = ANY( aliases )", term: matches.captures.second ).last
