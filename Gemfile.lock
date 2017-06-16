@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/Groundswell/swell_ecom.git
-  revision: 60757913e18bb1dbd045be5cafa42f14b42c97c5
+  revision: abd7024d3d8fdb5e317c8bae7fab2313cab14241
   specs:
     swell_ecom (0.0.1)
       stripe
