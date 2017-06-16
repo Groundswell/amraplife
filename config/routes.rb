@@ -17,11 +17,11 @@ Rails.application.routes.draw do
 
 	resources :metrics
 	resources :metric_admin
-	resources :metric_alexa_skills, only: :create
 
 	resources :movements
 	resources :movement_admin
 
+	resources :observation_alexa_skills, only: :create
 	resources :observations
 
 	resources :places
