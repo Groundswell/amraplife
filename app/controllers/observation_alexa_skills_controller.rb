@@ -20,15 +20,22 @@ class ObservationAlexaSkillsController < ActionController::Base
 			puts "#{alexa_request.slots}"
 			puts "#{alexa_request.name}"
 
+			metric = (alexa_request.slots['metric'] || {})['value']
+			value = (alexa_request.slots['value'] || {})['value']
+			action = (alexa_request.slots['action'] || {})['value']
+
 			if alexa_request.name == 'LogMetricObservationIntent'
-				alexa_response.add_speech("Logging Metric")
-				# alexa_response.add_hash_card( { :title => 'Logging Metric', :subtitle => "Intent #{alexa_request.name}" } )
+
+				alexa_response.add_speech("Logging that you #{action} #{value} #{metric}")
+
 			elsif alexa_request.name == 'LogStartObservationIntent'
-				alexa_response.add_speech("Starting timer")
-				# alexa_response.add_hash_card( { :title => 'Logging Metric', :subtitle => "Intent #{alexa_request.name}" } )
+
+				alexa_response.add_speech("Starting your #{action} timer")
+
 			elsif alexa_request.name == 'LogStopObservationIntent'
-				alexa_response.add_speech("Stopping timer")
-				# alexa_response.add_hash_card( { :title => 'Logging Metric', :subtitle => "Intent #{alexa_request.name}" } )
+
+				alexa_response.add_speech("Stopping your #{action} timer")
+
 			else
 				alexa_response.add_speech("Recieved Intent #{alexa_request.name}")
 			end
