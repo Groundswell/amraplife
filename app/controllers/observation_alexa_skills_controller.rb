@@ -10,7 +10,7 @@ class ObservationAlexaSkillsController < ActionController::Base
 
 	def help_intent
 
-		add_speech("todo. Say stuff about how to use the skill.")
+		add_ask("todo. Say stuff about how to use the skill.", reprompt_text: "Sorry, can you say that again?")
 
 	end
 
@@ -91,10 +91,10 @@ class ObservationAlexaSkillsController < ActionController::Base
 	# **************************************************************************
 	def create
 		# @todo Check that it's a valid Alexa request
-		@alexa_request = AlexaRubykit.build_request( JSON.parse(request.raw_post) )
-		@alexa_session = @alexa_request.session
-		@alexa_response = AlexaRubykit::Response.new
-		@alexa_params = Hash[*@alexa_request.slots.values.collect{|values| [values['name'].to_sym,values['value']]}.flatten]
+		@alexa_request	= AlexaRubykit.build_request( JSON.parse(request.raw_post) )
+		@alexa_session	= @alexa_request.session
+		@alexa_response	= AlexaRubykit::Response.new
+		@alexa_params	= Hash[*@alexa_request.slots.values.collect{|values| [values['name'].to_sym,values['value']]}.flatten]
 
 		@user = User.friendly.find('mike')
 		# @todo implement user finding and creation by alexa/amazon user id
@@ -148,7 +148,7 @@ class ObservationAlexaSkillsController < ActionController::Base
 			# halt 200
 		end
 
-		render json: @alexa_response.build_response
+		render json: @alexa_response.build_response( !!!@ask_response )
 	end
 
 	private
@@ -171,12 +171,31 @@ class ObservationAlexaSkillsController < ActionController::Base
 		@user
 	end
 
-	def add_hash_card( args = {} )
-		alexa_response.add_hash_card( args )
+	def add_ask(speech_text, args = {} )
+		@ask_response = true
+		alexa_response.add_speech( speech_text, !!(args[:ssml] || args[:speech_ssml]) )
+		alexa_response.add_reprompt( args[:reprompt_text], !!(args[:ssml] || args[:speech_ssml]) ) if args[:reprompt_text].present?
 	end
 
-	def add_speech(text)
-		alexa_response.add_speech(text)
+
+	def add_audio_url( url, token='', offset=0)
+		alexa_response.add_audio_url( url, token, offset )
+	end
+
+	def add_hash_card( card )
+		alexa_response.add_hash_card( card )
+	end
+
+	def add_reprompt(speech_text, ssml = false)
+		alexa_response.add_reprompt( speech_text, ssml )
+	end
+
+	def add_speech(speech_text, ssml = false)
+		alexa_response.add_speech( speech_text, ssml )
+	end
+
+	def add_session_attribute( key, value )
+		alexa_response.add_session_attribute( key, value )
 	end
 
 	def alexa_params
