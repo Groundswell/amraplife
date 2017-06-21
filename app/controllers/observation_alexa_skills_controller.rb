@@ -1,3 +1,4 @@
+
 class ObservationAlexaSkillsController < ActionController::Base
 	protect_from_forgery :except => [:create]
 
@@ -27,11 +28,11 @@ class ObservationAlexaSkillsController < ActionController::Base
 			puts "#{alexa_request.slots}"
 			puts "#{alexa_request.name}"
 
-			unit = (alexa_request.slots['metric'] || {})['value']
-			unit ||= 'seconds' if alexa_request.name == 'LogStartObservationIntent'
+			action = (alexa_request.slots['action'] || {})['value']
 
 			value = (alexa_request.slots['value'] || {})['value']
-			action = (alexa_request.slots['action'] || {})['value']
+			unit = (alexa_request.slots['metric'] || {})['value']
+			unit ||= 'seconds' if alexa_request.name == 'LogStartObservationIntent'
 
 			unit ||= 'seconds' if alexa_request.name == 'LogStartObservationIntent'
 
@@ -39,6 +40,8 @@ class ObservationAlexaSkillsController < ActionController::Base
 
 				observed_metric = Metric.where( user_id: user ).find_by_alias( action.downcase )
 				observed_metric ||= Metric.where( user_id: nil ).find_by_alias( action.downcase ).try(:dup)
+				# observed_metric ||= Metric.new( title: action, unit: unit )
+				observed_metric.update( user: user ) if observed_metric.present?
 
 			end
 
@@ -74,7 +77,7 @@ class ObservationAlexaSkillsController < ActionController::Base
 
 				if observation.present?
 					observation.stop
-					alexa_response.add_speech("Stopping your #{action} timer at #{observation.value} #{observation.unit}")
+					alexa_response.add_speech("Stopping your #{action} timer at #{observation.value.to_i} #{observation.unit}")
 				else
 					alexa_response.add_speech("I can't find any running #{action} timers.")
 				end
