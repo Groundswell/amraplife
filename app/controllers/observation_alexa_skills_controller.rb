@@ -23,20 +23,25 @@ class ObservationAlexaSkillsController < ActionController::Base
 
 	def log_metric_observation_intent
 
-		observed_metric = get_user_metric( user, alexa_params[:action], alexa_params[:unit] )
-
-		if observed_metric.nil?
-			add_speech("I'm sorry, I don't know how to log information about #{alexa_params[:action]}.")
-			return
-		end
-
-		Observation.create( user: user, observed: observed_metric, value: alexa_params[:value], unit: alexa_params[:unit], notes: "start #{alexa_params[:action]}" )
-
 		if alexa_params[:action].present?
 
-			add_speech("Logging that you #{alexa_params[:action]} #{alexa_params[:value]} #{alexa_params[:unit]}")
+			observed_metric = get_user_metric( user, alexa_params[:action], alexa_params[:unit] )
+
+			if observed_metric.nil?
+
+				add_speech("I'm sorry, I don't know how to log information about #{alexa_params[:action]}.")
+
+			else
+
+				Observation.create( user: user, observed: observed_metric, value: alexa_params[:value], unit: alexa_params[:unit], notes: "start #{alexa_params[:action]}" )
+
+				add_speech("Logging that you #{alexa_params[:action]} #{alexa_params[:value]} #{alexa_params[:unit]}")
+
+			end
 
 		else
+
+			Observation.create( user: user, value: alexa_params[:value], unit: alexa_params[:unit], notes: "start #{alexa_params[:action]}" )
 
 			add_speech("Logging #{alexa_params[:value]} #{alexa_params[:unit]}")
 
@@ -94,14 +99,22 @@ class ObservationAlexaSkillsController < ActionController::Base
 		@alexa_request	= AlexaRubykit.build_request( JSON.parse(request.raw_post) )
 		@alexa_session	= @alexa_request.session
 		@alexa_response	= AlexaRubykit::Response.new
-		@alexa_params	= Hash[*@alexa_request.slots.values.collect{|values| [values['name'].to_sym,values['value']]}.flatten]
+		@alexa_params 	= {}
+		@alexa_params	= Hash[*@alexa_request.slots.values.collect{|values| [values['name'].to_sym,values['value']]}.flatten] if @alexa_response.is_a?( AlexaRubykit::IntentRequest )
 
-		@user = User.friendly.find('mike')
+		@user = User.friendly.find('michael')
 		# @todo implement user finding and creation by alexa/amazon user id
 		# user = User.find_or_create_by_amazon_user_id( @alexa_session.user_id )
 
-		# Response
-		if alexa_request.type == 'LAUNCH_REQUEST'
+		puts request.raw_post
+
+		if (@alexa_request.type == 'SESSION_ENDED_REQUEST')
+			# Wrap up whatever we need to do.
+			puts "#{@alexa_request.type}"
+			puts "#{@alexa_request.reason}"
+			# halt 200
+
+		elsif alexa_request.type == 'LAUNCH_REQUEST'
 
 			launch_request()
 
@@ -141,13 +154,6 @@ class ObservationAlexaSkillsController < ActionController::Base
 			end
 		end
 
-		if (@alexa_request.type =='SESSION_ENDED_REQUEST')
-			# Wrap up whatever we need to do.
-			puts "#{@alexa_request.type}"
-			puts "#{@alexa_request.reason}"
-			# halt 200
-		end
-
 		render json: @alexa_response.build_response( !!!@ask_response )
 	end
 
@@ -180,6 +186,10 @@ class ObservationAlexaSkillsController < ActionController::Base
 
 	def add_audio_url( url, token='', offset=0)
 		alexa_response.add_audio_url( url, token, offset )
+	end
+
+	def add_card(type = nil, title = nil , subtitle = nil, content = nil)
+		alexa_response.def add_card(type, title , subtitle, content)
 	end
 
 	def add_hash_card( card )
