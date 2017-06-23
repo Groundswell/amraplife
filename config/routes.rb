@@ -21,7 +21,10 @@ Rails.application.routes.draw do
 	resources :movements
 	resources :movement_admin
 
-	resources :observation_alexa_skills, only: :create
+	resources :observation_alexa_skills, only: :create do
+		get :login, on: :collection
+		get :login_success, on: :collection
+	end
 	resources :observations
 
 	resources :places

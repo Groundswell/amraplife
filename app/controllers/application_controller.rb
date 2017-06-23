@@ -21,4 +21,23 @@ class ApplicationController < ActionController::Base
 		session[:cart_count] = 0
 	end
 
+
+	def after_sign_in_path_for(resource)
+
+		if session[:dest].present? &&
+				not( session[:dest].match( /^\/users/ ) ) &&
+				not( session[:dest].match( /^\/login/ ) ) &&
+				not( session[:dest].match( /^\/logout/ ) ) &&
+				not( session[:dest].match( /^\/register/ ) ) &&
+				not( session[:dest].match( /^\/oauth_email_collector/ ) )
+
+			path = session[:dest]
+			path = path + (path.include?('?') ? '&' : '?') + "oauth_sign_in=1" unless path.include?('oauth_sign_in=1')
+		else
+			path = '/'
+		end
+
+		path
+	end
+
 end

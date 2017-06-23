@@ -21,6 +21,13 @@ class ObservationAlexaSkillsController < ActionController::Base
 
 	end
 
+	def login_intent
+
+		add_speech("Click the card in your Alexa App to sign in.")
+		add_card('LinkAccount', 'Sign Up', 'AMRAPLife', 'Join AMRAPLife to record and report all your fitness metrics.')
+
+	end
+
 	def log_metric_observation_intent
 
 		if alexa_params[:action].present?
@@ -102,9 +109,7 @@ class ObservationAlexaSkillsController < ActionController::Base
 		@alexa_params 	= {}
 		@alexa_params	= Hash[*@alexa_request.slots.values.collect{|values| [values['name'].to_sym,values['value']]}.flatten] if @alexa_response.is_a?( AlexaRubykit::IntentRequest )
 
-		@user = User.friendly.find('michael')
-		# @todo implement user finding and creation by alexa/amazon user id
-		# user = User.find_or_create_by_amazon_user_id( @alexa_session.user_id )
+		@user = User.where( authorization_code: @alexa_session.access_token ).first if @alexa_session.access_token.present?
 
 		puts request.raw_post
 
@@ -135,6 +140,10 @@ class ObservationAlexaSkillsController < ActionController::Base
 
 				help_intent()
 
+			elsif alexa_request.name == 'LoginIntent'
+
+				login_intent()
+
 			elsif alexa_request.name == 'LogMetricObservationIntent'
 
 				log_metric_observation_intent()
@@ -155,6 +164,32 @@ class ObservationAlexaSkillsController < ActionController::Base
 		end
 
 		render json: @alexa_response.build_response( !!!@ask_response )
+	end
+
+	def login
+		redirect_uri = params[:redirect_uri]
+		session[:dest] = login_success_observation_alexa_skills_url( client_id: params[:client_id], state: params[:state], redirect_uri: redirect_uri )
+
+		redirect_to main_app.login_path()
+	end
+
+	def login_success
+		valid_redirect_urls = [
+			'https://layla.amazon.com/spa/skill/account-linking-status.html?vendorId=MKT7E8U3IKMHM',
+			'https://pitangui.amazon.com/spa/skill/account-linking-status.html?vendorId=MKT7E8U3IKMHM'
+		]
+
+		redirect_uri = params[:redirect_uri]
+
+		if valid_redirect_urls.include?( redirect_uri )
+			current_user.update( authorization_code: current_user.authorization_code || "#{current_user.name || current_user.id}-#{SecureRandom.hex(64)}" )
+
+			redirect_uri = redirect_uri+"&state=#{params[:state]}&code=#{current_user.authorization_code}"
+
+			redirect_to redirect_uri
+		else
+			redirect_to '/'
+		end
 	end
 
 	private
@@ -189,7 +224,7 @@ class ObservationAlexaSkillsController < ActionController::Base
 	end
 
 	def add_card(type = nil, title = nil , subtitle = nil, content = nil)
-		alexa_response.def add_card(type, title , subtitle, content)
+		alexa_response.add_card(type, title , subtitle, content)
 	end
 
 	def add_hash_card( card )
