@@ -184,7 +184,7 @@ class ObservationAlexaSkillsController < ActionController::Base
 		if valid_redirect_urls.include?( redirect_uri )
 			current_user.update( authorization_code: current_user.authorization_code || "#{current_user.name || current_user.id}-#{SecureRandom.hex(64)}" )
 
-			redirect_uri = redirect_uri+"&state=#{params[:state]}&code=#{current_user.authorization_code}"
+			redirect_uri = redirect_uri+"#"+{ state: params[:state], access_token: current_user.authorization_code, token_type: "Bearer" }.to_query
 
 			redirect_to redirect_uri
 		else
