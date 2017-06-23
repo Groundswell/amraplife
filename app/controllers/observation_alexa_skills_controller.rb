@@ -17,7 +17,7 @@ class ObservationAlexaSkillsController < ActionController::Base
 	def launch_request
 		# Process your Launch Request
 		if alexa_user.present?
-			add_speech("Welcome #{user.try(:full_name)}, to the AMRAP Life skill.  To log fitness information just say \"Alexa tell AMRAP Life I ate 100 calories\", or use a fitness timer by saying \"Alexa ask AMRAP Life to start run timer\".  AMRAP Life will remember, report and provide insights into what you have hold it.")
+			add_speech("Welcome #{alexa_user.try(:full_name)}, to the AMRAP Life skill.  To log fitness information just say \"Alexa tell AMRAP Life I ate 100 calories\", or use a fitness timer by saying \"Alexa ask AMRAP Life to start run timer\".  AMRAP Life will remember, report and provide insights into what you have hold it.")
 		else
 			add_speech("Welcome to the AMRAP Life skill.  To log fitness information just say \"Alexa tell AMRAP Life I ate 100 calories\", or use a fitness timer by saying \"Alexa ask AMRAP Life to start run timer\".  AMRAP Life will remember, report and provide insights into what you have hold it.  To get started open your Alexa app, and complete the AMRAPLife skill registration.")
 			add_card('LinkAccount', 'Create your Fitness Account', 'AMRAPLife', 'In order to record and report your metrics you must first create an AMRAPLife account.')
@@ -41,7 +41,7 @@ class ObservationAlexaSkillsController < ActionController::Base
 
 		if alexa_params[:action].present?
 
-			observed_metric = get_user_metric( user, alexa_params[:action], alexa_params[:unit] )
+			observed_metric = get_user_metric( alexa_user, alexa_params[:action], alexa_params[:unit] )
 
 			if observed_metric.nil?
 
@@ -49,7 +49,7 @@ class ObservationAlexaSkillsController < ActionController::Base
 
 			else
 
-				Observation.create( user: user, observed: observed_metric, value: alexa_params[:value], unit: alexa_params[:unit], notes: "start #{alexa_params[:action]}" )
+				Observation.create( user: alexa_user, observed: observed_metric, value: alexa_params[:value], unit: alexa_params[:unit], notes: "start #{alexa_params[:action]}" )
 
 				add_speech("Logging that you #{alexa_params[:action]} #{alexa_params[:value]} #{alexa_params[:unit]}")
 
@@ -57,7 +57,7 @@ class ObservationAlexaSkillsController < ActionController::Base
 
 		else
 
-			Observation.create( user: user, value: alexa_params[:value], unit: alexa_params[:unit], notes: "start #{alexa_params[:action]}" )
+			Observation.create( user: alexa_user, value: alexa_params[:value], unit: alexa_params[:unit], notes: "start #{alexa_params[:action]}" )
 
 			add_speech("Logging #{alexa_params[:value]} #{alexa_params[:unit]}")
 
@@ -71,14 +71,14 @@ class ObservationAlexaSkillsController < ActionController::Base
 			return
 		end
 
-		observed_metric = get_user_metric( user, alexa_params[:action], 'seconds' )
+		observed_metric = get_user_metric( alexa_user, alexa_params[:action], 'seconds' )
 
 		if observed_metric.nil?
 			add_speech("I'm sorry, I don't know how to log information about #{alexa_params[:action]}.")
 			return
 		end
 
-		Observation.create( user: user, observed: observed_metric, started_at: Time.zone.now, notes: "start #{alexa_params[:action]}" )
+		Observation.create( user: alexa_user, observed: observed_metric, started_at: Time.zone.now, notes: "start #{alexa_params[:action]}" )
 		add_speech("Starting your #{alexa_params[:action]} timer")
 
 	end
@@ -89,17 +89,17 @@ class ObservationAlexaSkillsController < ActionController::Base
 			return
 		end
 
-		observed_metric = get_user_metric( user, alexa_params[:action], 'seconds' )
+		observed_metric = get_user_metric( alexa_user, alexa_params[:action], 'seconds' )
 
 		if observed_metric.nil?
 			add_speech("I'm sorry, I don't know how to log information about #{alexa_params[:action]}.")
 			return
 		end
 
-		observations = user.observations.where( 'started_at is not null' ).order( started_at: :desc )
+		observations = alexa_user.observations.where( 'started_at is not null' ).order( started_at: :desc )
 		observations = observations.where( observed: observed_metric ) if observed_metric.present?
 		observation  = observations.first
-		# observation = user.observations.where( observed_type: 'Metric', observed: observed_metric ).where( 'started_at is not null' ).order( started_at: :asc ).last
+		# observation = alexa_user.observations.where( observed_type: 'Metric', observed: observed_metric ).where( 'started_at is not null' ).order( started_at: :asc ).last
 
 		if observation.present?
 			observation.stop
@@ -126,7 +126,7 @@ class ObservationAlexaSkillsController < ActionController::Base
 		@alexa_params 	= {}
 		@alexa_params	= Hash[*@alexa_request.slots.values.collect{|values| [values['name'].to_sym,values['value']]}.flatten] if @alexa_request.respond_to? :slots
 
-		@user = User.where( authorization_code: @alexa_session.access_token ).first if @alexa_session.access_token.present?
+		@alexa_user = User.where( authorization_code: @alexa_session.access_token ).first if @alexa_session.access_token.present?
 
 		puts request.raw_post
 
@@ -225,8 +225,8 @@ class ObservationAlexaSkillsController < ActionController::Base
 		observed_metric
 	end
 
-	def user
-		@user
+	def alexa_user
+		@alexa_user
 	end
 
 	def add_ask(speech_text, args = {} )

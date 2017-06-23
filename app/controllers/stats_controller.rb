@@ -19,7 +19,7 @@ class StatsController < ApplicationController
 		end
 
 		@chart_data = current_user.observations.for( @stat ).dated_between( @start_date, @end_date )
-		
+
 		if @comp_stat.present?
 			@comp_data = current_user.observations.for( @comp_stat ).dated_between( @start_date, @end_date )
 		end
@@ -27,7 +27,7 @@ class StatsController < ApplicationController
 		if params[:normalize].present?
 			minA = @chart_data.minimum( :value ) < @comp_data.minimum( :value ) ? @chart_data.minimum( :value ) : @comp_data.minimum( :value )
 			maxB = @chart_data.maximum( :value ) > @comp_data.maximum( :value ) ? @chart_data.maximum( :value ) : @comp_data.maximum( :value )
-			
+
 			@chart_data.each{ |point| point.value = 1+(point.value-@chart_data.minimum( :value ))*9/(@chart_data.maximum( :value )-@chart_data.minimum( :value )) }
 			@comp_data.each{ |point| point.value = 1+(point.value-@comp_data.minimum( :value ))*9/(@comp_data.maximum( :value )-@comp_data.minimum( :value )) }
 		end
