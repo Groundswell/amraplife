@@ -107,7 +107,7 @@ class ObservationAlexaSkillsController < ActionController::Base
 		@alexa_session	= @alexa_request.session
 		@alexa_response	= AlexaRubykit::Response.new
 		@alexa_params 	= {}
-		@alexa_params	= Hash[*@alexa_request.slots.values.collect{|values| [values['name'].to_sym,values['value']]}.flatten] if @alexa_response.is_a?( AlexaRubykit::IntentRequest )
+		@alexa_params	= Hash[*@alexa_request.slots.values.collect{|values| [values['name'].to_sym,values['value']]}.flatten] if @alexa_request.respond_to? :slots
 
 		@user = User.where( authorization_code: @alexa_session.access_token ).first if @alexa_session.access_token.present?
 
