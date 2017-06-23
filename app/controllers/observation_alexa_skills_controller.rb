@@ -4,31 +4,40 @@ class ObservationAlexaSkillsController < ActionController::Base
 
 	def cancel_intent
 
-		add_speech("todo. Say stuff about canceling the skill.")
+		add_speech("Cancelling")
 
 	end
 
 	def help_intent
 
-		add_ask("todo. Say stuff about how to use the skill.", reprompt_text: "Sorry, can you say that again?")
+		add_speech("To log fitness information just say \"Alexa tell AMRAP Life I ate 100 calories\", or use a fitness timer by saying \"Alexa ask AMRAP Life to start run timer\".  AMRAP Life will remember, report and provide insights into what you have hold it.")
 
 	end
 
 	def launch_request
 		# Process your Launch Request
-		add_speech("Welcome #{user.try(:full_name)}, to AMRAP Life.  How can I help you?")
+		if alexa_user.present?
+			add_speech("Welcome #{user.try(:full_name)}, to the AMRAP Life skill.  To log fitness information just say \"Alexa tell AMRAP Life I ate 100 calories\", or use a fitness timer by saying \"Alexa ask AMRAP Life to start run timer\".  AMRAP Life will remember, report and provide insights into what you have hold it.")
+		else
+			add_speech("Welcome to the AMRAP Life skill.  To log fitness information just say \"Alexa tell AMRAP Life I ate 100 calories\", or use a fitness timer by saying \"Alexa ask AMRAP Life to start run timer\".  AMRAP Life will remember, report and provide insights into what you have hold it.  To get started open your Alexa app, and complete the AMRAPLife skill registration.")
+			add_card('LinkAccount', 'Create your Fitness Account', 'AMRAPLife', 'In order to record and report your metrics you must first create an AMRAPLife account.')
+		end
 		# add_hash_card( { :title => 'Ruby Run', :subtitle => 'Ruby Running Ready!' } )
 
 	end
 
 	def login_intent
 
-		add_speech("Click the card in your Alexa App to sign in.")
-		add_card('LinkAccount', 'Sign Up', 'AMRAPLife', 'Join AMRAPLife to record and report all your fitness metrics.')
+		add_speech("Open your Alexa app, and complete the AMRAPLife skill registration to continue")
+		add_card('LinkAccount', 'Create your Fitness Account', 'AMRAPLife', 'In order to record and report your metrics you must first create an AMRAPLife account.')
 
 	end
 
 	def log_metric_observation_intent
+		unless alexa_user.present?
+			login_intent
+			return
+		end
 
 		if alexa_params[:action].present?
 
@@ -57,6 +66,10 @@ class ObservationAlexaSkillsController < ActionController::Base
 	end
 
 	def log_start_observation_intent
+		unless alexa_user.present?
+			login_intent
+			return
+		end
 
 		observed_metric = get_user_metric( user, alexa_params[:action], 'seconds' )
 
@@ -71,6 +84,10 @@ class ObservationAlexaSkillsController < ActionController::Base
 	end
 
 	def log_stop_observation_intent
+		unless alexa_user.present?
+			login_intent
+			return
+		end
 
 		observed_metric = get_user_metric( user, alexa_params[:action], 'seconds' )
 
@@ -95,7 +112,7 @@ class ObservationAlexaSkillsController < ActionController::Base
 
 	def stop_intent
 
-		add_speech("todo. Say stuff about stopping the skill.")
+		add_speech("Stopping.")
 
 	end
 
