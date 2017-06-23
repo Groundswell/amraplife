@@ -1,12 +1,12 @@
 class RegistrationsController < Devise::RegistrationsController
 
 	layout 'sessions'
-	
+
 	def create
-		email = params[:user][:email]
+		email = params[:user][:email] || params[:user][:login]
 		# todo -- check validity of email param?
 
-		user = User.where( email: email ).first || 
+		user = User.where( email: email ).first ||
 				User.new( email: email, full_name: params[:user][:name], name: params[:user][:name], ip: request.ip )
 
 		if user.encrypted_password.present?
@@ -21,13 +21,13 @@ class RegistrationsController < Devise::RegistrationsController
 		user.password_confirmation = params[:user][:password_confirmation]
 
 		if user.save
-			#record_user_event( 'registration', user: resource, content: 'registered.' ) 
+			#record_user_event( 'registration', user: resource, content: 'registered.' )
 			set_flash "Thanks for signing up!"
         	sign_up( :user, user )
         	respond_with user, location: after_sign_up_path_for( user )
 		else
 			set_flash "Could not register user.", :error, user
-			render :new
+			render :new, locals: { resource: user }
 			return false
 		end
 
