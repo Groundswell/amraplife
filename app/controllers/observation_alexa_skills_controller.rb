@@ -10,17 +10,17 @@ class ObservationAlexaSkillsController < ActionController::Base
 
 	def help_intent
 
-		add_speech("To log fitness information just say \"Alexa tell AMRAP Life I ate 100 calories\", or use a fitness timer by saying \"Alexa ask AMRAP Life to start run timer\".  AMRAP Life will remember, report and provide insights into what you have hold it.")
+		add_speech("To log fitness information just say \"Alexa tell Fit Log I ate 100 calories\", or use a fitness timer by saying \"Alexa ask Fit Log to start run timer\".  Fit Log will remember, report and provide insights into what you have hold it.")
 
 	end
 
 	def launch_request
 		# Process your Launch Request
 		if alexa_user.present?
-			add_speech("Welcome #{alexa_user.try(:full_name)}, to the AMRAP Life skill.  To log fitness information just say \"Alexa tell AMRAP Life I ate 100 calories\", or use a fitness timer by saying \"Alexa ask AMRAP Life to start run timer\".  AMRAP Life will remember, report and provide insights into what you have hold it.")
+			add_speech("Welcome to Fit Log, an AMRAP Life skill.  To log fitness information just say \"Alexa tell Fit Log I ate 100 calories\", or use a fitness timer by saying \"Alexa ask Fit Log to start run timer\".  Fit Log will remember, report and provide insights into what you have hold it.")
 		else
-			add_speech("Welcome to the AMRAP Life skill.  To log fitness information just say \"Alexa tell AMRAP Life I ate 100 calories\", or use a fitness timer by saying \"Alexa ask AMRAP Life to start run timer\".  AMRAP Life will remember, report and provide insights into what you have hold it.  To get started open your Alexa app, and complete the AMRAPLife skill registration.")
-			add_card('LinkAccount', 'Create your Fitness Account', 'AMRAPLife', 'In order to record and report your metrics you must first create an AMRAPLife account.')
+			add_speech("Welcome to Fit Log, an AMRAP Life skill.  To log fitness information just say \"Alexa tell Fit Log I ate 100 calories\", or use a fitness timer by saying \"Alexa ask Fit Log to start run timer\".  Fit Log will remember, report and provide insights into what you have hold it.  To get started open your Alexa app, and complete the Fit Log skill registration on AMRAPLife.")
+			add_card('LinkAccount', 'Create your Fit Log Account on AMRAPLife', '', 'In order to record and report your metrics you must first create a Fit Log account on AMRAPLife.')
 		end
 		# add_hash_card( { :title => 'Ruby Run', :subtitle => 'Ruby Running Ready!' } )
 
@@ -28,9 +28,21 @@ class ObservationAlexaSkillsController < ActionController::Base
 
 	def login_intent
 
-		add_speech("Open your Alexa app, and complete the AMRAPLife skill registration to continue")
-		add_card('LinkAccount', 'Create your Fitness Account', 'AMRAPLife', 'In order to record and report your metrics you must first create an AMRAPLife account.')
+		add_speech("Open your Alexa app, and complete the Fit Log skill registration on AMRAP Life to continue")
+		add_card('LinkAccount', 'Create your Fit Log Account on AMRAPLife', '', 'In order to record and report your metrics you must first create a Fit Log account on AMRAPLife.')
 
+	end
+
+	def log_eaten_observation_intent
+		if alexa_params[:quantity].present? && alexa_params[:measure].blank?
+			add_speech("Logging that you ate #{alexa_params[:quantity]} #{alexa_params[:food]}")
+		elsif alexa_params[:quantity].present? && alexa_params[:measure].present?
+			add_speech("Logging that you ate #{alexa_params[:quantity]} #{alexa_params[:measure]} of #{alexa_params[:food]}")
+		elsif alexa_params[:portion].present?
+			add_speech("Logging that you ate #{alexa_params[:portion]} portion of #{alexa_params[:food]}")
+		else
+			add_speech("Sorry, I don't understand.")
+		end
 	end
 
 	def log_metric_observation_intent
@@ -160,6 +172,10 @@ class ObservationAlexaSkillsController < ActionController::Base
 			elsif alexa_request.name == 'LoginIntent'
 
 				login_intent()
+
+			elsif alexa_request.name == 'LogEatenObservationIntent'
+
+				log_eaten_observation_intent()
 
 			elsif alexa_request.name == 'LogMetricObservationIntent'
 
