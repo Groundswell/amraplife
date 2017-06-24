@@ -34,12 +34,42 @@ class ObservationAlexaSkillsController < ActionController::Base
 	end
 
 	def log_eaten_observation_intent
+
+		food_results = []
+		if alexa_params[:food].present?
+			begin
+				search_params = {
+					results: '0:4',
+					# cal_min=0
+					# cal_max=50000
+					fields: '*',
+					appId: ENV['NUTRITIONX_API_ID'],
+					appKey: ENV['NUTRITIONX_API_KEY'],
+				}
+
+				result = JSON.parse( RestClient.get "https://api.nutritionix.com/v1_1/search/#{URI.encode(alexa_params[:food])}", { accept: :json, params: search_params } )
+
+				#puts JSON.pretty_generate result
+
+				if result['total_hits'] > 0
+					calories = result['hits'].collect{ |hit| hit['fields']['nf_calories'] }.sum / result['hits'].count
+				end
+				
+			rescue Exception => e
+				NewRelic::Agent.notice_error(e)
+				logger.error "log_eaten_observation_intent error"
+				logger.error e
+				puts e.backtrace
+			end
+
+		end
+
 		if alexa_params[:quantity].present? && alexa_params[:measure].blank?
-			add_speech("Logging that you ate #{alexa_params[:quantity]} #{alexa_params[:food]}")
+			add_speech("Logging that you ate #{alexa_params[:quantity]} #{alexa_params[:food]}.#{calories.present? ? " Approximately #{calories} calories." : ""}")
 		elsif alexa_params[:quantity].present? && alexa_params[:measure].present?
-			add_speech("Logging that you ate #{alexa_params[:quantity]} #{alexa_params[:measure]} of #{alexa_params[:food]}")
+			add_speech("Logging that you ate #{alexa_params[:quantity]} #{alexa_params[:measure]} of #{alexa_params[:food]}.#{calories.present? ? " Approximately #{calories} calories." : ""}.")
 		elsif alexa_params[:portion].present?
-			add_speech("Logging that you ate #{alexa_params[:portion]} portion of #{alexa_params[:food]}")
+			add_speech("Logging that you ate #{alexa_params[:portion]} portion of #{alexa_params[:food]}.#{calories.present? ? " Approximately #{calories * alexa_params[:portion].to_i} calories." : ""}")
 		else
 			add_speech("Sorry, I don't understand.")
 		end
