@@ -34,6 +34,10 @@ class ObservationAlexaSkillsController < ActionController::Base
 	end
 
 	def log_eaten_observation_intent
+		unless alexa_user.present?
+			login_intent
+			return
+		end
 
 		food_results = []
 		if alexa_params[:food].present?
@@ -52,9 +56,11 @@ class ObservationAlexaSkillsController < ActionController::Base
 				#puts JSON.pretty_generate result
 
 				if result['total_hits'] > 0
-					calories = result['hits'].collect{ |hit| hit['fields']['nf_calories'] }.sum / result['hits'].count
+					calories = (result['hits'].collect{ |hit| hit['fields']['nf_calories'] }.sum / result['hits'].count).to_i
+
+					calories = calories * alexa_params[:portion].to_i if alexa_params[:portion].present?
 				end
-				
+
 			rescue Exception => e
 				NewRelic::Agent.notice_error(e)
 				logger.error "log_eaten_observation_intent error"
@@ -64,14 +70,30 @@ class ObservationAlexaSkillsController < ActionController::Base
 
 		end
 
+		observed_metric = get_user_metric( alexa_user, 'ate', 'calories' )
+
 		if alexa_params[:quantity].present? && alexa_params[:measure].blank?
+
 			add_speech("Logging that you ate #{alexa_params[:quantity]} #{alexa_params[:food]}.#{calories.present? ? " Approximately #{calories} calories." : ""}")
+
+			Observation.create( user: alexa_user, observed: observed_metric, value: calories, unit: 'calories', notes: "I ate #{alexa_params[:quantity]} #{alexa_params[:food]}" )
+
 		elsif alexa_params[:quantity].present? && alexa_params[:measure].present?
+
 			add_speech("Logging that you ate #{alexa_params[:quantity]} #{alexa_params[:measure]} of #{alexa_params[:food]}.#{calories.present? ? " Approximately #{calories} calories." : ""}.")
+
+			Observation.create( user: alexa_user, observed: observed_metric, value: calories, unit: 'calories', notes: "I ate #{alexa_params[:quantity]} #{alexa_params[:measure]} of #{alexa_params[:food]}" )
+
 		elsif alexa_params[:portion].present?
-			add_speech("Logging that you ate #{alexa_params[:portion]} portion of #{alexa_params[:food]}.#{calories.present? ? " Approximately #{calories * alexa_params[:portion].to_i} calories." : ""}")
+
+			add_speech("Logging that you ate #{alexa_params[:portion]} portion of #{alexa_params[:food]}.#{calories.present? ? " Approximately #{calories} calories." : ""}")
+
+			Observation.create( user: alexa_user, observed: observed_metric, value: calories, unit: 'calories', notes: "I ate #{alexa_params[:portion]} portion of #{alexa_params[:food]}" )
+
 		else
+
 			add_speech("Sorry, I don't understand.")
+
 		end
 	end
 
@@ -261,8 +283,8 @@ class ObservationAlexaSkillsController < ActionController::Base
 
 		if action.present?
 
-			observed_metric = Metric.where( user_id: user ).find_by_alias( alexa_params[:action].downcase )
-			observed_metric ||= Metric.where( user_id: nil ).find_by_alias( alexa_params[:action].downcase ).try(:dup)
+			observed_metric = Metric.where( user_id: user ).find_by_alias( action.downcase )
+			observed_metric ||= Metric.where( user_id: nil ).find_by_alias( action.downcase ).try(:dup)
 			# observed_metric ||= Metric.new( title: alexa_params[:action], unit: unit )
 			observed_metric.update( user: user ) if observed_metric.present?
 
