@@ -1,0 +1,23 @@
+.container
+	.row
+		.col-xs-12
+			%h1.center-text{ style: 'margin: 10vh 0;' }
+				Ooops, looks like you landed on a product that doesn't exist.
+
+-# .jumbotron{ style: 'background-color: #e9fbfe;' }
+	.container
+		.row
+			.col-xs-12.text-center
+				%h1
+					Free Shipping on All Orders
+				%p
+					No minimum purchase required. Continental US only.
+				%a.btn.btn-lg.btn-info.btn-filled{ href: 'faq' }
+					Learn More
+					%i.fa.fa-chevron-right
+
+%section.clearfix.productsContent{ style: 'padding-top:25px;' }
+	.container
+		.row
+			- SwellEcom::Product.published.order( seq: :asc ).limit(18).each do |product|
+				= render 'card', product: product, args: {}
