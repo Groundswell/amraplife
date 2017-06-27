@@ -185,7 +185,7 @@ class ObservationBotService
 
 			observed_metric = Metric.where( user_id: user ).find_by_alias( action.downcase )
 			observed_metric ||= Metric.where( user_id: nil ).find_by_alias( action.downcase ).try(:dup)
-			# observed_metric ||= Metric.new( title: params[:action], unit: unit )
+			observed_metric ||= Metric.new( title: action, unit: unit ) if action.present?
 			observed_metric.update( user: user ) if observed_metric.present?
 
 		end
