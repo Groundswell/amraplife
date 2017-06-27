@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/Groundswell/swell_ecom.git
-  revision: 00248ba681818270a0e7351ab4ba7a41f3354e41
+  revision: ba8bf1993c3f4f2f1ff4e6cac24d47c5a06b7282
   specs:
     swell_ecom (0.0.1)
       stripe
@@ -9,7 +9,7 @@ GIT
 
 GIT
   remote: git://github.com/Groundswell/swell_media.git
-  revision: 2b9ff61342905dd535a84106de5984d5adad4319
+  revision: 7dba8dc1e0607f57cd3a2894a4e5b1ef002c5e77
   specs:
     swell_media (0.0.1)
       acts-as-taggable-array-on
@@ -153,7 +153,7 @@ GEM
       faraday
       multi_json
     erubis (2.7.0)
-    excon (0.56.0)
+    excon (0.57.0)
     execjs (2.7.0)
     extendmatrix (0.4)
     faraday (0.11.0)
@@ -206,7 +206,7 @@ GEM
     fog-atmos (0.1.0)
       fog-core
       fog-xml
-    fog-aws (1.3.0)
+    fog-aws (1.4.0)
       fog-core (~> 1.38)
       fog-json (~> 1.0)
       fog-xml (~> 0.1)
@@ -293,7 +293,7 @@ GEM
     fog-voxel (0.1.0)
       fog-core
       fog-xml
-    fog-vsphere (1.10.0)
+    fog-vsphere (1.11.0)
       fog-core
       rbvmomi (~> 1.9)
     fog-xenserver (0.3.0)
@@ -421,7 +421,7 @@ GEM
       thor (>= 0.18.1, < 2.0)
     raindrops (0.17.0)
     rake (12.0.0)
-    rbvmomi (1.11.2)
+    rbvmomi (1.11.3)
       builder (~> 3.0)
       json (>= 1.8)
       nokogiri (~> 1.5)

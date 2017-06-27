@@ -45,7 +45,7 @@
 								%h4
 									Related Articles
 							
-							- SwellMedia::Article.published.where( category_id: @media.category_id ).each do |article|
+							- SwellMedia::Article.published.where( category_id: @media.category_id ).limit( 3 ).each do |article|
 								= render "swell_media/articles/card", article: article, args: {}
 
 
