@@ -2,10 +2,13 @@ class NutritionService
 
 	def nutrition_information( args = {} )
 
+
 		if args[:query].present?
+			args[:min] ||= 0
+			args[:max] ||= 4
 
 			search_params = {
-				results: '0:4',
+				results: "#{args[:min]}:#{args[:max]}",
 				# cal_min=0
 				# cal_max=50000
 				fields: '*',
@@ -18,8 +21,6 @@ class NutritionService
 			json_string_response = RestClient.get( api_endpoint, { accept: :json, params: search_params } )
 			response = JSON.parse( json_string_response, :symbolize_names => true )
 
-			# puts JSON.pretty_generate response
-
 			results = response[:hits].collect do |row|
 
 				nutrition_facts = {}
@@ -30,13 +31,11 @@ class NutritionService
 				serving_unit = row[:fields].delete(:nf_serving_size_unit)
 				serving_weight_grams = row[:fields].delete(:nf_serving_weight_grams)
 
-				row.each do |key,value|
+				row[:fields].each do |key,value|
 					if key.to_s.start_with?('nf_')
 						nutrition_facts[key.to_s[3..-1].to_sym] = value
 					end
 				end
-
-				# puts JSON.pretty_generate row
 
 				{
 					_score: row[:_score],
@@ -51,10 +50,10 @@ class NutritionService
 				}
 			end
 
-
 			return {
 				total_count: response[:total_hits],
 				best_score: response[:max_score],
+				average_calories: (results.collect{ |result| result[:nutrion_facts][:calories] }.sum / results.count).round(2),
 				results: results
 			}
 

@@ -42,24 +42,10 @@ class ObservationAlexaSkillsController < ActionController::Base
 		food_results = []
 		if alexa_params[:food].present?
 			begin
-				search_params = {
-					results: '0:4',
-					# cal_min=0
-					# cal_max=50000
-					fields: '*',
-					appId: ENV['NUTRITIONX_API_ID'],
-					appKey: ENV['NUTRITIONX_API_KEY'],
-				}
+				results = NutritionService.new.nutrition_information( query: alexa_params[:food], max: 4 )
 
-				result = JSON.parse( RestClient.get "https://api.nutritionix.com/v1_1/search/#{URI.encode(alexa_params[:food])}", { accept: :json, params: search_params } )
-
-				#puts JSON.pretty_generate result
-
-				if result['total_hits'] > 0
-					calories = (result['hits'].collect{ |hit| hit['fields']['nf_calories'] }.sum / result['hits'].count).to_i
-
-					calories = calories * alexa_params[:portion].to_i if alexa_params[:portion].present?
-				end
+				calories = results[:average_calories]
+				calories = calories * alexa_params[:portion].to_i if alexa_params[:portion].present?
 
 			rescue Exception => e
 				NewRelic::Agent.notice_error(e)
