@@ -1,16 +1,157 @@
-class ObservationBotService
+class ObservationBotService < AbstractBotService
 
-	def initialize( args = {} )
+	 add_intents( {
+		cancel: {
+			utterances: [ 'cancel' ]
+		},
+		help: {
+			utterances: [ 'help', 'for help' ]
+		},
+		launch: {
+			utterances: [ '' ]
+		},
+		login: {
+			utterances: [ 'login', 'sign me in', 'sign in', 'log in', 'log me in' ]
+		},
+		log_eaten_observation: {
+			utterances: [
+				'i ate {quantity} serving of {food}',
+				'i ate {quantity} {measure} of {food}',
+				'i ate {quantity} {food}',
+				'i ate {portion} portion of {food}',
+			],
+			slots: {
+				quantity: 'Number',
+				food: 'Food',
+				measure: 'Measure',
+				portion: 'Number',
+			}
+		},
+		log_metric_observation: {
+			utterances: [
+				'i {action} {value} {unit}',
+				'to log {value} {unit}',
+				'log {action} {value} {unit}',
+				'log {value} {unit}',
+			],
+			slots: {
+				value: 'Number',
+				action: 'Action',
+				unit: 'Unit',
+			}
+		},
+		log_start_observation: {
+			utterances: [
+				"to start {action}",
+		        "start {action}",
+		        "begin {action}",
+		        "to begin {action}",
+		        "to time {action}",
+		        "time {action}",
+		        "start timing {action}",
+		        "to start {action} timer",
+		        "I am starting a {action}"
+			],
+			slots: {
+				action: 'Action',
+			}
+		},
+		log_stop_observation: {
+			utterances: [
+				"stop {action}",
+				"to stop {action}",
+				"end {action}",
+				"to end {action}",
+				"stop timing {action}",
+				"stop {action} timer",
+				"I have finished my {action}",
+				"I have completed my {action}"
+			],
+			slots: {
+				action: 'Action',
+			}
+		},
+		stop: {
+			utterances: [ 'stop' ]
+		},
+	} )
 
-		@request	= args[:request]
-		@session	= args[:session]
-		@response	= args[:response]
-		@params 	= args[:params]
-		@user 		= args[:user]
-
-	end
-
-
+	add_slots( {
+		Action: {
+			regex: [
+				'[a-zA-Z\s]*[a-zA-Z]+'
+			],
+			values: [
+		        { value: "ran", synonyms: [] },
+		        { value: "swam", synonyms: [] },
+		        { value: "biked", synonyms: [] },
+		        { value: "walked", synonyms: [] },
+		        { value: "jogged", synonyms: [] },
+		        { value: "slept", synonyms: [] },
+		        { value: "drove", synonyms: [] },
+		        { value: "drive", synonyms: [] },
+		        { value: "worked", synonyms: [] },
+		        { value: "ate", synonyms: [] },
+		        { value: "studying latin", synonyms: [] },
+		        { value: "bike ride", synonyms: [] },
+			]
+		},
+		Food: {
+			regex: [
+				'[a-zA-Z\.]*\s*[a-zA-Z\.]*\s*[a-zA-Z\.]*\s*[a-zA-Z\.]*\s*[a-zA-Z\.]+'
+			],
+			values: [
+			]
+		},
+		Measure: {
+			regex: [
+				'[a-zA-Z]+'
+			],
+			values: [
+		        { value: "cup", synonyms: [] },
+		        { value: "gram", synonyms: [] },
+		        { value: "teaspoon", synonyms: [] },
+		        { value: "tablespoon", synonyms: [] },
+		        { value: "liter", synonyms: [] },
+		        { value: "ounce", synonyms: [] },
+			]
+		},
+		Unit: {
+			regex: [
+				'[a-zA-Z\.]*\s*[a-zA-Z\.]*\s*[a-zA-Z\.]*\s*[a-zA-Z\.]+'
+			],
+			values: [
+				{ value: "height", synonyms: [] },
+		        { value: "weight", synonyms: [] },
+		        { value: "hips", synonyms: [] },
+		        { value: "resting heart rate", synonyms: [] },
+		        { value: "systolic blood pressure", synonyms: [] },
+		        { value: "diastolic blood pressure", synonyms: [] },
+		        { value: "blood pressure", synonyms: [] },
+		        { value: "precent body fat", synonyms: [] },
+		        { value: "heart rate", synonyms: [] },
+		        { value: "pulse", synonyms: [] },
+		        { value: "systolic", synonyms: [] },
+		        { value: "diastolic", synonyms: [] },
+		        { value: "body fat", synonyms: [] },
+		        { value: "B.M.I.", synonyms: [] },
+		        { value: "B M I", synonyms: [] },
+		        { value: "Calories", synonyms: [] },
+		        { value: "cal", synonyms: [] },
+		        { value: "cals", synonyms: [] },
+		        { value: "protein", synonyms: [] },
+		        { value: "grams protein", synonyms: [] },
+		        { value: "grams of protein", synonyms: [] },
+		        { value: "carbs", synonyms: [] },
+		        { value: "carbohydrates", synonyms: [] },
+		        { value: "sleep", synonyms: [] },
+		        { value: "Working", synonyms: [] },
+		        { value: "Work", synonyms: [] },
+		        { value: "miles", synonyms: [] },
+		        { value: "kilometers", synonyms: [] },
+	      ]
+	  },
+  	} )
 
 	def cancel
 
@@ -178,7 +319,6 @@ class ObservationBotService
 
 	private
 
-
 	def get_user_metric( user, action, unit )
 
 		if action.present?
@@ -191,59 +331,6 @@ class ObservationBotService
 		end
 
 		observed_metric
-	end
-
-	def user
-		@user
-	end
-
-	def add_ask(speech_text, args = {} )
-		response.add_ask( speech_tex, args )
-	end
-
-
-	def add_audio_url( url, token='', offset=0)
-		response.add_audio_url( url, token, offset )
-	end
-
-	def add_card(type = nil, title = nil , subtitle = nil, content = nil)
-		response.add_card(type, title , subtitle, content)
-	end
-
-	def add_hash_card( card )
-		response.add_hash_card( card )
-	end
-
-	def add_login_prompt( title = nil , subtitle = nil, content = nil )
-		response.add_login_prompt( title , subtitle, content )
-	end
-
-	def add_reprompt(speech_text, ssml = false)
-		response.add_reprompt( speech_text, ssml )
-	end
-
-	def add_speech(speech_text, ssml = false)
-		response.add_speech( speech_text, ssml )
-	end
-
-	def add_session_attribute( key, value )
-		response.add_session_attribute( key, value )
-	end
-
-	def params
-		@params
-	end
-
-	def request
-		@request
-	end
-
-	def response
-		@response
-	end
-
-	def session
-		@session
 	end
 
 end

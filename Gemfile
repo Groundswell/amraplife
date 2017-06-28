@@ -39,6 +39,7 @@ gem 'gibbon'
 gem 'kaminari'
 gem 'memcachier'
 gem 'newrelic_rpm'
+gem 'numbers_in_words'
 gem 'rest-client'
 gem 'sendgrid-ruby'
 gem 'statsample' # to muck around with

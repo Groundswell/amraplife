@@ -369,6 +369,8 @@ GEM
     nokogiri (1.7.0.1)
       mini_portile2 (~> 2.1.0)
     nori (2.6.0)
+    numbers_in_words (0.4.0)
+      activesupport
     numerizer (0.1.1)
     omniauth (1.6.1)
       hashie (>= 3.4.6, < 3.6.0)
@@ -548,6 +550,7 @@ DEPENDENCIES
   memcachier
   momentjs-rails (>= 2.9.0)
   newrelic_rpm
+  numbers_in_words
   pg (~> 0.15)
   rails (= 4.2.7)
   rest-client
