@@ -3,6 +3,8 @@ class ObservationSlackBotsController < ActionController::Base
 	protect_from_forgery :except => [:create]
 
 	def create
+		puts request.raw_post
+
 		if params[:type] == 'url_verification'
 			render text: params[:challenge], content_type: 'text/plain'
 			return
