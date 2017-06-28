@@ -161,7 +161,7 @@ class ObservationBotService < AbstractBotService
 
 	def help
 
-		add_speech("To log fitness information just say \"Alexa tell Fit Log I ate 100 calories\", or use a fitness timer by saying \"Alexa ask Fit Log to start run timer\".  Fit Log will remember, report and provide insights into what you have hold it.")
+		add_speech("To log fitness information just say \"Alexa tell Fit Log I ate 100 calories\", or use a fitness timer by saying \"Alexa ask Fit Log to start run timer\".  Fit Log will remember, report and provide insights into what you have told it.")
 
 	end
 
