@@ -16,7 +16,7 @@ class AbstractBotService
 
 		@request	= args[:request]
 		@session	= args[:session]
-		@response	= args[:response]
+		@response	= args[:response] || :puts
 		@params 	= args[:params]
 		@user 		= args[:user]
 
