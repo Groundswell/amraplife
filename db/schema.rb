@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170627181527) do
+ActiveRecord::Schema.define(version: 20170628145900) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -598,6 +598,17 @@ ActiveRecord::Schema.define(version: 20170627181527) do
   add_index "recipes", ["category_id"], name: "index_recipes_on_category_id", using: :btree
   add_index "recipes", ["slug"], name: "index_recipes_on_slug", unique: true, using: :btree
   add_index "recipes", ["tags"], name: "index_recipes_on_tags", using: :gin
+
+  create_table "teams", force: :cascade do |t|
+    t.string   "name"
+    t.string   "slack_team_id"
+    t.hstore   "properties",    default: {}
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "teams", ["name"], name: "index_teams_on_name", using: :btree
+  add_index "teams", ["slack_team_id"], name: "index_teams_on_slack_team_id", using: :btree
 
   create_table "terms", force: :cascade do |t|
     t.string   "title"

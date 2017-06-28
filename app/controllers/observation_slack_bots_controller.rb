@@ -12,6 +12,7 @@ class ObservationSlackBotsController < ActionController::Base
 
 		if params[:event].present? && params[:event][:type] == 'message' && ENV['SLACK_FITLOG_BOT_VERIFICATION_TOKEN'] == params[:token]
 
+			@team = Team.where( slack_team_id: params[:team_id] )
 
 			@bot_service = ObservationBotService.new( response: self, params: { event: params[:event] } )
 
@@ -25,6 +26,39 @@ class ObservationSlackBotsController < ActionController::Base
 		end
 
 		render text: 'NOPE', content_type: 'text/plain'
+	end
+
+	def auth_callback
+
+		code = params[:code]
+		state = params[:state]
+
+		puts "auth_callback.code #{code} #{state}"
+
+		oauth_access_response = JSON.parse( RestClient.post( 'https://slack.com/api/oauth.access', { code: code, client_id: ENV['SLACK_FITLOG_BOT_CLIENT_ID'], client_secret: ENV['SLACK_FITLOG_BOT_CLIENT_SECRET'] } ), :symbolize_names => true )
+		puts oauth_access_response.to_json
+
+		auth_test_response = JSON.parse( RestClient.post( 'https://slack.com/api/auth.test', { token: oauth_access_response[:access_token] } ), :symbolize_names => true )
+		puts auth_test_response.to_json
+
+		bot_user_id = ( oauth_access_response[:bot].present? ? oauth_access_response[:bot][:bot_user_id] : nil ) || ( auth_test_response[:bot].present? ? auth_test_response[:bot][:bot_user_id] : nil )
+		bot_access_token = ( oauth_access_response[:bot].present? ? oauth_access_response[:bot][:bot_access_token] : nil ) || ( auth_test_response[:bot].present? ? auth_test_response[:bot][:bot_access_token] : nil )
+
+		@team = Team.find_by( slack_team_id: params[:team_id] )
+		@team ||= Team.create(
+			name: auth_test_response[:team_name] || oauth_access_response[:team_name],
+			slack_team_id: auth_test_response[:team_id] || oauth_access_response[:team_id],
+			properties: {
+				'oauth_access_response' => oauth_access_response.to_json,
+				'auth_test_response' => auth_test_response.to_json,
+				'bot_user_id' => bot_user_id,
+				'bot_access_token' => bot_access_token,
+			} )
+
+		puts "@team.name #{@team.name}, @team.slack_team_id #{@team.slack_team_id}"
+
+		redirect_to '/'
+
 	end
 
 	def add_ask(speech_text, args = {} )
@@ -71,18 +105,20 @@ class ObservationSlackBotsController < ActionController::Base
 
 
 		query_headers = {
-			content_type: "application/json; charset=utf-8",
+			# content_type: "application/json; charset=utf-8",
 		}
 
 		query_body = {
-			token: ENV['SLACK_FITLOG_BOT_OAUTH_TOKEN'],
+			token: @team.properties['bot_access_token'],
 			channel: args[:channel],
 			text: text,
+			username: 'FitLog',
+			as_user: false,
 		}
 
 		api_endpoint = 'https://slack.com/api/chat.postMessage'
 
-		json_string_response = RestClient.post( api_endpoint, query_body.to_json, query_headers )
+		json_string_response = RestClient.post( api_endpoint, query_body, query_headers )
 		puts json_string_response
 
 		true
