@@ -28,7 +28,7 @@ class ObservationSlackBotsController < ActionController::Base
 		render text: 'NOPE', content_type: 'text/plain'
 	end
 
-	def auth_callback
+	def install_callback
 
 		code = params[:code]
 		state = params[:state]

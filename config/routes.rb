@@ -26,7 +26,7 @@ Rails.application.routes.draw do
 		get :login_success, on: :collection
 	end
 	resources :observation_slack_bots, only: :create do
-		get :auth_callback, on: :collection
+		get :install_callback, on: :collection
 	end
 	resources :observations
 
