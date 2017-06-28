@@ -1,5 +1,5 @@
 
-class ObservationSlackBotController < ActionController::Base
+class ObservationSlackBotsController < ActionController::Base
 	protect_from_forgery :except => [:create]
 
 	def create
@@ -7,7 +7,8 @@ class ObservationSlackBotController < ActionController::Base
 			render text: params[:challenge], content_type: 'text/plain'
 			return
 		end
-		
+
+		render text: 'NOPE', content_type: 'text/plain'
 	end
 
 	def add_ask(speech_text, args = {} )
