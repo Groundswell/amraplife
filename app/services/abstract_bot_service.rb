@@ -36,6 +36,8 @@ class AbstractBotService
 			end
 		end
 
+		puts requested_intent_name
+
 		if requested_intent_name.present?
 			requested_intent = compiled_intents[requested_intent_name.to_sym]
 
@@ -45,6 +47,9 @@ class AbstractBotService
 			end
 
 			self.send( requested_intent_name )
+			return true
+		else
+			return false
 		end
 	end
 
