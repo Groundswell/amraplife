@@ -12,7 +12,7 @@ class ObservationSlackBotsController < ActionController::Base
 
 		if params[:event].present? && params[:event][:type] == 'message' && ENV['SLACK_FITLOG_BOT_VERIFICATION_TOKEN'] == params[:token]
 
-			@team = Team.where( slack_team_id: params[:team_id] )
+			@team = Team.find_by( slack_team_id: params[:team_id] )
 
 			@bot_service = ObservationBotService.new( response: self, params: { event: params[:event] } )
 
