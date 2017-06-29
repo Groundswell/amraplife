@@ -14,7 +14,7 @@ class ObservationSlackBotsController < ActionController::Base
 		if params[:event].present? && params[:event][:type] == 'message' && params[:event][:bot_id].blank? && ENV['SLACK_FITLOG_BOT_VERIFICATION_TOKEN'] == params[:token]
 
 			@team = Team.find_by( slack_team_id: params[:team_id] )
-			@user = SwellMedia::OauthCredential.where( token: params[:event][:user], provider: "#{params[:team_id]}.slack" ).first.try(:user)
+			@user = SwellMedia::OauthCredential.where( uid: params[:event][:user], provider: "#{params[:team_id]}.slack" ).first.try(:user)
 			@user ||= @team.team_users.find_by( slack_user_id: params[:event][:user] ).try(:user) if @team.present?
 
 			@bot_service = ObservationBotService.new( response: self, user: @user, params: { event: params[:event] } )
