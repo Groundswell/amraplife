@@ -65,6 +65,20 @@ class ObservationSlackBotsController < ActionController::Base
 
 	end
 
+	def login
+		session[:dest] = login_success_observation_alexa_skills_url( team_id: params[:team_id], user: params[:user], token: params[:token] )
+
+		redirect_to main_app.register_path()
+	end
+
+	def login_success
+		oauth_credential = current_user.oauth_credentials.where( provider: "#{params[:team_id]}.slack", uid: params[:user] ).first_or_initialize
+		oauth_credential.save
+		#oauth_credential.update( token: "#{current_user.name || current_user.id}-#{SecureRandom.hex(64)}" ) if oauth_credential.token.blank?
+		set_flash( 'Registration complete.  Now start logging!' )
+		redirect_to '/'
+	end
+
 	def add_ask(speech_text, args = {} )
 		puts "add_ask: #{speech_text}"
 		chat_post_message( speech_text, channel: params[:event][:channel] )
@@ -85,6 +99,7 @@ class ObservationSlackBotsController < ActionController::Base
 
 	def add_login_prompt( title = nil , subtitle = nil, content = nil )
 		puts "add_login_prompt: #{title} (#{subtitle}) #{content}"
+		chat_post_message( main_app.login_observation_slack_bots_url( team_id: params[:team_id],  user: params[:event][:user], token: 'D4G5K' ), channel: params[:event][:channel] )
 	end
 
 	def add_reprompt(speech_text, ssml = false)
