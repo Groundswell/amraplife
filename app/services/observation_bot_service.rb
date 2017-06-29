@@ -161,7 +161,7 @@ class ObservationBotService < AbstractBotService
 
 	def help
 
-		help_message = get_dialog('help', default: "To log fitness information just say \"I ate 100 calories\", or use a fitness timer by saying \"start run timer\".  Fit Log will remember, report and provide insights into what you have told it.")
+		help_message = get_dialog('help', default: "To log fitness information just say \"I ate 100 calories\", or use a fitness timer by saying \"start run timer\".  Life Meter will remember, report and provide insights into what you have told it.")
 
 		add_speech( help_message )
 
@@ -170,25 +170,25 @@ class ObservationBotService < AbstractBotService
 	def launch
 		# Process your Launch Request
 		if user.present?
-			launch_message = get_dialog('launch_user', default: "Welcome to Fit Log, an AMRAP Life skill.  To log fitness information just say \"I ate 100 calories\", or use a fitness timer by saying \"start run timer\".  Fit Log will remember, report and provide insights into what you have hold it.")
+			launch_message = get_dialog('launch_user', default: "Welcome to Life Meter, an AMRAP Life skill.  To log fitness information just say \"I ate 100 calories\", or use a fitness timer by saying \"start run timer\".  Life Meter will remember, report and provide insights into what you have hold it.")
 
 			add_speech(launch_message)
 		else
-			launch_message = get_dialog('launch_guest', default: "Welcome to Fit Log, an AMRAP Life skill.  To log fitness information just say \"I ate 100 calories\", or use a fitness timer by saying \"start run timer\".  Fit Log will remember, report and provide insights into what you have hold it.  To get started click this link, and complete the Fit Log skill registration on AMRAPLife.")
+			launch_message = get_dialog('launch_guest', default: "Welcome to Life Meter, an AMRAP Life skill.  To log fitness information just say \"I ate 100 calories\", or use a fitness timer by saying \"start run timer\".  Life Meter will remember, report and provide insights into what you have hold it.  To get started click this link, and complete the Life Meter skill registration on AMRAPLife.")
 
 			add_speech(launch_message)
-			add_login_prompt('Create your Fit Log Account on AMRAPLife', '', 'In order to record and report your metrics you must first create a Fit Log account on AMRAPLife.')
+			add_login_prompt('Create your Life Meter Account on AMRAPLife', '', 'In order to record and report your metrics you must first create a Life Meter account on AMRAPLife.')
 		end
 		# add_hash_card( { :title => 'Ruby Run', :subtitle => 'Ruby Running Ready!' } )
 
 	end
 
 	def login
-		launch_message = get_dialog('login', default: "Click this link to complete the Fit Log skill registration on AMRAP Life")
+		launch_message = get_dialog('login', default: "Click this link to complete the Life Meter skill registration on AMRAP Life")
 
 
 		add_speech( launch_message )
-		add_login_prompt('Create your Fit Log Account on AMRAPLife', '', 'In order to record and report your metrics you must first create a Fit Log account on AMRAPLife.')
+		add_login_prompt('Create your Life Meter Account on AMRAPLife', '', 'In order to record and report your metrics you must first create a Life Meter account on AMRAPLife.')
 
 	end
 
