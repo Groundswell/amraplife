@@ -53,6 +53,11 @@ class ObservationAlexaSkillsController < ActionController::Base
 	end
 
 	def login
+		if current_user.present?
+			login_success
+			return
+		end
+
 		redirect_uri = params[:redirect_uri]
 		session[:dest] = login_success_observation_alexa_skills_url( client_id: params[:client_id], state: params[:state], redirect_uri: redirect_uri )
 
