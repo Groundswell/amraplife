@@ -156,27 +156,4 @@ class ObservationSlackBotsController < ActionController::Base
 		true
 	end
 
-	def users_identity( user_id )
-
-
-		query_headers = {
-			# content_type: "application/json; charset=utf-8",
-		}
-
-		query_body = {
-			token: @team.properties['bot_access_token'],
-			channel: args[:channel],
-			text: text,
-			username: 'FitLog',
-			as_user: false,
-		}
-
-		api_endpoint = 'https://slack.com/api/chat.postMessage'
-
-		json_string_response = RestClient.post( api_endpoint, query_body, query_headers )
-		puts json_string_response
-
-		true
-	end
-
 end
