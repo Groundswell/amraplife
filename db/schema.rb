@@ -11,7 +11,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+<<<<<<< HEAD
 ActiveRecord::Schema.define(version: 20170628222346) do
+=======
+ActiveRecord::Schema.define(version: 20170628145900) do
+>>>>>>> 9f852f652560686facb36f444db004c565ba014a
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -439,8 +443,8 @@ ActiveRecord::Schema.define(version: 20170628222346) do
     t.string   "content"
     t.float    "value"
     t.float    "sub_value",     default: 0.0
-    t.string   "unit",          default: "sec"
-    t.string   "sub_unit",      default: "rep"
+    t.string   "unit",          default: "secs"
+    t.string   "sub_unit",      default: "reps"
     t.string   "rx"
     t.text     "notes"
     t.datetime "started_at"
@@ -553,10 +557,8 @@ ActiveRecord::Schema.define(version: 20170628222346) do
     t.text     "shopify_code"
     t.string   "title"
     t.string   "caption"
-    t.integer  "seq",             default: 1
     t.string   "slug"
     t.string   "avatar"
-    t.string   "brand_model"
     t.integer  "status",          default: 0
     t.text     "description"
     t.text     "content"
@@ -575,10 +577,10 @@ ActiveRecord::Schema.define(version: 20170628222346) do
     t.integer  "collection_id"
     t.integer  "shipping_price",  default: 0
     t.string   "tax_code",        default: "00000"
+    t.integer  "seq",             default: 1
   end
 
   add_index "products", ["category_id"], name: "index_products_on_category_id", using: :btree
-  add_index "products", ["seq"], name: "index_products_on_seq", using: :btree
   add_index "products", ["slug"], name: "index_products_on_slug", unique: true, using: :btree
   add_index "products", ["status"], name: "index_products_on_status", using: :btree
   add_index "products", ["tags"], name: "index_products_on_tags", using: :gin
@@ -606,13 +608,36 @@ ActiveRecord::Schema.define(version: 20170628222346) do
   add_index "recipes", ["slug"], name: "index_recipes_on_slug", unique: true, using: :btree
   add_index "recipes", ["tags"], name: "index_recipes_on_tags", using: :gin
 
+  create_table "team_users", force: :cascade do |t|
+    t.integer  "team_id"
+    t.integer  "user_id"
+    t.string   "slack_user_id"
+    t.hstore   "properties",    default: {}
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "team_users", ["slack_user_id", "user_id"], name: "index_team_users_on_slack_user_id_and_user_id", using: :btree
+  add_index "team_users", ["team_id"], name: "index_team_users_on_team_id", using: :btree
+  add_index "team_users", ["user_id"], name: "index_team_users_on_user_id", using: :btree
+
+  create_table "teams", force: :cascade do |t|
+    t.string   "name"
+    t.string   "slack_team_id"
+    t.hstore   "properties",    default: {}
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "teams", ["name"], name: "index_teams_on_name", using: :btree
+  add_index "teams", ["slack_team_id"], name: "index_teams_on_slack_team_id", using: :btree
+
   create_table "terms", force: :cascade do |t|
     t.string   "title"
     t.string   "slug"
-    t.text     "description"
     t.text     "content"
-    t.text     "aliases",     default: [], array: true
-    t.integer  "status",      default: 1
+    t.text     "aliases",    default: [], array: true
+    t.integer  "status",     default: 1
     t.datetime "created_at"
     t.datetime "updated_at"
   end

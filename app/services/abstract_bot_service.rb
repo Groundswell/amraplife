@@ -19,10 +19,12 @@ class AbstractBotService
 		@response	= args[:response] || :puts
 		@params 	= args[:params]
 		@user 		= args[:user]
+		@dialog		= args[:dialog] || {}
 
 	end
 
 	def respond_to_text( text, args = {} )
+		text = text.strip
 		compiled_intents = self.class.compiled_intents
 
 		requested_intent_name = nil
@@ -36,6 +38,8 @@ class AbstractBotService
 			end
 		end
 
+		puts requested_intent_name
+
 		if requested_intent_name.present?
 			requested_intent = compiled_intents[requested_intent_name.to_sym]
 
@@ -45,6 +49,9 @@ class AbstractBotService
 			end
 
 			self.send( requested_intent_name )
+			return true
+		else
+			return false
 		end
 	end
 
@@ -88,8 +95,8 @@ class AbstractBotService
 					regex = (regex || '') + utterance_regex
 				end
 
-				regex = '/^' + regex + '$/i'
-				@compiled_intents[intent_name] = intent.merge( regex: Regexp.new( regex ) )
+				regex = '^(' + regex + ')$'
+				@compiled_intents[intent_name] = intent.merge( regex: Regexp.new( regex, true ) )
 			end
 
 		end
@@ -177,6 +184,10 @@ class AbstractBotService
 		else
 			response.add_session_attribute( key, value )
 		end
+	end
+
+	def get_dialog( key, args = {} )
+		return @dialog[key.to_sym] || args[:default]
 	end
 
 	def params

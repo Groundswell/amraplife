@@ -2,6 +2,13 @@
 class ObservationAlexaSkillsController < ActionController::Base
 	protect_from_forgery :except => [:create]
 
+	DEFAULT_DIALOG = {
+		help: "To log fitness information just say \"Alexa tell Fit Log I ate 100 calories\", or use a fitness timer by saying \"Alexa ask Fit Log to start run timer\".  Fit Log will remember, report and provide insights into what you have told it.",
+		launch_user: "Welcome to Fit Log, an AMRAP Life skill.  To log fitness information just say \"Alexa tell Fit Log I ate 100 calories\", or use a fitness timer by saying \"Alexa ask Fit Log to start run timer\".  Fit Log will remember, report and provide insights into what you have hold it.",
+		launch_guest: "Welcome to Fit Log, an AMRAP Life skill.  To log fitness information just say \"Alexa tell Fit Log I ate 100 calories\", or use a fitness timer by saying \"Alexa ask Fit Log to start run timer\".  Fit Log will remember, report and provide insights into what you have hold it.  To get started open your Alexa app, and complete the Fit Log skill registration on AMRAPLife.",
+		login: "Open your Alexa app, and complete the Fit Log skill registration on AMRAP Life to continue",
+	}
+
 	def create
 		# @todo Check that it's a valid Alexa request
 		@alexa_request	= AlexaRubykit.build_request( JSON.parse(request.raw_post) )
@@ -11,8 +18,9 @@ class ObservationAlexaSkillsController < ActionController::Base
 		@alexa_params	= Hash[*@alexa_request.slots.values.collect{|values| [values['name'].to_sym,values['value']]}.flatten] if @alexa_request.respond_to?(:slots) && @alexa_request.slots.present?
 
 		@alexa_user = User.where( authorization_code: @alexa_session.access_token ).first if @alexa_session.access_token.present?
+		@alexa_user ||= SwellMedia::OauthCredential.where( token: @alexa_session.access_token, provider: 'amazon:alexa' ).first.try(:user) if @alexa_session.access_token.present?
 
-		@bot_service = ObservationBotService.new( request: @alexa_request, response: self, session: @alexa_session, params: @alexa_params, user: @alexa_user )
+		@bot_service = ObservationBotService.new( request: @alexa_request, response: self, session: @alexa_session, params: @alexa_params, user: @alexa_user, dialog: DEFAULT_DIALOG )
 
 		if (@alexa_request.type == 'SESSION_ENDED_REQUEST')
 			# Wrap up whatever we need to do.
@@ -45,6 +53,11 @@ class ObservationAlexaSkillsController < ActionController::Base
 	end
 
 	def login
+		if current_user.present?
+			login_success
+			return
+		end
+
 		redirect_uri = params[:redirect_uri]
 		session[:dest] = login_success_observation_alexa_skills_url( client_id: params[:client_id], state: params[:state], redirect_uri: redirect_uri )
 
@@ -60,9 +73,10 @@ class ObservationAlexaSkillsController < ActionController::Base
 		redirect_uri = params[:redirect_uri]
 
 		if valid_redirect_urls.include?( redirect_uri )
-			current_user.update( authorization_code: current_user.authorization_code || "#{current_user.name || current_user.id}-#{SecureRandom.hex(64)}" )
+			oauth_credential = current_user.oauth_credentials.where( provider: 'amazon:alexa' ).first_or_initialize
+			oauth_credential.update( token: "#{current_user.name || current_user.id}-#{SecureRandom.hex(64)}" ) if oauth_credential.token.blank?
 
-			redirect_uri = redirect_uri+"#"+{ state: params[:state], access_token: current_user.authorization_code, token_type: "Bearer" }.to_query
+			redirect_uri = redirect_uri+"#"+{ state: params[:state], access_token: oauth_credential.token, token_type: "Bearer" }.to_query
 
 			redirect_to redirect_uri
 		else
