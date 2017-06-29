@@ -66,6 +66,11 @@ class ObservationSlackBotsController < ActionController::Base
 	end
 
 	def login
+		if current_user.present?
+			login_success
+			return
+		end
+
 		session[:dest] = login_success_observation_alexa_skills_url( team_id: params[:team_id], user: params[:user], token: params[:token] )
 
 		redirect_to main_app.register_path()
