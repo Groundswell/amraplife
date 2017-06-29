@@ -23,6 +23,7 @@ class AbstractBotService
 	end
 
 	def respond_to_text( text, args = {} )
+		text = text.strip
 		compiled_intents = self.class.compiled_intents
 
 		requested_intent_name = nil
@@ -93,8 +94,8 @@ class AbstractBotService
 					regex = (regex || '') + utterance_regex
 				end
 
-				regex = '/^' + regex + '$/i'
-				@compiled_intents[intent_name] = intent.merge( regex: Regexp.new( regex ) )
+				regex = '^(' + regex + ')$'
+				@compiled_intents[intent_name] = intent.merge( regex: Regexp.new( regex, true ) )
 			end
 
 		end
