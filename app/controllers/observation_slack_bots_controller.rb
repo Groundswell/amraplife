@@ -49,8 +49,9 @@ class ObservationSlackBotsController < ActionController::Base
 
 		puts "team_name #{team_name}, team_id #{team_id}"
 
-		@team = Team.find_by( slack_team_id: params[:team_id] )
-		@team ||= Team.create(
+		@team = Team.find_by( slack_team_id: team_id )
+		@team ||= Team.new()
+		@team.update(
 			name: team_name,
 			slack_team_id: team_id,
 			properties: {
@@ -58,7 +59,8 @@ class ObservationSlackBotsController < ActionController::Base
 				'auth_test_response' => auth_test_response.to_json,
 				'bot_user_id' => bot_user_id,
 				'bot_access_token' => bot_access_token,
-			} )
+			}
+		)
 
 		puts "@team.name #{@team.name}, @team.slack_team_id #{@team.slack_team_id}"
 
