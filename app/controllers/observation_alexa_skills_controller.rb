@@ -11,6 +11,7 @@ class ObservationAlexaSkillsController < ActionController::Base
 		@alexa_params	= Hash[*@alexa_request.slots.values.collect{|values| [values['name'].to_sym,values['value']]}.flatten] if @alexa_request.respond_to?(:slots) && @alexa_request.slots.present?
 
 		@alexa_user = User.where( authorization_code: @alexa_session.access_token ).first if @alexa_session.access_token.present?
+		@alexa_user ||= SwellMedia::OauthCredential.where( token: @alexa_session.access_token, provider: 'amazon:alexa' ).first.try(:user) if @alexa_session.access_token.present?
 
 		@bot_service = ObservationBotService.new( request: @alexa_request, response: self, session: @alexa_session, params: @alexa_params, user: @alexa_user )
 
@@ -60,9 +61,10 @@ class ObservationAlexaSkillsController < ActionController::Base
 		redirect_uri = params[:redirect_uri]
 
 		if valid_redirect_urls.include?( redirect_uri )
-			current_user.update( authorization_code: current_user.authorization_code || "#{current_user.name || current_user.id}-#{SecureRandom.hex(64)}" )
+			oauth_credential = current_user.oauth_credentials.where( provider: 'amazon:alexa' ).first_or_initialize
+			oauth_credential.update( token: "#{current_user.name || current_user.id}-#{SecureRandom.hex(64)}" ) if oauth_credential.token.blank?
 
-			redirect_uri = redirect_uri+"#"+{ state: params[:state], access_token: current_user.authorization_code, token_type: "Bearer" }.to_query
+			redirect_uri = redirect_uri+"#"+{ state: params[:state], access_token: oauth_credential.token, token_type: "Bearer" }.to_query
 
 			redirect_to redirect_uri
 		else

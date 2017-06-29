@@ -29,10 +29,10 @@ class ObservationBotService < AbstractBotService
 		},
 		log_metric_observation: {
 			utterances: [
-				'i {action} {value} {unit}',
 				'to log {value} {unit}',
-				'log {action} {value} {unit}',
+				'i {action} {value} {unit}',
 				'log {value} {unit}',
+				'log {action} {value} {unit}',
 			],
 			slots: {
 				value: 'Number',
@@ -42,15 +42,15 @@ class ObservationBotService < AbstractBotService
 		},
 		log_start_observation: {
 			utterances: [
+				"I am starting a {action}"
+				"to start {action} timer",
 				"to start {action}",
-		        "start {action}",
-		        "begin {action}",
 		        "to begin {action}",
 		        "to time {action}",
-		        "time {action}",
 		        "start timing {action}",
-		        "to start {action} timer",
-		        "I am starting a {action}"
+		        "start {action}",
+		        "begin {action}",
+		        "time {action}",
 			],
 			slots: {
 				action: 'Action',

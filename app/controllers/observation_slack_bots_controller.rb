@@ -14,10 +14,8 @@ class ObservationSlackBotsController < ActionController::Base
 		if params[:event].present? && params[:event][:type] == 'message' && params[:event][:bot_id].blank? && ENV['SLACK_FITLOG_BOT_VERIFICATION_TOKEN'] == params[:token]
 
 			@team = Team.find_by( slack_team_id: params[:team_id] )
-
-			if @team.present?
-				@user = @team.team_users.find_by( slack_user_id: params[:event][:user] ).try(:user)
-			end
+			@user = SwellMedia::OauthCredential.where( token: params[:event][:user], provider: "#{params[:team_id]}.slack" ).first.try(:user)
+			@user ||= @team.team_users.find_by( slack_user_id: params[:event][:user] ).try(:user) if @team.present?
 
 			@bot_service = ObservationBotService.new( response: self, user: @user, params: { event: params[:event] } )
 
@@ -46,6 +44,7 @@ class ObservationSlackBotsController < ActionController::Base
 		team_id = auth_test_response[:team_id] || oauth_access_response[:team_id]
 		bot_user_id = ( oauth_access_response[:bot].present? ? oauth_access_response[:bot][:bot_user_id] : nil ) || ( auth_test_response[:bot].present? ? auth_test_response[:bot][:bot_user_id] : nil )
 		bot_access_token = ( oauth_access_response[:bot].present? ? oauth_access_response[:bot][:bot_access_token] : nil ) || ( auth_test_response[:bot].present? ? auth_test_response[:bot][:bot_access_token] : nil )
+		access_token = oauth_access_response[:access_token]
 
 		@team = Team.find_by( slack_team_id: team_id )
 		@team ||= Team.new( properties: {} )
@@ -57,6 +56,7 @@ class ObservationSlackBotsController < ActionController::Base
 				'auth_test_response' => auth_test_response.to_json,
 				'bot_user_id' => bot_user_id,
 				'bot_access_token' => bot_access_token,
+				'access_token' => access_token,
 			})
 		)
 
