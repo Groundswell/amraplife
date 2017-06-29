@@ -1,6 +1,8 @@
 %h1
-	Editing Observation of
-	= @observation.observed.title
+	Editing Observation 
+	- if @observation.observed.present?
+		of
+		= @observation.observed.title
 .main-box.clearfix
 	.main-box-header.clearfix
 		

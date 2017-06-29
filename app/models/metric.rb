@@ -1,8 +1,9 @@
 class Metric < ActiveRecord::Base
 
 	before_create 	:set_aliases
-
 	validate 		:unique_aliases
+
+	enum visibility: { 'private' => 0, 'trainer' => 1, 'team' => 3, 'community' => 5, 'public' => 10 }
 
 	belongs_to :movement
 	belongs_to :user
@@ -31,6 +32,10 @@ class Metric < ActiveRecord::Base
 
 	def slugger
 		"#{self.title}#{self.user_id}"
+	end
+
+	def total_for_day( day=Time.zone.now )
+		self.observations.for_day( day ).sum( :value )
 	end
 
 	private

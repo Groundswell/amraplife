@@ -31,19 +31,33 @@ class Observation < ActiveRecord::Base
 
 
 	def self.new_from_string( str, opts={} )
+		raw_input = str
 		# parse srings of the form 'activity_code=234:23.43'
+
+		# for simplicity, just strip leading record or log
+		str = str.gsub( /\A(record|log)/, '' ).strip
+
+		if str.match( /\Ai*\s*ate/i )
+			# ate something.... send it to the nutrition service
+		end 
 
 		# one or more word character(s) followed by zero or more whitespace, 
 		# then an = or 'is' or 'for'
 		# then possibly more whitespace, then one or more numbers with possibly an
 		# ampersand, colons, and maybe training an 'rx'
 		# for now, just look at beginning of string (the \A). Can remove it to allow many obs from one str
-		matches = str.match(/(\A\w+\s* (=|is|for) \s*[0-9a-zA-Z&:\.%]+\s*[rx]*)/ix )
+		matches = str.match(/(\A\w+\s* (=|is|was|for) \s*[0-9a-zA-Z&:\.%]+\s*[rx]*)/ix )
 		if matches.present?
 			# split on =, see if left-hand matches a metric, parse right-hand values and record
 			separator = matches.captures[1]
-			key = matches.captures[0].split( separator )[0].strip
-			val = matches.captures[0].split( separator )[1].strip
+
+			if separator == 'for'
+				key = matches.captures[0].split( separator )[1].strip
+				val = matches.captures[0].split( separator )[0].strip
+			else
+				key = matches.captures[0].split( separator )[0].strip
+				val = matches.captures[0].split( separator )[1].strip
+			end
 
 			if match = val.match( /[a-zA-Z%]+(\s|\z)/ )
 				unit = match.to_s.strip.singularize
@@ -76,7 +90,7 @@ class Observation < ActiveRecord::Base
 				end
 			end
 
-			return Observation.new( user: opts[:user], observed: observed, value: val, notes: matches.post_match )
+			return Observation.new( user: opts[:user], observed: observed, value: val, notes: matches.post_match, raw_input: raw_input )
 
 		# verb condition - e.g. "ran 3miles"
 		# string begins with congruent word characters, then whitespace, 
@@ -118,7 +132,7 @@ class Observation < ActiveRecord::Base
 			end
 
 
-			return Observation.new( user: opts[:user], observed: observed, value: val, notes: matches.post_match )
+			return Observation.new( user: opts[:user], observed: observed, value: val, notes: matches.post_match, raw_input: raw_input )
 
 		elsif matches = str.match( /(\Astarted|\Astart)\s+(\w+)/ )
 			# start something
@@ -137,7 +151,7 @@ class Observation < ActiveRecord::Base
 				end
 			end
 
-			return Observation.new( user: opts[:user], observed: observed, started_at: Time.zone.now, notes: matches.post_match )
+			return Observation.new( user: opts[:user], observed: observed, started_at: Time.zone.now, notes: matches.post_match, raw_input: raw_input )
 
 		elsif matches = str.match( /(\Astopped|\Astop)\s+(\w+)/ )
 			# stop something
@@ -150,7 +164,7 @@ class Observation < ActiveRecord::Base
 		end
 
 		# nothing matches -- it's just a note
-		return Observation.new( user: opts[:user], notes: str )
+		return Observation.new( user: opts[:user], notes: str, raw_input: raw_input )
 
 
 	end
@@ -202,7 +216,7 @@ class Observation < ActiveRecord::Base
 
 		def set_defaults
 			self.recorded_at ||= Time.zone.now
-			self.started_at ||= Time.zone.now
+			#self.started_at ||= Time.zone.now
 
 			if self.observed.try( :unit ).present?
 				self.unit = self.observed.unit

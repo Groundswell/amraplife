@@ -1,0 +1,37 @@
+<script>
+$(function($) {
+	$('.chart').easyPieChart({
+		easing: 'easeOutBounce',
+		onStep: function(from, to, percent) {
+			$(this.el).find('.percent').text(Math.round(percent));
+		},
+		barColor: '#3498db',
+		trackColor: '#f2f2f2',
+		scaleColor: false,
+		lineWidth: 8,
+		size: 130,
+		animate: 1500
+	});
+
+	$(function(){
+
+    $('[data-sparkline]').each(initSparkLine);
+	    function initSparkLine() {
+	      var $element = $(this),
+	          options = $element.data(),
+	          values  = options.values && options.values.split(',');
+
+	      options.type = options.type || 'bar'; // default chart is bar
+	      options.disableHiddenCheck = true;
+
+	      $element.sparkline(values, options);
+
+	      if(options.resize) {
+	        $(window).resize(function(){
+	          $element.sparkline(values, options);
+	        });
+	      }
+	    }
+  	});
+});
+</script>

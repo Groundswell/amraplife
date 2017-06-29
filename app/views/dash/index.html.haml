@@ -1,19 +1,123 @@
 
 .row
+	.col-sm-12.hidden-lg.hidden-md
+		%h3 Quick Add
+		= form_for Observation.new, html: { style: 'margin: auto 1em;' } do |f|
+			= f.text_field :content, class: 'form-control', placeholder: 'Activity=Value Notes'
+			.pull-right= f.submit 'Quick Add', class: 'btn btn-primary btn-lg', style: 'margin-top: 0.5em;'
+.row
 	.col-sm-12
-		- if @observations.present?
-			%center
-				%h1
-					Activity Feed
+		.row
+			.col-xs-6
+				%h1 
+					- if @day.to_date == Date.current
+						Today
+					- else
+						= { '0' => 'Sun', '1' => 'Mon', '2' => 'Tues', '3' => 'Wed', '4' => 'Thurs', '5' => 'Fri', '6' => 'Sat' }[@day.wday.to_s]
+					- if @day.to_date == Date.current
+						= "(#{{ '0' => 'Sun', '1' => 'Mon', '2' => 'Tues', '3' => 'Wed', '4' => 'Thurs', '5' => 'Fri', '6' => 'Sat' }[@day.wday.to_s]} #{@day.to_s( :slashed )})"
+					- else
+						= "(#{@day.to_s( :slashed )})"
 
-			= raw paginate @observations
+			.col-xs-2.col-sm-1.col-sm-offset-1
+				%h4
+					%a{ href: dash_index_path( day: @day.yesterday ) }
+						%i.fa.fa-chevron-left
+			.col-xs-2.col-sm-1
+				%h4
+					%a{ href: dash_index_path( day: Time.zone.now) }
+						%i.fa.fa-calendar
+			.col-xs-2.col-sm-1
+				%h4
+					%a{ href: dash_index_path( day: @day.tomorrow ) }
+						%i.fa.fa-chevron-right
+						
+		.row
+			.col-sm-6.col-xs-12
+				.main-box.clearfix.project-box.purple-box
+					.main-box-body.clearfix
+						.project-box-header.purple-bg
+							.name
+								%a{ href: '#' }
+									Recent Activity
+						.project-box-content
+							- if @observations.present?
+								= raw paginate @observations
+								.main-box.feed
+									.main-box-body.clearfix
+										%ul
+										- @observations.each do |observation|
+											= render 'observations/feed_item', observation: observation
+							- else
+								%center
+									%h1
+										No Activity Yet
+			- @metrics.each do |metric|
+				.col-sm-6.col-xs-12
+					.main-box.clearfix.project-box.green-box
+						.main-box-body.clearfix
+							.project-box-header.green-bg
+								.name
+									%a{ href: '#' }
+										%i.fa.fa-bullseye
+										= metric.title
+							.project-box-footer.clearfix
+								%a{ href: '#' }
+									%span.value
+										= metric.observations.last.try( :human_value )
+									%span.label
+										Current
+								%a{ href: '#' }
+									%span.value
+										= 180
+									%span.label
+										Target
+								%a{ href: '#' }
+									%span.value
+										%i.fa.fa-plus-square
+									%span.label
+										Record
+							-#.project-box-content
+								%span.chart{ data: { percent: '0.87', 'bar-color' => '#2ECC71' } }
+									%span.percent
+										"%"
+										%br
+									%span.lbl
+										Nice!
+							- if metric.observations.count > 3
+								.project-box-content
+									%h4 Recent Observations
+								.project-box-footer.clearfix
+									%span.spark{ style: 'text-align:center;' }
+										%div{ data: { sparkline: '', type: :line, 'line-color' => '#2ECC71', height: 60, width: '70%', 'line-width' => 2, 'chart-range-min' => "#{metric.observations.order( recorded_at: :desc ).limit( 10 ).minimum( :value )}", 'chart-range-max' => "#{metric.observations.order( recorded_at: :desc ).limit( 10 ).maximum( :value )}", 'spot-color' => '#888', 'min-spot-color' => '#2ECC71', 'max-spot-color' => '#2ECC71', 'fill-color' => '', 'highlight-line-color' => '#fff', 'spot-radius' => 3, resize: true, values: "#{metric.observations.order( recorded_at: :desc ).limit( 10 ).pluck( :value ).reverse.join(',')}" } }
+							
+							.project-box-ultrafooter.clearfix
+								.pull-right.btn-group
+									%a.dropdown-toggle{ href: '#', data: { toggle: :dropdown } }
+										%i.fa.fa-cog
+										%b.caret
+									%ul.dropdown-menu
+										%li
+											%a{ href: '#' }
+												%i.fa.fa-plus-square
+												Record
+										%li
+											%a{ href: '#' }
+												%i.fa.fa-pencil
+												Edit
+										%li
+											%a{ href: '#' }
+												%i.fa.fa-eye
+												Show
+										%li.divider
+										%li
+											%a{ href: '#', data: { method: 'delete', confirm: 'Are you sure?' } }
+												%i.fa.fa-trash-o
+												Delete!
 
-			.main-box.feed
-				.main-box-body.clearfix
-					%ul
-					- @observations.each do |observation|
-						= render 'observations/feed_item', observation: observation
-		- else
-			%center
-				%h1
-					No Activity Yet
+
+= render 'dash/widget_scripts'
+
+
+
+		

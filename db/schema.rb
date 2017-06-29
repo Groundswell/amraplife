@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170627181527) do
+ActiveRecord::Schema.define(version: 20170628222346) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -355,11 +355,15 @@ ActiveRecord::Schema.define(version: 20170627181527) do
     t.integer "movement_id"
     t.string  "title"
     t.string  "slug"
-    t.text    "aliases",     default: [],    array: true
-    t.string  "unit",        default: "sec"
+    t.text    "aliases",       default: [],          array: true
+    t.string  "unit",          default: "sec"
     t.integer "user_id"
     t.string  "metric_type"
     t.text    "description"
+    t.string  "target_period"
+    t.string  "target_type",   default: "sum_value"
+    t.float   "target_min",    default: 0.0
+    t.float   "target_max",    default: 0.0
   end
 
   add_index "metrics", ["movement_id"], name: "index_metrics_on_movement_id", using: :btree
@@ -445,6 +449,7 @@ ActiveRecord::Schema.define(version: 20170627181527) do
     t.hstore   "properties",    default: {}
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "raw_input"
   end
 
   add_index "observations", ["parent_id"], name: "index_observations_on_parent_id", using: :btree

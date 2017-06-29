@@ -17,7 +17,7 @@
 				- @observations.each do |observation|
 					%tr
 						%td
-							= link_to observation.observed.try(:title) || 'n/a', edit_observation_path( observation )
+							= link_to observation.observed.try(:title) || 'Note', edit_observation_path( observation )
 						%td
 							= observation.human_value
 						%td
