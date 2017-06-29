@@ -66,6 +66,12 @@ class ObservationSlackBotsController < ActionController::Base
 	end
 
 	def login
+		@team = Team.find_by( slack_team_id: params[:team_id] )
+		unless @team.present?
+			set_flash( 'Before registering, you must first install the FitLog app on Slack.' )
+			redirect_to '/'
+		end
+
 		if current_user.present?
 			login_success
 			return
@@ -77,8 +83,11 @@ class ObservationSlackBotsController < ActionController::Base
 	end
 
 	def login_success
-		oauth_credential = current_user.oauth_credentials.where( provider: "#{params[:team_id]}.slack", uid: params[:user] ).first_or_initialize
+		@team = Team.find_by( slack_team_id: params[:team_id] )
+		oauth_credential = current_user.oauth_credentials.where( provider: "#{@team.slack_team_id}.slack", uid: params[:user] ).first_or_initialize
 		oauth_credential.save
+
+		@team.team_users.where( user: current_user, slack_user_id: params[:user] ).first_or_create
 		#oauth_credential.update( token: "#{current_user.name || current_user.id}-#{SecureRandom.hex(64)}" ) if oauth_credential.token.blank?
 		set_flash( 'Registration complete.  Now start logging!' )
 		redirect_to '/'
