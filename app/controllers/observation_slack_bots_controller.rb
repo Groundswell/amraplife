@@ -10,7 +10,8 @@ class ObservationSlackBotsController < ActionController::Base
 			return
 		end
 
-		if params[:event].present? && params[:event][:type] == 'message' && ENV['SLACK_FITLOG_BOT_VERIFICATION_TOKEN'] == params[:token]
+		# only respond to message, and not to bots.
+		if params[:event].present? && params[:event][:type] == 'message' && params[:event][:bot_id].blank? && ENV['SLACK_FITLOG_BOT_VERIFICATION_TOKEN'] == params[:token]
 
 			@team = Team.find_by( slack_team_id: params[:team_id] )
 
@@ -33,37 +34,29 @@ class ObservationSlackBotsController < ActionController::Base
 		code = params[:code]
 		state = params[:state]
 
-		puts "auth_callback.code #{code} #{state}"
-		puts "params.to_json #{params.to_json}"
-
 		oauth_access_response = JSON.parse( RestClient.post( 'https://slack.com/api/oauth.access', { code: code, client_id: ENV['SLACK_FITLOG_BOT_CLIENT_ID'], client_secret: ENV['SLACK_FITLOG_BOT_CLIENT_SECRET'] } ), :symbolize_names => true )
-		puts "oauth_access_response.to_json #{oauth_access_response.to_json}"
 
 		auth_test_response = JSON.parse( RestClient.post( 'https://slack.com/api/auth.test', { token: oauth_access_response[:access_token] } ), :symbolize_names => true )
-		puts "auth_test_response.to_json #{auth_test_response.to_json}"
 
 		team_name = oauth_access_response[:team_name] || auth_test_response[:team_name]
 		team_id = auth_test_response[:team_id] || oauth_access_response[:team_id]
 		bot_user_id = ( oauth_access_response[:bot].present? ? oauth_access_response[:bot][:bot_user_id] : nil ) || ( auth_test_response[:bot].present? ? auth_test_response[:bot][:bot_user_id] : nil )
 		bot_access_token = ( oauth_access_response[:bot].present? ? oauth_access_response[:bot][:bot_access_token] : nil ) || ( auth_test_response[:bot].present? ? auth_test_response[:bot][:bot_access_token] : nil )
 
-		puts "team_name #{team_name}, team_id #{team_id}"
-
 		@team = Team.find_by( slack_team_id: team_id )
-		@team ||= Team.new()
+		@team ||= Team.new( properties: {} )
 		@team.update(
 			name: team_name,
 			slack_team_id: team_id,
-			properties: {
+			properties: @team.properties.merge({
 				'oauth_access_response' => oauth_access_response.to_json,
 				'auth_test_response' => auth_test_response.to_json,
 				'bot_user_id' => bot_user_id,
 				'bot_access_token' => bot_access_token,
-			}
+			})
 		)
 
-		puts "@team.name #{@team.name}, @team.slack_team_id #{@team.slack_team_id}"
-
+		set_flash( 'FitLog Slack Bot was Successfully Installed.' )
 		redirect_to '/'
 
 	end
