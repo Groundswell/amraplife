@@ -599,6 +599,19 @@ ActiveRecord::Schema.define(version: 20170628145900) do
   add_index "recipes", ["slug"], name: "index_recipes_on_slug", unique: true, using: :btree
   add_index "recipes", ["tags"], name: "index_recipes_on_tags", using: :gin
 
+  create_table "team_users", force: :cascade do |t|
+    t.integer  "team_id"
+    t.integer  "user_id"
+    t.string   "slack_user_id"
+    t.hstore   "properties",    default: {}
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "team_users", ["slack_user_id", "user_id"], name: "index_team_users_on_slack_user_id_and_user_id", using: :btree
+  add_index "team_users", ["team_id"], name: "index_team_users_on_team_id", using: :btree
+  add_index "team_users", ["user_id"], name: "index_team_users_on_user_id", using: :btree
+
   create_table "teams", force: :cascade do |t|
     t.string   "name"
     t.string   "slack_team_id"
