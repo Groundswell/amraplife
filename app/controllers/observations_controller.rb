@@ -5,17 +5,17 @@ class ObservationsController < ApplicationController
 
 	layout 'dash'
 
-	def create
+	# def create
 
-		@observation = Observation.new_from_string( params[:observation][:content], user: current_user )
+	# 	@observation = Observation.new_from_string( params[:observation][:content], user: current_user )
 		
-		if @observation.save
-			set_flash "Observation recorded"
-		else
-			set_flash "Observation could not be saved", :danger, @observation
-		end
-		redirect_to :back
-	end
+	# 	if @observation.save
+	# 		set_flash "Observation recorded"
+	# 	else
+	# 		set_flash "Observation could not be saved", :danger, @observation
+	# 	end
+	# 	redirect_to :back
+	# end
 
 	def destroy
 		@observation.destroy
@@ -25,6 +25,11 @@ class ObservationsController < ApplicationController
 
 	def index
 		@observations = current_user.observations.order( recorded_at: :desc ).page( params[:page] )
+	end
+
+	def stop
+		@observation.stop!
+		redirect_to :back
 	end
 
 	def update

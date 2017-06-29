@@ -1,7 +1,7 @@
 
 class Observation < ActiveRecord::Base
 
-	attr_accessor :content, :stop, :start
+	# attr_accessor :content, :stop, :start
 
 	before_create 	:set_defaults
 	validate 		:gotta_have_value_or_notes
@@ -90,7 +90,7 @@ class Observation < ActiveRecord::Base
 				end
 			end
 
-			return Observation.new( user: opts[:user], observed: observed, value: val, notes: matches.post_match, raw_input: raw_input )
+			return Observation.new( user: opts[:user], observed: observed, value: val, notes: matches.post_match )
 
 		# verb condition - e.g. "ran 3miles"
 		# string begins with congruent word characters, then whitespace, 
@@ -132,7 +132,7 @@ class Observation < ActiveRecord::Base
 			end
 
 
-			return Observation.new( user: opts[:user], observed: observed, value: val, notes: matches.post_match, raw_input: raw_input )
+			return Observation.new( user: opts[:user], observed: observed, value: val, notes: matches.post_match )
 
 		elsif matches = str.match( /(\Astarted|\Astart)\s+(\w+)/ )
 			# start something
@@ -151,14 +151,14 @@ class Observation < ActiveRecord::Base
 				end
 			end
 
-			return Observation.new( user: opts[:user], observed: observed, started_at: Time.zone.now, notes: matches.post_match, raw_input: raw_input )
+			return Observation.new( user: opts[:user], observed: observed, started_at: Time.zone.now, notes: matches.post_match )
 
 		elsif matches = str.match( /(\Astopped|\Astop)\s+(\w+)/ )
 			# stop something
 			observed = opts[:user].metrics.where( ":term = ANY( aliases )", term: matches.captures.second ).last
 			obs = opts[:user].observations.where( observed_type: 'Metric', observed_id: observed.try( :id ) ).where( 'started_at is not null' ).order( started_at: :asc ).last
 			return Observation.new( errors: "No Active Timer" ) if obs.nil?
-			obs.stop
+			obs.stop!
 			obs.notes += matches.post_match if matches.post_match.present?
 			return obs
 		end
@@ -193,10 +193,11 @@ class Observation < ActiveRecord::Base
 		end
 	end
 
-	def stop
+	def stop!
 		self.ended_at = Time.zone.now
 		self.recorded_at = Time.zone.now
 		self.value = self.ended_at.to_i - self.started_at.to_i
+		self.save
 	end
 
 	def to_s

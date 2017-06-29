@@ -311,7 +311,7 @@ class ObservationBotService < AbstractBotService
 		# observation = user.observations.where( observed_type: 'Metric', observed: observed_metric ).where( 'started_at is not null' ).order( started_at: :asc ).last
 
 		if observation.present?
-			observation.stop
+			observation.stop!
 			add_speech("Stopping your #{params[:action]} timer at #{observation.value.to_i} #{observation.unit}")
 		else
 			add_speech("I can't find any running #{params[:action]} timers.")

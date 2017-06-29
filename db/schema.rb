@@ -11,11 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-<<<<<<< HEAD
-ActiveRecord::Schema.define(version: 20170628222346) do
-=======
-ActiveRecord::Schema.define(version: 20170628145900) do
->>>>>>> 9f852f652560686facb36f444db004c565ba014a
+ActiveRecord::Schema.define(version: 20170629224904) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -443,8 +439,8 @@ ActiveRecord::Schema.define(version: 20170628145900) do
     t.string   "content"
     t.float    "value"
     t.float    "sub_value",     default: 0.0
-    t.string   "unit",          default: "secs"
-    t.string   "sub_unit",      default: "reps"
+    t.string   "unit",          default: "sec"
+    t.string   "sub_unit",      default: "rep"
     t.string   "rx"
     t.text     "notes"
     t.datetime "started_at"
@@ -453,7 +449,6 @@ ActiveRecord::Schema.define(version: 20170628145900) do
     t.hstore   "properties",    default: {}
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "raw_input"
   end
 
   add_index "observations", ["parent_id"], name: "index_observations_on_parent_id", using: :btree
@@ -557,8 +552,10 @@ ActiveRecord::Schema.define(version: 20170628145900) do
     t.text     "shopify_code"
     t.string   "title"
     t.string   "caption"
+    t.integer  "seq",             default: 1
     t.string   "slug"
     t.string   "avatar"
+    t.string   "brand_model"
     t.integer  "status",          default: 0
     t.text     "description"
     t.text     "content"
@@ -577,10 +574,10 @@ ActiveRecord::Schema.define(version: 20170628145900) do
     t.integer  "collection_id"
     t.integer  "shipping_price",  default: 0
     t.string   "tax_code",        default: "00000"
-    t.integer  "seq",             default: 1
   end
 
   add_index "products", ["category_id"], name: "index_products_on_category_id", using: :btree
+  add_index "products", ["seq"], name: "index_products_on_seq", using: :btree
   add_index "products", ["slug"], name: "index_products_on_slug", unique: true, using: :btree
   add_index "products", ["status"], name: "index_products_on_status", using: :btree
   add_index "products", ["tags"], name: "index_products_on_tags", using: :gin
@@ -635,9 +632,10 @@ ActiveRecord::Schema.define(version: 20170628145900) do
   create_table "terms", force: :cascade do |t|
     t.string   "title"
     t.string   "slug"
+    t.text     "description"
     t.text     "content"
-    t.text     "aliases",    default: [], array: true
-    t.integer  "status",     default: 1
+    t.text     "aliases",     default: [], array: true
+    t.integer  "status",      default: 1
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -658,6 +656,18 @@ ActiveRecord::Schema.define(version: 20170628145900) do
 
   add_index "transactions", ["parent_obj_id", "parent_obj_type"], name: "index_transactions_on_parent_obj_id_and_parent_obj_type", using: :btree
   add_index "transactions", ["reference_code"], name: "index_transactions_on_reference_code", using: :btree
+
+  create_table "user_inputs", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "created_obj_id"
+    t.string   "created_obj_type"
+    t.text     "content"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "user_inputs", ["created_obj_id", "created_obj_type"], name: "index_user_inputs_on_created_obj_id_and_created_obj_type", using: :btree
+  add_index "user_inputs", ["user_id"], name: "index_user_inputs_on_user_id", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "name"

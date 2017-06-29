@@ -46,12 +46,42 @@
 								.main-box.feed
 									.main-box-body.clearfix
 										%ul
-										- @observations.each do |observation|
-											= render 'observations/feed_item', observation: observation
+											- @observations.each do |observation|
+												= render 'observations/feed_item', observation: observation
 							- else
 								%center
 									%h1
 										No Activity Yet
+			- unless @timers.empty?
+				.col-sm-6.col-xs-12
+					.main-box.clearfix.project-box.emerald-box
+						.main-box-body.clearfix
+							.project-box-header.emerald-bg
+								.name
+									%a{ href: '#' }
+										%i.fa.fa-clock-o
+										Active Timers
+							.project-box-content
+								.main-box.feed
+									.main-box-body.clearfix
+										%table.table
+											%thead
+												%th Activity
+												%th Started
+												%th
+											%tbody
+												- @timers.each do |timer|
+													%tr
+														%td
+															= timer.observed.try( :title )
+														%td
+															= timer.started_at.to_s( :short )
+															%br
+															= "(#{time_ago_in_words( timer.started_at )} ago)"
+														%td
+															%a{ href: stop_observation_path( timer ), data: { method: :put } }
+																%i.fa.fa-stop
+																stop
 			- @metrics.each do |metric|
 				.col-sm-6.col-xs-12
 					.main-box.clearfix.project-box.green-box
@@ -66,7 +96,7 @@
 									%span.value
 										= metric.observations.last.try( :human_value )
 									%span.label
-										Current
+										Latest
 								%a{ href: '#' }
 									%span.value
 										= 180

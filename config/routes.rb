@@ -30,7 +30,10 @@ Rails.application.routes.draw do
 		get :install_callback, on: :collection
 		get :login_success, on: :collection
 	end
-	resources :observations
+
+	resources :observations do 
+		put :stop, on: :member
+	end
 
 	resources :places
 	resources :place_admin
@@ -46,6 +49,8 @@ Rails.application.routes.draw do
 	resources :term_admin do
 		delete :empty_trash, on: :collection
 	end
+
+	resources :user_inputs, only: :create
 
 	resources :workouts
 	resources :workout_admin
