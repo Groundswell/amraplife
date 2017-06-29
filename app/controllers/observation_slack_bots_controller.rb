@@ -34,20 +34,25 @@ class ObservationSlackBotsController < ActionController::Base
 		state = params[:state]
 
 		puts "auth_callback.code #{code} #{state}"
+		puts "params.to_json #{params.to_json}"
 
 		oauth_access_response = JSON.parse( RestClient.post( 'https://slack.com/api/oauth.access', { code: code, client_id: ENV['SLACK_FITLOG_BOT_CLIENT_ID'], client_secret: ENV['SLACK_FITLOG_BOT_CLIENT_SECRET'] } ), :symbolize_names => true )
-		puts oauth_access_response.to_json
+		puts "oauth_access_response.to_json #{oauth_access_response.to_json}"
 
 		auth_test_response = JSON.parse( RestClient.post( 'https://slack.com/api/auth.test', { token: oauth_access_response[:access_token] } ), :symbolize_names => true )
-		puts auth_test_response.to_json
+		puts "auth_test_response.to_json #{auth_test_response.to_json}"
 
+		team_name = oauth_access_response[:team_name] || auth_test_response[:team_name]
+		team_id = auth_test_response[:team_id] || oauth_access_response[:team_id]
 		bot_user_id = ( oauth_access_response[:bot].present? ? oauth_access_response[:bot][:bot_user_id] : nil ) || ( auth_test_response[:bot].present? ? auth_test_response[:bot][:bot_user_id] : nil )
 		bot_access_token = ( oauth_access_response[:bot].present? ? oauth_access_response[:bot][:bot_access_token] : nil ) || ( auth_test_response[:bot].present? ? auth_test_response[:bot][:bot_access_token] : nil )
 
+		puts "team_name #{team_name}, team_id #{team_id}"
+
 		@team = Team.find_by( slack_team_id: params[:team_id] )
 		@team ||= Team.create(
-			name: auth_test_response[:team_name] || oauth_access_response[:team_name],
-			slack_team_id: auth_test_response[:team_id] || oauth_access_response[:team_id],
+			name: team_name,
+			slack_team_id: team_id,
 			properties: {
 				'oauth_access_response' => oauth_access_response.to_json,
 				'auth_test_response' => auth_test_response.to_json,
