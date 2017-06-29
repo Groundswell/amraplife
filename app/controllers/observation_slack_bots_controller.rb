@@ -15,7 +15,11 @@ class ObservationSlackBotsController < ActionController::Base
 
 			@team = Team.find_by( slack_team_id: params[:team_id] )
 
-			@bot_service = ObservationBotService.new( response: self, params: { event: params[:event] } )
+			if @team.present?
+				@user = @team.team_users.find_by( slack_user_id: params[:event][:user] ).try(:user)
+			end
+
+			@bot_service = ObservationBotService.new( response: self, user: @user, params: { event: params[:event] } )
 
 			unless @bot_service.respond_to_text( params[:event][:text] )
 				add_speech( "Sorry, I don't know about that." )
@@ -102,6 +106,29 @@ class ObservationSlackBotsController < ActionController::Base
 
 	private
 	def chat_post_message( text, args = {} )
+
+
+		query_headers = {
+			# content_type: "application/json; charset=utf-8",
+		}
+
+		query_body = {
+			token: @team.properties['bot_access_token'],
+			channel: args[:channel],
+			text: text,
+			username: 'FitLog',
+			as_user: false,
+		}
+
+		api_endpoint = 'https://slack.com/api/chat.postMessage'
+
+		json_string_response = RestClient.post( api_endpoint, query_body, query_headers )
+		puts json_string_response
+
+		true
+	end
+
+	def users_identity( user_id )
 
 
 		query_headers = {
