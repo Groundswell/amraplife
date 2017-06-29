@@ -2,6 +2,13 @@
 class ObservationAlexaSkillsController < ActionController::Base
 	protect_from_forgery :except => [:create]
 
+	DEFAULT_DIALOG = {
+		help: "To log fitness information just say \"Alexa tell Fit Log I ate 100 calories\", or use a fitness timer by saying \"Alexa ask Fit Log to start run timer\".  Fit Log will remember, report and provide insights into what you have told it.",
+		launch_user: "Welcome to Fit Log, an AMRAP Life skill.  To log fitness information just say \"Alexa tell Fit Log I ate 100 calories\", or use a fitness timer by saying \"Alexa ask Fit Log to start run timer\".  Fit Log will remember, report and provide insights into what you have hold it.",
+		launch_guest: "Welcome to Fit Log, an AMRAP Life skill.  To log fitness information just say \"Alexa tell Fit Log I ate 100 calories\", or use a fitness timer by saying \"Alexa ask Fit Log to start run timer\".  Fit Log will remember, report and provide insights into what you have hold it.  To get started open your Alexa app, and complete the Fit Log skill registration on AMRAPLife.",
+		login: "Open your Alexa app, and complete the Fit Log skill registration on AMRAP Life to continue",
+	}
+
 	def create
 		# @todo Check that it's a valid Alexa request
 		@alexa_request	= AlexaRubykit.build_request( JSON.parse(request.raw_post) )
@@ -13,7 +20,7 @@ class ObservationAlexaSkillsController < ActionController::Base
 		@alexa_user = User.where( authorization_code: @alexa_session.access_token ).first if @alexa_session.access_token.present?
 		@alexa_user ||= SwellMedia::OauthCredential.where( token: @alexa_session.access_token, provider: 'amazon:alexa' ).first.try(:user) if @alexa_session.access_token.present?
 
-		@bot_service = ObservationBotService.new( request: @alexa_request, response: self, session: @alexa_session, params: @alexa_params, user: @alexa_user )
+		@bot_service = ObservationBotService.new( request: @alexa_request, response: self, session: @alexa_session, params: @alexa_params, user: @alexa_user, dialog: DEFAULT_DIALOG )
 
 		if (@alexa_request.type == 'SESSION_ENDED_REQUEST')
 			# Wrap up whatever we need to do.

@@ -19,6 +19,7 @@ class AbstractBotService
 		@response	= args[:response] || :puts
 		@params 	= args[:params]
 		@user 		= args[:user]
+		@dialog		= args[:dialog] || {}
 
 	end
 
@@ -183,6 +184,10 @@ class AbstractBotService
 		else
 			response.add_session_attribute( key, value )
 		end
+	end
+
+	def get_dialog( key, args = {} )
+		return @dialog[key.to_sym] || args[:default]
 	end
 
 	def params
