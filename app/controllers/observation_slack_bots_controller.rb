@@ -141,13 +141,12 @@ class ObservationSlackBotsController < ActionController::Base
 			# content_type: "application/json; charset=utf-8",
 		}
 
-		query_body = {
+		query_body = args.merge({
 			token: @team.properties['bot_access_token'],
-			channel: args[:channel],
 			text: text,
 			username: 'FitLog',
 			as_user: false,
-		}
+		})
 
 		api_endpoint = 'https://slack.com/api/chat.postMessage'
 
