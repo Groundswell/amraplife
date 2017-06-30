@@ -3,7 +3,7 @@ class Metric < ActiveRecord::Base
 	before_create 	:set_aliases
 	validate 		:unique_aliases
 
-	enum availability: { 'private' => 0, 'trainer' => 1, 'team' => 3, 'community' => 5, 'public' => 10 }
+	enum availability: { 'just_me' => 0, 'trainer' => 1, 'team' => 3, 'community' => 5, 'anyone' => 10 }
 
 	belongs_to :movement
 	belongs_to :user
