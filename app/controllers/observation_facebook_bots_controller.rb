@@ -5,7 +5,7 @@ class ObservationFacebookBotsController < ActionController::Base
 	def create
 		puts request.raw_post
 		if params['hub.challenge'] && ENV['FACEBOOK_LIFEMETER_BOT_VERIFICATION_TOKEN'] == params['hub.verify_token']
-			render text: ENV['FACEBOOK_LIFEMETER_BOT_VERIFICATION_TOKEN'], content_type: 'text/plain'
+			render text: params['hub.challenge'], content_type: 'text/plain'
 			return
 		end
 
