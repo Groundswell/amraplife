@@ -81,7 +81,7 @@ class ObservationBotService < AbstractBotService
 	add_slots( {
 		Action: {
 			regex: [
-				'[a-zA-Z\s]*[a-zA-Z]+'
+				'[a-zA-Z\s,\-]*[a-zA-Z]+'
 			],
 			values: [
 		        { value: "ran", synonyms: [] },
