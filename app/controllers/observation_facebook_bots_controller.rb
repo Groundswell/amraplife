@@ -11,15 +11,15 @@ class ObservationFacebookBotsController < ActionController::Base
 
 		if params[:object] == 'page'
 
-			@user = SwellMedia::OauthCredential.where( uid: params[:event][:user], provider: "chat.facebook" ).first.try(:user)
-
-			@bot_service = ObservationBotService.new( response: self, user: @user, params: {} )
-
-
 			params[:entry].each do |entry|
 				entry[:messaging].each do |messaging|
+
+					@user = SwellMedia::OauthCredential.where( uid: messaging[:sender][:id], provider: "chat.facebook" ).first.try(:user)
+
+					@bot_service = ObservationBotService.new( response: self, user: @user, params: {} )
+
 					@messaging = messaging
-					
+
 					unless @bot_service.respond_to_text messaging[:message][:text]
 
 						chat_post_message( "Sorry, I don't know about that." )
