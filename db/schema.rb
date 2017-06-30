@@ -11,9 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
-ActiveRecord::Schema.define(version: 20170628222346) do
-
+ActiveRecord::Schema.define(version: 20170629224904) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -442,8 +440,8 @@ ActiveRecord::Schema.define(version: 20170628222346) do
     t.string   "content"
     t.float    "value"
     t.float    "sub_value",     default: 0.0
-    t.string   "unit",          default: "sec"
-    t.string   "sub_unit",      default: "rep"
+    t.string   "unit",          default: "secs"
+    t.string   "sub_unit",      default: "reps"
     t.string   "rx"
     t.text     "notes"
     t.datetime "started_at"
@@ -555,10 +553,8 @@ ActiveRecord::Schema.define(version: 20170628222346) do
     t.text     "shopify_code"
     t.string   "title"
     t.string   "caption"
-    t.integer  "seq",             default: 1
     t.string   "slug"
     t.string   "avatar"
-    t.string   "brand_model"
     t.integer  "status",          default: 0
     t.text     "description"
     t.text     "content"
@@ -577,10 +573,10 @@ ActiveRecord::Schema.define(version: 20170628222346) do
     t.integer  "collection_id"
     t.integer  "shipping_price",  default: 0
     t.string   "tax_code",        default: "00000"
+    t.integer  "seq",             default: 1
   end
 
   add_index "products", ["category_id"], name: "index_products_on_category_id", using: :btree
-  add_index "products", ["seq"], name: "index_products_on_seq", using: :btree
   add_index "products", ["slug"], name: "index_products_on_slug", unique: true, using: :btree
   add_index "products", ["status"], name: "index_products_on_status", using: :btree
   add_index "products", ["tags"], name: "index_products_on_tags", using: :gin
@@ -635,10 +631,9 @@ ActiveRecord::Schema.define(version: 20170628222346) do
   create_table "terms", force: :cascade do |t|
     t.string   "title"
     t.string   "slug"
-    t.text     "description"
     t.text     "content"
-    t.text     "aliases",     default: [], array: true
-    t.integer  "status",      default: 1
+    t.text     "aliases",    default: [], array: true
+    t.integer  "status",     default: 1
     t.datetime "created_at"
     t.datetime "updated_at"
   end
