@@ -11,7 +11,7 @@ class ObservationSlackBotsController < ActionController::Base
 		end
 
 		# only respond to message, and not to bots.
-		if params[:event].present? && params[:event][:type] == 'message' && params[:event][:bot_id].blank? && ENV['SLACK_FITLOG_BOT_VERIFICATION_TOKEN'] == params[:token]
+		if params[:event].present? && params[:event][:type] == 'message' && params[:event][:bot_id].blank? && ENV['SLACK_LIFEMETER_BOT_VERIFICATION_TOKEN'] == params[:token]
 
 			@team = Team.find_by( slack_team_id: params[:team_id] )
 			@user = SwellMedia::OauthCredential.where( uid: params[:event][:user], provider: "#{params[:team_id]}.slack" ).first.try(:user)
@@ -36,7 +36,7 @@ class ObservationSlackBotsController < ActionController::Base
 		code = params[:code]
 		state = params[:state]
 
-		oauth_access_response = JSON.parse( RestClient.post( 'https://slack.com/api/oauth.access', { code: code, client_id: ENV['SLACK_FITLOG_BOT_CLIENT_ID'], client_secret: ENV['SLACK_FITLOG_BOT_CLIENT_SECRET'] } ), :symbolize_names => true )
+		oauth_access_response = JSON.parse( RestClient.post( 'https://slack.com/api/oauth.access', { code: code, client_id: ENV['SLACK_LIFEMETER_BOT_CLIENT_ID'], client_secret: ENV['SLACK_LIFEMETER_BOT_CLIENT_SECRET'] } ), :symbolize_names => true )
 
 		auth_test_response = JSON.parse( RestClient.post( 'https://slack.com/api/auth.test', { token: oauth_access_response[:access_token] } ), :symbolize_names => true )
 
@@ -60,7 +60,7 @@ class ObservationSlackBotsController < ActionController::Base
 			})
 		)
 
-		set_flash( 'FitLog Slack Bot was Successfully Installed.' )
+		set_flash( 'Life Meter Slack Bot was Successfully Installed.' )
 		redirect_to '/'
 
 	end
@@ -68,7 +68,7 @@ class ObservationSlackBotsController < ActionController::Base
 	def login
 		@team = Team.find_by( slack_team_id: params[:team_id] )
 		unless @team.present?
-			set_flash( 'Before registering, you must first install the FitLog app on Slack.' )
+			set_flash( 'Before registering, you must first install the Life Meter app on Slack.' )
 			redirect_to '/'
 		end
 
@@ -77,7 +77,7 @@ class ObservationSlackBotsController < ActionController::Base
 			return
 		end
 
-		session[:dest] = login_success_observation_alexa_skills_url( team_id: params[:team_id], user: params[:user], token: params[:token] )
+		session[:dest] = login_success_observation_facebook_bots_url( team_id: params[:team_id], user: params[:user], token: params[:token] )
 
 		redirect_to main_app.register_path()
 	end
@@ -144,7 +144,7 @@ class ObservationSlackBotsController < ActionController::Base
 		query_body = args.merge({
 			token: @team.properties['bot_access_token'],
 			text: text,
-			username: 'FitLog',
+			username: 'Life Meter',
 			as_user: false,
 		})
 

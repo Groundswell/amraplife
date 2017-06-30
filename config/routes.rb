@@ -21,9 +21,14 @@ Rails.application.routes.draw do
 	resources :movements
 	resources :movement_admin
 
-	get '/fitlog/register_slack/:team_id/:user/:token' => 'observation_slack_bots#login', as: 'login_observation_slack_bots'
+	get '/lifemeter/slack/:team_id/:user/:token' => 'observation_slack_bots#login', as: 'login_observation_slack_bots'
+	get '/lifemeter/facebook/:user/:token' => 'observation_facebook_bots#login', as: 'login_observation_facebook_bots'
 	resources :observation_alexa_skills, only: :create do
 		get :login, on: :collection
+		get :login_success, on: :collection
+	end
+	resources :observation_facebook_bots, only: :create do
+		get :create, on: :collection
 		get :login_success, on: :collection
 	end
 	resources :observation_slack_bots, only: :create do
