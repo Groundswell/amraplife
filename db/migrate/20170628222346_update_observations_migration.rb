@@ -5,7 +5,7 @@ class UpdateObservationsMigration < ActiveRecord::Migration
 		add_column 	:metrics, :target_min, :float, default: 0
 		add_column 	:metrics, :target_max, :float, default: 0
 
-		add_column 	:metrics, :visibility, :integer, default: 0
+		add_column 	:metrics, :availability, :integer, default: 0
 
 
 

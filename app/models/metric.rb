@@ -3,7 +3,7 @@ class Metric < ActiveRecord::Base
 	before_create 	:set_aliases
 	validate 		:unique_aliases
 
-	enum visibility: { 'private' => 0, 'trainer' => 1, 'team' => 3, 'community' => 5, 'public' => 10 }
+	enum availability: { 'private' => 0, 'trainer' => 1, 'team' => 3, 'community' => 5, 'public' => 10 }
 
 	belongs_to :movement
 	belongs_to :user
@@ -22,7 +22,7 @@ class Metric < ActiveRecord::Base
 
 
 	def aliases_csv
-		self.aliases.join( ', ' )	
+		self.aliases.join( ', ' )
 	end
 
 	def aliases_csv=( aliases_csv )
@@ -47,5 +47,5 @@ class Metric < ActiveRecord::Base
 			existing_aliases = Metric.where( user_id: self.user_id ).where.not( id: self.id ).pluck( :aliases ).flatten
 			self.aliases = self.aliases.uniq - existing_aliases
 		end
-	
+
 end

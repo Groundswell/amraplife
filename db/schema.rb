@@ -364,7 +364,7 @@ ActiveRecord::Schema.define(version: 20170628222346) do
     t.string  "target_type",   default: "sum_value"
     t.float   "target_min",    default: 0.0
     t.float   "target_max",    default: 0.0
-    t.integer "visibility",    default: 0
+    t.integer "availability",  default: 0
   end
 
   add_index "metrics", ["movement_id"], name: "index_metrics_on_movement_id", using: :btree
