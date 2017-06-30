@@ -36,6 +36,7 @@ gem 'elasticsearch-model'
 gem 'elasticsearch-rails'
 gem 'bonsai-elasticsearch-rails'
 gem 'gibbon'
+gem "google_assistant"
 gem 'kaminari'
 gem 'memcachier'
 gem 'newrelic_rpm'

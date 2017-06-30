@@ -27,6 +27,8 @@ Rails.application.routes.draw do
 		get :login, on: :collection
 		get :login_success, on: :collection
 	end
+	resources :observation_google_actions, only: :create do
+	end
 	resources :observation_facebook_bots, only: :create do
 		get :create, on: :collection
 		get :login_success, on: :collection
@@ -36,7 +38,7 @@ Rails.application.routes.draw do
 		get :login_success, on: :collection
 	end
 
-	resources :observations do 
+	resources :observations do
 		put :stop, on: :member
 	end
 
