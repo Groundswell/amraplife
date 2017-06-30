@@ -19,7 +19,12 @@ class ObservationFacebookBotsController < ActionController::Base
 			params[:entry].each do |entry|
 				entry[:messaging].each do |messaging|
 					@messaging = messaging
-					@bot_service.respond_to_text messaging[:message][:text]
+					
+					unless @bot_service.respond_to_text messaging[:message][:text]
+
+						chat_post_message( "Sorry, I don't know about that." )
+
+					end
 				end
 			end
 
