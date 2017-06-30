@@ -28,6 +28,7 @@ Rails.application.routes.draw do
 		get :login_success, on: :collection
 	end
 	resources :observation_facebook_bots, only: :create do
+		get :create, on: :collection
 		get :login_success, on: :collection
 	end
 	resources :observation_slack_bots, only: :create do
