@@ -12,25 +12,33 @@ class ObservationGoogleActionsController < ActionController::Base
 	def create
 		puts request.raw_post
 
-		@response = self
-
 		assistant_response = GoogleAssistant.respond_to(params, response) do |assistant|
 
-			@bot_service = ObservationBotService.new( response: @response, user: nil, params: {}, dialog: DEFAULT_DIALOG )
-
 			assistant.intent.main do
-				@assistant = assistant
+				action_response = GoogleActionResponse.new( assistant: assistant )
+				@bot_service = ObservationBotService.new( response: action_response, user: nil, params: {}, dialog: DEFAULT_DIALOG )
 				@bot_service.respond_to_text( '' )
+
+				action_response.queue.each do |response_action|
+					assistant.send( *response_action )
+				end
 			end
 
 			assistant.intent.text do
-				@assistant = assistant
+				action_response = GoogleActionResponse.new( assistant: assistant )
+				@bot_service = ObservationBotService.new( response: action_response, user: nil, params: {}, dialog: DEFAULT_DIALOG )
+
 				request_text = assistant.arguments[0].text_value.downcase
 				request_text = request_text.gsub(/^.* LifeMeter/, '')
 				puts request_text
-				unless @bot_service.respond_to_text( assistant.arguments[0].text_value.downcase )
-					add_speech( "Sorry, I don't know about that." )
+				if @bot_service.respond_to_text( request_text )
+					action_response.queue.each do |response_action|
+						assistant.send( *response_action )
+					end
+				else
+					action_response.add_speech( "Sorry, I don't know about that." )
 				end
+
 			end
 		end
 
@@ -39,12 +47,26 @@ class ObservationGoogleActionsController < ActionController::Base
 		render json: assistant_response
 	end
 
+	private
+
+end
+
+class GoogleActionResponse
+
+	def initialize( args = {} )
+		@queue = []
+	end
+
+	def queue
+		@queue
+	end
+
+
 	def add_ask(speech_text, args = {} )
 		puts "add_ask: #{speech_text}"
 		ask_args = { prompt: speech_text }
 		ask_args[:no_input_prompt] = [ ask_args[:reprompt_text] ] if ask_args[:reprompt_text].present?
-
-		@assistant.ask( ask_args )
+		@queue << [ :ask, ask_args ]
 	end
 
 	def add_audio_url( url, token='', offset=0)
@@ -69,13 +91,11 @@ class ObservationGoogleActionsController < ActionController::Base
 
 	def add_speech(speech_text, ssml = false)
 		puts "add_speech: #{speech_text}"
-		@assistant.tell( speech_text )
+		@queue << [ :tell, speech_text ]
 	end
 
 	def add_session_attribute( key, value )
 		puts "add_session_attribute: #{key} -> #{value}"
 	end
-
-	private
 
 end
