@@ -12,31 +12,66 @@ class ObservationGoogleActionsController < ActionController::Base
 	def create
 		puts request.raw_post
 
-		assistant_response = GoogleAssistant.respond_to(params, response) do |assistant|
-			assistant.intent.main do
-				assistant.conversation.state = "asking favorite color"
+		@response = self
 
-				assistant.ask(
-					prompt: "What is your favorite color?",
-					no_input_prompt: ["What did you say your favorite color is?"]
-				)
+		assistant_response = GoogleAssistant.respond_to(params, response) do |assistant|
+			@assistant = assistant
+
+
+			@bot_service = ObservationBotService.new( response: @response, user: nil, params: {}, dialog: DEFAULT_DIALOG )
+
+
+			assistant.intent.main do
+				@bot_service.respond_to_text( '' )
 			end
 
 			assistant.intent.text do
-				case assistant.arguments[0].text_value.downcase
-				when "hello"
-					tell_text = "Hi there!"
-				when "goodbye"
-					tell_text = "See you later!"
-				else
-					tell_text = "I heard you say #{assistant.arguments[0].text_value}, but I don't know what that means."
+				unless @bot_service.respond_to_text( assistant.arguments[0].text_value.downcase )
+					add_speech( "Sorry, I don't know about that." )
 				end
-
-				assistant.tell(tell_text)
 			end
 		end
 
 		render json: assistant_response
 	end
+
+	def add_ask(speech_text, args = {} )
+		puts "add_ask: #{speech_text}"
+		ask_args = { prompt: speech_text }
+		ask_args[:no_input_prompt] = [ ask_args[:reprompt_text] ] if ask_args[:reprompt_text].present?
+
+		@assistant.ask( ask_args )
+	end
+
+	def add_audio_url( url, token='', offset=0)
+		puts "add_audio_url: #{url}"
+	end
+
+	def add_card(type = nil, title = nil , subtitle = nil, content = nil)
+		puts "add_card (#{type}): #{title} (#{subtitle}) - #{content}"
+	end
+
+	def add_hash_card( card )
+		puts "add_hash_card: #{card}"
+	end
+
+	def add_login_prompt( title = nil , subtitle = nil, content = nil )
+		puts "add_login_prompt: #{title} (#{subtitle}) #{content}"
+	end
+
+	def add_reprompt(speech_text, ssml = false)
+		puts "add_reprompt: #{speech_text}"
+	end
+
+	def add_speech(speech_text, ssml = false)
+		puts "add_speech: #{speech_text}"
+		@assistant.tell( speech_text )
+	end
+
+	def add_session_attribute( key, value )
+		puts "add_session_attribute: #{key} -> #{value}"
+	end
+
+	private
 
 end
