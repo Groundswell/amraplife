@@ -1,10 +1,19 @@
 class AbstractBotService
 
+	NATURAL_LANGUAGE_NUMBERS_REGEX = "([0-9]+|one|two|three|four|five|six|seven|eight|nine|ten|even|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|fourty|fifty|sixty|seventy|eighty|ninety|hundred|thousand|million|billion)+(\s*,?\s+([0-9]+|one|two|three|four|five|six|seven|eight|nine|ten|even|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|fourty|fifty|sixty|seventy|eighty|ninety|hundred|thousand|million|billion)*)*"
+
 	DEFAULT_SLOTS = {
 		Number: {
 			regex: [
-				"(one|two|three|four|five|six|seven|eight|nine|ten|even|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|fourty|fifty|sixty|seventy|eighty|ninety|hundred|thousand|million|billion)+(\s*,?\s+(one|two|three|four|five|six|seven|eight|nine|ten|even|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|fourty|fifty|sixty|seventy|eighty|ninety|hundred|thousand|million|billion)*)*",
+				NATURAL_LANGUAGE_NUMBERS_REGEX,
 				"(?<!\S)(?=.)(0|([1-9](\d*|\d{0,2}(,\d{3})*)))?(\.\d*[0-9])?(?!\S)",
+			],
+			values: []
+		},
+		Time: {
+			regex: [
+				"((#{NATURAL_LANGUAGE_NUMBERS_REGEX})\s+hour(s)?)?\s*((#{NATURAL_LANGUAGE_NUMBERS_REGEX})\s+minute(s)?)?\s*((#{NATURAL_LANGUAGE_NUMBERS_REGEX})\s+(second|minute|hour)(s)?)",
+				"[1-9]*[0-9]:[0-5][0-9](:[0-5][0-9])?",
 			],
 			values: []
 		}
