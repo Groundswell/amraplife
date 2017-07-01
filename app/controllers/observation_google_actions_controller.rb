@@ -15,22 +15,26 @@ class ObservationGoogleActionsController < ActionController::Base
 		@response = self
 
 		assistant_response = GoogleAssistant.respond_to(params, response) do |assistant|
-			@assistant = assistant
-
 
 			@bot_service = ObservationBotService.new( response: @response, user: nil, params: {}, dialog: DEFAULT_DIALOG )
 
-
 			assistant.intent.main do
+				@assistant = assistant
 				@bot_service.respond_to_text( '' )
 			end
 
 			assistant.intent.text do
+				@assistant = assistant
+				request_text = assistant.arguments[0].text_value.downcase
+				request_text = request_text.gsub(/^.* LifeMeter/, '')
+				puts request_text
 				unless @bot_service.respond_to_text( assistant.arguments[0].text_value.downcase )
 					add_speech( "Sorry, I don't know about that." )
 				end
 			end
 		end
+
+		puts "assistant_response #{assistant_response}"
 
 		render json: assistant_response
 	end
