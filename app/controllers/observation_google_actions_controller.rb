@@ -14,9 +14,12 @@ class ObservationGoogleActionsController < ActionController::Base
 
 		assistant_response = GoogleAssistant.respond_to(params, response) do |assistant|
 
+			@user = SwellMedia::OauthCredential.where( token: assistant.user.access_token, provider: 'google.assistant' ).first.try(:user) if assistant.user.access_token.present?
+
+
 			assistant.intent.main do
 				action_response = GoogleActionResponse.new
-				@bot_service = ObservationBotService.new( response: action_response, user: nil, params: {}, dialog: DEFAULT_DIALOG )
+				@bot_service = ObservationBotService.new( response: action_response, user: @user, params: {}, dialog: DEFAULT_DIALOG )
 
 				request_text = params[:inputs].first[:raw_inputs].first[:query]
 				request_text = request_text.gsub(/^.* (LifeMeter|life meter)/i, '').strip
