@@ -4,6 +4,9 @@ class ObservationBotService < AbstractBotService
 		cancel: {
 			utterances: [ 'cancel' ]
 		},
+		get_motivation: {
+			utterances: [ 'motivate me', 'inspire me', 'to motivate me', 'to inspire me' ]
+		},
 		help: {
 			utterances: [ 'help', 'for help' ]
 		},
@@ -159,6 +162,13 @@ class ObservationBotService < AbstractBotService
 
 		add_speech("Cancelling")
 
+	end
+
+	def get_motivation
+
+		motivation = Inspiration.published.order('random()').first.title
+
+		add_speech( motivation )
 	end
 
 	def help
