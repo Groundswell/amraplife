@@ -25,14 +25,14 @@ class ObservationGoogleActionsController < ActionController::Base
 			assistant.intent.text do
 				case assistant.arguments[0].text_value.downcase
 				when "hello"
-					respond_with = "Hi there!"
+					tell_text = "Hi there!"
 				when "goodbye"
-					respond_with = "See you later!"
+					tell_text = "See you later!"
 				else
-					respond_with "I heard you say #{assistant.arguments[0].text_value}, but I don't know what that means."
+					tell_text = "I heard you say #{assistant.arguments[0].text_value}, but I don't know what that means."
 				end
 
-				assistant.tell(respond_with)
+				assistant.tell(tell_text)
 			end
 		end
 
