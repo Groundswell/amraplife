@@ -45,6 +45,34 @@ class ObservationGoogleActionsController < ActionController::Base
 		render json: assistant_response
 	end
 
+	def login
+		if current_user.present?
+			login_success
+			return
+		end
+
+		redirect_uri = params[:redirect_uri]
+		session[:dest] = login_success_observation_google_actions_url( client_id: params[:client_id], state: params[:state], redirect_uri: redirect_uri )
+
+		redirect_to main_app.register_path()
+	end
+
+	def login_success
+
+		redirect_uri = params[:redirect_uri]
+
+		if redirect_uri == "https://oauth-redirect.googleusercontent.com/r/#{ENV['GOOGLE_ASSISTANT_LIFEMETER_BOT_APP_ID']}"
+			oauth_credential = current_user.oauth_credentials.where( provider: 'google.assistant' ).first_or_initialize
+			oauth_credential.update( token: "#{current_user.name || current_user.id}-#{SecureRandom.hex(64)}" ) if oauth_credential.token.blank?
+
+			redirect_uri = redirect_uri+"#"+{ state: params[:state], access_token: oauth_credential.token, token_type: "bearer" }.to_query
+
+			redirect_to redirect_uri
+		else
+			redirect_to '/'
+		end
+	end
+
 	private
 
 end
