@@ -19,9 +19,8 @@ class ObservationGoogleActionsController < ActionController::Base
 				@bot_service = ObservationBotService.new( response: action_response, user: nil, params: {}, dialog: DEFAULT_DIALOG )
 				@bot_service.respond_to_text( '' )
 
-				action_response.queue.each do |response_action|
-					assistant.send( *response_action )
-				end
+				action_response.respond( assistant )
+
 			end
 
 			assistant.intent.text do
@@ -30,14 +29,13 @@ class ObservationGoogleActionsController < ActionController::Base
 
 				request_text = assistant.arguments[0].text_value.downcase
 				request_text = request_text.gsub(/^.* LifeMeter/, '')
-				puts request_text
-				if @bot_service.respond_to_text( request_text )
-					action_response.queue.each do |response_action|
-						assistant.send( *response_action )
-					end
-				else
+				# puts request_text
+
+				unless @bot_service.respond_to_text( request_text )
 					action_response.add_speech( "Sorry, I don't know about that." )
 				end
+
+				action_response.respond( assistant )
 
 			end
 		end
@@ -59,6 +57,10 @@ class GoogleActionResponse
 
 	def queue
 		@queue
+	end
+
+	def respond( assistant )
+		return assistant.send( *self.queue.first )
 	end
 
 
