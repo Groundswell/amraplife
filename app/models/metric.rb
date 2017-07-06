@@ -15,7 +15,7 @@ class Metric < ActiveRecord::Base
 	friendly_id :slugger, use: [ :slugged ]
 
 	def self.find_by_alias( term )
-		where( ":term = ANY( aliases )", term: term ).first
+		where( ":term = ANY( aliases )", term: term.parameterize ).first
 	end
 
 
@@ -41,6 +41,10 @@ class Metric < ActiveRecord::Base
 	private
 		def set_aliases
 			self.aliases << self.title.parameterize unless self.aliases.include?( self.title.parameterize )
+			self.aliases.each_with_index do |value, index|
+				self.aliases[index] = value.parameterize
+			end
+			self.aliases = self.aliases.sort
 		end
 
 		def unique_aliases
