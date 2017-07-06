@@ -63,12 +63,12 @@ class ObservationBotService < AbstractBotService
 		},
 		log_stop_observation: {
 			utterances: [
+				"stop {action} timer",
+				"stop timing {action}",
 				"stop {action}",
 				"to stop {action}",
 				"end {action}",
 				"to end {action}",
-				"stop timing {action}",
-				"stop {action} timer",
 				"I have finished my {action}",
 				"I have completed my {action}"
 			],
