@@ -294,7 +294,10 @@ class ObservationBotService < AbstractBotService
 
 		observed_metric = get_user_metric( user, params[:action], 'seconds' )
 
-		if observed_metric.nil?
+		if observed_metric.errors.present?
+			add_speech("I'm sorry, I don't know how to log information about #{params[:action]}. #{observed_metric.errors.full_messages.join('. ')}")
+			return
+		elsif observed_metric.nil?
 			add_speech("I'm sorry, I don't know how to log information about #{params[:action]}.")
 			return
 		end
@@ -312,7 +315,10 @@ class ObservationBotService < AbstractBotService
 
 		observed_metric = get_user_metric( user, params[:action], 'seconds' )
 
-		if observed_metric.nil?
+		if observed_metric.errors.present?
+			add_speech("I'm sorry, I don't know how to log information about #{params[:action]}. #{observed_metric.errors.full_messages.join('. ')}")
+			return
+		elsif observed_metric.nil?
 			add_speech("I'm sorry, I don't know how to log information about #{params[:action]}.")
 			return
 		end
