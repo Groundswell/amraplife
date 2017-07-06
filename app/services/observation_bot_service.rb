@@ -48,12 +48,16 @@ class ObservationBotService < AbstractBotService
 		log_start_observation: {
 			utterances: [
 				"I am starting a {action}",
+				"to start timing {action}",
 				"to start {action} timer",
 				"to start {action}",
 		        "to begin {action}",
 		        "to time {action}",
 		        "start timing {action}",
+		        "start {action} timer",
 		        "start {action}",
+		        "begin timing {action}",
+		        "begin {action} timer",
 		        "begin {action}",
 		        "time {action}",
 			],
