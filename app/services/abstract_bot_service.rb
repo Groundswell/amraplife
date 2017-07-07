@@ -1,19 +1,31 @@
 class AbstractBotService
 
 	NATURAL_LANGUAGE_NUMBERS_REGEX = "([0-9]+|one|two|three|four|five|six|seven|eight|nine|ten|even|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|fourty|fifty|sixty|seventy|eighty|ninety|hundred|thousand|million|billion)+(\s*,?\s+([0-9]+|one|two|three|four|five|six|seven|eight|nine|ten|even|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|fourty|fifty|sixty|seventy|eighty|ninety|hundred|thousand|million|billion)*)*"
+	NUMERIC_NUMBERS_REGEX = "(?<!\S)(?=.)(0|([1-9](\d*|\d{0,2}(,\d{3})*)))?(\.\d*[0-9])?(?!\S)"
+	NATURAL_LANGUAGE_TIME_REGEX = "((#{NATURAL_LANGUAGE_NUMBERS_REGEX})\s+hour(s)?)?\s*((#{NATURAL_LANGUAGE_NUMBERS_REGEX})\s+minute(s)?)?\s*((#{NATURAL_LANGUAGE_NUMBERS_REGEX})\s+(second|minute|hour)(s)?)"
+	NUMERIC_TIME_REGEX = "[1-9]*[0-9]:[0-5][0-9](:[0-5][0-9])?"
 
 	DEFAULT_SLOTS = {
 		Number: {
 			regex: [
 				NATURAL_LANGUAGE_NUMBERS_REGEX,
-				"(?<!\S)(?=.)(0|([1-9](\d*|\d{0,2}(,\d{3})*)))?(\.\d*[0-9])?(?!\S)",
+				NUMERIC_NUMBERS_REGEX,
 			],
 			values: []
 		},
 		Time: {
 			regex: [
-				"((#{NATURAL_LANGUAGE_NUMBERS_REGEX})\s+hour(s)?)?\s*((#{NATURAL_LANGUAGE_NUMBERS_REGEX})\s+minute(s)?)?\s*((#{NATURAL_LANGUAGE_NUMBERS_REGEX})\s+(second|minute|hour)(s)?)",
-				"[1-9]*[0-9]:[0-5][0-9](:[0-5][0-9])?",
+				NATURAL_LANGUAGE_TIME_REGEX,
+				NUMERIC_TIME_REGEX,
+			],
+			values: []
+		},
+		Amount: {
+			regex: [
+				NATURAL_LANGUAGE_NUMBERS_REGEX,
+				NUMERIC_NUMBERS_REGEX,
+				NATURAL_LANGUAGE_TIME_REGEX,
+				NUMERIC_TIME_REGEX,
 			],
 			values: []
 		}
@@ -72,6 +84,9 @@ class AbstractBotService
 
 	def self.add_intent( name, definition )
 		@intents ||= DEFAULT_INTENTS
+		definition[:utterances].each_with_index do |utterance,index|
+			definition[:utterances][index] = utterance.gsub(/\s+/,'\\s+')
+		end
 		@intents[name.to_sym] = definition
 	end
 
