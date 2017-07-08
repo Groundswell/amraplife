@@ -37,8 +37,8 @@ class AbstractBotService
 
 		@request	= args[:request]
 		@session	= args[:session]
-		@response	= args[:response] || :puts
-		@params 	= args[:params]
+		@response	= args[:response] || DefaultActionResponse.new
+		@params 	= args[:params] || {}
 		@user 		= args[:user]
 		@dialog		= args[:dialog] || {}
 
@@ -74,6 +74,22 @@ class AbstractBotService
 		else
 			return false
 		end
+	end
+
+	def params
+		@params
+	end
+
+	def request
+		@request
+	end
+
+	def response
+		@response
+	end
+
+	def session
+		@session
 	end
 
 	def self.add_intents( intents )
@@ -214,20 +230,59 @@ class AbstractBotService
 		return @dialog[key.to_sym] || args[:default]
 	end
 
-	def params
-		@params
+end
+
+
+
+class DefaultActionResponse
+
+	def initialize( args = {} )
+		@queue = []
 	end
 
-	def request
-		@request
+	def queue
+		@queue
 	end
 
-	def response
-		@response
+
+	def add_ask(speech_text, args = {} )
+		puts "add_ask: #{speech_text}"
+		@queue << [ :ask, speech_text, args ]
 	end
 
-	def session
-		@session
+	def add_audio_url( url, token='', offset=0)
+		puts "add_audio_url: #{url}"
+		@queue << [ :audio_url, url, token, offset ]
+	end
+
+	def add_card(type = nil, title = nil , subtitle = nil, content = nil)
+		puts "add_card (#{type}): #{title} (#{subtitle}) - #{content}"
+		@queue << [ :card, type, title, subtitle, content ]
+	end
+
+	def add_hash_card( card )
+		puts "add_hash_card: #{card}"
+		add_card( card[:type], card[:title], card[:subtitle], card[:content] )
+	end
+
+	def add_login_prompt( title = nil , subtitle = nil, content = nil )
+		puts "add_login_prompt: #{title} (#{subtitle}) #{content}"
+		add_card( :login_prompt, title, subtitle, content )
+	end
+
+	def add_reprompt(speech_text, ssml = false)
+		puts "add_reprompt: #{speech_text}"
+		@queue << [ :reprompt, speech_text, ssml ]
+	end
+
+	def add_speech(speech_text, ssml = false)
+		puts "add_speech: #{speech_text}"
+		@queue << [ :speech, speech_text ]
+	end
+
+	def add_session_attribute( key, value )
+		puts "add_session_attribute: #{key} -> #{value}"
+		@queue << [ :session_attribute, key, value ]
 	end
 
 end
