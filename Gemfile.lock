@@ -9,7 +9,7 @@ GIT
 
 GIT
   remote: git://github.com/Groundswell/swell_media.git
-  revision: 7dba8dc1e0607f57cd3a2894a4e5b1ef002c5e77
+  revision: 374b095d476d8c0e770cf44e04594fdbfc708515
   specs:
     swell_media (0.0.1)
       acts-as-taggable-array-on
@@ -153,7 +153,7 @@ GEM
       faraday
       multi_json
     erubis (2.7.0)
-    excon (0.57.0)
+    excon (0.57.1)
     execjs (2.7.0)
     extendmatrix (0.4)
     faraday (0.11.0)
@@ -293,7 +293,7 @@ GEM
     fog-voxel (0.1.0)
       fog-core
       fog-xml
-    fog-vsphere (1.11.0)
+    fog-vsphere (1.11.1)
       fog-core
       rbvmomi (~> 1.9)
     fog-xenserver (0.3.0)
