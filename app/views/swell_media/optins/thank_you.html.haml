@@ -6,18 +6,16 @@
 				.thanksContent
 					%h1.text-center.content-title
 						Thanks for signing up!
-					
-					- if @offer_optin.present?
+
+					- if @offer_optin.present? && @offer_optin.lead_offer.present?
 						%p
 							= raw @offer_optin.lead_offer.thank_you_msg
 
 
 					%p.text-center
-						We will send an email to 
+						We will send an email to
 						%strong= @optin.email
 						confirming your address. Please be sure to check your promotion and spam folders.
 						%br
-						
-						We'll keep you in the loop with new recipes, articles, and discounts as we get them.
 
-					
+						We'll keep you in the loop with new recipes, articles, and discounts as we get them.
