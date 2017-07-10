@@ -130,7 +130,7 @@ class UserInput < ActiveRecord::Base
 					observed.user = self.user
 					observed.save
 				else
-					observed ||= self.user.metrics.create( title: matches.captures.second, unit: unit )
+					observed ||= self.user.metrics.create( title: matches.captures.second, unit: 'sec' )
 				end
 			end
 

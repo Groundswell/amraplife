@@ -41,7 +41,7 @@
 						= f.select :workout_type, [ [ 'AMRAP', 'amrap' ], ['Rounds For Time', 'rft'], [ 'For Time', 'ft' ], [ 'Custom', 'custom' ], [ 'TABATA', 'tabata'], [ 'EMOM', 'emom' ] ], {}, class: 'form-control'
 					.form-group
 						= f.label :status
-						= f.collection_select :status, Recipe.statuses, :first, :first, {}, class: 'form-control'
+						= f.collection_select :status, Workout.statuses, :first, :first, {}, class: 'form-control'
 
 					.form-group
 						= f.submit 'Update', class: 'btn btn-primary'
@@ -65,12 +65,10 @@
 						%th.col-xs-2
 							Type
 						%th
-							Title
+							Content
 						%th
 							Duration
 
-						%th
-							Reps
 						%th
 					%tbody
 						- @workout.workout_segments.order( :seq ).each do |segment|
@@ -79,13 +77,11 @@
 								%td= segment.segment_type
 								%td= segment
 								%td
-									- if segment.duration.nil?
+									- if segment.duration.blank?
 										measured
 									- else
 										= "#{sprintf( '%02d', segment.duration / 60 )}:#{sprintf( '%02d', segment.duration % 60 )}"
 
-								%td
-									= segment.total_reps
 								%td
 									%a.btn.btn-small.btn-danger{ href: workout_segment_path( segment ), data: { method: :delete, confirm: 'Are you Sure?' } }
 										%i.fa.fa-trash
@@ -95,11 +91,10 @@
 							%td
 								= f.select :segment_type, [ ['AMRAP', 'amrap'], ['For Time', 'ft'], ['Rounds for Time', 'rft'], ['EotM', 'emom'], ['TABATA', 'tabata'], ['Accumulate Time', 'accumulate'], ['Strength', 'strength'], ['Rest', 'rest'] ], {}, class: 'form-control'
 							%td
-								= f.text_field :content, class: 'form-control'
+								= f.text_area :content, class: 'form-control'
 							%td
 								= f.text_field :duration, class: 'form-control'
 
-							%td
 							%td
 								= f.submit 'Add', class: 'btn btn-small btn-success'
 
@@ -112,7 +107,6 @@
 				= f.hidden_field :workout_id, value: @workout.id
 				%table.table
 					%thead
-						%th Segment
 						%th Movement
 						%th Equipment
 						%th M Rx
@@ -125,10 +119,6 @@
 								%td= movement.m_rx
 								%td= movement.f_rx
 						%tr
-							%td
-								= f.collection_select :workout_segment_id, @workout.workout_segments.order( :seq ), :id, :full_title, class: 'form-control'
-							%td
-								= f.number_field :seq, class: 'form-control'
 							%td
 								= f.collection_select :movement_id, Movement.order( :title ).all, :id, :title, {}, class: 'form-control'
 							%td

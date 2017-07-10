@@ -34,5 +34,9 @@ module SwellMedia
 			render layout: 'swell_media/homepage'
 		end
 
+		def inspirations
+			redirect_to "https://www.amraplife.com/get/free-inspirational-wallpapers"
+		end
+
 	end
 end

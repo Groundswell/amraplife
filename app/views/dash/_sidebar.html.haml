@@ -30,11 +30,6 @@
 						Online
 			#sidebar-nav.collapse.navbar-collapse.navbar-ex1-collapse
 				%ul.nav.nav-pills.nav-stacked
-					%li.hidden-sm
-						= form_for UserInput.new, html: { style: 'margin: auto 1em;' } do |f|
-							= f.text_field :content, class: 'form-control', placeholder: 'Metric=Value(units) Notes'
-							.pull-right= f.submit 'Quick Add', class: 'btn btn-primary btn-lg', style: 'margin-top: 0.5em;'
-				%ul.nav.nav-pills.nav-stacked
 					%li.nav-header.nav-header-first.hidden-sm.hidden-xs
 						Navigation
 					%li{ class: set_css_if( controller: :dash ) }

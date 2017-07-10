@@ -3,7 +3,7 @@ json.title @workout.title
 
 json.workout_type @workout.workout_type
 json.human_type @workout.human_type
-json.cover_img @workout.cover_img
+json.cover_img @workout.cover_image
 
 json.overview_title @workout.overview_title
 json.overview_content @workout.overview_content

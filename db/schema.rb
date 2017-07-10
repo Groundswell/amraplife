@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170629224904) do
+ActiveRecord::Schema.define(version: 20170705154436) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -47,6 +47,28 @@ ActiveRecord::Schema.define(version: 20170629224904) do
   add_index "assets", ["parent_obj_id", "parent_obj_type", "asset_type", "use"], name: "swell_media_asset_use_index", using: :btree
   add_index "assets", ["parent_obj_type", "parent_obj_id"], name: "index_assets_on_parent_obj_type_and_parent_obj_id", using: :btree
   add_index "assets", ["tags"], name: "index_assets_on_tags", using: :gin
+
+  create_table "assignments", force: :cascade do |t|
+    t.integer  "assigned_id"
+    t.string   "assigned_type"
+    t.integer  "user_id"
+    t.integer  "assigned_by_id"
+    t.integer  "status",         default: 1
+    t.integer  "availability",   default: 0
+    t.string   "title"
+    t.text     "description"
+    t.text     "notes"
+    t.datetime "starts_at"
+    t.datetime "ends_at"
+    t.datetime "due_at"
+    t.hstore   "properties"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "assignments", ["assigned_by_id"], name: "index_assignments_on_assigned_by_id", using: :btree
+  add_index "assignments", ["assigned_id", "assigned_type"], name: "index_assignments_on_assigned_id_and_assigned_type", using: :btree
+  add_index "assignments", ["user_id"], name: "index_assignments_on_user_id", using: :btree
 
   create_table "cart_items", force: :cascade do |t|
     t.integer  "cart_id"
@@ -356,7 +378,7 @@ ActiveRecord::Schema.define(version: 20170629224904) do
     t.string  "title"
     t.string  "slug"
     t.text    "aliases",       default: [],          array: true
-    t.string  "unit"
+    t.string  "unit",          default: "sec"
     t.integer "user_id"
     t.string  "metric_type"
     t.text    "description"
@@ -364,7 +386,7 @@ ActiveRecord::Schema.define(version: 20170629224904) do
     t.string  "target_type",   default: "sum_value"
     t.float   "target_min",    default: 0.0
     t.float   "target_max",    default: 0.0
-    t.integer "availability",  default: 0
+    t.float   "target"
   end
 
   add_index "metrics", ["movement_id"], name: "index_metrics_on_movement_id", using: :btree
@@ -440,8 +462,8 @@ ActiveRecord::Schema.define(version: 20170629224904) do
     t.string   "content"
     t.float    "value"
     t.float    "sub_value",     default: 0.0
-    t.string   "unit",          default: "secs"
-    t.string   "sub_unit",      default: "reps"
+    t.string   "unit",          default: "sec"
+    t.string   "sub_unit",      default: "rep"
     t.string   "rx"
     t.text     "notes"
     t.datetime "started_at"
@@ -553,8 +575,10 @@ ActiveRecord::Schema.define(version: 20170629224904) do
     t.text     "shopify_code"
     t.string   "title"
     t.string   "caption"
+    t.integer  "seq",             default: 1
     t.string   "slug"
     t.string   "avatar"
+    t.string   "brand_model"
     t.integer  "status",          default: 0
     t.text     "description"
     t.text     "content"
@@ -573,10 +597,10 @@ ActiveRecord::Schema.define(version: 20170629224904) do
     t.integer  "collection_id"
     t.integer  "shipping_price",  default: 0
     t.string   "tax_code",        default: "00000"
-    t.integer  "seq",             default: 1
   end
 
   add_index "products", ["category_id"], name: "index_products_on_category_id", using: :btree
+  add_index "products", ["seq"], name: "index_products_on_seq", using: :btree
   add_index "products", ["slug"], name: "index_products_on_slug", unique: true, using: :btree
   add_index "products", ["status"], name: "index_products_on_status", using: :btree
   add_index "products", ["tags"], name: "index_products_on_tags", using: :gin
@@ -631,9 +655,10 @@ ActiveRecord::Schema.define(version: 20170629224904) do
   create_table "terms", force: :cascade do |t|
     t.string   "title"
     t.string   "slug"
+    t.text     "description"
     t.text     "content"
-    t.text     "aliases",    default: [], array: true
-    t.integer  "status",     default: 1
+    t.text     "aliases",     default: [], array: true
+    t.integer  "status",      default: 1
     t.datetime "created_at"
     t.datetime "updated_at"
   end

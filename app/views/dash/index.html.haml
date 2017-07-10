@@ -34,6 +34,19 @@
 						
 		.row
 			.col-sm-6.col-xs-12
+				.main-box.clearfix.project-box.green-box
+					.main-box-body.clearfix
+						.project-box-header.green-bg
+							.name
+								%a{ href: '#' }
+									Log Something
+						.project-box-content
+							= form_for UserInput.new, html: { style: 'margin: auto 1em;' } do |f|
+								= f.text_field :content, class: 'form-control', placeholder: 'Metric=Value(units) Notes'
+								.pull-right= f.submit 'Add', class: 'btn btn-success btn-lg', style: 'margin: 0.5em auto;'
+								.clearfix
+
+
 				.main-box.clearfix.project-box.purple-box
 					.main-box-body.clearfix
 						.project-box-header.purple-bg
@@ -52,8 +65,9 @@
 								%center
 									%h1
 										No Activity Yet
-			- unless @timers.empty?
-				.col-sm-6.col-xs-12
+			
+			.col-sm-6.col-xs-12
+				- unless @timers.empty?
 					.main-box.clearfix.project-box.emerald-box
 						.main-box-body.clearfix
 							.project-box-header.emerald-bg
@@ -82,8 +96,21 @@
 															%a{ href: stop_observation_path( timer ), data: { method: :put } }
 																%i.fa.fa-stop
 																stop
-			- @metrics.each do |metric|
-				.col-sm-6.col-xs-12
+				- else
+					.main-box.clearfix.project-box.emerald-box
+						.main-box-body.clearfix
+							.project-box-header.emerald-bg
+								.name
+									%a{ href: '#' }
+										%i.fa.fa-clock-o
+										Timers
+							.project-box-content
+								No Active Timers
+								%a.btn.btn-info{ href: '#' }
+									Start one
+
+
+				- @metrics.each do |metric|
 					.main-box.clearfix.project-box.green-box
 						.main-box-body.clearfix
 							.project-box-header.green-bg
@@ -97,11 +124,14 @@
 										= metric.observations.last.try( :human_value )
 									%span.label
 										Latest
+										on
+										= metric.observations.last.recorded_at.to_s( :slashed )
 								%a{ href: '#' }
 									%span.value
-										= 180
+										= metric.observations.for_day( @day ).sum( :value )
 									%span.label
-										Target
+										Total for 
+										= "(#{@day.to_s( :slashed )})"
 								%a{ href: '#' }
 									%span.value
 										%i.fa.fa-plus-square
@@ -132,11 +162,11 @@
 												%i.fa.fa-plus-square
 												Record
 										%li
-											%a{ href: '#' }
+											%a{ href: edit_metric_path( metric ) }
 												%i.fa.fa-pencil
 												Edit
 										%li
-											%a{ href: '#' }
+											%a{ href: stat_path( metric ) }
 												%i.fa.fa-eye
 												Show
 										%li.divider

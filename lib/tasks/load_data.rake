@@ -5,31 +5,32 @@ namespace :amraplife do
 		Metric.destroy_all
 		Observation.destroy_all
 		puts "Adding some Metrics"
-		ht = Metric.create title: 'Height', aliases: ['ht'], unit: 'in'
-		wt = Metric.create title: 'Weight', aliases: ['wt', 'lbs'], unit: 'lb'
-		wst = Metric.create title: 'Waist', aliases: ['wst'], unit: 'in'
-		wst = Metric.create title: 'Hips', aliases: ['hip'], unit: 'in'
-		rhr = Metric.create title: 'Resting Heart Rate', aliases: ['pulse', 'heart-rate', 'rhr'], unit: 'bpm'
-		systolic = Metric.create title: 'Systolic Blood Pressure', aliases: ['sbp', 'systolic'], unit: 'mm Hg'
-		diastolic = Metric.create title: 'Diastolic Blood Pressure', aliases: ['dbp', 'diastolic'], unit: 'mm Hg'
-		diastolic = Metric.create title: 'Blood Pressure', aliases: ['bp', 'blood-pressure'], unit: 'mm Hg' # use sub units for sys/dias observations
-		pbf = Metric.create title: 'Percent Body Fat', aliases: ['pbf', 'bodyfat'], unit: '%'
-		bmi = Metric.create title: 'Body Mass Index', aliases: ['bmi'], unit: 'bmi'
+		wt = Metric.create title: 'Weight', metric_type: 'physical', aliases: ['wt', 'lbs'], unit: 'lb'
+		wst = Metric.create title: 'Waist', metric_type: 'physical', aliases: ['wst'], unit: 'in'
+		wst = Metric.create title: 'Hips', metric_type: 'physical', aliases: ['hip'], unit: 'in'
+		rhr = Metric.create title: 'Resting Heart Rate', metric_type: 'physical', aliases: ['pulse', 'heart rate', 'rhr'], unit: 'bpm'
+		systolic = Metric.create title: 'Systolic Blood Pressure', metric_type: 'physical', aliases: ['sbp', 'systolic'], unit: 'mm Hg'
+		diastolic = Metric.create title: 'Diastolic Blood Pressure', metric_type: 'physical', aliases: ['dbp', 'diastolic'], unit: 'mm Hg'
+		diastolic = Metric.create title: 'Blood Pressure', metric_type: 'physical', aliases: ['bp', 'blood pressure'], unit: 'mm Hg' # use sub units for sys/dias observations
+		pbf = Metric.create title: 'Percent Body Fat', metric_type: 'physical', aliases: ['pbf', 'bodyfat'], unit: '%'
+		bmi = Metric.create title: 'Body Mass Index', metric_type: 'physical', aliases: ['bmi'], unit: 'bmi'
 		
+		md = Metric.create title: 'Mood', metric_type: 'mental', aliases: [ 'feeling', 'happiness' ]
+		md = Metric.create title: 'Energy', metric_type: 'mental', aliases: [ 'energy level' ]
 
-		bmi = Metric.create title: 'Calories', 	aliases: ['eat', 'ate', 'eating', 'cal', 'cals'], unit: 'kCal'
-		bmi = Metric.create title: 'Protein',	aliases: ['prot', 'grams-protein'], unit: 'g'
-		bmi = Metric.create title: 'Fat', 		aliases: ['fat', 'grams-fat'], unit: 'g'
-		bmi = Metric.create title: 'Carb', 		aliases: ['carb', 'carbs', 'carbohydrates', 'grams-carb'], unit: 'g'
+		bmi = Metric.create title: 'Calories', metric_type: 'nutrition', 	aliases: ['eat', 'ate', 'eating', 'cal', 'cals', 'breakfast', 'lunch', 'dinner', 'snack', 'block', 'blocks'], unit: 'kCal', target_period: 'day', target_type: 'sum_value', target: 2000
+		bmi = Metric.create title: 'Protein', metric_type: 'nutrition',	aliases: ['prot', 'grams protein', 'grams of protein' ], unit: 'g'
+		bmi = Metric.create title: 'Fat', metric_type: 'nutrition', 		aliases: ['fat', 'grams fat', 'grams of fat' ], unit: 'g'
+		bmi = Metric.create title: 'Carb', metric_type: 'nutrition', 		aliases: ['carb', 'carbs', 'carbohydrates', 'grams carb', 'grams of carb' ], unit: 'g'
 
-		bmi = Metric.create title: 'Sleep', 	aliases: ['slp', 'sleeping', 'slept', 'nap', 'napping', 'napped'], unit: 'sec'
-		bmi = Metric.create title: 'Meditation', aliases: ['med', 'meditating', 'meditated'], unit: 'sec'
-		bmi = Metric.create title: 'Drive', 	aliases: ['drv', 'driving', 'drove'], unit: 'sec'
-		bmi = Metric.create title: 'Work', 	aliases: ['wrk', 'working', 'worked'], unit: 'sec'
-		bmi = Metric.create title: 'Walk', 	aliases: ['wlk', 'walking', 'walked'], unit: 'sec'
-		bmi = Metric.create title: 'Cycle', aliases: ['cycling', 'cycled', 'bike', 'biked', 'biking', 'bicycling', 'bicycled', 'bicycle'], unit: 'sec'
-		bmi = Metric.create title: 'Swim', aliases: ['swimming', 'swam'], unit: 'sec'
-		bmi = Metric.create title: 'Run', aliases: ['running', 'ran', 'jog', 'jogging', 'jogged'], unit: 'sec'
+		bmi = Metric.create title: 'Sleep', metric_type: 'activity', 	aliases: ['slp', 'sleeping', 'slept', 'nap', 'napping', 'napped'], unit: 'sec', target_period: 'day', target_type: 'sum_value', target: 28800
+		bmi = Metric.create title: 'Meditation', metric_type: 'activity', aliases: ['med', 'meditating', 'meditated'], unit: 'sec', target_period: 'day', target_type: 'sum_value', target: 1200
+		bmi = Metric.create title: 'Drive', metric_type: 'activity', 	aliases: ['drv', 'driving', 'drove'], unit: 'sec'
+		bmi = Metric.create title: 'Work', metric_type: 'activity', 	aliases: ['wrk', 'working', 'worked'], unit: 'sec'
+		bmi = Metric.create title: 'Walk', metric_type: 'activity', 	aliases: ['wlk', 'walking', 'walked'], unit: 'sec'
+		bmi = Metric.create title: 'Cycle', metric_type: 'activity', aliases: ['cycling', 'cycled', 'bike', 'biked', 'biking', 'bicycling', 'bicycled', 'bicycle' ], unit: 'sec'
+		bmi = Metric.create title: 'Swim', metric_type: 'activity', aliases: ['swimming', 'swam'], unit: 'sec'
+		bmi = Metric.create title: 'Run', metric_type: 'activity', aliases: ['running', 'ran', 'jog', 'jogging', 'jogged'], unit: 'sec'
 		
 		
 
