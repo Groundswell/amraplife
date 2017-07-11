@@ -83,6 +83,17 @@ class ObservationBotService < AbstractBotService
 				action: 'Action',
 			}
 		},
+		report_eaten_observation: {
+			utterances: [
+				'how many calories (did|have) i (eaten|eat) {time_period}',
+				'how much (did|have) i (eaten|eat) {time_period}',
+				'how many calories (did|have) i (eaten|eat) in the {time_period}',
+				'how much (did|have) i (eaten|eat) in the {time_period}',
+			],
+			slots: {
+				time_period: 'TimePeriod',
+			}
+		},
 		stop: {
 			utterances: [ 'stop' ]
 		},
@@ -341,6 +352,44 @@ class ObservationBotService < AbstractBotService
 		else
 			add_speech("I can't find any running #{params[:action]} timers.")
 		end
+
+	end
+
+	def report_eaten_observation
+		unless user.present?
+			login
+			return
+		end
+
+		observed_metric = get_user_metric( user, 'ate', 'calories' )
+		time_period = params[:time_period].downcase.gsub(/\s+/,' ')
+
+		puts "'#{time_period}'"
+
+		if time_period == 'today'
+			range = Time.now.beginning_of_day..Time.now.end_of_day
+		elsif time_period == 'yesterday'
+			range = 1.day.ago.beginning_of_day..1.day.ago.end_of_day
+		elsif ( matches = time_period.match(/this (?'unit'week|month|year)/) ).present?
+			unit = matches['unit']
+			range = Time.now.try("beginning_of_#{unit}").beginning_of_day..Time.now.try("end_of_#{unit}").end_of_day
+		elsif ( matches = time_period.match(/last (?'unit'week|month|year)/) ).present?
+			unit = matches['unit']
+			range = 1.try(unit).ago.try("beginning_of_#{unit}").beginning_of_day..1.try(unit).ago.try("end_of_#{unit}").end_of_day
+		elsif ( matches = time_period.match(/last (?'amount'.+) (?'unit'days|weeks|months|years)/) ).present?
+			amount = NumbersInWords.in_numbers( matches['amount'] )
+			unit = matches['unit']
+			range = amount.try(unit).ago.beginning_of_day..Time.now
+		else
+			add_speech("Sorry, I don't understand that.")
+			return
+		end
+
+		puts range
+
+		calories = Observation.where( user: user, observed: Metric.where( user_id: user, title: 'ate' ), created_at: range ).sum(:value)
+
+		add_speech("#{calories.to_i} calories.")
 
 	end
 

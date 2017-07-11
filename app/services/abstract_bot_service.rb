@@ -20,6 +20,18 @@ class AbstractBotService
 			],
 			values: []
 		},
+		TimePeriod: {
+			regex: [
+				"today|yesterday|this\s+(week|month|year)|last\s+(day|week|month)|last\s+#{NATURAL_LANGUAGE_NUMBERS_REGEX}\s+(days|weeks|months)",
+			],
+			values: []
+		},
+		TimeUnit: {
+			regex: [
+				"(week|month|day|year|weeks|months|days|years)",
+			],
+			values: []
+		},
 		Amount: {
 			regex: [
 				NATURAL_LANGUAGE_NUMBERS_REGEX,
