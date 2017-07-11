@@ -70,7 +70,9 @@ class ObservationAlexaSkillsController < ActionController::Base
 	def login_success
 		valid_redirect_urls = [
 			'https://layla.amazon.com/spa/skill/account-linking-status.html?vendorId=MKT7E8U3IKMHM',
-			'https://pitangui.amazon.com/spa/skill/account-linking-status.html?vendorId=MKT7E8U3IKMHM'
+			'https://pitangui.amazon.com/spa/skill/account-linking-status.html?vendorId=MKT7E8U3IKMHM',
+			'https://layla.amazon.com/spa/skill/account-linking-status.html?vendorId=M1F4UU7I5YESCS',
+			'https://pitangui.amazon.com/spa/skill/account-linking-status.html?vendorId=M1F4UU7I5YESCS'
 		]
 
 		redirect_uri = params[:redirect_uri]
