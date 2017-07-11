@@ -22,7 +22,7 @@ class ObservationGoogleActionsController < ActionController::Base
 				@bot_service = ObservationBotService.new( response: action_response, user: @user, params: {}, dialog: DEFAULT_DIALOG )
 
 				request_text = params[:inputs].first[:raw_inputs].first[:query]
-				request_text = request_text.gsub(/^.* (LifeMeter|life meter)/i, '').strip
+				request_text = request_text.gsub(/^.* (lifemeter|life\s+meter|amraplife|amrap\s+life|am\s+wrap\s+life)/i, '').strip
 
 				unless @bot_service.respond_to_text( request_text )
 					action_response.add_speech( "Sorry, I don't know about that." )
