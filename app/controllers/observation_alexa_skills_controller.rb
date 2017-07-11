@@ -11,6 +11,7 @@ class ObservationAlexaSkillsController < ActionController::Base
 
 	def create
 		# @todo Check that it's a valid Alexa request
+		puts request.raw_post
 		@alexa_request	= AlexaRubykit.build_request( JSON.parse(request.raw_post) )
 		@alexa_session	= @alexa_request.session
 		@alexa_response	= AlexaRubykit::Response.new
