@@ -33,6 +33,12 @@ index.html.haml
 												%i.fa.fa-clock-o
 												= time_ago_in_words input.created_at
 												ago.
+											- if input.result_obj.present?
+												I did this:
+												= input.result_status
+												= input.action
+												= input.result_obj.class.name
+												= input.result_obj
 
 					- else
 						%center
