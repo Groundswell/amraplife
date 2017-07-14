@@ -1,6 +1,6 @@
-
+index.html.haml
 .row
-	.col-sm-12.hidden-lg.hidden-md
+	.col-sm-12
 		%h3 Quick Add
 		= form_for UserInput.new, html: { style: 'margin: auto 1em;' } do |f|
 			= f.text_field :content, class: 'form-control', placeholder: 'Metric=Value(units) Notes'
@@ -8,188 +8,36 @@
 			.clearfix
 .row
 	.col-sm-12
-		.row
-			.col-xs-6
-				%h1 
-					- if @day.to_date == Date.current
-						Today
+		.main-box.clearfix.project-box.purple-box
+			.main-box-body.clearfix
+				.project-box-header.purple-bg
+					.name
+						%a{ href: '#' }
+							Recent Activity
+				.project-box-content
+					- if @inputs.present?
+						= raw paginate @inputs
+						.main-box.feed
+							.main-box-body.clearfix
+								%ul
+									- @inputs.each do |input|
+										%li.clearfix{ style: 'list-style: none;' }
+											.img
+												= image_tag input.user.avatar
+											.title
+												You Said: 
+												= input.content
+											.post-time
+												= input.created_at.to_s( :slashed_time )
+											.time-ago
+												%i.fa.fa-clock-o
+												= time_ago_in_words input.created_at
+												ago.
+
 					- else
-						= { '0' => 'Sun', '1' => 'Mon', '2' => 'Tues', '3' => 'Wed', '4' => 'Thurs', '5' => 'Fri', '6' => 'Sat' }[@day.wday.to_s]
-					- if @day.to_date == Date.current
-						= "(#{{ '0' => 'Sun', '1' => 'Mon', '2' => 'Tues', '3' => 'Wed', '4' => 'Thurs', '5' => 'Fri', '6' => 'Sat' }[@day.wday.to_s]} #{@day.to_s( :slashed )})"
-					- else
-						= "(#{@day.to_s( :slashed )})"
-
-			.col-xs-2.col-sm-1.col-sm-offset-1
-				%h4
-					%a{ href: dash_index_path( day: @day.yesterday ) }
-						%i.fa.fa-chevron-left
-			.col-xs-2.col-sm-1
-				%h4
-					%a{ href: dash_index_path( day: Time.zone.now) }
-						%i.fa.fa-calendar
-			.col-xs-2.col-sm-1
-				%h4
-					%a{ href: dash_index_path( day: @day.tomorrow ) }
-						%i.fa.fa-chevron-right
-						
-		.row
-			.col-sm-6.col-xs-12
-				.main-box.clearfix.project-box.green-box
-					.main-box-body.clearfix
-						.project-box-header.green-bg
-							.name
-								%a{ href: '#' }
-									Log Something
-						.project-box-content
-							= form_for UserInput.new, html: { style: 'margin: auto 1em;' } do |f|
-								= f.text_field :content, class: 'form-control', placeholder: 'Metric=Value(units) Notes'
-								.pull-right= f.submit 'Add', class: 'btn btn-success btn-lg', style: 'margin: 0.5em auto;'
-								.clearfix
-
-
-				.main-box.clearfix.project-box.purple-box
-					.main-box-body.clearfix
-						.project-box-header.purple-bg
-							.name
-								%a{ href: '#' }
-									Recent Activity
-						.project-box-content
-							- if @inputs.present?
-								= raw paginate @inputs
-								.main-box.feed
-									.main-box-body.clearfix
-										%ul
-											- @inputs.each do |input|
-												%li.clearfix{ style: 'list-style: none;' }
-													.img
-													.title
-														You Said: 
-														= input.content
-													.post-time
-														= input.created_at.to_s( :slashed_time )
-													.time-ago
-														%i.fa.fa-clock-o
-														= time_ago_in_words input.created_at
-														ago.
-
-							- else
-								%center
-									%h1
-										No Activity Yet
-			
-			.col-sm-6.col-xs-12
-				- unless @timers.empty?
-					.main-box.clearfix.project-box.emerald-box
-						.main-box-body.clearfix
-							.project-box-header.emerald-bg
-								.name
-									%a{ href: '#' }
-										%i.fa.fa-clock-o
-										Active Timers
-							.project-box-content
-								.main-box.feed
-									.main-box-body.clearfix
-										%table.table
-											%thead
-												%th Activity
-												%th Started
-												%th
-											%tbody
-												- @timers.each do |timer|
-													%tr
-														%td
-															= timer.observed.try( :title )
-														%td
-															= timer.started_at.to_s( :short )
-															%br
-															= "(#{time_ago_in_words( timer.started_at )} ago)"
-														%td
-															%a{ href: stop_observation_path( timer ), data: { method: :put } }
-																%i.fa.fa-stop
-																stop
-				- else
-					.main-box.clearfix.project-box.emerald-box
-						.main-box-body.clearfix
-							.project-box-header.emerald-bg
-								.name
-									%a{ href: '#' }
-										%i.fa.fa-clock-o
-										Timers
-							.project-box-content
-								No Active Timers
-								%a.btn.btn-info{ href: '#' }
-									Start one
-
-
-				- @metrics.each do |metric|
-					.main-box.clearfix.project-box.green-box
-						.main-box-body.clearfix
-							.project-box-header.green-bg
-								.name
-									%a{ href: '#' }
-										%i.fa.fa-bullseye
-										= metric.title
-							.project-box-footer.clearfix
-								%a{ href: '#' }
-									%span.value
-										= metric.observations.last.try( :human_value )
-									%span.label
-										Latest
-										on
-										= metric.observations.last.recorded_at.to_s( :slashed )
-								%a{ href: '#' }
-									%span.value
-										= metric.observations.for_day( @day ).sum( :value )
-									%span.label
-										Total for 
-										= "(#{@day.to_s( :slashed )})"
-								%a{ href: '#' }
-									%span.value
-										%i.fa.fa-plus-square
-									%span.label
-										Record
-							-#.project-box-content
-								%span.chart{ data: { percent: '0.87', 'bar-color' => '#2ECC71' } }
-									%span.percent
-										"%"
-										%br
-									%span.lbl
-										Nice!
-							- if metric.observations.count > 3
-								.project-box-content
-									%h4 Recent Observations
-								.project-box-footer.clearfix
-									%span.spark{ style: 'text-align:center;' }
-										%div{ data: { sparkline: '', type: :line, 'line-color' => '#2ECC71', height: 60, width: '70%', 'line-width' => 2, 'chart-range-min' => "#{metric.observations.order( recorded_at: :desc ).limit( 10 ).minimum( :value )}", 'chart-range-max' => "#{metric.observations.order( recorded_at: :desc ).limit( 10 ).maximum( :value )}", 'spot-color' => '#888', 'min-spot-color' => '#2ECC71', 'max-spot-color' => '#2ECC71', 'fill-color' => '', 'highlight-line-color' => '#fff', 'spot-radius' => 3, resize: true, values: "#{metric.observations.order( recorded_at: :desc ).limit( 10 ).pluck( :value ).reverse.join(',')}" } }
-							
-							.project-box-ultrafooter.clearfix
-								.pull-right.btn-group
-									%a.dropdown-toggle{ href: '#', data: { toggle: :dropdown } }
-										%i.fa.fa-cog
-										%b.caret
-									%ul.dropdown-menu
-										%li
-											%a{ href: '#' }
-												%i.fa.fa-plus-square
-												Record
-										%li
-											%a{ href: edit_metric_path( metric ) }
-												%i.fa.fa-pencil
-												Edit
-										%li
-											%a{ href: stat_path( metric ) }
-												%i.fa.fa-eye
-												Show
-										%li.divider
-										%li
-											%a{ href: '#', data: { method: 'delete', confirm: 'Are you sure?' } }
-												%i.fa.fa-trash-o
-												Delete!
-
-
-= render 'dash/widget_scripts'
+						%center
+							%h1
+								No Activity Yet
 
 
 
-		
