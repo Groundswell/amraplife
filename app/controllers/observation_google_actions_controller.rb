@@ -19,7 +19,7 @@ class ObservationGoogleActionsController < ActionController::Base
 
 			assistant.intent.main do
 				action_response = GoogleActionResponse.new
-				@bot_service = ObservationBotService.new( response: action_response, user: @user, params: {}, dialog: DEFAULT_DIALOG )
+				@bot_service = ObservationBotService.new( response: action_response, user: @user, params: {}, dialog: DEFAULT_DIALOG, source: 'google_actions' )
 
 				request_text = params[:inputs].first[:raw_inputs].first[:query]
 				request_text = request_text.gsub(/^.* (lifemeter|life\s+meter|amraplife|amrap\s+life|am\s+wrap\s+life)/i, '').strip

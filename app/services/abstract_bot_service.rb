@@ -53,11 +53,13 @@ class AbstractBotService
 		@params 	= args[:params] || {}
 		@user 		= args[:user]
 		@dialog		= args[:dialog] || {}
+		@options	= args
 
 	end
 
 	def respond_to_text( text, args = {} )
 		text = text.strip
+		@raw_input = text
 		compiled_intents = self.class.compiled_intents
 
 		requested_intent_name = nil
@@ -88,8 +90,16 @@ class AbstractBotService
 		end
 	end
 
+	def options
+		@options
+	end
+
 	def params
 		@params
+	end
+
+	def raw_input
+		@raw_input
 	end
 
 	def request

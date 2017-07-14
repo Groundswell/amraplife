@@ -256,25 +256,30 @@ class ObservationBotService < AbstractBotService
 
 			add_speech("Logging that you ate #{params[:quantity]} #{params[:food]}.#{calories.present? ? " Approximately #{calories} calories." : ""}")
 
-			Observation.create( user: user, observed: observed_metric, value: calories, unit: 'calories', notes: "I ate #{params[:quantity]} #{params[:food]}" )
+			observation = Observation.create( user: user, observed: observed_metric, value: calories, unit: 'calories', notes: "I ate #{params[:quantity]} #{params[:food]}" )
 
 		elsif params[:quantity].present? && params[:measure].present?
 
 			add_speech("Logging that you ate #{params[:quantity]} #{params[:measure]} of #{params[:food]}.#{calories.present? ? " Approximately #{calories} calories." : ""}.")
 
-			Observation.create( user: user, observed: observed_metric, value: calories, unit: 'calories', notes: "I ate #{params[:quantity]} #{params[:measure]} of #{params[:food]}" )
+			observation = Observation.create( user: user, observed: observed_metric, value: calories, unit: 'calories', notes: "I ate #{params[:quantity]} #{params[:measure]} of #{params[:food]}" )
 
 		elsif params[:portion].present?
 
 			add_speech("Logging that you ate #{params[:portion]} portion of #{params[:food]}.#{calories.present? ? " Approximately #{calories} calories." : ""}")
 
-			Observation.create( user: user, observed: observed_metric, value: calories, unit: 'calories', notes: "I ate #{params[:portion]} portion of #{params[:food]}" )
+			observation = Observation.create( user: user, observed: observed_metric, value: calories, unit: 'calories', notes: "I ate #{params[:portion]} portion of #{params[:food]}" )
 
 		else
 
 			add_speech("Sorry, I don't understand.")
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found' )
+			return
 
 		end
+
+		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'create', source: options[:source], result_status: 'success' )
+
 	end
 
 	def log_metric_observation
@@ -310,6 +315,8 @@ class ObservationBotService < AbstractBotService
 
 		end
 
+		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'create', source: options[:source], result_status: 'success' )
+
 	end
 
 	def log_start_observation
@@ -322,14 +329,18 @@ class ObservationBotService < AbstractBotService
 
 		if observed_metric.errors.present?
 			add_speech("I'm sorry, I don't know how to log information about #{params[:action]}. #{observed_metric.errors.full_messages.join('. ')}")
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found' ) if user.present?
 			return
 		elsif observed_metric.nil?
 			add_speech("I'm sorry, I don't know how to log information about #{params[:action]}.")
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found' ) if user.present?
 			return
 		end
 
-		Observation.create( user: user, observed: observed_metric, started_at: Time.zone.now, notes: "start #{params[:action]}" )
+		observation = Observation.create( user: user, observed: observed_metric, started_at: Time.zone.now, notes: "start #{params[:action]}" )
 		add_speech("Starting your #{params[:action]} timer")
+
+		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'create', source: options[:source], result_status: 'success' )
 
 	end
 
@@ -343,9 +354,11 @@ class ObservationBotService < AbstractBotService
 
 		if observed_metric.errors.present?
 			add_speech("I'm sorry, I don't know how to log information about #{params[:action]}. #{observed_metric.errors.full_messages.join('. ')}")
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found' )
 			return
 		elsif observed_metric.nil?
 			add_speech("I'm sorry, I don't know how to log information about #{params[:action]}.")
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found' )
 			return
 		end
 
@@ -360,6 +373,8 @@ class ObservationBotService < AbstractBotService
 		else
 			add_speech("I can't find any running #{params[:action]} timers.")
 		end
+
+		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'update', source: options[:source], result_status: 'success' )
 
 	end
 
@@ -390,14 +405,14 @@ class ObservationBotService < AbstractBotService
 			range = amount.try(unit).ago.beginning_of_day..Time.now
 		else
 			add_speech("Sorry, I don't understand that.")
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found' )
 			return
 		end
-
-		puts range
 
 		calories = Observation.where( user: user, observed: Metric.where( user_id: user, title: 'ate' ), created_at: range ).sum(:value)
 
 		add_speech("#{calories.to_i} calories.")
+		user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'success' )
 
 	end
 
