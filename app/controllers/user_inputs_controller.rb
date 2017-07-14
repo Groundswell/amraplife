@@ -6,6 +6,16 @@ class UserInputsController < ApplicationController
 	def create
 		@input = current_user.user_inputs.create( user_input_params )
 		@input.parse_content!
+
+		@bot_service = ObservationBotService.new( user: current_user, source: 'dash' )
+
+		unless @bot_service.respond_to_text( user_input_params[:content] )
+
+			add_flash "Sorry, I didn't understand that."
+
+		end
+
+
 		redirect_to :back
 	end
 
