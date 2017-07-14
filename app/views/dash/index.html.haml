@@ -26,6 +26,8 @@
 											.title
 												You Said:
 												= input.content
+												from
+												= input.source
 											.post-time
 												= input.created_at.to_s( :slashed_time )
 											.time-ago

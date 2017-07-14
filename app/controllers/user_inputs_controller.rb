@@ -4,8 +4,6 @@ class UserInputsController < ApplicationController
 
 	# web interface posts here for user all commands
 	def create
-		@input = current_user.user_inputs.create( user_input_params )
-		@input.parse_content!
 
 		@bot_service = ObservationBotService.new( user: current_user, source: 'dash' )
 
