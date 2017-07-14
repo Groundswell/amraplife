@@ -293,17 +293,17 @@ class ObservationBotService < AbstractBotService
 
 			else
 
-				Observation.create( user: user, observed: observed_metric, value: params[:value], unit: params[:unit], notes: "start #{params[:action]}" )
+				observation = Observation.create( user: user, observed: observed_metric, value: params[:value], unit: params[:unit], notes: "start #{params[:action]}" )
 
-				add_speech("Logging that you #{params[:action]} #{params[:value]} #{params[:unit]}")
+				add_speech( observation.to_s( user ) )
 
 			end
 
 		else
 
-			Observation.create( user: user, value: params[:value], unit: params[:unit], notes: "start #{params[:action]}" )
+			observation = Observation.create( user: user, value: params[:value], unit: params[:unit], notes: "start #{params[:action]}" )
 
-			add_speech("Logging #{params[:value]} #{params[:unit]}")
+			add_speech( observation.to_s( user ) )
 
 		end
 
