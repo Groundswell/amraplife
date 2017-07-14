@@ -5,7 +5,7 @@ class UserInput < ActiveRecord::Base
 	# generated objects
 
 	belongs_to 	:user 
-	belongs_to 	:created_obj, polymorphic: true
+	belongs_to 	:result_obj, polymorphic: true
 
 	def parse_content!
 		# take what the user said, try to make sense of it, and create
@@ -70,9 +70,9 @@ class UserInput < ActiveRecord::Base
 				end
 			end
 
-			self.created_obj = Observation.create( user: self.user, observed: observed, value: val, notes: matches.post_match )
+			self.result_obj = Observation.create( user: self.user, observed: observed, value: val, notes: matches.post_match )
 			self.save
-			return self.created_obj
+			return self.result_obj
 
 		# verb condition - e.g. "ran 3miles"
 		# string begins with congruent word characters, then whitespace, 
@@ -113,9 +113,9 @@ class UserInput < ActiveRecord::Base
 				end
 			end
 
-			self.created_obj = Observation.create( user: self.user, observed: observed, value: val, notes: matches.post_match )
+			self.result_obj = Observation.create( user: self.user, observed: observed, value: val, notes: matches.post_match )
 			self.save
-			return self.created_obj
+			return self.result_obj
 
 		elsif matches = str.match( /(\Astarted|\Astart)\s+(\w+)/ )
 			# start something
@@ -134,9 +134,9 @@ class UserInput < ActiveRecord::Base
 				end
 			end
 
-			self.created_obj = Observation.create( user: self.user, observed: observed, started_at: Time.zone.now, notes: matches.post_match )
+			self.result_obj = Observation.create( user: self.user, observed: observed, started_at: Time.zone.now, notes: matches.post_match )
 			self.save
-			return self.created_obj
+			return self.result_obj
 
 		elsif matches = str.match( /(\Astopped|\Astop)\s+(\w+)/ )
 			# stop something
@@ -149,9 +149,9 @@ class UserInput < ActiveRecord::Base
 		end
 
 		# nothing matches -- it's just a note
-		self.created_obj = Observation.create( user: self.user, notes: str, raw_input: raw_input )
+		self.result_obj = Observation.create( user: self.user, notes: str )
 		self.save
-		return self.created_obj
+		return self.result_obj
 
 	end
 end

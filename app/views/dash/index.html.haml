@@ -55,13 +55,24 @@
 								%a{ href: '#' }
 									Recent Activity
 						.project-box-content
-							- if @observations.present?
-								= raw paginate @observations
+							- if @inputs.present?
+								= raw paginate @inputs
 								.main-box.feed
 									.main-box-body.clearfix
 										%ul
-											- @observations.each do |observation|
-												= render 'observations/feed_item', observation: observation
+											- @inputs.each do |input|
+												%li.clearfix{ style: 'list-style: none;' }
+													.img
+													.title
+														You Said: 
+														= input.content
+													.post-time
+														= input.created_at.to_s( :slashed_time )
+													.time-ago
+														%i.fa.fa-clock-o
+														= time_ago_in_words input.created_at
+														ago.
+
 							- else
 								%center
 									%h1
