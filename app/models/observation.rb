@@ -200,8 +200,23 @@ class Observation < ActiveRecord::Base
 		self.save
 	end
 
-	def to_s
-		return "#{self.human_value} #{self.unit}"
+	def to_s( user=nil )
+		str = ""
+		if user = self.user
+			str = 'You '
+		else
+			str = "#{self.user} "
+		end
+		
+		if self.value.present?
+			str += "recorded #{self.human_value} for #{self.observed.try( :title )} "
+		elsif self.started_at.present? && self.ended_at.nil?
+			str += "started #{self.observed.try( :title )} "
+		else
+			str += "said "
+		end
+
+		str += self.notes
 	end
 
 

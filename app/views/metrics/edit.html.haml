@@ -43,6 +43,19 @@
 						.form-group
 							= f.label :aliases_csv, 'Aliases'
 							= f.text_field :aliases_csv, class: 'form-control'
+						
+						.form-group
+							= f.label :target_period
+							= f.select :target_period, options_for_select( [ ['Day', 'day'], ['Week', 'week'], ['Month', 'month'],[ 'Year', 'year'], ['All-Time', 'all_time'] ], @metric.target_period ), {}, class: 'form-control'
+						.form-group
+							= f.label :target_type
+							= f.select :target_type, options_for_select( [ ['Average', 'avg_value'], ['Count', 'count'], ['Sum', 'sum_value'], [ 'Max', 'max_value'], ['Min', 'min_value'], ['Range', 'range'] ], @metric.target_type ), {}, class: 'form-control'
+						.form-group
+							= f.label :target
+							= f.text_field :target, class: 'form-control'
+
+
+
 						.form-group
 							= f.submit :update, class: 'btn btn-primary'
 	

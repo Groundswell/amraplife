@@ -18,10 +18,12 @@ namespace :amraplife do
 		md = Metric.create title: 'Mood', metric_type: 'mental', aliases: [ 'feeling', 'happiness' ]
 		md = Metric.create title: 'Energy', metric_type: 'mental', aliases: [ 'energy level' ]
 
-		bmi = Metric.create title: 'Calories', metric_type: 'nutrition', 	aliases: ['eat', 'ate', 'eating', 'cal', 'cals', 'breakfast', 'lunch', 'dinner', 'snack', 'block', 'blocks'], unit: 'kCal', target_period: 'day', target_type: 'sum_value', target: 2000
+		bmi = Metric.create title: 'Calories', metric_type: 'nutrition', 	aliases: ['eat', 'ate', 'eating', 'cal', 'cals', 'meal', 'breakfast', 'lunch', 'dinner', 'snack', 'block', 'blocks'], unit: 'kCal', target_period: 'day', target_type: 'sum_value', target: 2000
+		bmi = Metric.create title: 'Blocks', metric_type: 'nutrition', 	aliases: ['eat', 'ate', 'eating', 'meal', 'breakfast', 'lunch', 'dinner', 'snack', 'block', 'blocks'], unit: 'block', target_period: 'day', target_type: 'sum_value', target: 15
 		bmi = Metric.create title: 'Protein', metric_type: 'nutrition',	aliases: ['prot', 'grams protein', 'grams of protein' ], unit: 'g'
 		bmi = Metric.create title: 'Fat', metric_type: 'nutrition', 		aliases: ['fat', 'grams fat', 'grams of fat' ], unit: 'g'
-		bmi = Metric.create title: 'Carb', metric_type: 'nutrition', 		aliases: ['carb', 'carbs', 'carbohydrates', 'grams carb', 'grams of carb' ], unit: 'g'
+		bmi = Metric.create title: 'Carb', metric_type: 'nutrition', 		aliases: ['carb', 'carbs', 'carbohydrates', 'grams carb', 'grams of carb', 'net carbs' ], unit: 'g'
+		bmi = Metric.create title: 'Sugar', metric_type: 'nutrition', 		aliases: ['sugars', 'grams sugar', 'grams of sugar' ], unit: 'g'
 
 		bmi = Metric.create title: 'Sleep', metric_type: 'activity', 	aliases: ['slp', 'sleeping', 'slept', 'nap', 'napping', 'napped'], unit: 'sec', target_period: 'day', target_type: 'sum_value', target: 28800
 		bmi = Metric.create title: 'Meditation', metric_type: 'activity', aliases: ['med', 'meditating', 'meditated'], unit: 'sec', target_period: 'day', target_type: 'sum_value', target: 1200

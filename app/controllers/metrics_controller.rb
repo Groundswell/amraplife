@@ -40,7 +40,7 @@ class MetricsController < ApplicationController
 
 		def metric_params
 			params[:metric][:unit] = params[:metric][:unit].singularize
-			params.require( :metric ).permit( :title, :unit, :aliases_csv, :description )
+			params.require( :metric ).permit( :title, :unit, :aliases_csv, :description, :target, :target_type, :target_period )
 		end
 
 end
