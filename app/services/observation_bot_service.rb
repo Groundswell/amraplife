@@ -283,6 +283,9 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
+		# @todo parse notes
+		notes = nil
+
 		if params[:action].present?
 
 			observed_metric = get_user_metric( user, params[:action], params[:unit] )
@@ -293,7 +296,7 @@ class ObservationBotService < AbstractBotService
 
 			else
 
-				observation = Observation.create( user: user, observed: observed_metric, value: params[:value], unit: params[:unit], notes: "start #{params[:action]}" )
+				observation = Observation.create( user: user, observed: observed_metric, value: params[:value], unit: params[:unit], notes: notes )
 
 				add_speech( observation.to_s( user ) )
 
@@ -301,7 +304,7 @@ class ObservationBotService < AbstractBotService
 
 		else
 
-			observation = Observation.create( user: user, value: params[:value], unit: params[:unit], notes: "start #{params[:action]}" )
+			observation = Observation.create( user: user, value: params[:value], unit: params[:unit], notes: notes )
 
 			add_speech( observation.to_s( user ) )
 
