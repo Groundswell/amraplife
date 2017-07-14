@@ -16,22 +16,12 @@ class ObservationBotService < AbstractBotService
 		login: {
 			utterances: [ 'login', 'sign me in', 'sign in', 'log in', 'log me in' ]
 		},
-		log_eaten_observation: {
-			utterances: [
-				'i ate {quantity} serving of {food}',
-				'i ate {quantity} {measure} of {food}',
-				'i ate {quantity} {food}',
-				'i ate {portion} portion of {food}',
-			],
-			slots: {
-				quantity: 'Number',
-				food: 'Food',
-				measure: 'Measure',
-				portion: 'Number',
-			}
-		},
 		log_metric_observation: {
 			utterances: [
+				'i ate {value} {unit} of {action}',
+				'to (log|record) {value} for {action}',
+				'to (log|record) {value} {unit} for {action}',
+				'to (log|record) {value}{unit} for {action}',
 				'to (log|record) {value} {unit}',
 				'i did {value} {unit} of {action}',
 				'i {action} for {value} {unit}',
@@ -81,6 +71,20 @@ class ObservationBotService < AbstractBotService
 			],
 			slots: {
 				action: 'Action',
+			}
+		},
+		log_eaten_observation: {
+			utterances: [
+				'i ate {quantity} serving of {food}',
+				# 'i ate {quantity} {measure} of {food}',
+				# 'i ate {quantity} {food}',
+				'i ate {portion} portion of {food}',
+			],
+			slots: {
+				quantity: 'Number',
+				food: 'Food',
+				measure: 'Measure',
+				portion: 'Number',
 			}
 		},
 		report_eaten_observation: {
