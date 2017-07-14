@@ -5,6 +5,7 @@ class UserInputV2Migration < ActiveRecord::Migration
 
 		add_column 		:user_inputs, :source, :string # web, mobile, fb, sack, alexa, goog_assistant
 		add_column 		:user_inputs, :action, :string, default: :created # created, updated
+		add_column 		:user_inputs, :result_status, :string, default: :success # csuccess, fail
 		add_column 		:user_inputs, :system_notes, :text
 
 	end

@@ -2,9 +2,10 @@
 .row
 	.col-sm-12.hidden-lg.hidden-md
 		%h3 Quick Add
-		= form_for Observation.new, html: { style: 'margin: auto 1em;' } do |f|
-			= f.text_field :content, class: 'form-control', placeholder: 'Activity=Value Notes'
-			.pull-right= f.submit 'Quick Add', class: 'btn btn-primary btn-lg', style: 'margin-top: 0.5em;'
+		= form_for UserInput.new, html: { style: 'margin: auto 1em;' } do |f|
+			= f.text_field :content, class: 'form-control', placeholder: 'Metric=Value(units) Notes'
+			.pull-right= f.submit 'Add', class: 'btn btn-success btn-lg', style: 'margin: 0.5em auto;'
+			.clearfix
 .row
 	.col-sm-12
 		.row

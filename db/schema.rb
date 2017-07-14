@@ -689,6 +689,7 @@ ActiveRecord::Schema.define(version: 20170714175117) do
     t.datetime "updated_at"
     t.string   "source"
     t.string   "action",          default: "created"
+    t.string   "result_status",   default: "success"
     t.text     "system_notes"
   end
 
