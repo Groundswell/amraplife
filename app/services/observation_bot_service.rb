@@ -16,22 +16,13 @@ class ObservationBotService < AbstractBotService
 		login: {
 			utterances: [ 'login', 'sign me in', 'sign in', 'log in', 'log me in' ]
 		},
-		log_eaten_observation: {
-			utterances: [
-				'i ate {quantity} serving of {food}',
-				'i ate {quantity} {measure} of {food}',
-				'i ate {quantity} {food}',
-				'i ate {portion} portion of {food}',
-			],
-			slots: {
-				quantity: 'Number',
-				food: 'Food',
-				measure: 'Measure',
-				portion: 'Number',
-			}
-		},
 		log_metric_observation: {
 			utterances: [
+				'i ate {value} {unit} of {action}',
+				'i ate {value}{unit} of {action}',
+				'to (log|record) {value} for {action}',
+				'to (log|record) {value} {unit} for {action}',
+				'to (log|record) {value}{unit} for {action}',
 				'to (log|record) {value} {unit}',
 				'i did {value} {unit} of {action}',
 				'i {action} for {value} {unit}',
@@ -81,6 +72,20 @@ class ObservationBotService < AbstractBotService
 			],
 			slots: {
 				action: 'Action',
+			}
+		},
+		log_eaten_observation: {
+			utterances: [
+				'i ate {quantity} serving of {food}',
+				# 'i ate {quantity} {measure} of {food}',
+				# 'i ate {quantity} {food}',
+				'i ate {portion} portion of {food}',
+			],
+			slots: {
+				quantity: 'Number',
+				food: 'Food',
+				measure: 'Measure',
+				portion: 'Number',
 			}
 		},
 		report_eaten_observation: {
@@ -288,17 +293,17 @@ class ObservationBotService < AbstractBotService
 
 			else
 
-				Observation.create( user: user, observed: observed_metric, value: params[:value], unit: params[:unit], notes: "start #{params[:action]}" )
+				observation = Observation.create( user: user, observed: observed_metric, value: params[:value], unit: params[:unit], notes: "start #{params[:action]}" )
 
-				add_speech("Logging that you #{params[:action]} #{params[:value]} #{params[:unit]}")
+				add_speech( observation.to_s( user ) )
 
 			end
 
 		else
 
-			Observation.create( user: user, value: params[:value], unit: params[:unit], notes: "start #{params[:action]}" )
+			observation = Observation.create( user: user, value: params[:value], unit: params[:unit], notes: "start #{params[:action]}" )
 
-			add_speech("Logging #{params[:value]} #{params[:unit]}")
+			add_speech( observation.to_s( user ) )
 
 		end
 
