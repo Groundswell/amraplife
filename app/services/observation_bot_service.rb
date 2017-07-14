@@ -19,6 +19,7 @@ class ObservationBotService < AbstractBotService
 		log_metric_observation: {
 			utterances: [
 				'i ate {value} {unit} of {action}',
+				'i ate {value}{unit} of {action}',
 				'to (log|record) {value} for {action}',
 				'to (log|record) {value} {unit} for {action}',
 				'to (log|record) {value}{unit} for {action}',
