@@ -14,7 +14,7 @@ class Observation < ActiveRecord::Base
 	def self.dated_between( start_date=1.month.ago, end_date=Time.zone.now )
 		start_date = start_date.to_datetime.beginning_of_day
 		end_date = end_date.to_datetime.end_of_day
-		
+
 		where( recorded_at: start_date..end_date )
 	end
 
@@ -39,9 +39,9 @@ class Observation < ActiveRecord::Base
 
 		if str.match( /\Ai*\s*ate/i )
 			# ate something.... send it to the nutrition service
-		end 
+		end
 
-		# one or more word character(s) followed by zero or more whitespace, 
+		# one or more word character(s) followed by zero or more whitespace,
 		# then an = or 'is' or 'for'
 		# then possibly more whitespace, then one or more numbers with possibly an
 		# ampersand, colons, and maybe training an 'rx'
@@ -74,7 +74,7 @@ class Observation < ActiveRecord::Base
 				unit = 'sec'
 				val = val.to_i * 3600
 			end
-				
+
 			# get metric from the user's assigned metrics
 			observed = opts[:user].metrics.find_by_alias( key.downcase )
 			if observed.nil?
@@ -93,10 +93,10 @@ class Observation < ActiveRecord::Base
 			return Observation.new( user: opts[:user], observed: observed, value: val, notes: matches.post_match )
 
 		# verb condition - e.g. "ran 3miles"
-		# string begins with congruent word characters, then whitespace, 
+		# string begins with congruent word characters, then whitespace,
 		# then numbers (optionally connected to unit)
 		elsif matches = str.match( /(\A\w+)\s+([0-9]+\w*)/ )
-			
+
 			key = matches.captures[0].strip
 			val = matches.captures[1].strip
 
@@ -177,7 +177,7 @@ class Observation < ActiveRecord::Base
 
 		elsif self.observed.try( :workout_type ) == 'strength'
 			return "#{self.value.to_i}"
-			
+
 		elsif self.value.present? && TIME_UNITS.include?( self.unit )
 			ChronicDuration.output( self.value, format: :chrono )
 		else
@@ -207,7 +207,7 @@ class Observation < ActiveRecord::Base
 		else
 			str = "#{self.user} "
 		end
-		
+
 		if self.value.present?
 			str += "recorded #{self.human_value} for #{self.observed.try( :title )} "
 		elsif self.started_at.present? && self.ended_at.nil?
@@ -216,7 +216,9 @@ class Observation < ActiveRecord::Base
 			str += "said "
 		end
 
-		str += self.notes
+		str += self.notes if self.notes.present?
+
+		str
 	end
 
 

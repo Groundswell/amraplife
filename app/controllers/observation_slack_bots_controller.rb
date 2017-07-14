@@ -17,7 +17,7 @@ class ObservationSlackBotsController < ActionController::Base
 			@user = SwellMedia::OauthCredential.where( uid: params[:event][:user], provider: "#{params[:team_id]}.slack" ).first.try(:user)
 			@user ||= @team.team_users.find_by( slack_user_id: params[:event][:user] ).try(:user) if @team.present?
 
-			@bot_service = ObservationBotService.new( response: self, user: @user, params: { event: params[:event] } )
+			@bot_service = ObservationBotService.new( response: self, user: @user, params: { event: params[:event] }, source: 'slack' )
 
 			unless @bot_service.respond_to_text( params[:event][:text] )
 				add_speech( "Sorry, I don't know about that." )
