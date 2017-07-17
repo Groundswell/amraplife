@@ -9,7 +9,7 @@ class UserInputsController < ApplicationController
 
 		unless @bot_service.respond_to_text( user_input_params[:content] )
 
-			add_flash "Sorry, I didn't understand that."
+			set_flash "Sorry, I didn't understand that."
 
 		end
 

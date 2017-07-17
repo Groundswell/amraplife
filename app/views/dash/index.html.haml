@@ -20,26 +20,36 @@
 							.main-box-body.clearfix
 								%ul
 									- @inputs.each do |input|
-										%li.clearfix{ style: 'list-style: none;' }
-											.img
-												= image_tag input.user.avatar
-											.title
-												You Said:
-												= input.content
-												from
-												= input.source
-											.post-time
-												= input.created_at.to_s( :slashed_time )
+										%li.clearfix{ style: 'list-style: none;text-align:left;' }
+											= image_tag input.user.avatar, width: 24
+
+											You Said:
+											= "'#{input.content}'"
+											from
+											= input.source
+
+											
+											.response{ style: 'margin-left:2em;margin-top:1em;' }
+												= image_tag 'logo.png', width: 24
+												I:
+												= input.action
+
+												- if input.result_obj.present?
+													= input.result_obj.class.name
+													= input.result_obj.id
+
+												= input.system_notes
+													
+
+
+
 											.time-ago
 												%i.fa.fa-clock-o
 												= time_ago_in_words input.created_at
 												ago.
-											- if input.result_obj.present?
-												I did this:
-												= input.result_status
-												= input.action
-												= input.result_obj.class.name
-												= input.result_obj
+												%br
+												= input.created_at.to_s( :slashed_time )
+											
 
 					- else
 						%center

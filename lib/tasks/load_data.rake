@@ -4,6 +4,7 @@ namespace :amraplife do
 	task load_metrics: :environment do 
 		Metric.destroy_all
 		Observation.destroy_all
+		UserInput.destroy_all
 		puts "Adding some Metrics"
 		wt = Metric.create title: 'Weight', metric_type: 'physical', aliases: ['wt', 'lbs'], unit: 'lb'
 		wst = Metric.create title: 'Waist', metric_type: 'physical', aliases: ['wst'], unit: 'in'
@@ -11,12 +12,12 @@ namespace :amraplife do
 		rhr = Metric.create title: 'Resting Heart Rate', metric_type: 'physical', aliases: ['pulse', 'heart rate', 'rhr'], unit: 'bpm'
 		systolic = Metric.create title: 'Systolic Blood Pressure', metric_type: 'physical', aliases: ['sbp', 'systolic'], unit: 'mm Hg'
 		diastolic = Metric.create title: 'Diastolic Blood Pressure', metric_type: 'physical', aliases: ['dbp', 'diastolic'], unit: 'mm Hg'
-		diastolic = Metric.create title: 'Blood Pressure', metric_type: 'physical', aliases: ['bp', 'blood pressure'], unit: 'mm Hg' # use sub units for sys/dias observations
+		bp = Metric.create title: 'Blood Pressure', metric_type: 'physical', aliases: ['bp', 'blood pressure'], unit: 'mm Hg' # use sub units for sys/dias observations
 		pbf = Metric.create title: 'Percent Body Fat', metric_type: 'physical', aliases: ['pbf', 'bodyfat'], unit: '%'
 		bmi = Metric.create title: 'Body Mass Index', metric_type: 'physical', aliases: ['bmi'], unit: 'bmi'
 		
-		md = Metric.create title: 'Mood', metric_type: 'mental', aliases: [ 'feeling', 'happiness' ]
-		md = Metric.create title: 'Energy', metric_type: 'mental', aliases: [ 'energy level' ]
+		md = Metric.create title: 'Mood', metric_type: 'mental', aliases: [ 'feeling', 'happiness' ], unit: '%'
+		md = Metric.create title: 'Energy', metric_type: 'mental', aliases: [ 'energy level' ], unit: '%'
 
 		bmi = Metric.create title: 'Calories', metric_type: 'nutrition', 	aliases: ['eat', 'ate', 'eating', 'cal', 'cals', 'meal', 'breakfast', 'lunch', 'dinner', 'snack', 'block', 'blocks'], unit: 'kCal', target_period: 'day', target_type: 'sum_value', target: 2000
 		bmi = Metric.create title: 'Blocks', metric_type: 'nutrition', 	aliases: ['eat', 'ate', 'eating', 'meal', 'breakfast', 'lunch', 'dinner', 'snack', 'block', 'blocks'], unit: 'block', target_period: 'day', target_type: 'sum_value', target: 15

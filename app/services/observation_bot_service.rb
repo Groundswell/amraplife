@@ -5,7 +5,7 @@ class ObservationBotService < AbstractBotService
 			utterances: [ 'cancel' ]
 		},
 		get_motivation: {
-			utterances: [ 'motivate me', 'inspire me', 'to motivate me', 'to inspire me' ]
+			utterances: [ 'motivate me', 'inspire me', 'to motivate me', 'to inspire me', 'for inspiration', 'for motivation' ]
 		},
 		help: {
 			utterances: [ 'help', 'for help' ]
@@ -18,25 +18,25 @@ class ObservationBotService < AbstractBotService
 		},
 		log_metric_observation: {
 			utterances: [
-				'i ate {value} {unit} of {action}',
-				'i ate {value}{unit} of {action}',
-				'to (log|record) {value} for {action}',
-				'to (log|record) {value} {unit} for {action}',
-				'to (log|record) {value}{unit} for {action}',
-				'to (log|record) {value} {unit}',
-				'i did {value} {unit} of {action}',
-				'i {action} for {value} {unit}',
-				'i {action} {value} {unit}',
-				'(log|record) {value} {unit}',
-				'(log|record) {action} {value} {unit}',
-				'(log|record) {action} {value}',
-				'{action}={value} {unit}',
-				'{action}={value}{unit}',
-				'{action}={value}',
-				'{action} (is|was) {value} {unit}',
-				'{action} (is|was) {value}{unit}',
-				'{value} {unit} for {action}',
-				'{value}{unit} for {action}',
+				# log weight = 176
+				# log weight is 176
+				# to log that wt is 194
+				# weight 179lbs
+				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*{action}\s*(?:=|is|was)?\s*{value}',
+				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*{action}\s*(?:=|is|was)?\s*{value}\s*{unit}',
+
+
+				# log 172 for weight
+				'(?:to )?\s*(?:log |record )?\s*{value} for {action}',
+				'(?:to )?\s*(?:log |record )?\s*{value}\s*{unit} for {action}',
+
+				# I ran 3 miles
+				'(?:that )?\s*i {action} {value}',
+				'(?:that )?\s*i {action} {value}\s*{unit}',
+				'(?:that )?\s*i {action} for {value}',
+				'(?:that )?\s*i {action} for {value}\s*{unit}',
+				'(?:that )?\s*i did {value}\s*{unit} of {action}'
+
 			],
 			slots: {
 				value: 'Amount',
@@ -76,6 +76,8 @@ class ObservationBotService < AbstractBotService
 		},
 		log_eaten_observation: {
 			utterances: [
+				# 'i ate {value} {unit} of {action}',
+				# 'i ate {value}{unit} of {action}',
 				'i ate {quantity} serving of {food}',
 				# 'i ate {quantity} {measure} of {food}',
 				# 'i ate {quantity} {food}',
@@ -189,9 +191,11 @@ class ObservationBotService < AbstractBotService
 
 	def get_motivation
 
-		motivation = Inspiration.published.order('random()').first.title
+		motivation = Inspiration.published.order('random()').first
 
-		add_speech( motivation )
+		add_speech( motivation.title )
+
+		user.user_inputs.create( content: raw_input, result_obj: motivation, action: 'read', source: options[:source], result_status: 'success', system_notes: "Spoke: #{motivation.title}" )
 	end
 
 	def help
@@ -278,7 +282,7 @@ class ObservationBotService < AbstractBotService
 
 		end
 
-		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'create', source: options[:source], result_status: 'success' )
+		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'created', source: options[:source], result_status: 'success' )
 
 	end
 
@@ -290,18 +294,28 @@ class ObservationBotService < AbstractBotService
 
 		# @todo parse notes
 		notes = nil
+		sys_notes = nil
 
 		if params[:action].present?
 
 			observed_metric = get_user_metric( user, params[:action], params[:unit] )
 
 			if observed_metric.nil?
-
 				add_speech("I'm sorry, I don't know how to log information about #{params[:action]}.")
-
 			else
-
-				observation = Observation.create( user: user, observed: observed_metric, value: params[:value], unit: params[:unit], notes: notes )
+				val = params[:value]
+				# always store time as secs
+				if val.match( /:/ )
+					val = ChronicDuration.parse( val )
+					params[:unit] ||= 'sec'
+				elsif ['minute', 'minutes', 'min', 'mins'].include?( params[:unit] )
+					params[:unit] = 'sec'
+					val = val.to_i * 60
+				elsif ['hour', 'hours', 'hr', 'hrs'].include?( params[:unit] )
+					params[:unit] = 'sec'
+					val = val.to_i * 3600
+				end
+				observation = Observation.create( user: user, observed: observed_metric, value: val, unit: params[:unit], notes: notes )
 
 				add_speech( observation.to_s( user ) )
 
@@ -315,7 +329,10 @@ class ObservationBotService < AbstractBotService
 
 		end
 
-		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'create', source: options[:source], result_status: 'success' )
+		if observation.present?
+			sys_notes = "Logged #{observation.human_value} for #{observation.observed.title}."
+		end
+		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'create', source: options[:source], result_status: 'success', system_notes: sys_notes )
 
 	end
 
@@ -427,6 +444,7 @@ class ObservationBotService < AbstractBotService
 	def get_user_metric( user, action, unit )
 
 		if action.present?
+			action = action.gsub( /(log|record|to|my|todays|is|was|=|i|for)/i, '' ).strip
 
 			observed_metric = Metric.where( user_id: user ).find_by_alias( action.downcase )
 			observed_metric ||= Metric.where( user_id: nil ).find_by_alias( action.downcase ).try(:dup)
