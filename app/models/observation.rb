@@ -41,7 +41,7 @@ class Observation < ActiveRecord::Base
 		elsif self.value.present? && TIME_UNITS.include?( self.unit )
 			ChronicDuration.output( self.value, format: :chrono )
 		else
-			"#{self.value}#{self.unit}"
+			"#{self.value} #{self.unit}"
 		end
 	end
 

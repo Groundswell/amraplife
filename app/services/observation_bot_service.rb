@@ -237,6 +237,11 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
+
+		# @todo parse notes
+		notes = nil
+
+
 		food_results = []
 		if params[:food].present?
 			begin
@@ -260,19 +265,19 @@ class ObservationBotService < AbstractBotService
 
 			add_speech("Logging that you ate #{params[:quantity]} #{params[:food]}.#{calories.present? ? " Approximately #{calories} calories." : ""}")
 
-			observation = Observation.create( user: user, observed: observed_metric, value: calories, unit: 'calories', notes: "I ate #{params[:quantity]} #{params[:food]}" )
+			observation = Observation.create( user: user, observed: observed_metric, value: calories, unit: 'calories', notes: notes )
 
 		elsif params[:quantity].present? && params[:measure].present?
 
 			add_speech("Logging that you ate #{params[:quantity]} #{params[:measure]} of #{params[:food]}.#{calories.present? ? " Approximately #{calories} calories." : ""}.")
 
-			observation = Observation.create( user: user, observed: observed_metric, value: calories, unit: 'calories', notes: "I ate #{params[:quantity]} #{params[:measure]} of #{params[:food]}" )
+			observation = Observation.create( user: user, observed: observed_metric, value: calories, unit: 'calories', notes: notes )
 
 		elsif params[:portion].present?
 
 			add_speech("Logging that you ate #{params[:portion]} portion of #{params[:food]}.#{calories.present? ? " Approximately #{calories} calories." : ""}")
 
-			observation = Observation.create( user: user, observed: observed_metric, value: calories, unit: 'calories', notes: "I ate #{params[:portion]} portion of #{params[:food]}" )
+			observation = Observation.create( user: user, observed: observed_metric, value: calories, unit: 'calories', notes: notes )
 
 		else
 
@@ -342,6 +347,9 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
+		# @todo parse notes
+		notes = nil
+
 		observed_metric = get_user_metric( user, params[:action], 'seconds' )
 
 		if observed_metric.errors.present?
@@ -354,7 +362,7 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
-		observation = Observation.create( user: user, observed: observed_metric, started_at: Time.zone.now, notes: "start #{params[:action]}" )
+		observation = Observation.create( user: user, observed: observed_metric, started_at: Time.zone.now, notes: notes )
 		add_speech("Starting your #{params[:action]} timer")
 
 		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'create', source: options[:source], result_status: 'success' )
