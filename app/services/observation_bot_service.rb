@@ -5,7 +5,10 @@ class ObservationBotService < AbstractBotService
 			utterances: [ 'cancel' ]
 		},
 		get_motivation: {
-			utterances: [ 'motivate me', 'inspire me', 'to motivate me', 'to inspire me', 'for inspiration', 'for motivation' ]
+			utterances: [ 
+				'(?:to )?\s*(inspire |motivate )\s*me',
+				'(?:to )?\s*(?:for )?\s*(?:give me )?\s*(inspiration|motivation)'
+				 ]
 		},
 		help: {
 			utterances: [ 'help', 'for help' ]
@@ -18,6 +21,7 @@ class ObservationBotService < AbstractBotService
 		},
 		log_metric_observation: {
 			utterances: [
+				# for input like....
 				# log weight = 176
 				# log weight is 176
 				# to log that wt is 194
@@ -25,11 +29,12 @@ class ObservationBotService < AbstractBotService
 				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*{action}\s*(?:=|is|was)?\s*{value}',
 				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*{action}\s*(?:=|is|was)?\s*{value}\s*{unit}',
 
-
+				# for input like....
 				# log 172 for weight
 				'(?:to )?\s*(?:log |record )?\s*{value} for {action}',
 				'(?:to )?\s*(?:log |record )?\s*{value}\s*{unit} for {action}',
 
+				# for input like....
 				# I ran 3 miles
 				'(?:that )?\s*i {action} {value}',
 				'(?:that )?\s*i {action} {value}\s*{unit}',
@@ -46,15 +51,8 @@ class ObservationBotService < AbstractBotService
 		},
 		log_start_observation: {
 			utterances: [
-				"I am (starting|begining) a {action}",
-				"to (start|begin) timing {action}",
-				"to (start|begin) {action} timer",
-				"to (start|begin) {action}",
-		        "to time {action}",
-		        "(start|begin) timing {action}",
-		        "(start|begin) {action} timer",
-		        "(start|begin) {action}",
-		        "time {action}",
+				# (that) (i) (am) start(ed|ing) (to) working
+				'(?:that )?\s*(?:i )?\s*(?:am )?\s*(start|tim)(?:ed|ing)?\s*(?:to )?\s*(?:a |an )?\s*{action}',
 			],
 			slots: {
 				action: 'Action',
@@ -62,13 +60,7 @@ class ObservationBotService < AbstractBotService
 		},
 		log_stop_observation: {
 			utterances: [
-				"(stop|end) {action} timer",
-				"(stop|end) timing {action}",
-				"(stop|end) {action}",
-				"to (stop|end) {action} timer",
-				"to (stop|end) {action}",
-				"I have (finished|completed) my {action}",
-				"I have (finished|completed) {action}",
+				"(?:to )?\s*(?:that )?\s*(?:i )?\s*(stop|end|finish|complete)(?:ed|ing|ped)?\s*{action}\s*(?:timer)?",
 			],
 			slots: {
 				action: 'Action',
@@ -101,6 +93,16 @@ class ObservationBotService < AbstractBotService
 				time_period: 'TimePeriod',
 			}
 		},
+		set_name: {
+			utterances: [
+				'(?:to )?\s*call me {name}',
+				'(?:that )?\s*my name is {name}'
+				],
+			slots:{
+				name: 'Name',
+				},
+			},
+
 		stop: {
 			utterances: [ 'stop' ]
 		},
@@ -126,6 +128,13 @@ class ObservationBotService < AbstractBotService
 		        { value: "bike ride", synonyms: [] },
 			]
 		},
+		Amount: {
+			regex: [
+				'[0-9.:&]+'
+			],
+			values: [
+			]
+		},
 		Food: {
 			regex: [
 				'[a-zA-Z\.]*\s*[a-zA-Z\.]*\s*[a-zA-Z\.]*\s*[a-zA-Z\.]*\s*[a-zA-Z\.]+'
@@ -145,6 +154,12 @@ class ObservationBotService < AbstractBotService
 		        { value: "liter", synonyms: [] },
 		        { value: "ounce", synonyms: [] },
 			]
+		},
+		Name: {
+			regex: [
+				'.+'
+				],
+				values: []
 		},
 		Unit: {
 			regex: [
@@ -195,7 +210,7 @@ class ObservationBotService < AbstractBotService
 
 		add_speech( motivation.title )
 
-		user.user_inputs.create( content: raw_input, result_obj: motivation, action: 'read', source: options[:source], result_status: 'success', system_notes: "Spoke: #{motivation.title}" )
+		user.user_inputs.create( content: raw_input, result_obj: motivation, action: 'read', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{motivation.title}'" )
 	end
 
 	def help
@@ -337,7 +352,7 @@ class ObservationBotService < AbstractBotService
 		if observation.present?
 			sys_notes = "Logged #{observation.human_value} for #{observation.observed.title}."
 		end
-		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'create', source: options[:source], result_status: 'success', system_notes: sys_notes )
+		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'created', source: options[:source], result_status: 'success', system_notes: sys_notes )
 
 	end
 
@@ -350,7 +365,7 @@ class ObservationBotService < AbstractBotService
 		# @todo parse notes
 		notes = nil
 
-		observed_metric = get_user_metric( user, params[:action], 'seconds' )
+		observed_metric = get_user_metric( user, params[:action], 'sec' )
 
 		if observed_metric.errors.present?
 			add_speech("I'm sorry, I don't know how to log information about #{params[:action]}. #{observed_metric.errors.full_messages.join('. ')}")
@@ -365,7 +380,9 @@ class ObservationBotService < AbstractBotService
 		observation = Observation.create( user: user, observed: observed_metric, started_at: Time.zone.now, notes: notes )
 		add_speech("Starting your #{params[:action]} timer")
 
-		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'create', source: options[:source], result_status: 'success' )
+		sys_notes = "Spoke: 'Starting your #{params[:action]} timer'."
+
+		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'created', source: options[:source], result_status: 'success', system_notes: sys_notes )
 
 	end
 
@@ -374,8 +391,9 @@ class ObservationBotService < AbstractBotService
 			login
 			return
 		end
+		sys_notes = ''
 
-		observed_metric = get_user_metric( user, params[:action], 'seconds' )
+		observed_metric = get_user_metric( user, params[:action], 'sec' )
 
 		if observed_metric.errors.present?
 			add_speech("I'm sorry, I don't know how to log information about #{params[:action]}. #{observed_metric.errors.full_messages.join('. ')}")
@@ -394,12 +412,14 @@ class ObservationBotService < AbstractBotService
 
 		if observation.present?
 			observation.stop!
-			add_speech("Stopping your #{params[:action]} timer at #{observation.value.to_i} #{observation.unit}")
+			add_speech("Stopping your #{params[:action]} timer at #{observation.value.to_i} #{observation.unit}" )
+			sys_notes = "Spoke: 'Stopping your #{params[:action]} timer at #{observation.value.to_i} #{observation.unit}'"
 		else
 			add_speech("I can't find any running #{params[:action]} timers.")
+			sys_notes = "I can't find any running #{params[:action]} timers."
 		end
 
-		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'update', source: options[:source], result_status: 'success' )
+		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'updated', source: options[:source], result_status: 'success', system_notes: sys_notes )
 
 	end
 
@@ -439,6 +459,12 @@ class ObservationBotService < AbstractBotService
 		add_speech("#{calories.to_i} calories.")
 		user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'success' )
 
+	end
+
+	def set_name
+		user.update( first_name: params[:name] )
+		add_speech("OK, from now on I'll call you #{params[:name]}.")
+		user.user_inputs.create( content: raw_input, result_obj: user, action: 'updated', source: options[:source], result_status: 'success', system_notes: "Spoke: 'OK, from now on I'll call you #{params[:name]}.'" )
 	end
 
 	def stop
