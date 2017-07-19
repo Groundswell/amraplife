@@ -262,9 +262,9 @@ class ObservationBotService < AbstractBotService
 
 		motivation = Inspiration.published.order('random()').first
 
-		add_speech( motivation.title )
+		add_speech( motivation.description )
 
-		user.user_inputs.create( content: raw_input, result_obj: motivation, action: 'read', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{motivation.title}'" )
+		user.user_inputs.create( content: raw_input, result_obj: motivation, action: 'read', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{motivation.description}'" )
 	end
 
 	def help

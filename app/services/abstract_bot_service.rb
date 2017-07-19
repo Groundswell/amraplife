@@ -60,6 +60,7 @@ class AbstractBotService
 	def respond_to_text( text, args = {} )
 		text = text.strip
 		@raw_input = text
+		
 		compiled_intents = self.class.compiled_intents
 
 		requested_intent_name = nil

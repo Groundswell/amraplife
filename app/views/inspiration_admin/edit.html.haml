@@ -46,6 +46,10 @@
 							= text_field_tag :avatar_text_field, '', class: 'form-control', placeholder: 'Full Path to Image', data: { inputfor: '#inspiration_avatar_asset_url' }
 
 				.form-group
+					= f.label :description, 'Description: (Read by Bot)'
+					= f.text_area :description, class: 'form-control wysiwyg', rows: 4
+				.form-group
+					= f.label :content, 'Content: (Shown on Page)'
 					= f.text_area :content, class: 'form-control wysiwyg', rows: 12
 
 
