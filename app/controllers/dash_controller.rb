@@ -11,7 +11,7 @@ class DashController < ApplicationController
 		@inputs = current_user.user_inputs.order( created_at: :desc ).page( params[:page] )
 
 		@metrics = current_user.metrics
-		@observations = current_user.observations.order( recorded_at: :desc ).page( params[:page] )
+
 		@timers = current_user.observations.where.not( started_at: nil ).where( value: nil )
 	end
 

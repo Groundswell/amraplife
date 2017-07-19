@@ -86,6 +86,7 @@ class AbstractBotService
 			self.send( requested_intent_name )
 			return true
 		else
+			user.user_inputs.create( content: @raw_input, action: 'failed', source: options[:source], result_status: 'parse failure', system_notes: "I didn't understand '#{@raw_input}'" )
 			return false
 		end
 	end

@@ -41,18 +41,18 @@
 								= current_user.observations.count
 					%li{ class: set_css_if( controller: :metrics ) }
 						%a{ href: main_app.metrics_path }
-							%i.fa.fa-bicycle
+							%i.fa.fa-line-chart
 							%span
-								Metrics
+								Things You are Tracking
 					%li{ class: set_css_if( controller: :observations ) }
 						%a{ href: main_app.observations_path }
-							%i.fa.fa-th-large
+							%i.fa.fa-eye
 							%span
 								Observations
 							-#%span.label.label-success.pull-right
 								New
 
-					%li
+					-#%li
 						%a.dropdown-toggle{ href: '#' }
 							%i.fa.fa-line-chart
 							%span

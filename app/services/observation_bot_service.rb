@@ -19,6 +19,71 @@ class ObservationBotService < AbstractBotService
 		login: {
 			utterances: [ 'login', 'sign me in', 'sign in', 'log in', 'log me in' ]
 		},
+		log_journal_observation: {
+			utterances: [
+				'(?:to)?\s*journal\s*(that)?{notes}',
+				'dear diary\s*{notes}',
+			],
+			slots: {
+				notes: 'Notes',
+			}
+		},
+		log_start_observation: {
+			utterances: [
+				# (that) (i) (am) start(ed|ing) (to) working
+				'(?:that )?\s*(?:i )?\s*(?:am )?\s*(start|tim)(?:ed|ing)?\s*(?:to )?\s*(?:a |an )?\s*{action}',
+			],
+			slots: {
+				action: 'Action',
+			}
+		},
+		log_stop_observation: {
+			utterances: [
+				"(?:to )?\s*(?:that )?\s*(?:i )?\s*(stop|end|finish|complete)(?:ed|ing|ped)?\s*{action}\s*(?:timer)?",
+			],
+			slots: {
+				action: 'Action',
+			}
+		},
+		
+		report_last_value_observation:{
+			utterances: [
+				# what is my weight
+				'what (is|was) (?:my )?\s*{action} {time_period}',
+				'what (is|was) (?:my )?\s*{action}',
+			],
+			slots: {
+				action: 'Action',
+				time_period: 'TimePeriod',
+			}
+		},
+		report_sum_value_observation: {
+			utterances: [
+				# how many calories have I eaten
+				'how (many|much)\s*(calories|food )\s*.+(eat|ate|eaten)',
+				'how (many|much)\s*(calories|food )\s*.+(eat|ate|eaten)\s*{time_period}',
+
+				'how (much|many|long) (do|did|have|i) (?:i )?\s*{action} {time_period}',
+				'how (much|many|long) (do|did|have|i) (?:i )?\s*{action}',
+
+			],
+			slots: {
+				time_period: 'TimePeriod',
+			}
+		},
+		set_name: {
+			utterances: [
+				'(?:to )?\s*call me {name}',
+				'(?:that )?\s*my name is {name}'
+				],
+			slots:{
+				name: 'Name',
+				},
+			},
+
+		stop: {
+			utterances: [ 'stop' ]
+		},
 		log_metric_observation: {
 			utterances: [
 				# for input like....
@@ -49,30 +114,13 @@ class ObservationBotService < AbstractBotService
 				unit: 'Unit',
 			}
 		},
-		log_start_observation: {
+		log_food_observation: {
 			utterances: [
-				# (that) (i) (am) start(ed|ing) (to) working
-				'(?:that )?\s*(?:i )?\s*(?:am )?\s*(start|tim)(?:ed|ing)?\s*(?:to )?\s*(?:a |an )?\s*{action}',
-			],
-			slots: {
-				action: 'Action',
-			}
-		},
-		log_stop_observation: {
-			utterances: [
-				"(?:to )?\s*(?:that )?\s*(?:i )?\s*(stop|end|finish|complete)(?:ed|ing|ped)?\s*{action}\s*(?:timer)?",
-			],
-			slots: {
-				action: 'Action',
-			}
-		},
-		log_eaten_observation: {
-			utterances: [
-				# 'i ate {value} {unit} of {action}',
-				# 'i ate {value}{unit} of {action}',
+				'i ate {value} {unit} of {action}',
+				'i ate {value}{unit} of {action}',
 				'i ate {quantity} serving of {food}',
-				# 'i ate {quantity} {measure} of {food}',
-				# 'i ate {quantity} {food}',
+				'i ate {quantity} {measure} of {food}',
+				'i ate {quantity} {food}',
 				'i ate {portion} portion of {food}',
 			],
 			slots: {
@@ -82,24 +130,25 @@ class ObservationBotService < AbstractBotService
 				portion: 'Number',
 			}
 		},
-		report_eaten_observation: {
+		set_target:{
 			utterances: [
-				'how many calories (did|have) i (eaten|eat) {time_period}',
-				'how much (did|have) i (eaten|eat) {time_period}',
-				'how many calories (did|have) i (eaten|eat) in the {time_period}',
-				'how much (did|have) i (eaten|eat) in the {time_period}',
-			],
-			slots: {
-				time_period: 'TimePeriod',
-			}
-		},
-		set_name: {
-			utterances: [
-				'(?:to )?\s*call me {name}',
-				'(?:that )?\s*my name is {name}'
+				'set\s*(?:a)?\s*target of {value} for {action}',
+				'set\s*(?:a)?\s*target of {value}\s*{unit} for {action}',
+				'set\s*(?:a)?\s*target\s*(?:for)?{action} of {value}',
+				'set\s*(?:a)?\s*target\s*(?:for)?{action} of {value}\s*{unit}',
 				],
 			slots:{
-				name: 'Name',
+				action: 'Action',
+				value: 'Amount',
+				unit: 'Unit'
+				},
+		},
+		tell_about: {
+			utterances: [
+				'(to)?\s*tell me about\s*(?:my)?\s*{action}',
+				],
+			slots:{
+				action: 'Action',
 				},
 			},
 
@@ -161,39 +210,32 @@ class ObservationBotService < AbstractBotService
 				],
 				values: []
 		},
+		Notes: {
+			regex: [
+				'.+\z'
+				],
+				values: []
+		},
 		Unit: {
 			regex: [
-				'[a-zA-Z\.]*\s*[a-zA-Z\.]*\s*[a-zA-Z\.]*\s*[a-zA-Z\.]+'
+				'[a-zA-Z]+'
 			],
 			values: [
-				{ value: "height", synonyms: [] },
-		        { value: "weight", synonyms: [] },
-		        { value: "hips", synonyms: [] },
-		        { value: "resting heart rate", synonyms: [] },
-		        { value: "systolic blood pressure", synonyms: [] },
-		        { value: "diastolic blood pressure", synonyms: [] },
-		        { value: "blood pressure", synonyms: [] },
-		        { value: "precent body fat", synonyms: [] },
-		        { value: "heart rate", synonyms: [] },
-		        { value: "pulse", synonyms: [] },
-		        { value: "systolic", synonyms: [] },
-		        { value: "diastolic", synonyms: [] },
-		        { value: "body fat", synonyms: [] },
-		        { value: "B.M.I.", synonyms: [] },
-		        { value: "B M I", synonyms: [] },
-		        { value: "Calories", synonyms: [] },
+				{ value: "g", synonyms: [] },
+		        { value: "kg", synonyms: [] },
+		        { value: "in", synonyms: [] },
+		        { value: "cm", synonyms: [] },
+		        { value: "mile", synonyms: [] },
 		        { value: "cal", synonyms: [] },
-		        { value: "cals", synonyms: [] },
-		        { value: "protein", synonyms: [] },
-		        { value: "grams protein", synonyms: [] },
-		        { value: "grams of protein", synonyms: [] },
-		        { value: "carbs", synonyms: [] },
-		        { value: "carbohydrates", synonyms: [] },
-		        { value: "sleep", synonyms: [] },
-		        { value: "Working", synonyms: [] },
-		        { value: "Work", synonyms: [] },
-		        { value: "miles", synonyms: [] },
-		        { value: "kilometers", synonyms: [] },
+		        { value: "calorie", synonyms: [] },
+		        { value: "km", synonyms: [] },
+		        { value: "sec", synonyms: [] },
+		        { value: "kilometer", synonyms: [] },
+		        { value: "%", synonyms: [] },
+		        { value: "lb", synonyms: [] },
+		        { value: "pound", synonyms: [] },
+		        { value: "rd", synonyms: [] },
+		        { value: "rep", synonyms: [] },
 	      ]
 	  },
   	} )
@@ -215,7 +257,7 @@ class ObservationBotService < AbstractBotService
 
 	def help
 
-		help_message = get_dialog('help', default: "To log fitness information just say \"I ate 100 calories\", or use a fitness timer by saying \"start run timer\".  Life Meter will remember, report and provide insights into what you have told it.")
+		help_message = get_dialog('help', default: "To log information just say \"I ate 100 calories\", or use a fitness timer by saying \"start run timer\". AMRAP Life will remember, report and provide insights into what you have told it.")
 
 		add_speech( help_message )
 
@@ -224,29 +266,29 @@ class ObservationBotService < AbstractBotService
 	def launch
 		# Process your Launch Request
 		if user.present?
-			launch_message = get_dialog('launch_user', default: "Welcome to Life Meter, an AMRAP Life skill.  To log fitness information just say \"I ate 100 calories\", or use a fitness timer by saying \"start run timer\".  Life Meter will remember, report and provide insights into what you have hold it.")
+			launch_message = get_dialog('launch_user', default: "Welcome to AMRAP Life. To log information just say \"I ate 100 calories\", or use a fitness timer by saying \"start run timer\".  AMRAP Life will remember, report and provide insights into what you have told it.")
 
 			add_speech(launch_message)
 		else
-			launch_message = get_dialog('launch_guest', default: "Welcome to Life Meter, an AMRAP Life skill.  To log fitness information just say \"I ate 100 calories\", or use a fitness timer by saying \"start run timer\".  Life Meter will remember, report and provide insights into what you have hold it.  To get started click this link, and complete the Life Meter skill registration on AMRAPLife.")
+			launch_message = get_dialog('launch_guest', default: "Welcome to AMRAP Life. To log fitness information just say \"I ate 100 calories\", or use a fitness timer by saying \"start run timer\". AMRAP Life will remember, report and provide insights into what you have told it. To get started click this link, and complete the AMRAP Life skill registration on AMRAPLife.com.")
 
 			add_speech(launch_message)
-			add_login_prompt('Create your Life Meter Account on AMRAPLife', '', 'In order to record and report your metrics you must first create a Life Meter account on AMRAPLife.')
+			add_login_prompt('Create your AMRAP Life Account on AMRAPLife.com', '', 'In order to record and report your metrics you must first create a AMRAP Life account on AMRAPLife.com.')
 		end
 		# add_hash_card( { :title => 'Ruby Run', :subtitle => 'Ruby Running Ready!' } )
 
 	end
 
 	def login
-		launch_message = get_dialog('login', default: "Click this link to complete the Life Meter skill registration on AMRAP Life")
+		launch_message = get_dialog('login', default: "Click this link to complete the AMRAP Life skill registration on AMRAPLife.com")
 
 
 		add_speech( launch_message )
-		add_login_prompt('Create your Life Meter Account on AMRAPLife', '', 'In order to record and report your metrics you must first create a Life Meter account on AMRAPLife.')
+		add_login_prompt('Create your AMRAP Life Account on AMRAPLife.com', '', 'In order to record and report your metrics you must first create a AMRAP Life account on AMRAPLife.com.')
 
 	end
 
-	def log_eaten_observation
+	def log_food_observation
 		unless user.present?
 			login
 			return
@@ -274,7 +316,7 @@ class ObservationBotService < AbstractBotService
 
 		end
 
-		observed_metric = get_user_metric( user, 'ate', 'calories' )
+		observed_metric = get_user_metric( user, 'ate', 'calories', true )
 
 		if params[:quantity].present? && params[:measure].blank?
 
@@ -306,6 +348,19 @@ class ObservationBotService < AbstractBotService
 
 	end
 
+	def log_journal_observation
+		unless user.present?
+			login
+			return
+		end
+
+		if params[:notes].present?
+			observation = user.observations.create( notes: params[:notes] )
+			add_speech( "I recorded your journal entry." )
+			user.user_inputs.create( content: raw_input, result_obj: observation, action: 'created', source: options[:source], result_status: 'success', system_notes: "Spoke: 'I recorded your journal entry.'" )
+		end
+	end
+
 	def log_metric_observation
 		unless user.present?
 			login
@@ -318,7 +373,7 @@ class ObservationBotService < AbstractBotService
 
 		if params[:action].present?
 
-			observed_metric = get_user_metric( user, params[:action], params[:unit] )
+			observed_metric = get_user_metric( user, params[:action], params[:unit], true )
 
 			if observed_metric.nil?
 				add_speech("I'm sorry, I don't know how to log information about #{params[:action]}.")
@@ -365,7 +420,7 @@ class ObservationBotService < AbstractBotService
 		# @todo parse notes
 		notes = nil
 
-		observed_metric = get_user_metric( user, params[:action], 'sec' )
+		observed_metric = get_user_metric( user, params[:action], 'sec', true )
 
 		if observed_metric.errors.present?
 			add_speech("I'm sorry, I don't know how to log information about #{params[:action]}. #{observed_metric.errors.full_messages.join('. ')}")
@@ -423,71 +478,191 @@ class ObservationBotService < AbstractBotService
 
 	end
 
-	def report_eaten_observation
+	def report_sum_value_observation
 		unless user.present?
 			login
 			return
 		end
 
-		observed_metric = get_user_metric( user, 'ate', 'calories' )
-		time_period = params[:time_period].downcase.gsub(/\s+/,' ')
+		params[:action] ||= 'Calories'
+		
+		observed_metric = get_user_metric( user, params[:action], nil, false )
+		
+		time_period = params[:time_period] || 'today'
+		time_period = time_period.downcase.gsub(/\s+/,' ')
+
+		if observed_metric.nil?
+			default_metric ||= Metric.where( user_id: nil ).find_by_alias( params[:action].downcase )
+			action = default_metric.try( :title ) || params[:action]
+			add_speech("Sorry, you haven't recorded anything for #{action} yet.")
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found', action: 'reported', system_notes: "Spoke: 'Sorry, you haven't recorded anything for #{action} yet.'" )
+			return
+		end
 
 		puts "'#{time_period}'"
 
 		if time_period == 'today'
-			range = Time.now.beginning_of_day..Time.now.end_of_day
+			range = Time.now.beginning_of_day..Time.zone.now.end_of_day
 		elsif time_period == 'yesterday'
 			range = 1.day.ago.beginning_of_day..1.day.ago.end_of_day
 		elsif ( matches = time_period.match(/this (?'unit'week|month|year)/) ).present?
 			unit = matches['unit']
-			range = Time.now.try("beginning_of_#{unit}").beginning_of_day..Time.now.try("end_of_#{unit}").end_of_day
+			range = Time.zone.now.try("beginning_of_#{unit}").beginning_of_day..Time.zone.now.try("end_of_#{unit}").end_of_day
 		elsif ( matches = time_period.match(/last (?'unit'week|month|year)/) ).present?
 			unit = matches['unit']
 			range = 1.try(unit).ago.try("beginning_of_#{unit}").beginning_of_day..1.try(unit).ago.try("end_of_#{unit}").end_of_day
 		elsif ( matches = time_period.match(/last (?'amount'.+) (?'unit'days|weeks|months|years)/) ).present?
 			amount = NumbersInWords.in_numbers( matches['amount'] )
 			unit = matches['unit']
-			range = amount.try(unit).ago.beginning_of_day..Time.now
+			range = amount.try(unit).ago.beginning_of_day..Time.zone.now
 		else
 			add_speech("Sorry, I don't understand that.")
 			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found' )
 			return
 		end
 
-		calories = Observation.where( user: user, observed: Metric.where( user_id: user, title: 'ate' ), created_at: range ).sum(:value)
+		sum = user.observations.of( observed_metric ).where( recorded_at: range ).sum( :value )
 
-		add_speech("#{calories.to_i} calories.")
-		user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'success' )
+		add_speech( "You logged #{sum} #{observed_metric.unit}s of #{observed_metric.title} #{time_period}." )
+		sys_notes = "Spoke: 'You logged #{sum} #{observed_metric.unit}s of #{observed_metric.title} #{time_period}.'"
+
+		user.user_inputs.create( content: raw_input, action: 'reported', source: options[:source], result_status: 'success', system_notes: sys_notes )
+
+	end
+
+	def report_last_value_observation
+		unless user.present?
+			login
+			return
+		end
+
+		observed_metric = get_user_metric( user, params[:action], nil, false )
+
+		if observed_metric.nil?
+			default_metric ||= Metric.where( user_id: nil ).find_by_alias( params[:action].downcase )
+			action = default_metric.try( :title ) || params[:action]
+			add_speech("Sorry, you haven't recorded anything for #{action} yet.")
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found', action: 'reported', system_notes: "Spoke: 'Sorry, you haven't recorded anything for #{action} yet.'" )
+			return
+		end
+
+		time_period = params[:time_period] || ''
+		time_period = time_period.downcase.gsub(/\s+/,' ')
+
+		verb = "is"
+
+		observations = user.observations.of( observed_metric ).order( recorded_at: :desc )
+
+		if time_period == 'yesterday'
+			observations = observations.where( "recorded_at <= :time", time: 1.day.ago.beginning_of_day )
+		elsif ( matches = time_period.match(/last (?'unit'week|month|year)/) ).present?
+			verb = 'was'
+			unit = matches['unit']
+			observations = observations.where( "recorded_at <= :time", time: 1.try(unit).ago.try("end_of_#{unit}").end_of_day ) 
+		end
+
+		obs = observations.first
+
+		if obs.present?
+
+			add_speech( "Your #{obs.observed.title} #{verb} #{obs.human_value} #{time_period}." )
+			sys_notes = "Spoke: 'Your #{obs.observed.title} #{verb} #{obs.human_value} #{time_period}.'"
+
+			user.user_inputs.create( content: raw_input, action: 'reported', source: options[:source], result_status: 'success', system_notes: sys_notes )
+		else
+			observed = observed_metric.try( :title ) || params[:action]
+			add_speech("Sorry, you didn't record #{observed} for #{time_period}.")
+			user.user_inputs.create( content: raw_input, action: 'reported', source: options[:source], result_status: 'not found', system_notes: "Spoke: 'Sorry, you didn't record #{observed} for #{time_period}.'" )
+			return
+		end
 
 	end
 
 	def set_name
+		unless user.present?
+			login
+			return
+		end
 		user.update( first_name: params[:name] )
 		add_speech("OK, from now on I'll call you #{params[:name]}.")
 		user.user_inputs.create( content: raw_input, result_obj: user, action: 'updated', source: options[:source], result_status: 'success', system_notes: "Spoke: 'OK, from now on I'll call you #{params[:name]}.'" )
 	end
 
-	def stop
+	def set_target
+		unless user.present?
+			login
+			return
+		end
+		metric = get_user_metric( user, params[:action], params[:unit], true )
 
+		if metric.nil?
+			default_metric ||= Metric.where( user_id: nil ).find_by_alias( params[:action].downcase )
+			action = default_metric.try( :title ) || params[:action]
+			add_speech("Sorry, I can't assign a target because you haven't recorded anything for #{action} yet.")
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found', action: 'reported', system_notes: "Spoke: 'Sorry, I can't assign a target because you haven't recorded anything for #{action} yet.'" )
+			return
+		end
+
+		metric.update( target: params[:value] )
+		add_speech( "I set a target of #{params[:value]} for #{metric.title}." )
+		sys_notes = "Spoke: 'I set a target of #{params[:value]} for #{metric.title}.'"
+
+		user.user_inputs.create( content: raw_input, result_obj: metric, action: 'updated', source: options[:source], result_status: 'success', system_notes: sys_notes )
+
+	end
+
+	def stop
 		add_speech("Stopping.")
+	end
+
+	def tell_about
+		unless user.present?
+			login
+			return
+		end
+		metric = get_user_metric( user, params[:action] )
+
+		if metric.nil?
+			default_metric ||= Metric.where( user_id: nil ).find_by_alias( params[:action].downcase )
+			action = default_metric.try( :title ) || params[:action]
+			add_speech("Sorry, you haven't recorded anything for #{action} yet.")
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found', action: 'reported', system_notes: "Spoke: 'Sorry, you haven't recorded anything for #{action} yet.'" )
+			return
+		end
+
+		obs_count_total = user.observations.for( metric ).count
+		obs_count_last_week = user.observations.for( metric ).where( recorded_at: 1.week.ago.beginning_of_week..1.week.ago.end_of_week ).count
+		obs_count_this_week = user.observations.for( metric ).where( recorded_at: Time.zone.now.beginning_of_week..Time.zone.now.end_of_week ).count
+		
+		average_value = user.observations.for( metric ).average( :value ).round( 2 )
+		min_value = user.observations.for( metric ).minimum( :value )
+		max_value = user.observations.for( metric ).maximum( :value )
+		value_sum = user.observations.for( metric ).sum( :value )
+
+		add_speech( "You have logged #{metric.title} #{obs_count_total} times in all. #{obs_count_last_week} times last week, and #{obs_count_this_week} times so far this week. The average value for #{metric.title} is #{average_value}. The max value is #{max_value} and the minimum is #{min_value}." )
+		sys_notes = "Spoke: 'You have logged #{metric.title} #{obs_count_total} times in all. #{obs_count_last_week} times last week, and #{obs_count_this_week} times so far this week. The average value for #{metric.title} is #{average_value}. The max value is #{max_value} and the minimum is #{min_value}.'"
+
+		user.user_inputs.create( content: raw_input, action: 'reported', source: options[:source], result_status: 'success', system_notes: sys_notes )
 
 	end
 
 	private
 
-	def get_user_metric( user, action, unit )
+		def get_user_metric( user, action, unit=nil, create=false )
 
-		if action.present?
-			action = action.gsub( /(log|record|to|my|todays|is|was|=|i|for)/i, '' ).strip
+			if action.present?
+				action = action.gsub( /(log |record |to |my | todays | is| are| was| = |i | for)/i, '' ).strip
 
-			observed_metric = Metric.where( user_id: user ).find_by_alias( action.downcase )
-			observed_metric ||= Metric.where( user_id: nil ).find_by_alias( action.downcase ).try(:dup)
-			observed_metric ||= Metric.new( title: action, unit: unit ) if action.present?
-			observed_metric.update( user: user ) if observed_metric.present?
+				observed_metric = Metric.where( user_id: user ).find_by_alias( action.downcase )
+				if create
+					observed_metric ||= Metric.where( user_id: nil ).find_by_alias( action.downcase ).try(:dup)
+					observed_metric ||= Metric.new( title: action, unit: unit ) if action.present?
+					observed_metric.update( user: user ) if observed_metric.present?
+				end
 
+			end
+
+			observed_metric
 		end
-
-		observed_metric
-	end
 
 end
