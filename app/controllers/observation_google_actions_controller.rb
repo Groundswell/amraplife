@@ -3,10 +3,10 @@ class ObservationGoogleActionsController < ActionController::Base
 	protect_from_forgery :except => [:create]
 
 	DEFAULT_DIALOG = {
-		help: "To log fitness information just say \"Google tell Life Meter I ate 100 calories\", or use a fitness timer by saying \"Google ask Life Meter to start run timer\".  Life Meter will remember, report and provide insights into what you have told it.",
-		launch_user: "Welcome to Life Meter, an AMRAP Life skill.  To log fitness information just say \"Google tell Life Meter I ate 100 calories\", or use a fitness timer by saying \"Google ask Life Meter to start run timer\".  Life Meter will remember, report and provide insights into what you have hold it.",
-		launch_guest: "Welcome to Life Meter, an AMRAP Life skill.  To log fitness information just say \"Google tell Life Meter I ate 100 calories\", or use a fitness timer by saying \"Google ask Life Meter to start run timer\".  Life Meter will remember, report and provide insights into what you have hold it.  To get started open your Google app, and complete the Life Meter skill registration on AMRAPLife.",
-		login: "Open your Google app, and complete the Life Meter skill registration on AMRAP Life to continue",
+		help: "To log fitness information just say \"Google tell AMRAP Life I ate 100 calories\", or use a fitness timer by saying \"Google ask AMRAP Life to start run timer\".  AMRAP Life will remember, report and provide insights into what you have told it.",
+		launch_user: "Welcome to AMRAP Life.  To log fitness information just say \"Google tell AMRAP Life I ate 100 calories\", or use a fitness timer by saying \"Google ask AMRAP Life to start run timer\".  AMRAP Life will remember, report and provide insights into what you have hold it.",
+		launch_guest: "Welcome to AMRAP Life.  To log fitness information just say \"Google tell AMRAP Life I ate 100 calories\", or use a fitness timer by saying \"Google ask AMRAP Life to start run timer\".  AMRAP Life will remember, report and provide insights into what you have hold it.  To get started open your Google app, and complete the AMRAP Life.",
+		login: "Open your Google app, and complete the AMRAP Life registration to continue",
 	}
 
 	def create

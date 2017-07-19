@@ -60,7 +60,7 @@ class ObservationSlackBotsController < ActionController::Base
 			})
 		)
 
-		set_flash( 'Life Meter Slack Bot was Successfully Installed.' )
+		set_flash( 'AMRAP Life Slack Bot was Successfully Installed.' )
 		redirect_to '/'
 
 	end
@@ -68,7 +68,7 @@ class ObservationSlackBotsController < ActionController::Base
 	def login
 		@team = Team.find_by( slack_team_id: params[:team_id] )
 		unless @team.present?
-			set_flash( 'Before registering, you must first install the Life Meter app on Slack.' )
+			set_flash( 'Before registering, you must first install the AMRAP Life app on Slack.' )
 			redirect_to '/'
 		end
 
@@ -144,7 +144,7 @@ class ObservationSlackBotsController < ActionController::Base
 		query_body = args.merge({
 			token: @team.properties['bot_access_token'],
 			text: text,
-			username: 'Life Meter',
+			username: 'AMRAP Life',
 			as_user: false,
 		})
 
