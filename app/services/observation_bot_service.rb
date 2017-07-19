@@ -31,7 +31,7 @@ class ObservationBotService < AbstractBotService
 		log_start_observation: {
 			utterances: [
 				# (that) (i) (am) start(ed|ing) (to) working
-				'(?:that )?\s*(?:i )?\s*(?:am )?\s*(start|tim)(?:ed|ing)?\s*(?:to )?\s*(?:a |an )?\s*{action}',
+				'(?:to)?(?:that )?\s*(?:i )?\s*(?:am )?\s*(start|tim)(?:ed|ing)?\s*(?:to )?\s*(?:a |an )?\s*{action}',
 			],
 			slots: {
 				action: 'Action',
@@ -39,7 +39,7 @@ class ObservationBotService < AbstractBotService
 		},
 		log_stop_observation: {
 			utterances: [
-				"(?:to )?\s*(?:that )?\s*(?:i )?\s*(stop|end|finish|complete)(?:ed|ing|ped)?\s*{action}\s*(?:timer)?",
+				"(?:to )?\s*(?:that )?\s*(?:i )?\s*(stop|end|finish|complete)(?:ed|ing|ped)?\s*(?:my)?\s*{action}\s*(?:timer)?",
 			],
 			slots: {
 				action: 'Action',
@@ -420,6 +420,8 @@ class ObservationBotService < AbstractBotService
 		# @todo parse notes
 		notes = nil
 
+		params[:action] = params[:action].gsub( /timer/, '' )
+
 		observed_metric = get_user_metric( user, params[:action], 'sec', true )
 
 		if observed_metric.errors.present?
@@ -448,27 +450,23 @@ class ObservationBotService < AbstractBotService
 		end
 		sys_notes = ''
 
-		observed_metric = get_user_metric( user, params[:action], 'sec' )
+		metric = get_user_metric( user, params[:action], 'sec' )
 
-		if observed_metric.errors.present?
-			add_speech("I'm sorry, I don't know how to log information about #{params[:action]}. #{observed_metric.errors.full_messages.join('. ')}")
-			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found' )
-			return
-		elsif observed_metric.nil?
-			add_speech("I'm sorry, I don't know how to log information about #{params[:action]}.")
-			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found' )
+		if metric.nil?
+			default_metric ||= Metric.where( user_id: nil ).find_by_alias( params[:action].downcase )
+			action = default_metric.try( :title ) || params[:action]
+			add_speech("Sorry, you haven't recorded anything for #{action} yet.")
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found', action: 'reported', system_notes: "Spoke: 'Sorry, you haven't recorded anything for #{action} yet.'" )
 			return
 		end
 
-		observations = user.observations.where( 'started_at is not null' ).order( started_at: :desc )
-		observations = observations.where( observed: observed_metric ) if observed_metric.present?
+		observations = user.observations.of( metric ).where( value: nil ).where( 'started_at is not null' ).order( started_at: :desc )
 		observation  = observations.first
-		# observation = user.observations.where( observed_type: 'Metric', observed: observed_metric ).where( 'started_at is not null' ).order( started_at: :asc ).last
 
 		if observation.present?
 			observation.stop!
-			add_speech("Stopping your #{params[:action]} timer at #{observation.value.to_i} #{observation.unit}" )
-			sys_notes = "Spoke: 'Stopping your #{params[:action]} timer at #{observation.value.to_i} #{observation.unit}'"
+			add_speech("Stopping your #{metric.title} timer at #{observation.value.to_i} #{observation.unit}" )
+			sys_notes = "Spoke: 'Stopping your #{metric.title} timer at #{observation.value.to_i} #{observation.unit}'"
 		else
 			add_speech("I can't find any running #{params[:action]} timers.")
 			sys_notes = "I can't find any running #{params[:action]} timers."
@@ -639,6 +637,13 @@ class ObservationBotService < AbstractBotService
 		max_value = user.observations.for( metric ).maximum( :value )
 		value_sum = user.observations.for( metric ).sum( :value )
 
+		if metric.unit == 'sec'
+			average_value = ChronicDuration.output( average_value, format: :chrono )
+			min_value = ChronicDuration.output( min_value, format: :chrono )
+			max_value = ChronicDuration.output( max_value, format: :chrono )
+			value_sum = ChronicDuration.output( value_sum, format: :chrono )
+		end
+
 		add_speech( "You have logged #{metric.title} #{obs_count_total} times in all. #{obs_count_last_week} times last week, and #{obs_count_this_week} times so far this week. The average value for #{metric.title} is #{average_value}. The max value is #{max_value} and the minimum is #{min_value}." )
 		sys_notes = "Spoke: 'You have logged #{metric.title} #{obs_count_total} times in all. #{obs_count_last_week} times last week, and #{obs_count_this_week} times so far this week. The average value for #{metric.title} is #{average_value}. The max value is #{max_value} and the minimum is #{min_value}.'"
 
@@ -651,7 +656,7 @@ class ObservationBotService < AbstractBotService
 		def get_user_metric( user, action, unit=nil, create=false )
 
 			if action.present?
-				action = action.gsub( /(log |record |to |my | todays | is| are| was| = |i | for)/i, '' ).strip
+				action = action.gsub( /(log |record |to |my | todays | is| are| was| = |i | for|timer)/i, '' ).strip
 
 				observed_metric = Metric.where( user_id: user ).find_by_alias( action.downcase )
 				if create

@@ -52,18 +52,19 @@
 							-#%span.label.label-success.pull-right
 								New
 
-					-#%li
-						%a.dropdown-toggle{ href: '#' }
-							%i.fa.fa-line-chart
-							%span
-								Stats
-							%i.fa.fa-angle-right.drop-icon
-							%ul.submenu
-								%li
-									%a{ href: main_app.stats_path }
-										Charts
-								- current_user.metrics.each do |metric|
+					- if current_user.observations.count > 1
+						%li
+							%a{ href: main_app.stats_path }
+								%i.fa.fa-bar-chart
+								%span
+									Charts
+								-#%i.fa.fa-angle-right.drop-icon
+								-#%ul.submenu
 									%li
-										%a{ href: stat_path( metric ) }
-											= metric.title
+										%a{ href: main_app.stats_path }
+											Charts
+									- current_user.metrics.each do |metric|
+										%li
+											%a{ href: stat_path( metric ) }
+												= metric.title
 	#nav-col-submenu
