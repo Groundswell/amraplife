@@ -4,8 +4,8 @@ class ObservationAlexaSkillsController < ActionController::Base
 
 	DEFAULT_DIALOG = {
 		help: "To log fitness information just say \"Alexa tell AMRAP Life I ate 100 calories\", or use a fitness timer by saying \"Alexa ask AMRAP Life to start run timer\".  AMRAP Life will remember, report and provide insights into what you have told it.",
-		launch_user: "Welcome to AMRAP Life.  To log fitness information just say \"Alexa tell AMRAP Life I ate 100 calories\", or use a fitness timer by saying \"Alexa ask AMRAP Life to start run timer\".  AMRAP Life will remember, report and provide insights into what you have hold it.",
-		launch_guest: "Welcome to AMRAP Life.  To log fitness information just say \"Alexa tell AMRAP Life I ate 100 calories\", or use a fitness timer by saying \"Alexa ask AMRAP Life to start run timer\".  AMRAP Life will remember, report and provide insights into what you have hold it.  To get started open your Alexa app, and complete the AMRAP Life registration.",
+		launch_user: "Welcome to AMRAP Life.  To log fitness information just say \"Alexa tell AMRAP Life I ate 100 calories\", or use a fitness timer by saying \"Alexa ask AMRAP Life to start run timer\".  AMRAP Life will remember, report and provide insights into what you have told it.",
+		launch_guest: "Welcome to AMRAP Life.  To log fitness information just say \"Alexa tell AMRAP Life I ate 100 calories\", or use a fitness timer by saying \"Alexa ask AMRAP Life to start run timer\".  AMRAP Life will remember, report and provide insights into what you have told it.  To get started open your Alexa app, and complete the AMRAP Life registration.",
 		login: "Open your Alexa app, and complete the AMRAP Life registration to continue",
 	}
 
