@@ -3,7 +3,7 @@ class MetricsController < ApplicationController
 	before_filter :authenticate_user!
 	before_filter :get_metric, except: [ :create, :index ]
 
-	layout 'dash'
+	layout 'lifemeter'
 
 	def create
 		@metric = current_user.metrics.new( metric_params )

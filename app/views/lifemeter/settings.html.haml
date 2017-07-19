@@ -1,0 +1,40 @@
+%h1
+	Settings 
+.main-box.clearfix
+	.main-box-header.clearfix
+		
+	.main-box-body.clearfix
+		= form_tag update_settings_lifemeter_index_path, method: :put do
+			.row
+				.col-sm-8
+					.form-group
+						= label_tag :name
+						= text_field_tag :name, current_user.to_s, class: 'form-control'
+
+					.form-group
+						= label_tag :email
+						= text_field_tag :email, current_user.email, class: 'form-control'
+
+					.form-group
+						= label_tag :current_password
+						= password_field_tag :current_password, '', class: 'form-control'
+					.form-group
+						= label_tag :new_password
+						= password_field_tag :new_password, '', class: 'form-control'
+					.form-group
+						= label_tag :new_password_confirmation
+						= password_field_tag :new_password_confirmation, '', class: 'form-control'
+				
+				.col-sm-4
+					.well
+						.form-group
+							= label_tag :gender
+							= select_tag :gender, ['Male', 'Female'], class: 'form-control'
+						.form-group
+							= label_tag :birthdate
+							= text_field_tag :birthdate, '', class: 'form-control'
+
+						.form-group
+							= submit_tag 'Update', class: 'btn btn-primary'
+
+	

@@ -3,7 +3,7 @@ class ObservationsController < ApplicationController
 	before_filter :authenticate_user!
 	before_filter :get_observation, except: [ :create, :index ]
 
-	layout 'dash'
+	layout 'lifemeter'
 
 	# def create
 

@@ -1,10 +1,20 @@
 Rails.application.routes.draw do
 
-	resources :cards do
-		get :success, on: :member
+	# resources :cards do
+	# 	get :success, on: :member
+	# end
+
+	resources :lifemeter, only: :index do 
+		get :settings, on: :collection
+		put :update_settings, on: :collection
+		get :dash, on: :collection
 	end
 
-	resources :lifemeter, only: :index
+	scope 'lifemeter' do
+		resources :metrics
+		resources :observations
+		resources :stats
+	end
 
 	resources :equipment
 	resources :equipment_admin
@@ -15,7 +25,7 @@ Rails.application.routes.draw do
 		get :preview, on: :member
 	end
 
-	resources :metrics
+	# resources :metrics
 	resources :metric_admin
 
 	resources :movements
@@ -40,9 +50,9 @@ Rails.application.routes.draw do
 		get :login_success, on: :collection
 	end
 
-	resources :observations do
-		put :stop, on: :member
-	end
+	# resources :observations do
+	# 	put :stop, on: :member
+	# end
 
 	resources :places
 	resources :place_admin
@@ -52,7 +62,7 @@ Rails.application.routes.draw do
 		get :preview, on: :member
 	end
 
-	resources :stats
+	# resources :stats
 
 	resources :terms, only: :index, path: 'crossfit-terms'
 	resources :term_admin do

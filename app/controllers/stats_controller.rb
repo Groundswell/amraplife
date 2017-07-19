@@ -3,7 +3,7 @@ class StatsController < ApplicationController
 
 	before_filter :authenticate_user!
 
-	layout 'dash'
+	layout 'lifemeter'
 
 	def index
 		@stat = current_user.metrics.friendly.find( params[:stat] ) if params[:stat].present?

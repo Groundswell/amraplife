@@ -9,15 +9,15 @@
 							= current_user
 							%i.fa.fa-angle-down
 						%ul.dropdown-menu
-							%li
+							-#%li
 								%a{ href: '#' }
 									%i.fa.fa-user
 									Profile
 							%li
-								%a{ href: '#' }
+								%a{ href: settings_lifemeter_index_path }
 									%i.fa.fa-cog
 									Settings
-							%li
+							-#%li
 								%a{ href: '#' }
 									%i.fa.fa-bell
 									Notifications
@@ -32,7 +32,7 @@
 				%ul.nav.nav-pills.nav-stacked
 					%li.nav-header.nav-header-first.hidden-sm.hidden-xs
 						Navigation
-					%li{ class: set_css_if( controller: :dash ) }
+					%li{ class: set_css_if( controller: :lifemeter ) }
 						%a{ href: lifemeter_index_path }
 							%i.fa.fa-dashboard
 							%span
