@@ -3,9 +3,11 @@ class ObservationAlexaSkillsController < ActionController::Base
 	protect_from_forgery :except => [:create]
 
 	DEFAULT_DIALOG = {
+
 		help: "To log fitness information just say \"Alexa tell Life Meter I ate 100 calories\", or use a fitness timer by saying \"Alexa ask Life Meter to start a workout timer\".  Life Meter will remember, report and provide insights into what you have told it.",
 		launch_user: "Welcome to Life Meter by AMRAP Life.  To log fitness information just say \"Alexa tell Life Meter I ate 100 calories\", or use a fitness timer by saying \"Alexa ask Life Meter to start a workout timer\". Life Meter will remember, report and provide insights into what you have told it.",
 		launch_guest: "Welcome to Life Meter by AMRAP Life.  To log fitness information just say \"Alexa tell Life Meter I ate 100 calories\", or use a fitness timer by saying \"Alexa ask Life Meter to start a workout timer\".  Life Meter will remember, report and provide insights into what you have told it.  To get started open your Alexa app, and complete AMRAP Life registration.",
+
 		login: "Open your Alexa app, and complete the AMRAP Life registration to continue",
 	}
 

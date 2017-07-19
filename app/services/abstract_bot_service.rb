@@ -100,6 +100,10 @@ class AbstractBotService
 		@params
 	end
 
+	def raw_input=( text )
+		@raw_input = text
+	end
+
 	def raw_input
 		@raw_input
 	end
