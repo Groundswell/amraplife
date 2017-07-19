@@ -279,14 +279,14 @@ class ObservationBotService < AbstractBotService
 	def launch
 		# Process your Launch Request
 		if user.present?
-			launch_message = get_dialog('launch_user', default: "Welcome to AMRAP Life. To log information just say \"I ate 100 calories\", or use a fitness timer by saying \"start run timer\".  AMRAP Life will remember, report and provide insights into what you have told it.")
+			launch_message = get_dialog('launch_user', default: "Welcome to Life Meter by AMRAP Life. To log information just say \"I ate 100 calories\", or use a fitness timer by saying \"start run timer\".  Life Meter will remember, report and provide insights into what you have told it.")
 
 			add_speech(launch_message)
 		else
-			launch_message = get_dialog('launch_guest', default: "Welcome to AMRAP Life. To log fitness information just say \"I ate 100 calories\", or use a fitness timer by saying \"start run timer\". AMRAP Life will remember, report and provide insights into what you have told it. To get started click this link, and complete the AMRAP Life skill registration on AMRAPLife.com.")
+			launch_message = get_dialog('launch_guest', default: "Welcome to Life Meter by AMRAP Life. To log fitness information just say \"I ate 100 calories\", or use a fitness timer by saying \"start run timer\". Life Meter will remember, report and provide insights into what you have told it. To get started click this link, and complete the Life Meter skill registration on AMRAPLife.com.")
 
 			add_speech(launch_message)
-			add_login_prompt('Create your AMRAP Life Account on AMRAPLife.com', '', 'In order to record and report your metrics you must first create a AMRAP Life account on AMRAPLife.com.')
+			add_login_prompt('Create your Life Meter Account on AMRAPLife.com', '', 'In order to record and report your metrics you must first create an account on AMRAPLife.com.')
 		end
 		# add_hash_card( { :title => 'Ruby Run', :subtitle => 'Ruby Running Ready!' } )
 
@@ -297,7 +297,7 @@ class ObservationBotService < AbstractBotService
 
 
 		add_speech( launch_message )
-		add_login_prompt('Create your AMRAP Life Account on AMRAPLife.com', '', 'In order to record and report your metrics you must first create a AMRAP Life account on AMRAPLife.com.')
+		add_login_prompt('Create your AAccount on AMRAPLife.com', '', 'In order to record and report your metrics you must first create an account on AMRAPLife.com.')
 
 	end
 
