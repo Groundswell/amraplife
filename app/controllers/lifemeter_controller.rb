@@ -1,4 +1,4 @@
-class DashController < ApplicationController
+class LifemeterController < ApplicationController
 	
 	before_filter :authenticate_user!
 	

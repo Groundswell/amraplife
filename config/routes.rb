@@ -4,7 +4,7 @@ Rails.application.routes.draw do
 		get :success, on: :member
 	end
 
-	resources :dash, only: :index
+	resources :lifemeter, only: :index
 
 	resources :equipment
 	resources :equipment_admin
