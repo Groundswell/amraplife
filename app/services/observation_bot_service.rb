@@ -57,17 +57,28 @@ class ObservationBotService < AbstractBotService
 				time_period: 'TimePeriod',
 			}
 		},
+		target_remaining:{
+			utterances: [
+				'how (much|many) {action} do I have left',
+				],
+			slots:{
+				action: 'Action',
+				unit: 'Unit'
+				},
+		},
+
 		report_sum_value_observation: {
 			utterances: [
 				# how many calories have I eaten
-				'how (many|much)\s*(calories|food )\s*.+(eat|ate|eaten)',
-				'how (many|much)\s*(calories|food )\s*.+(eat|ate|eaten)\s*{time_period}',
+				'how (many|much|many)\s*(calories|food )\s*.+(eat|ate|eaten)',
+				'how (many|much|many)\s*(calories|food )\s*.+(eat|ate|eaten)\s*{time_period}',
 
-				'how (much|many|long) (do|did|have|i) (?:i )?\s*{action} {time_period}',
-				'how (much|many|long) (do|did|have|i) (?:i )?\s*{action}',
+				'how (much|many|long)\s*(?:do|did|have|i)?\s*(?:i )?\s*{action} {time_period}',
+				'how (much|many|long)\s*(?:do|did|have|i)?\s*(?:i )?\s*{action}',
 
 			],
 			slots: {
+				action: 'Action',
 				time_period: 'TimePeriod',
 			}
 		},
@@ -143,6 +154,7 @@ class ObservationBotService < AbstractBotService
 				unit: 'Unit'
 				},
 		},
+		
 		tell_about: {
 			utterances: [
 				'(to)?\s*tell me about\s*(?:my)?\s*{action}',
@@ -520,9 +532,14 @@ class ObservationBotService < AbstractBotService
 		end
 
 		sum = user.observations.of( observed_metric ).where( recorded_at: range ).sum( :value )
+		unit = observed_metric.unit
+		if observed_metric.unit == 'sec'
+			sum = ChronicDuration.output( sum, format: :chrono )
+			unit = ''
+		end
 
-		add_speech( "You logged #{sum} #{observed_metric.unit}s of #{observed_metric.title} #{time_period}." )
-		sys_notes = "Spoke: 'You logged #{sum} #{observed_metric.unit}s of #{observed_metric.title} #{time_period}.'"
+		add_speech( "You logged #{sum} #{unit} of #{observed_metric.title} #{time_period}." )
+		sys_notes = "Spoke: 'You logged #{sum} #{unit} of #{observed_metric.title} #{time_period}.'"
 
 		user.user_inputs.create( content: raw_input, action: 'reported', source: options[:source], result_status: 'success', system_notes: sys_notes )
 
@@ -611,6 +628,52 @@ class ObservationBotService < AbstractBotService
 
 	def stop
 		add_speech("Stopping.")
+	end
+
+	def target_remaining
+		unless user.present?
+			login
+			return
+		end
+		metric = get_user_metric( user, params[:action], params[:unit], false )
+		if metric.nil?
+			default_metric ||= Metric.where( user_id: nil ).find_by_alias( params[:action].downcase )
+			action = default_metric.try( :title ) || params[:action]
+			add_speech("Sorry, you haven't recorded anything for #{action} yet.")
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found', action: 'reported', system_notes: "Spoke: 'Sorry, I you haven't recorded anything for #{action} yet.'" )
+			return
+		elsif metric.target.nil?
+			add_speech("Sorry, you haven't a target for #{metric.title} yet. Say something like 'Set a target of 100 for #{metric.title}' to set a target.")
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found', action: 'reported', system_notes: "Spoke: 'Sorry, you haven't a target for #{metric.title} yet.'" )
+			return
+		end
+
+		sum = user.observations.of( metric ).where( recorded_at: Time.now.beginning_of_day..Time.now.end_of_day ).sum( :value )
+		target = metric.target
+		delta = ( target-sum ).abs
+
+		unit = metric.unit
+		formatted_sum = sum
+		formatted_target = target
+		formatted_delta = delta
+
+		if metric.unit == 'sec'
+			formatted_sum = ChronicDuration.output( sum, format: :chrono )
+			formatted_target = ChronicDuration.output( target, format: :chrono )
+			formatted_delta = ChronicDuration.output( delta, format: :chrono )
+			unit = ''
+		end
+
+		response = "Your #{metric.title} target is #{formatted_target} #{unit}. "
+		if sum <= metric.target
+			response += "You have logged #{formatted_sum} so far today, and you have #{formatted_delta} remaining."
+		else
+			response += "You have logged #{formatted_sum} so far today, and you are over by #{formatted_delta}."
+		end
+
+		add_speech( response )
+
+		user.user_inputs.create( content: raw_input, action: 'reported', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{response}'" )
 	end
 
 	def tell_about
