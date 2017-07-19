@@ -5,7 +5,7 @@ class ObservationBotService < AbstractBotService
 			utterances: [ 'cancel' ]
 		},
 		get_motivation: {
-			utterances: [ 
+			utterances: [
 				'(?:to )?\s*(inspire |motivate )\s*me',
 				'(?:to )?\s*(?:for )?\s*(?:give me )?\s*(inspiration|motivation)'
 				 ]
@@ -45,7 +45,7 @@ class ObservationBotService < AbstractBotService
 				action: 'Action',
 			}
 		},
-		
+
 		report_last_value_observation:{
 			utterances: [
 				# what is my weight
@@ -154,7 +154,7 @@ class ObservationBotService < AbstractBotService
 				unit: 'Unit'
 				},
 		},
-		
+
 		tell_about: {
 			utterances: [
 				'(to)?\s*tell me about\s*(?:my)?\s*{action}',
@@ -264,7 +264,7 @@ class ObservationBotService < AbstractBotService
 
 		add_speech( motivation.title )
 
-		user.user_inputs.create( content: raw_input, result_obj: motivation, action: 'read', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{motivation.title}'" )
+		user.user_inputs.create( content: raw_input, result_obj: motivation, action: 'read', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{motivation.title}'" ) if user.present?
 	end
 
 	def help
@@ -495,9 +495,9 @@ class ObservationBotService < AbstractBotService
 		end
 
 		params[:action] ||= 'Calories'
-		
+
 		observed_metric = get_user_metric( user, params[:action], nil, false )
-		
+
 		time_period = params[:time_period] || 'today'
 		time_period = time_period.downcase.gsub(/\s+/,' ')
 
@@ -573,7 +573,7 @@ class ObservationBotService < AbstractBotService
 		elsif ( matches = time_period.match(/last (?'unit'week|month|year)/) ).present?
 			verb = 'was'
 			unit = matches['unit']
-			observations = observations.where( "recorded_at <= :time", time: 1.try(unit).ago.try("end_of_#{unit}").end_of_day ) 
+			observations = observations.where( "recorded_at <= :time", time: 1.try(unit).ago.try("end_of_#{unit}").end_of_day )
 		end
 
 		obs = observations.first
@@ -694,7 +694,7 @@ class ObservationBotService < AbstractBotService
 		obs_count_total = user.observations.for( metric ).count
 		obs_count_last_week = user.observations.for( metric ).where( recorded_at: 1.week.ago.beginning_of_week..1.week.ago.end_of_week ).count
 		obs_count_this_week = user.observations.for( metric ).where( recorded_at: Time.zone.now.beginning_of_week..Time.zone.now.end_of_week ).count
-		
+
 		average_value = user.observations.for( metric ).average( :value ).round( 2 )
 		min_value = user.observations.for( metric ).minimum( :value )
 		max_value = user.observations.for( metric ).maximum( :value )
