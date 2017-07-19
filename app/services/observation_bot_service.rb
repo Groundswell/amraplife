@@ -262,7 +262,7 @@ class ObservationBotService < AbstractBotService
 
 		motivation = Inspiration.published.order('random()').first
 
-		add_speech( motivation.description )
+		add_speech( ActionController::Base.helpers.strip_tags( motivation.description ) )
 
 		user.user_inputs.create( content: raw_input, result_obj: motivation, action: 'read', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{motivation.description}'" ) if user.present?
 
