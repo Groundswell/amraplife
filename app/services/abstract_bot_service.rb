@@ -60,7 +60,7 @@ class AbstractBotService
 	def respond_to_text( text, args = {} )
 		text = text.strip
 		@raw_input = text
-		
+
 		compiled_intents = self.class.compiled_intents
 
 		requested_intent_name = nil
@@ -87,7 +87,7 @@ class AbstractBotService
 			self.send( requested_intent_name )
 			return true
 		else
-			user.user_inputs.create( content: @raw_input, action: 'failed', source: options[:source], result_status: 'parse failure', system_notes: "I didn't understand '#{@raw_input}'" )
+			user.user_inputs.create( content: @raw_input, action: 'failed', source: options[:source], result_status: 'parse failure', system_notes: "I didn't understand '#{@raw_input}'" ) if user.present?
 			return false
 		end
 	end
