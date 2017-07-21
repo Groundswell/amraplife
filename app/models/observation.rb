@@ -9,8 +9,6 @@ class Observation < ActiveRecord::Base
 	belongs_to 	:observed, polymorphic: true
 	belongs_to 	:user
 
-	TIME_UNITS = [ 'day', 'hr', 'hour', 'minute', 'min', 'sec', 'second' ]
-
 	def self.dated_between( start_date=1.month.ago, end_date=Time.zone.now )
 		start_date = start_date.to_datetime.beginning_of_day
 		end_date = end_date.to_datetime.end_of_day
@@ -38,18 +36,18 @@ class Observation < ActiveRecord::Base
 		elsif self.observed.try( :workout_type ) == 'strength'
 			return "#{self.value.to_i}"
 
-		elsif self.value.present? && TIME_UNITS.include?( self.unit )
+		elsif self.value.present? && self.unit == 'sec'
 			ChronicDuration.output( self.value, format: :chrono )
 		else
 			"#{self.value} #{self.unit}"
 		end
 	end
 
-	def input_value
-		if self.value.present? && TIME_UNITS.include?( self.unit )
+	def formatted_value
+		if self.value.present? && self.unit == 'sec'
 			ChronicDuration.output( self.value, format: :chrono )
 		else
-			self.value
+			"#{self.value} #{self.unit}s"
 		end
 	end
 

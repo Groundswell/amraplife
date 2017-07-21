@@ -7,32 +7,47 @@
 		= form_tag update_settings_lifemeter_index_path, method: :put do
 			.row
 				.col-sm-8
-					.form-group
-						= label_tag :name
-						= text_field_tag :name, current_user.to_s, class: 'form-control'
+					.row
+						.col-sm-4
+							.form-group
+								%center
+									= label_tag :avatar, 'Your Image:'
+									= image_tag current_user.avatar_url, class: 'img-responsive center', id: 'user_avatar_img'
+								%div{ style: 'text-align:center;padding:0.3em;' }
+									%a{ href: '#', data: { toggle: :assetup, for: '#user_avatar,#user_avatar_img', asset: { asset_type: 'image', use: 'avatar', status: 'active', parent_obj_id: current_user.id, parent_obj_type: current_user.class.base_class.name }.to_json, params: { authenticity_token: form_authenticity_token() }.to_json } }
+										%i.fa.fa-upload
+										upload
+								= hidden_field_tag :avatar, class: 'form-control', id: 'user_avatar'
+						.col-sm-8
+							.form-group
+								= label_tag :full_name
 
-					.form-group
-						= label_tag :email
-						= text_field_tag :email, current_user.email, class: 'form-control'
+							.form-group
+								= label_tag :email
+								= text_field_tag :email, current_user.email, class: 'form-control'
 
-					.form-group
-						= label_tag :current_password
-						= password_field_tag :current_password, '', class: 'form-control'
-					.form-group
-						= label_tag :new_password
-						= password_field_tag :new_password, '', class: 'form-control'
-					.form-group
-						= label_tag :new_password_confirmation
-						= password_field_tag :new_password_confirmation, '', class: 'form-control'
-				
+							.form-group
+								= label_tag :current_password
+								= password_field_tag :current_password, '', class: 'form-control'
+							.form-group
+								= label_tag :new_password
+								= password_field_tag :new_password, '', class: 'form-control'
+							.form-group
+								= label_tag :new_password_confirmation
+								= password_field_tag :new_password_confirmation, '', class: 'form-control'
+						
 				.col-sm-4
 					.well
 						.form-group
-							= label_tag :gender
-							= select_tag :gender, ['Male', 'Female'], class: 'form-control'
+							= check_box_tag :use_metric_units, true, current_user.use_metric_units, { class: 'form-control', style: 'width:40px;'  }
+							= label_tag :use_metric_units, 'Use Metric Units?', style: 'display:inline;'
+
 						.form-group
-							= label_tag :birthdate
-							= text_field_tag :birthdate, '', class: 'form-control'
+							= label_tag :gender
+							= text_field_tag :gender, current_user.gender, class: 'form-control'
+						.form-group
+							= label_tag :dob, 'Birthdate:'
+							= text_field_tag :dob, current_user.dob, class: 'form-control'
 
 						.form-group
 							= submit_tag 'Update', class: 'btn btn-primary'

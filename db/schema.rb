@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170714175117) do
+ActiveRecord::Schema.define(version: 20170720002304) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -377,16 +377,14 @@ ActiveRecord::Schema.define(version: 20170714175117) do
     t.integer "movement_id"
     t.string  "title"
     t.string  "slug"
-    t.text    "aliases",       default: [],          array: true
+    t.text    "aliases",     default: [],              array: true
     t.string  "unit"
     t.integer "user_id"
     t.string  "metric_type"
     t.text    "description"
-    t.string  "target_period"
-    t.string  "target_type",   default: "sum_value"
-    t.float   "target_min",    default: 0.0
-    t.float   "target_max",    default: 0.0
-    t.integer "availability",  default: 0
+    t.string  "target_type", default: "daily_sum_max"
+    t.float   "target_min"
+    t.float   "target_max"
     t.float   "target"
   end
 
@@ -462,9 +460,9 @@ ActiveRecord::Schema.define(version: 20170714175117) do
     t.string   "title"
     t.string   "content"
     t.float    "value"
-    t.float    "sub_value",     default: 0.0
-    t.string   "unit",          default: "secs"
-    t.string   "sub_unit",      default: "reps"
+    t.float    "sub_value"
+    t.string   "unit"
+    t.string   "sub_unit"
     t.string   "rx"
     t.text     "notes"
     t.datetime "started_at"
@@ -576,8 +574,10 @@ ActiveRecord::Schema.define(version: 20170714175117) do
     t.text     "shopify_code"
     t.string   "title"
     t.string   "caption"
+    t.integer  "seq",             default: 1
     t.string   "slug"
     t.string   "avatar"
+    t.string   "brand_model"
     t.integer  "status",          default: 0
     t.text     "description"
     t.text     "content"
@@ -596,10 +596,10 @@ ActiveRecord::Schema.define(version: 20170714175117) do
     t.integer  "collection_id"
     t.integer  "shipping_price",  default: 0
     t.string   "tax_code",        default: "00000"
-    t.integer  "seq",             default: 1
   end
 
   add_index "products", ["category_id"], name: "index_products_on_category_id", using: :btree
+  add_index "products", ["seq"], name: "index_products_on_seq", using: :btree
   add_index "products", ["slug"], name: "index_products_on_slug", unique: true, using: :btree
   add_index "products", ["status"], name: "index_products_on_status", using: :btree
   add_index "products", ["tags"], name: "index_products_on_tags", using: :gin
@@ -654,9 +654,10 @@ ActiveRecord::Schema.define(version: 20170714175117) do
   create_table "terms", force: :cascade do |t|
     t.string   "title"
     t.string   "slug"
+    t.text     "description"
     t.text     "content"
-    t.text     "aliases",    default: [], array: true
-    t.integer  "status",     default: 1
+    t.text     "aliases",     default: [], array: true
+    t.integer  "status",      default: 1
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -746,6 +747,7 @@ ActiveRecord::Schema.define(version: 20170714175117) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "authorization_code"
+    t.boolean  "use_metric_units",       default: false
   end
 
   add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", unique: true, using: :btree

@@ -19,7 +19,7 @@
 							%i.fa.fa-bell
 							-#%span.count
 								8
-						%ul.dropdown-menu.notifications-list
+						-#%ul.dropdown-menu.notifications-list
 							%li.pointer
 								.pointer-inner
 									.arrow
@@ -44,6 +44,8 @@
 							%li.item-footer
 								%a{ href: '#' }
 									View All...
+					%li
+						= image_tag 'life_meter_full_logo.png', height: 40, style: 'margin-top:4px;'
 			#header-nav.nav-no-collapse.pull-right
 				%ul.nav.navbar-nav.pull-right
 					%li.mobile-search
@@ -56,7 +58,7 @@
 									%i.fa.fa-search.nav-search-icon
 					%li.dropdown.profile-dropdown
 						%a.dropdown-toggle{ href: '#', data: { toggle: :dropdown } }
-							= image_tag current_user.try( :avatar )
+							= current_user.try( :avatar_tag )
 							%span.hidden-xs
 								= current_user
 							%b.caret

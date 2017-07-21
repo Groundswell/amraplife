@@ -22,14 +22,21 @@
 
 				.col-md-6.col-sm-7.col-xs-12
 					%ul.list-inline.pull-right.top-right
-						%li.account-login
-							%span
-								%a{ href: '.login-modal', data: { toggle: "modal" } }
-									Log in
-									-#%small
-										or
-								-#%a{ href: '#signup', data: { toggle: "modal" } } 
-									Create an account
+						- if current_user.present?
+							%li.account-login
+								%span
+									%a{ href: main_app.dash_lifemeter_index_path }
+										Hi
+										= current_user
+						- else
+							%li.account-login
+								%span
+									%a{ href: '.login-modal', data: { toggle: "modal" } }
+										Log in
+										-#%small
+											or
+									-#%a{ href: '#signup', data: { toggle: "modal" } } 
+										Create an account
 						%li.searchBox
 							%a{ href: 'javascript:void(0)' }
 								%i.fa.fa-search

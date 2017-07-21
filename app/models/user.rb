@@ -2,6 +2,8 @@ class User < SwellMedia::User
 
 	devise 		:database_authenticatable, :omniauthable, :registerable, :recoverable, :rememberable, :trackable, :authentication_keys => [:login]
 
+	after_create :set_name
+
 	# App declarations
 	has_many :metrics
 	has_many :observations
@@ -18,5 +20,12 @@ class User < SwellMedia::User
 			where(conditions.to_h).first
 		end
 	end
+
+	private
+		def set_name
+			if self.first_name.blank?
+				self.update( first_name: self.email.split( /@/ ).first )
+			end
+		end
 
 end

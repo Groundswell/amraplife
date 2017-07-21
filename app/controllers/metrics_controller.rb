@@ -29,6 +29,20 @@ class MetricsController < ApplicationController
 	def update
 		@metric.update( metric_params )
 		set_flash 'Updated'
+
+		if params[:metric][:reassign_to_metric_id].present?
+			# sanity-check that this is a valid assigned metric for the user
+			metric = current_user.metrics.find_by( id: params[:metric][:reassign_to_metric_id] )
+			if metric.present?
+				# reassign all observations
+				@metric.observations.update_all( observed_id: metric.id, observed_type: metric.class.name )
+				# destroy the old metric
+				@metric.destroy
+			end
+			redirect_to metrics_path
+			return false
+		end
+		
 		redirect_to :back
 	end
 
@@ -40,6 +54,9 @@ class MetricsController < ApplicationController
 
 		def metric_params
 			params[:metric][:unit] = params[:metric][:unit].singularize
+
+			params[:metric][:target] = ChronicDuration.parse( params[:metric][:target] ) if ChronicDuration.parse( params[:metric][:target] )
+			
 			params.require( :metric ).permit( :title, :unit, :aliases_csv, :description, :target, :target_type, :target_period )
 		end
 

@@ -48,13 +48,8 @@ class ObservationsController < ApplicationController
 				params[:observation][:value] = params[:observation][:value]
 			end
 			# always store time as secs
-			if params[:observation][:value].match( /:/ )
-				params[:observation][:value] = ChronicDuration.parse( params[:observation][:value] )
-			elsif ['minute', 'minutes', 'min', 'mins'].include?( unit )
-				params[:observation][:value] = params[:observation][:value].to_i * 60
-			elsif ['hour', 'hours', 'hr', 'hrs'].include?( unit )
-				params[:observation][:value] = params[:observation][:value].to_i * 3600
-			end
+			params[:observation][:value] = ChronicDuration.parse( params[:observation][:value] ) if ChronicDuration.parse( params[:observation][:value] )
+			
 			params.require( :observation ).permit( :recorded_at, :started_at, :ended_at, :value, :notes )
 		end
 

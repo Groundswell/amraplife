@@ -10,6 +10,8 @@ class Metric < ActiveRecord::Base
 
 	has_many 	:observations, as: :observed, dependent: :destroy
 
+	attr_accessor :reassign_to_metric_id
+
 
 	include FriendlyId
 	friendly_id :slugger, use: [ :slugged ]
@@ -29,6 +31,14 @@ class Metric < ActiveRecord::Base
 		self.aliases = aliases_csv.split( /,\s*/ )
 	end
 
+
+	def formatted_target
+		if self.target.present? && self.unit == 'sec'
+			ChronicDuration.output( self.target, format: :chrono )
+		else
+			"#{self.target} #{self.unit}s"
+		end
+	end
 
 	def slugger
 		"#{self.title}#{self.user_id}"

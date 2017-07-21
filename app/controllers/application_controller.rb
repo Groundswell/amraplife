@@ -22,22 +22,26 @@ class ApplicationController < ActionController::Base
 	end
 
 
-	def after_sign_in_path_for(resource)
+	def after_sign_in_path_for( resource )
 
-		if session[:dest].present? &&
-				not( session[:dest].match( /^\/users/ ) ) &&
-				not( session[:dest].match( /^\/login/ ) ) &&
-				not( session[:dest].match( /^\/logout/ ) ) &&
-				not( session[:dest].match( /^\/register/ ) ) &&
-				not( session[:dest].match( /^\/oauth_email_collector/ ) )
+		# if session[:dest].present? &&
+		# 		not( session[:dest].match( /^\/users/ ) ) &&
+		# 		not( session[:dest].match( /^\/login/ ) ) &&
+		# 		not( session[:dest].match( /^\/logout/ ) ) &&
+		# 		not( session[:dest].match( /^\/register/ ) ) &&
+		# 		not( session[:dest].match( /^\/oauth_email_collector/ ) )
 
-			path = session[:dest]
-			path = path + (path.include?('?') ? '&' : '?') + "oauth_sign_in=1" unless path.include?('oauth_sign_in=1')
+		# 	path = session[:dest]
+		# 	path = path + (path.include?('?') ? '&' : '?') + "oauth_sign_in=1" unless path.include?('oauth_sign_in=1')
+		# else
+		# 	path = '/lifemeter'
+		# end
+
+		if resource.admin?
+			return '/admin'
 		else
-			path = '/'
+			return '/lifemeter'
 		end
-
-		path
 	end
 
 end

@@ -4,6 +4,14 @@ class ObservationBotService < AbstractBotService
 		cancel: {
 			utterances: [ 'cancel' ]
 		},
+		check_metric: {
+			utterances: [
+				'(to)?\s*check\s*(my)?\s*{action}',
+				 ],
+			slots: {
+				action: 'Action',
+			}
+		},
 		get_motivation: {
 			utterances: [
 				'(?:to )?\s*(inspire |motivate )\s*me',
@@ -12,6 +20,9 @@ class ObservationBotService < AbstractBotService
 		},
 		help: {
 			utterances: [ 'help', 'for help' ]
+		},
+		hello: {
+			utterances: [ 'hi', 'hello', 'hi there', 'good morning', 'good afternoon' ]
 		},
 		launch: {
 			utterances: [ '' ]
@@ -67,21 +78,22 @@ class ObservationBotService < AbstractBotService
 				},
 		},
 
-		report_sum_value_observation: {
-			utterances: [
-				# how many calories have I eaten
-				'how (many|much|many)\s*(calories|food )\s*.+(eat|ate|eaten)',
-				'how (many|much|many)\s*(calories|food )\s*.+(eat|ate|eaten)\s*{time_period}',
+		# report_sum_value_observation: {
+		# 	utterances: [
+		# 		# how many calories have I eaten
+		# 		'how (many|much|many)\s*(calories|food )\s*.+(eat|ate|eaten)',
+		# 		'how (many|much|many)\s*(calories|food )\s*.+(eat|ate|eaten)\s*{time_period}',
 
-				'how (much|many|long)\s*(?:do|did|have|i)?\s*(?:i )?\s*{action} {time_period}',
-				'how (much|many|long)\s*(?:do|did|have|i)?\s*(?:i )?\s*{action}',
+		# 		'how (much|many|long)\s*(?:do|did|have|i)?\s*(?:i )?\s*{action} {time_period}',
+		# 		'how (much|many|long)\s*(?:do|did|have|i)?\s*(?:i )?\s*{action}',
 
-			],
-			slots: {
-				action: 'Action',
-				time_period: 'TimePeriod',
-			}
-		},
+		# 	],
+		# 	slots: {
+		# 		action: 'Action',
+		# 		time_period: 'TimePeriod',
+		# 	}
+		# },
+
 		set_name: {
 			utterances: [
 				'(?:to )?\s*call me {name}',
@@ -253,8 +265,64 @@ class ObservationBotService < AbstractBotService
   	} )
 
 	def cancel
-
 		add_speech("Cancelling")
+	end
+
+	def check_metric
+		unless user.present?
+			login
+			return
+		end
+
+		metric = get_user_metric( user, params[:action], nil, false )
+
+		if metric.nil?
+			default_metric ||= Metric.where( user_id: nil ).find_by_alias( params[:action].downcase )
+			action = default_metric.try( :title ) || params[:action]
+			add_speech("Sorry, you haven't recorded anything for #{action} yet.")
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found', action: 'reported', system_notes: "Spoke: 'Sorry, you haven't recorded anything for #{action} yet.'" )
+			return
+		end
+
+		last_observation = metric.observations.order( created_at: :desc ).first
+		total = metric.observations.where( recorded_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day ).sum( :value )
+		unit = metric.unit
+		if metric.unit == 'sec'
+			formatted_total = ChronicDuration.output( total, format: :chrono )
+		else
+			formatted_total = "#{total} #{metric.unit}s"
+		end
+
+		if metric.target.present?
+			delta = total - metric.target 
+			if metric.unit == 'sec'
+				formatted_delta = ChronicDuration.output( delta.abs, format: :chrono )
+			else
+				formatted_delta = "#{delta.abs} #{metric.unit}s"
+			end
+			direction = delta > 0 ? 'over' : 'under'
+
+			if metric.target_type == 'daily_sum_max'
+				response = "You have a target of no more than #{metric.formatted_target} total per day. Your total so far today is #{formatted_total}. "
+				response += "You are #{direction} your target by #{formatted_delta}."
+			elsif metric.target_type == 'daily_sum_min'
+				response = "You have a target of at least #{metric.formatted_target} total per day. Your total so far today is #{formatted_total}. "
+				response += "You are #{direction} your target by #{formatted_delta}."
+			elsif metric.target_type == 'min_value'
+				response = "You have a target of at least #{metric.formatted_target}. Your most recent #{metric.title} is #{last_observation.formatted_value}. "
+				response += "You are #{direction} your target by #{formatted_delta}."
+			elsif metric.target_type == 'max_value'
+				response = "You have a target of no more than #{metric.formatted_target}. Your most recent #{metric.title} is #{last_observation.formatted_value}. "
+				response += "You are #{direction} your target by #{formatted_delta}."
+			end
+			
+		else
+			response = "You haven't set a target for #{metric.title} yet. You last recorded it as #{last_observation.human_value}."
+		end
+
+		add_speech( response )
+	
+		user.user_inputs.create( content: raw_input, action: 'reported', source: options[:source], result_status: 'success', system_notes: "Spoke: #{response}" )
 
 	end
 
@@ -265,6 +333,24 @@ class ObservationBotService < AbstractBotService
 		add_speech( ActionController::Base.helpers.strip_tags( motivation.description ) )
 
 		user.user_inputs.create( content: raw_input, result_obj: motivation, action: 'read', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{motivation.description}'" ) if user.present?
+
+	end
+
+	def hello
+		greetings = [
+			'Howdy',
+			'Whasssup',
+			'Hey Hey',
+			'Greetings', 
+			'Hi there'
+		]
+		if user.present?
+			greeting = greetings.sample + ", #{user}"
+		end
+
+		add_speech( greeting )
+
+		user.user_inputs.create( content: raw_input, action: 'read', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{greeting}'" ) if user.present?
 
 	end
 
@@ -435,22 +521,12 @@ class ObservationBotService < AbstractBotService
 
 		params[:action] = params[:action].gsub( /timer/, '' )
 
-		observed_metric = get_user_metric( user, params[:action], 'sec', true )
+		metric = get_user_metric( user, params[:action], 'sec', true )
 
-		if observed_metric.errors.present?
-			add_speech("I'm sorry, I don't know how to log information about #{params[:action]}. #{observed_metric.errors.full_messages.join('. ')}")
-			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found' ) if user.present?
-			return
-		elsif observed_metric.nil?
-			add_speech("I'm sorry, I don't know how to log information about #{params[:action]}.")
-			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found' ) if user.present?
-			return
-		end
+		observation = Observation.create( user: user, observed: metric, started_at: Time.zone.now, notes: notes )
+		add_speech("Starting your #{metric.title} timer")
 
-		observation = Observation.create( user: user, observed: observed_metric, started_at: Time.zone.now, notes: notes )
-		add_speech("Starting your #{params[:action]} timer")
-
-		sys_notes = "Spoke: 'Starting your #{params[:action]} timer'."
+		sys_notes = "Spoke: 'Starting your #{metric.title} timer'."
 
 		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'created', source: options[:source], result_status: 'success', system_notes: sys_notes )
 

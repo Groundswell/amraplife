@@ -1,0 +1,161 @@
+!!!strict
+%html{ lang: :en }
+	%head
+		= render 'application/goog_tag'
+
+		= render 'application/html_head', args: {}
+
+		= stylesheet_link_tag "app_theme", media: "all"
+		= stylesheet_link_tag :application
+
+
+		%link{ href: 'https://fonts.googleapis.com/css?family=Lato:300,400,400i,700|PT+Serif:400,400i,700,700i' , rel:'stylesheet', type:'text/css' }
+		
+		%link{:href => "//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css", :media => "screen", :rel => "stylesheet"}
+
+		<!--[if lt IE 9]>
+		<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+		<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+	%body.body-wrapper
+		= render 'application/analytics'
+		.main-wrapper
+			.header.clearfix
+				.topBar
+					.container
+						.row
+							.col-md-6.col-sm-5.hidden-xs
+								%ul.list-inline
+									%li
+										%a{ href: 'http://facebook.com/amraplife', target: '_new' }
+											.fa.fa-facebook-square
+									%li
+										%a{ href: 'https://www.instagram.com/amrap_life/', target: '_new' }
+											.fa.fa-instagram
+									%li
+										%a{ href: 'http://pinterest.com/amraplife', target: '_new' }
+											.fa.fa-pinterest
+									%li
+										%a{ href: 'http://twitter.com/amraplife', target: '_new' }
+											.fa.fa-twitter
+									%li
+										%a{:href => main_app.feed_index_url( source: 'website', v: '1.0', format: 'rss' ), :target => "blank"}
+											.fa.fa-rss
+
+							.col-md-6.col-sm-7.col-xs-12
+								%ul.list-inline.pull-right.top-right
+									- if current_user.present?
+										%li.account-login
+											%span
+												%a{ href: main_app.dash_lifemeter_index_path }
+													Hi
+													= current_user
+									- else
+										%li.account-login
+											%span
+												%a{ href: '.login-modal', data: { toggle: "modal" } }
+													Log in
+													-#%small
+														or
+												-#%a{ href: '#signup', data: { toggle: "modal" } } 
+													Create an account
+									%li.searchBox
+										%a{ href: 'javascript:void(0)' }
+											%i.fa.fa-search
+										%ul.dropdown-menu.dropdown-menu-right
+											= form_tag '/store', method: :get do
+												%li
+													%span.input-group
+														%input.form-control{ name: :query, type: :text, placeholder: 'Search...'}
+														%button.input-group-addon{ type: :submit }
+															Submit
+									%li.dropdown.cart-dropdown
+										%a.dropdown-toggle{ href: "javascript:void(0)", data: { toggle: "dropdown" } }
+											%i.fa.fa-shopping-cart
+											= session[:cart_count] || 0
+										%ul.dropdown-menu.dropdown-menu-right
+											- if @cart.nil? || @cart.cart_items.empty?
+												%li
+													Your cart is empty.
+												%li
+													%a{ href: '/store', style: 'margin-top:0.5em;font-size:100%;text-decoration: underline;' }
+														Shop AMRAP
+											- else
+												%li
+													Item(s) in Your Cart
+												- @cart.cart_items.each do |line_item|
+													%li
+														%a{ href: line_item.item.url }
+															.media
+																%img.media-left.media-object{ src: line_item.item.avatar, style: 'max-width:50px;' }
+																.media-body
+																	%h6.media-heading{ style: 'font-weight:bold;' }
+																		= line_item.item.title
+																		%br
+																		%span
+																			= line_item.quantity
+																			X
+																			= number_to_currency( line_item.price / 100.to_f )
+												%li
+													.btn-group{ role: :group }
+														%a.btn.btn-default{ href: '/cart', style: 'color: #333;padding-left:1em;padding-right:1em;margin-right:2em;' }
+															Cart
+														%a.btn.btn-default{ href: '/checkout', style: 'color: #333;padding-left:1em;padding-right:1em;' }
+															Checkout
+																
+
+
+				%nav.navbar.navbar-main.navbar-default{ role: 'navigation' }
+					.container
+						.navbar-header
+							%button.navbar-toggle{ type: "button", data: { toggle: "collapse", target: ".navbar-ex1-collapse" } }
+								%span.sr-only
+									Toggle navigation
+								%span.icon-bar
+								%span.icon-bar
+								%span.icon-bar
+							%a.navbar-brand{ href: '/' }
+								= image_tag 'life_meter_full_logo.png'
+						
+						-#.collapse.navbar-collapse.navbar-ex1-collapse
+							%ul.nav.navbar-nav.navbar-right
+								%li
+									%a{ href: '/store' }
+										Shop
+								%li
+									%a{ href: '/recipes' }
+										Food
+
+								%li
+									%a{ href: '/articles' }
+										Blog
+								
+								%li
+									%a{ href: '/about' }
+										About
+								-#%li.dropdown
+									%a.dropdown-toggle{ href: "javascript:void(0)", role: :button, 'aria-haspopup' => true, 'aria-expanded' => false, data: { toggle: "dropdown" } } 
+										More
+										%i.fa.fa-chevron-down
+									%ul.dropdown-menu.dropdown-menu-right
+										%li
+											%a{ href: '/inspirations' }
+												Inspirations
+										%li
+											%a{ href: '/places' }
+												Places
+										%li
+											%a{ href: '/workouts' }
+												Workouts
+			= render 'application/flash'
+			= yield
+
+			= render 'application/footer'
+
+		= render "application/login_modal"
+
+		%script{ src: "https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js" }
+		= javascript_include_tag 'application'
+
+

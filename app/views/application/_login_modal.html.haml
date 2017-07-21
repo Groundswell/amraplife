@@ -1,0 +1,19 @@
+.modal.fade.login-modal#login{ tabindex: "-1", role: "dialog" }
+	.modal-dialog
+		.modal-content
+			.modal-header
+				%button.close{ type: "button", 'aria-hidden' => "true", data: { dismiss: "modal" } }
+					&times;
+				%h3.modal-title
+					log in
+			.modal-body
+				= form_for User.new, as: 'user', url: main_app.user_session_path( 'user' ) do |f|
+					.form-group
+						= f.text_field :login, autofocus: true, placeholder: "email", class: 'form-control'
+					.form-group
+						= f.password_field :password, placeholder: "password", class: 'form-control'
+
+					= f.submit 'log in', class: "btn btn-primary btn-block"
+					
+					%button.btn.btn-link.btn-block{ type: "button" }
+						Forgot Password?
