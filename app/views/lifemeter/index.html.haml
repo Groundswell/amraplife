@@ -1,8 +1,10 @@
-.row
-	.col-sm-12
-		.row
-			.col-xs-3
-				= image_tag 'life-meter-logo.png', class: 'img img-responsive'
-			.col-xs-9
-				%h1 
-					Life Meter by AMRAP Life
+.container
+	.row{ style: 'margin-top: 10px;margin-bottom: 2em;' }
+		.col-xs-2.col-xs-offset-5
+			= image_tag 'life-meter-logo.png', class: 'img img-responsive'
+		.col-xs-12{ style: 'margin-bottom: 2em;' }
+			%h1.text-center{ style: 'margin-bottom:0;' }
+				%strong><LIFE
+				Meter
+			.text-center
+				by AMRAP Life
