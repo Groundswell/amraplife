@@ -38,9 +38,9 @@ class ObservationFacebookBotsController < ActionController::Base
 			return
 		end
 
-		session[:dest] = login_success_observation_facebook_bots_url( team_id: params[:team_id], user: params[:user], token: params[:token] )
+		session[:oauth_uri] = login_success_observation_facebook_bots_url( team_id: params[:team_id], user: params[:user], token: params[:token] )
 
-		redirect_to main_app.register_path()
+		redirect_to main_app.lifemeter_index_path()
 	end
 
 	def login_success

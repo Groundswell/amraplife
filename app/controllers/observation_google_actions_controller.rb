@@ -44,9 +44,9 @@ class ObservationGoogleActionsController < ActionController::Base
 		end
 
 		redirect_uri = params[:redirect_uri]
-		session[:dest] = login_success_observation_google_actions_url( client_id: params[:client_id], state: params[:state], redirect_uri: redirect_uri )
+		session[:oauth_uri] = login_success_observation_google_actions_url( client_id: params[:client_id], state: params[:state], redirect_uri: redirect_uri )
 
-		redirect_to main_app.register_path()
+		redirect_to main_app.lifemeter_index_path()
 	end
 
 	def login_success
