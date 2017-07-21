@@ -43,19 +43,33 @@
 						.form-group
 							= f.label :aliases_csv, 'Aliases'
 							= f.text_field :aliases_csv, class: 'form-control'
-						
-						.form-group
-							= f.label :target_type
-							= f.select :target_type, options_for_select( [ ['Daily Sum Max', 'daily_sum_max'], ['Daily Sum Min', 'daily_sum_min'], ['All-Time Min', 'min_value'], [ 'All-Time Max', 'max_value'] ], @metric.target_type ), {}, class: 'form-control'
-							=# f.label :target_type
-							=# f.select :target_type, options_for_select( [ ['Average', 'avg_value'], ['Count', 'count'], ['Sum', 'sum_value'], [ 'Max', 'max_value'], ['Min', 'min_value'], ['Range', 'range'] ], @metric.target_type ), {}, class: 'form-control'
-						.form-group
-							= f.label :target
-							= f.text_field :target, value: @metric.formatted_target, class: 'form-control'
-						
+
 						.form-group
 							= f.label :reassign_to_metric_id, 'Reassign to Metric:'
 							= f.collection_select :reassign_to_metric_id, current_user.metrics.where.not( id: @metric.id ), :id, :title, { prompt: '--None--' }, { class: 'form-control' }
+						
+						.well
+							%h4 
+								= @metric.title 
+								Target
+							.form-group
+								= f.select :target_type, options_for_select( [ ['Accumulated Value', 'sum_value'], [ 'Value', 'value'], ['Number of Observations', 'count'], ['Average Value', 'avg_value'] ], @metric.target_type ), {}, class: 'form-control'
+							
+							.form-group
+								= f.label :target_period
+								= f.select :target_period, options_for_select( [ ['Per Day', 'daily'], ['Per Week', 'weekly'], ['Per Month', 'monthly'], ['All-Time', 'value'] ], @metric.target_period ), {}, class: 'form-control'
+
+							.form-group
+								= f.label :target_direction, 'Should be:'
+								= f.select :target_direction, options_for_select( [ ['At Least', 'at_least'], ['At Most', 'at_most'], ['Exactly', 'exactly'] ], @metric.target_direction ), {}, class: 'form-control'
+								
+								
+							.form-group
+								= f.label :target, 'Value:'
+								= f.text_field :target, value: @metric.formatted_target, class: 'form-control'
+							
+						
+						
 
 
 

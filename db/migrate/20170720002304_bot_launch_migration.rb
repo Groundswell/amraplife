@@ -6,8 +6,10 @@ class BotLaunchMigration < ActiveRecord::Migration
 				change_column_default 	:metrics, :unit, nil
 				change_column_default 	:metrics, :target_min, nil
 				change_column_default 	:metrics, :target_max, nil
-				change_column_default 	:metrics, :target_type, 'daily_sum_max'
-				remove_column			:metrics, :target_period
+				change_column_default 	:metrics, :target_type, 'value'
+				change_column_default 	:metrics, :target_period, 'all_time'
+				add_column 				:metrics, :target_direction, :string, default: 'at_most'
+				
 
 				change_column_default 	:observations, :unit, nil
 				change_column_default 	:observations, :sub_unit, nil
@@ -26,6 +28,8 @@ class BotLaunchMigration < ActiveRecord::Migration
 				change_column_default 	:observations, :unit, 'sec'
 				change_column_default 	:observations, :sub_unit, 0
 				change_column_default 	:observations, :sub_value, 0
+
+				remove_column :users, :use_metric_units
 			end
 		end
 

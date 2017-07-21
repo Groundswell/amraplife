@@ -377,15 +377,17 @@ ActiveRecord::Schema.define(version: 20170720002304) do
     t.integer "movement_id"
     t.string  "title"
     t.string  "slug"
-    t.text    "aliases",     default: [],              array: true
+    t.text    "aliases",          default: [],         array: true
     t.string  "unit"
     t.integer "user_id"
     t.string  "metric_type"
     t.text    "description"
-    t.string  "target_type", default: "daily_sum_max"
+    t.string  "target_type",      default: "value"
     t.float   "target_min"
     t.float   "target_max"
     t.float   "target"
+    t.string  "target_period",    default: "all_time"
+    t.string  "target_direction", default: "at_most"
   end
 
   add_index "metrics", ["movement_id"], name: "index_metrics_on_movement_id", using: :btree

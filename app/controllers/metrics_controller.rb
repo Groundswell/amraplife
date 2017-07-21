@@ -55,9 +55,9 @@ class MetricsController < ApplicationController
 		def metric_params
 			params[:metric][:unit] = params[:metric][:unit].singularize
 
-			params[:metric][:target] = ChronicDuration.parse( params[:metric][:target] ) if ChronicDuration.parse( params[:metric][:target] )
+			params[:metric][:target] = ChronicDuration.parse( params[:metric][:target] ) if params[:metric][:target_type].match( /value/) && ChronicDuration.parse( params[:metric][:target] )
 			
-			params.require( :metric ).permit( :title, :unit, :aliases_csv, :description, :target, :target_type, :target_period )
+			params.require( :metric ).permit( :title, :unit, :aliases_csv, :description, :target, :target_type, :target_period, :target_direction )
 		end
 
 end
