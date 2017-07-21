@@ -47,6 +47,16 @@ class ObservationBotService < AbstractBotService
 				duration: 'Notes',
 			}
 		},
+		assign_metric: {
+			utterances: [
+				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*track {action}',
+				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*track {action}\s*{unit}',
+			],
+			slots: {
+				action: 'Action',
+				unit: 'Unit',
+			}
+		},
 		log_journal_observation: {
 			utterances: [
 				'(?:to)?\s*journal\s*(that)?{notes}',
@@ -282,6 +292,20 @@ class ObservationBotService < AbstractBotService
 		add_speech("Cancelling")
 	end
 
+	def assign_metric
+		unless user.present?
+			login
+			return
+		end
+
+		metric = get_user_metric( user, params[:action], params[:unit], true )
+
+		response = "Great, I've added #{metric.title}. You can start logging it by saying '#{metric.title} is some value.'"
+		add_speech( response )
+
+		user.user_inputs.create( content: raw_input, result_obj: metric, action: 'created', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{response}'" )
+	end
+
 	def check_metric
 		unless user.present?
 			login
@@ -396,9 +420,11 @@ class ObservationBotService < AbstractBotService
 
 	def help
 
-		help_message = get_dialog('help', default: "To log information just say \"I ate 100 calories\", or use a fitness timer by saying \"start run timer\". AMRAP Life will remember, report and provide insights into what you have told it.")
+		help_message = get_dialog('help', default: "To log information just say \"I ate 100 calories\", or use a fitness timer by saying \"start a workout timer\". AMRAP Life will remember, report and provide insights into what you have told it.")
 
 		add_speech( help_message )
+
+		user.user_inputs.create( content: raw_input, action: 'read', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{help_message}'" ) if user.present?
 
 	end
 

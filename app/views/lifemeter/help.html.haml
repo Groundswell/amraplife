@@ -8,6 +8,22 @@
 			Life Meter is designed to help you get the most out of life by making it easy to measure, control, and analyze the behaviors most important to your health and wellbeing. Read on to get the most out of your Life Meter!
 
 		%h3
+			A note on Beta-Testing
+		%p
+			First off, we're really excited about Life Meter and we really appreciate your help in making it better. Just a couple things to note before we begin...
+		%p
+			Life Meter is currently Beta. The term 'Beta' gets grossly over-used in software development, but in this case we really mean it. Life Meter is under active development. That means:
+			%ol
+				%li{ style: 'margin-bottom:1em;' }
+					Things just may not work. That's kind of Beta-Testing 101.
+				%li{ style: 'margin-bottom:1em;' }
+					Features and functionality may change at any time. We'll try to communicate any changes before they happen, but we will be fixing critical bugs and incorporating your feedback continuously
+				%li{ style: 'margin-bottom:1em;' }
+					YOU MAY LOOSE ANY DATA YOU LOG DURING THE TEST. Some fixes, updates, and changes may require a hard-reset to the Life Meter database. We will try very hard not to permanently destroy data, but there's a good chance it could happen. Please don't use Life Meter for anything you really need or haven't backed up during the beta phase.
+				%li{ style: 'margin-bottom:1em;' }
+					For debugging and testing purposes, THE DATA YOU LOG MAY NOT BE PRIVATE. Please don't log sensitive personal data that you wouldn't want the developers of Life Meter to see. Once live, Life Meter will be secured over https and private, but engineers may need to access data to debug issues during the beta test. Please be mindful of this.
+
+		%h3
 			What can Life Meter do?
 		%p
 			In a nutshell, you can use Life Meter to track, report on, and analyze any vital stat that you care about. You can log and track information like your weight or pulse. You can track your calories or macronutrients. You can use Life Meter as a timer to log and track time you spend doing various activities. Life Meter will keep track of everything you report to it and give you useful reports andinsights into your data. You can even set targets for anything you track. Want to keep your caloric intake under 2000 calories per day? Just let Life Meter know, and it will let you know how many calories ou've eaten and how many you have left until your target.
@@ -16,6 +32,8 @@
 			Getting Started
 		%p
 			To use Life Meter you need an account. To get an account, you need an invitation. 
+		%p
+			Then you can use the web interface to start tracking. Simply type into the box at the top of the page to get started. You can log information by typing things like: "My weight is 167", or "I ate 430 calories", or "pulse is 54", or "I slept for 7hrs and 29mins". 
 
 		%h3
 			Using the Facebook Bot
@@ -39,17 +57,23 @@
 		%h3
 			Metrics
 		%p
-			Units, Aliases & moving
+			You can add a new Metric to track either by simply observing it or explicitly by typing: "track weight". You will find the list of Metrics that Life Meter is tracking for you in the 'Things You're Tracking' menu. 
+		%p
+			You may want to edit some of your Metrics to give Life Meter more fine-grained control. To do that, simply click 'Things You're Tracking', then select the Metric. You will then see the basic Metric information along with recent observations you have made of that Metric. You can change the title, add a description, or change the units. You may have made a mistake and want to re-assign all the observations of one Metric to another. E.g. let's say you mis-typed a metric name as 'slep' and want to move all 'slep' observations to 'sleep'. Simply select 'sleep' in the Reassign to Metric drop down and hit Update. All slep observations will move to Sleep and slep will be destroyed.
+		%p
+			%strong
+				Aliases
+			You may want to add a list of aliases to any new metrics you add. This helps Life Meter's natural language processor understand what you mean. In particular, if you add any activities to track, you'll want to add all the verb forms of those acitivities as aliases. Example: I  want to track my Work Hours. I'd add 'work', 'working', 'worked' as aliases to the 'Work Hours' metric.
+
+		%h3
+			Targets
+		%p
+			You can also add targets to the Metrics you are tracking. There are currently four kinds of targets:  
 
 		%h3
 			Timers
 		%p
 			starting & stopping
-
-		%h3
-			Targets
-		%p
-			max & min
 
 		%h3
 			Charts
@@ -65,6 +89,131 @@
 			Journal Entries
 		%p
 			You can use Life Meter as a journal or diary by saying or typing: "Journal...." or "Dear diary....". Journal entries are just free-form text, so they don't contain any values. They don't effect targets, and can't be charted or graphed. We've had some beta-testers simply use Life Meter as a handy audio diary over the Echo, simply recording their thoughts, feeling, and ideas throughout the day.
+
+		%h3
+			Commands and formats
+		%p
+			Here is a list of commands and expected behaviors. anything in parentheses (to) means it is optional and will be ignored. Anything in brackets separated by a pipe are commands with different options (e.g. [call me | my name is] are two ways of invoking the name command). Anything in braces {name} means it will be data sent to Life Meter. Some commands are different when spoken (e.g. to Echo or Google Home) vs when typed (e.g. in web interface or to a Life Meter bot)
+		%p
+			%table.table
+				%thead
+					%th Command
+					%th Medium
+					%th Action
+				%tbody
+					%tr
+						%td
+							"help"
+						%td
+							All
+						%td
+							Help
+					%tr
+						%td
+							"(that)(to) [call me | my name is] {name}"
+						%td
+							All
+						%td
+							Update your name
+					%tr
+						%td
+							"(that) my name is [name]"
+						%td
+							All
+						%td
+							Update your name
+					%tr
+						%td
+							"(to) [inspire me | give me inspiration]"
+						%td
+							All
+						%td
+							Gives motivation
+					%tr
+						%td
+							"(to) [motivate me | give me motivation]"
+						%td
+							All
+						%td
+							Gives motivation
+					%tr
+						%td
+							"check (my) {metric}"
+						%td
+							All
+						%td
+							Gives a report for how you're doing for that metric relative to your target if any.
+					%tr
+						%td
+							"define {term}"
+						%td
+							All
+						%td
+							Gives the definition of the term from our extensive CrossFit Glossary.
+					%tr
+						%td
+							"I {metric} for {value}"
+						%td
+							All
+						%td
+							Creates an observation of value for the metric. Used only for Duration. E.g. "I worked for 3 hours"
+					%tr
+						%td
+							"Track {metric}"
+						%td
+							All
+						%td
+							Assigns a Metric to begin tracking.
+
+					%tr
+						%td
+							"[journal | dear diary] {notes}"
+						%td
+							All
+						%td
+							Creates a free-form journal entry without metrics or observations.
+					%tr
+						%td
+							"start {metric}"
+						%td
+							All
+						%td
+							Begins a timer for the metric.
+					%tr
+						%td
+							"stop {metric}"
+						%td
+							All
+						%td
+							Stops a timer for the metric and assigns the resulting duration to an observation for it. The metric must have an actively running timer.
+					%tr
+						%td
+							"what is (my) {metric}"
+						%td
+							All
+						%td
+							Reports the last logged value for the metric.
+					%tr
+						%td
+							"set a target of {value} for {metric}"
+						%td
+							All
+						%td
+							Creates a target for the metric. You may want to further edit the target type in your dashboard.
+					%tr
+						%td
+							"set a target for {metric} of {value}"
+						%td
+							All
+						%td
+							Creates a target for the metric. You may want to further edit the target type in your dashboard.
+					%tr
+						%td
+							"tell (me) about {metric}"
+						%td
+							All
+						%td
+							Gives an overall report for the metric. 
 
 		%h3
 			Fun Stuff
