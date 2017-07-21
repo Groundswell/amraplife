@@ -417,7 +417,7 @@ class ObservationBotService < AbstractBotService
 
 		add_speech( message )
 
-		user.user_inputs.create( content: raw_input, action: 'read', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{greeting}'" ) if user.present?
+		user.user_inputs.create( content: raw_input, action: 'read', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{message}'" ) if user.present?
 
 	end
 
