@@ -382,11 +382,12 @@ ActiveRecord::Schema.define(version: 20170720002304) do
     t.integer "user_id"
     t.string  "metric_type"
     t.text    "description"
+    t.string  "target_period",    default: "all_time"
     t.string  "target_type",      default: "value"
     t.float   "target_min"
     t.float   "target_max"
+    t.integer "availability",     default: 0
     t.float   "target"
-    t.string  "target_period",    default: "all_time"
     t.string  "target_direction", default: "at_most"
   end
 
@@ -576,10 +577,8 @@ ActiveRecord::Schema.define(version: 20170720002304) do
     t.text     "shopify_code"
     t.string   "title"
     t.string   "caption"
-    t.integer  "seq",             default: 1
     t.string   "slug"
     t.string   "avatar"
-    t.string   "brand_model"
     t.integer  "status",          default: 0
     t.text     "description"
     t.text     "content"
@@ -598,10 +597,10 @@ ActiveRecord::Schema.define(version: 20170720002304) do
     t.integer  "collection_id"
     t.integer  "shipping_price",  default: 0
     t.string   "tax_code",        default: "00000"
+    t.integer  "seq",             default: 1
   end
 
   add_index "products", ["category_id"], name: "index_products_on_category_id", using: :btree
-  add_index "products", ["seq"], name: "index_products_on_seq", using: :btree
   add_index "products", ["slug"], name: "index_products_on_slug", unique: true, using: :btree
   add_index "products", ["status"], name: "index_products_on_status", using: :btree
   add_index "products", ["tags"], name: "index_products_on_tags", using: :gin
@@ -656,10 +655,9 @@ ActiveRecord::Schema.define(version: 20170720002304) do
   create_table "terms", force: :cascade do |t|
     t.string   "title"
     t.string   "slug"
-    t.text     "description"
     t.text     "content"
-    t.text     "aliases",     default: [], array: true
-    t.integer  "status",      default: 1
+    t.text     "aliases",    default: [], array: true
+    t.integer  "status",     default: 1
     t.datetime "created_at"
     t.datetime "updated_at"
   end

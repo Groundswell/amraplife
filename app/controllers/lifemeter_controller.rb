@@ -1,5 +1,5 @@
 class LifemeterController < ApplicationController
-	
+
 	before_filter :authenticate_user!, only: :dash
 
 	def dash
@@ -18,6 +18,12 @@ class LifemeterController < ApplicationController
 			redirect_to dash_lifemeter_index_path
 			return false
 		end
+
+		set_page_meta(
+			title: 'Life Meter by )°( AMRAP Life',
+			slack_app: "A60G5B79P"
+		)
+
 		render layout: 'lifemeter_splash'
 	end
 
@@ -56,5 +62,3 @@ class LifemeterController < ApplicationController
 
 
 end
-
-

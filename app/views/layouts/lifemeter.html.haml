@@ -13,15 +13,16 @@ filter: none;
 %html{ lang: :en }
 	%head
 		= render 'application/html_head', args: {}
-		
+
 		= stylesheet_link_tag "//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"
 		= stylesheet_link_tag "https://fonts.googleapis.com/css?family=Lato:300,400,700,900"
 
 		= stylesheet_link_tag 'cube'
 
 		= javascript_include_tag 'dash'
+		%meta{ name: "slack-app-id", content: "A60G5B79P" }
 
-		
+
 	%body.theme-amethyst
 		#theme-wrapper
 			= render 'lifemeter/navbar'
@@ -29,7 +30,7 @@ filter: none;
 			#page-wrapper.container
 				.row
 					= render 'lifemeter/sidebar'
-					
+
 					#content-wrapper
 						= render 'application/flash'
 						= yield
