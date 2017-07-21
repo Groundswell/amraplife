@@ -409,13 +409,13 @@ class ObservationBotService < AbstractBotService
 			'Hi there'
 		]
 
-		greeting = greetings.sample
-
 		if user.present?
-			 greeting = "#{greeting}, #{user}"
+			 message = "#{greetings.sample}, #{user}"
+		else
+			 message = "#{greetings.sample}"
 		end
 
-		add_speech( greeting )
+		add_speech( message )
 
 		user.user_inputs.create( content: raw_input, action: 'read', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{greeting}'" ) if user.present?
 
