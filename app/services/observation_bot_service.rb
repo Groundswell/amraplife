@@ -24,13 +24,13 @@ class ObservationBotService < AbstractBotService
 			utterances: [
 				'(?:to )?\s*(inspire |motivate )\s*me',
 				'(?:to )?\s*(?:for )?\s*(?:give me )?\s*(inspiration|motivation)'
-				 ]
+			 ]
 		},
 		help: {
 			utterances: [ 'help', 'for help' ]
 		},
 		hello: {
-			utterances: [ 'hi', 'hello', 'hi there', 'good morning', 'good afternoon' ]
+			utterances: [ 'hi', 'hey', 'yo', 'hello', 'hi there', 'good morning', 'good afternoon' ]
 		},
 		launch: {
 			utterances: [ '' ]
@@ -332,7 +332,7 @@ class ObservationBotService < AbstractBotService
 		end
 
 		if metric.target.present?
-			delta = total - metric.target 
+			delta = total - metric.target
 			if metric.unit == 'sec'
 				formatted_delta = ChronicDuration.output( delta.abs, format: :chrono )
 			else
@@ -353,13 +353,13 @@ class ObservationBotService < AbstractBotService
 				response = "You have a target of no more than #{metric.formatted_target}. Your most recent #{metric.title} is #{last_observation.formatted_value}. "
 				response += "You are #{direction} your target by #{formatted_delta}."
 			end
-			
+
 		else
 			response = "You haven't set a target for #{metric.title} yet. You last recorded #{last_observation.formatted_value} at #{last_observation.recorded_at.to_s( :long )}. You have logged #{formatted_total} so far today."
 		end
 
 		add_speech( response )
-	
+
 		user.user_inputs.create( content: raw_input, action: 'reported', source: options[:source], result_status: 'success', system_notes: "Spoke: #{response}" )
 
 	end
@@ -375,7 +375,7 @@ class ObservationBotService < AbstractBotService
 			term = Movement.published.where( "lower(REGEXP_REPLACE(title, '\s', '' )) = :m", m: match ).first
 			term = Movement.published.find_by_alias( match ) if term.nil?
 		end
-		
+
 		if term.present?
 			if term.aliases.include?( params[:term] )
 				response = "#{params[:term]} is an alias for #{term.title} which means: #{term.sanitized_content}"
@@ -405,11 +405,14 @@ class ObservationBotService < AbstractBotService
 			'Howdy',
 			'Whasssup',
 			'Hey Hey',
-			'Greetings', 
+			'Greetings',
 			'Hi there'
 		]
+
+		greeting = greetings.sample
+
 		if user.present?
-			greeting = greetings.sample + ", #{user}"
+			 greeting = "#{greeting}, #{user}"
 		end
 
 		add_speech( greeting )
@@ -459,7 +462,7 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 		# special construction to let Chronic Duration do it's thing on time-unit observations
-		# cause {value} slots don't take min sec, etc. 
+		# cause {value} slots don't take min sec, etc.
 		# of the form "(I) slept for 8hrs 24mins"
 
 		metric = get_user_metric( user, params[:action], 'sec', true )
