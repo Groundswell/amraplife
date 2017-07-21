@@ -159,6 +159,11 @@ class AbstractBotService
 
 						utterance_regex = utterance_regex.gsub("{#{slot_name}}","(?'#{slot_name}'#{slot[:regex].join('|')})")
 					end
+
+					if ( matches = utterance_regex.match(/\{[a-z][a-z0-9\-_]*\}/i) ).present?
+						raise Exception.new( "ERROR unmatches slots!!! (intent_name: #{intent_name}, utterance: \"#{utterance}\"). #{matches[0]} in \"#{utterance_regex}\"" )
+					end
+
 					regex = regex + '|' if regex.present?
 					regex = (regex || '') + utterance_regex
 				end
