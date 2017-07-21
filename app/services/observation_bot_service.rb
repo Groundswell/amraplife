@@ -12,6 +12,14 @@ class ObservationBotService < AbstractBotService
 				action: 'Action',
 			}
 		},
+		define: {
+			utterances: [
+				'(?:to)?\s*def(?:ine)?\s*{term}',
+			],
+			slots: {
+				term: 'Notes',
+			}
+		},
 		get_motivation: {
 			utterances: [
 				'(?:to )?\s*(inspire |motivate )\s*me',
@@ -29,6 +37,15 @@ class ObservationBotService < AbstractBotService
 		},
 		login: {
 			utterances: [ 'login', 'sign me in', 'sign in', 'log in', 'log me in' ]
+		},
+		log_duration_observation: {
+			utterances: [
+				'(?:that)?(?:i)?\s*{action}\s*for\s*{duration}',
+			],
+			slots: {
+				action: 'Action',
+				duration: 'Notes',
+			}
 		},
 		log_journal_observation: {
 			utterances: [
@@ -314,13 +331,39 @@ class ObservationBotService < AbstractBotService
 			end
 			
 		else
-			response = "You haven't set a target for #{metric.title} yet. You last recorded it as #{last_observation.human_value}."
+			response = "You haven't set a target for #{metric.title} yet. You last recorded #{last_observation.formatted_value} at #{last_observation.recorded_at.to_s( :long )}. You have logged #{formatted_total} so far today."
 		end
 
 		add_speech( response )
 	
 		user.user_inputs.create( content: raw_input, action: 'reported', source: options[:source], result_status: 'success', system_notes: "Spoke: #{response}" )
 
+	end
+
+	def define
+		#term = Term.published.find_by_alias( params[:term] )
+		match = params[:term].downcase.singularize.gsub( /\s+/, '' )
+		term = Term.published.where( "lower(REGEXP_REPLACE(title, '\s', '' )) = :m", m: match ).first
+		term = Term.published.find_by_alias( match ) if term.nil?
+
+		if term.nil?
+			# try the movement DB
+			term = Movement.published.where( "lower(REGEXP_REPLACE(title, '\s', '' )) = :m", m: match ).first
+			term = Movement.published.find_by_alias( match ) if term.nil?
+		end
+		
+		if term.present?
+			if term.aliases.include?( params[:term] )
+				response = "#{params[:term]} is an alias for #{term.title} which means: #{term.sanitized_content}"
+			else
+				response = "#{term.title} means: #{term.sanitized_content}"
+			end
+			add_speech( response )
+			user.user_inputs.create( content: raw_input, result_obj: term, action: 'read', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{response}.'" ) if user.present?
+		else
+			add_speech( "Hmmm, I don't know about #{params[:term]} yet." )
+			user.user_inputs.create( content: raw_input, action: 'read', source: options[:source], result_status: 'failed', system_notes: "Spoke: 'Hmmm, I don't know about #{params[:term]} yet.'" ) if user.present?
+		end
 	end
 
 	def get_motivation
@@ -381,6 +424,35 @@ class ObservationBotService < AbstractBotService
 
 		add_speech( launch_message )
 		add_login_prompt('Create your AAccount on AMRAPLife.com', '', 'In order to record and report your metrics you must first create an account on AMRAPLife.com.')
+
+	end
+
+	def log_duration_observation
+		unless user.present?
+			login
+			return
+		end
+		# special construction to let Chronic Duration do it's thing on time-unit observations
+		# cause {value} slots don't take min sec, etc. 
+		# of the form "(I) slept for 8hrs 24mins"
+
+		metric = get_user_metric( user, params[:action], 'sec', true )
+		value = ChronicDuration.parse( params[:duration] )
+
+		if value.present?
+			observation = metric.observations.create value: value
+
+			response = "Logged #{observation.human_value} for #{metric.title}."
+			add_speech( response )
+
+			user.user_inputs.create( content: raw_input, result_obj: observation, action: 'created', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{response}'" )
+		else
+			response = "I'm sorry, I didn't understand that."
+			add_speech( response )
+
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'failed', system_notes: "Spoke: '#{response}'" )
+		end
+
 
 	end
 
@@ -562,62 +634,62 @@ class ObservationBotService < AbstractBotService
 
 	end
 
-	def report_sum_value_observation
-		unless user.present?
-			login
-			return
-		end
+	# def report_sum_value_observation
+	# 	unless user.present?
+	# 		login
+	# 		return
+	# 	end
 
-		params[:action] ||= 'Calories'
+	# 	params[:action] ||= 'Calories'
 
-		observed_metric = get_user_metric( user, params[:action], nil, false )
+	# 	observed_metric = get_user_metric( user, params[:action], nil, false )
 
-		time_period = params[:time_period] || 'today'
-		time_period = time_period.downcase.gsub(/\s+/,' ')
+	# 	time_period = params[:time_period] || 'today'
+	# 	time_period = time_period.downcase.gsub(/\s+/,' ')
 
-		if observed_metric.nil?
-			default_metric ||= Metric.where( user_id: nil ).find_by_alias( params[:action].downcase )
-			action = default_metric.try( :title ) || params[:action]
-			add_speech("Sorry, you haven't recorded anything for #{action} yet.")
-			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found', action: 'reported', system_notes: "Spoke: 'Sorry, you haven't recorded anything for #{action} yet.'" )
-			return
-		end
+	# 	if observed_metric.nil?
+	# 		default_metric ||= Metric.where( user_id: nil ).find_by_alias( params[:action].downcase )
+	# 		action = default_metric.try( :title ) || params[:action]
+	# 		add_speech("Sorry, you haven't recorded anything for #{action} yet.")
+	# 		user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found', action: 'reported', system_notes: "Spoke: 'Sorry, you haven't recorded anything for #{action} yet.'" )
+	# 		return
+	# 	end
 
-		puts "'#{time_period}'"
+	# 	puts "'#{time_period}'"
 
-		if time_period == 'today'
-			range = Time.now.beginning_of_day..Time.zone.now.end_of_day
-		elsif time_period == 'yesterday'
-			range = 1.day.ago.beginning_of_day..1.day.ago.end_of_day
-		elsif ( matches = time_period.match(/this (?'unit'week|month|year)/) ).present?
-			unit = matches['unit']
-			range = Time.zone.now.try("beginning_of_#{unit}").beginning_of_day..Time.zone.now.try("end_of_#{unit}").end_of_day
-		elsif ( matches = time_period.match(/last (?'unit'week|month|year)/) ).present?
-			unit = matches['unit']
-			range = 1.try(unit).ago.try("beginning_of_#{unit}").beginning_of_day..1.try(unit).ago.try("end_of_#{unit}").end_of_day
-		elsif ( matches = time_period.match(/last (?'amount'.+) (?'unit'days|weeks|months|years)/) ).present?
-			amount = NumbersInWords.in_numbers( matches['amount'] )
-			unit = matches['unit']
-			range = amount.try(unit).ago.beginning_of_day..Time.zone.now
-		else
-			add_speech("Sorry, I don't understand that.")
-			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found' )
-			return
-		end
+	# 	if time_period == 'today'
+	# 		range = Time.now.beginning_of_day..Time.zone.now.end_of_day
+	# 	elsif time_period == 'yesterday'
+	# 		range = 1.day.ago.beginning_of_day..1.day.ago.end_of_day
+	# 	elsif ( matches = time_period.match(/this (?'unit'week|month|year)/) ).present?
+	# 		unit = matches['unit']
+	# 		range = Time.zone.now.try("beginning_of_#{unit}").beginning_of_day..Time.zone.now.try("end_of_#{unit}").end_of_day
+	# 	elsif ( matches = time_period.match(/last (?'unit'week|month|year)/) ).present?
+	# 		unit = matches['unit']
+	# 		range = 1.try(unit).ago.try("beginning_of_#{unit}").beginning_of_day..1.try(unit).ago.try("end_of_#{unit}").end_of_day
+	# 	elsif ( matches = time_period.match(/last (?'amount'.+) (?'unit'days|weeks|months|years)/) ).present?
+	# 		amount = NumbersInWords.in_numbers( matches['amount'] )
+	# 		unit = matches['unit']
+	# 		range = amount.try(unit).ago.beginning_of_day..Time.zone.now
+	# 	else
+	# 		add_speech("Sorry, I don't understand that.")
+	# 		user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found' )
+	# 		return
+	# 	end
 
-		sum = user.observations.of( observed_metric ).where( recorded_at: range ).sum( :value )
-		unit = observed_metric.unit
-		if observed_metric.unit == 'sec'
-			sum = ChronicDuration.output( sum, format: :chrono )
-			unit = ''
-		end
+	# 	sum = user.observations.of( observed_metric ).where( recorded_at: range ).sum( :value )
+	# 	unit = observed_metric.unit
+	# 	if observed_metric.unit == 'sec'
+	# 		sum = ChronicDuration.output( sum, format: :chrono )
+	# 		unit = ''
+	# 	end
 
-		add_speech( "You logged #{sum} #{unit} of #{observed_metric.title} #{time_period}." )
-		sys_notes = "Spoke: 'You logged #{sum} #{unit} of #{observed_metric.title} #{time_period}.'"
+	# 	add_speech( "You logged #{sum} #{unit} of #{observed_metric.title} #{time_period}." )
+	# 	sys_notes = "Spoke: 'You logged #{sum} #{unit} of #{observed_metric.title} #{time_period}.'"
 
-		user.user_inputs.create( content: raw_input, action: 'reported', source: options[:source], result_status: 'success', system_notes: sys_notes )
+	# 	user.user_inputs.create( content: raw_input, action: 'reported', source: options[:source], result_status: 'success', system_notes: sys_notes )
 
-	end
+	# end
 
 	def report_last_value_observation
 		unless user.present?
