@@ -101,14 +101,16 @@ class ObservationBotService < AbstractBotService
 				],
 			slots:{
 				name: 'Name',
-				},
 			},
+		},
 
 		stop: {
 			utterances: [ 'stop' ]
 		},
 		log_metric_observation: {
 			utterances: [
+				'i ate {value} {unit} of {action}',
+				'i ate {value}{unit} of {action}',
 				# for input like....
 				# log weight = 176
 				# log weight is 176
@@ -137,22 +139,20 @@ class ObservationBotService < AbstractBotService
 				unit: 'Unit',
 			}
 		},
-		log_food_observation: {
-			utterances: [
-				'i ate {value} {unit} of {action}',
-				'i ate {value}{unit} of {action}',
-				'i ate {quantity} serving of {food}',
-				'i ate {quantity} {measure} of {food}',
-				'i ate {quantity} {food}',
-				'i ate {portion} portion of {food}',
-			],
-			slots: {
-				quantity: 'Number',
-				food: 'Food',
-				measure: 'Measure',
-				portion: 'Number',
-			}
-		},
+		# log_food_observation: {
+		# 	utterances: [
+		# 		'i ate {quantity} serving of {food}',
+		# 		'i ate {quantity} {measure} of {food}',
+		# 		'i ate {quantity} {food}',
+		# 		'i ate {portion} portion of {food}',
+		# 	],
+		# 	slots: {
+		# 		quantity: 'Number',
+		# 		food: 'Food',
+		# 		measure: 'Measure',
+		# 		portion: 'Number',
+		# 	}
+		# },
 		set_target:{
 			utterances: [
 				'set\s*(?:a)?\s*target of {value} for {action}',
@@ -174,11 +174,8 @@ class ObservationBotService < AbstractBotService
 			slots:{
 				action: 'Action',
 				},
-			},
-
-		stop: {
-			utterances: [ 'stop' ]
 		},
+
 	} )
 
 	add_slots( {

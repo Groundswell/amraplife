@@ -110,8 +110,14 @@ class ObservationFacebookBotsController < ActionController::Base
 
 		api_endpoint = 'https://graph.facebook.com/v2.6/me/messages?access_token='+URI.encode( ENV['FACEBOOK_LIFEMETER_BOT_ACCESS_TOKEN'] )
 
-		json_string_response = RestClient.post( api_endpoint, query_body.to_json, query_headers )
-		puts json_string_response
+		begin
+
+			json_string_response = RestClient.post( api_endpoint, query_body.to_json, query_headers )
+			puts json_string_response
+
+		rescue Exception => e
+			NewRelic::Agent.notice_error(e)
+		end
 
 		true
 	end

@@ -60,7 +60,7 @@ class AbstractBotService
 	def respond_to_text( text, args = {} )
 		text = text.strip
 		@raw_input = text
-		
+
 		compiled_intents = self.class.compiled_intents
 
 		requested_intent_name = nil
@@ -87,7 +87,7 @@ class AbstractBotService
 			self.send( requested_intent_name )
 			return true
 		else
-			user.user_inputs.create( content: @raw_input, action: 'failed', source: options[:source], result_status: 'parse failure', system_notes: "I didn't understand '#{@raw_input}'" )
+			user.user_inputs.create( content: @raw_input, action: 'failed', source: options[:source], result_status: 'parse failure', system_notes: "I didn't understand '#{@raw_input}'" ) if user.present?
 			return false
 		end
 	end
@@ -159,6 +159,11 @@ class AbstractBotService
 
 						utterance_regex = utterance_regex.gsub("{#{slot_name}}","(?'#{slot_name}'#{slot[:regex].join('|')})")
 					end
+
+					if ( matches = utterance_regex.match(/\{[a-z][a-z0-9\-_]*\}/i) ).present?
+						raise Exception.new( "ERROR unmatches slots!!! (intent_name: #{intent_name}, utterance: \"#{utterance}\"). #{matches[0]} in \"#{utterance_regex}\"" )
+					end
+
 					regex = regex + '|' if regex.present?
 					regex = (regex || '') + utterance_regex
 				end
