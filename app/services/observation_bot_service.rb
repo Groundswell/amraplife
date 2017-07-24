@@ -322,17 +322,56 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
-		last_observation = metric.observations.order( created_at: :desc ).first
-		total = metric.observations.where( recorded_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day ).sum( :value )
-		unit = metric.unit
-		if metric.unit == 'sec'
-			formatted_total = ChronicDuration.output( total, format: :chrono )
-		else
-			formatted_total = "#{total} #{metric.unit}s"
-		end
-
 		if metric.target.present?
-			delta = total - metric.target
+			if metric.target_type == 'value'
+				current = metric.observations.order( created_at: :desc ).first
+			else
+				case metric.target_period
+				when 'daily'
+					range = Time.zone.now.beginning_of_day..Time.zone.now.end_of_day
+					target_period = 'per day'
+					current_period = 'today'
+				when 'weekly'
+					range = Time.zone.now.beginning_of_week..Time.zone.now.end_of_day
+					target_period = 'per week'
+					current_period = 'this week'
+				when 'monthly'
+					range = Time.zone.now.beginning_of_month..Time.zone.now.end_of_day
+					target_period = 'per month'
+					current_period = 'this month'
+				when 'yearly'
+					range = Time.zone.now.beginning_of_year..Time.zone.now.end_of_day
+					target_period = 'per year'
+					current_period = 'this year'
+				else
+					range = "2001-01-01".to_date..Time.zone.now.end_of_day
+					target_period = ''
+					current_period = ''
+				end
+
+				case metric.target_type
+				when 'sum_value'
+					current = metric.observations.where( recorded_at: range ).sum( :value )
+					target_type = "total"
+				when 'count'
+					current = metric.observations.where( recorded_at: range ).count
+					target_type = "observations"
+				when 'avg_value'
+					current = metric.observations.where( recorded_at: range ).average( :value )
+					target_type = "average"
+				end
+			
+			end
+
+			unit = metric.unit
+
+			if metric.unit == 'sec'
+				formatted_current = ChronicDuration.output( current, format: :chrono )
+			else
+				formatted_current = "#{current} #{metric.unit}s"
+			end
+			delta = current - metric.target
+
 			if metric.unit == 'sec'
 				formatted_delta = ChronicDuration.output( delta.abs, format: :chrono )
 			else
@@ -340,19 +379,14 @@ class ObservationBotService < AbstractBotService
 			end
 			direction = delta > 0 ? 'over' : 'under'
 
-			if metric.target_type == 'daily_sum_max'
-				response = "You have a target of no more than #{metric.formatted_target} total per day. Your total so far today is #{formatted_total}. "
+			if metric.target_type == 'value'
+				response = "You have a target of #{metric.target_direction.gsub( /_/, ' ' )} #{metric.formatted_target}. Your most recent #{metric.title} is #{last_observation.formatted_value}. "
 				response += "You are #{direction} your target by #{formatted_delta}."
-			elsif metric.target_type == 'daily_sum_min'
-				response = "You have a target of at least #{metric.formatted_target} total per day. Your total so far today is #{formatted_total}. "
-				response += "You are #{direction} your target by #{formatted_delta}."
-			elsif metric.target_type == 'min_value'
-				response = "You have a target of at least #{metric.formatted_target}. Your most recent #{metric.title} is #{last_observation.formatted_value}. "
-				response += "You are #{direction} your target by #{formatted_delta}."
-			elsif metric.target_type == 'max_value'
-				response = "You have a target of no more than #{metric.formatted_target}. Your most recent #{metric.title} is #{last_observation.formatted_value}. "
+			else
+				response = "You have a target of #{metric.target_direction.gsub( /_/, ' ' )} #{metric.formatted_target} #{target_type} #{target_period}. Your #{target_type} so far #{current_period} is #{formatted_current}. "
 				response += "You are #{direction} your target by #{formatted_delta}."
 			end
+
 
 		else
 			response = "You haven't set a target for #{metric.title} yet. You last recorded #{last_observation.formatted_value} at #{last_observation.recorded_at.to_s( :long )}. You have logged #{formatted_total} so far today."
