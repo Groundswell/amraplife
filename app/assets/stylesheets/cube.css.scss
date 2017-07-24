@@ -5,3 +5,11 @@
 *= require bootstrap-datetimepicker
 *= require_self
 */
+
+p.text, li.text{
+	font-size: 16px;
+}
+
+h3.text, h4.text{
+	font-weight: bold;
+}

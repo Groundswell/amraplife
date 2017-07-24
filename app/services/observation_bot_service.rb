@@ -904,10 +904,10 @@ class ObservationBotService < AbstractBotService
 		obs_count_last_week = user.observations.for( metric ).where( recorded_at: 1.week.ago.beginning_of_week..1.week.ago.end_of_week ).count
 		obs_count_this_week = user.observations.for( metric ).where( recorded_at: Time.zone.now.beginning_of_week..Time.zone.now.end_of_week ).count
 
-		average_value = user.observations.for( metric ).average( :value ).round( 2 )
-		min_value = user.observations.for( metric ).minimum( :value )
-		max_value = user.observations.for( metric ).maximum( :value )
-		value_sum = user.observations.for( metric ).sum( :value )
+		average_value = user.observations.for( metric ).average( :value ).try( :round, 2 ) || 0
+		min_value = user.observations.for( metric ).minimum( :value ) || 0
+		max_value = user.observations.for( metric ).maximum( :value ) || 0
+		value_sum = user.observations.for( metric ).sum( :value ) || 0
 
 		if metric.unit == 'sec'
 			average_value = ChronicDuration.output( average_value, format: :chrono )
