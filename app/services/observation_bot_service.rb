@@ -371,7 +371,7 @@ class ObservationBotService < AbstractBotService
 					current = metric.observations.where( recorded_at: range ).average( :value )
 					target_type = "average"
 				end
-			
+
 			end
 
 			unit = metric.unit
@@ -493,11 +493,11 @@ class ObservationBotService < AbstractBotService
 	end
 
 	def login
-		launch_message = get_dialog('login', default: "Click this link to complete the AMRAP Life skill registration on AMRAPLife.com")
+		launch_message = get_dialog('login', default: "Click this link to complete the Life Meter skill registration on AMRAPLife.com")
 
 
 		add_speech( launch_message )
-		add_login_prompt('Create your AAccount on AMRAPLife.com', '', 'In order to record and report your metrics you must first create an account on AMRAPLife.com.')
+		add_login_prompt('Create your Life Meter Account on AMRAPLife.com', '', 'In order to record and report your metrics you must first create an account on AMRAPLife.com.')
 
 	end
 
@@ -596,13 +596,13 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
-		
+
 		if params[:action].match( /of/ )
 			metric_alias = params[:action].gsub( /.+of/, '' ).strip
 			unit = params[:action].split( /of/ )[0]
 		else
-			unit = params[:action].match( /\S+\s/ ).to_s.strip 
-			metric_alias = params[:action].gsub( /\S+\s/, '' ).strip 
+			unit = params[:action].match( /\S+\s/ ).to_s.strip
+			metric_alias = params[:action].gsub( /\S+\s/, '' ).strip
 		end
 
 		metric = get_user_metric( user, metric_alias, unit, true )
