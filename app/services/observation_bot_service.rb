@@ -596,8 +596,14 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
-		metric_alias = params[:action].gsub( /.+of/, '' ).strip
-		unit = params[:action].split( /of/ )[0]
+		
+		if params[:action].match( /of/ )
+			metric_alias = params[:action].gsub( /.+of/, '' ).strip
+			unit = params[:action].split( /of/ )[0]
+		else
+			unit = params[:action].match( /\S+\s/ ).to_s.strip 
+			metric_alias = params[:action].gsub( /\S+\s/, '' ).strip 
+		end
 
 		metric = get_user_metric( user, metric_alias, unit, true )
 
