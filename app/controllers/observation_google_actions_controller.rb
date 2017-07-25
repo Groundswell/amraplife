@@ -53,7 +53,7 @@ class ObservationGoogleActionsController < ActionController::Base
 
 		redirect_uri = params[:redirect_uri]
 
-		if redirect_uri == "https://oauth-redirect.googleusercontent.com/r/#{ENV['GOOGLE_ASSISTANT_LIFEMETER_BOT_APP_ID']}"
+		if redirect_uri == "https://oauth-redirect.googleusercontent.com/r/#{ENV['GOOGLE_ASSISTANT_LIFEMETER_BOT_APP_ID']}" || redirect_uri == 'https://www.google.com/'
 			oauth_credential = current_user.oauth_credentials.where( provider: 'google.assistant' ).first_or_initialize
 			oauth_credential.update( token: "#{current_user.name || current_user.id}-#{SecureRandom.hex(64)}" ) if oauth_credential.token.blank?
 
