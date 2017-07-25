@@ -42,7 +42,7 @@
 						%h4
 							Sign Up to Help Beta Test Life Meter
 						%h5
-							And win an Echo Dot
+							And win an Echo Dot *
 
 						= form_for SwellMedia::ContactUs.new, url: swell_media.contacts_path do |f|
 							= f.hidden_field :subject, value: 'lifemeter beta test'
@@ -54,7 +54,13 @@
 								= f.text_area :message, rows: 3, class: 'form-control'
 
 							= f.submit 'Send', class: 'btn btn-lg btn-primary'
-					.col-xs-12
+
+
+						.text.small{ style: 'margin-top:2em;' }
+							* Yes, we really are giving away Echo Dots to some of our beta-testers. You must actively participate in the Beta period to be eligible. Beta-testing brand-new software can be fun, but it can also be a bit of a hassle at times. As an expression of our gratitude, two qualified testers chosen at random will get an Echo Dot, and two more will get $20 Amazon gift cards.
+					
+
+					-#.col-xs-12
 						.text-center{ style: 'margin: 1em 0 1em 0;' }
 							%a.btn.btn-default{ href: 'https://www.messenger.com/t/lifemeterapp' }
 								%img{ src: image_path('facebook-messenger.svg'), style: 'height: 1em;display: inline-block;' }

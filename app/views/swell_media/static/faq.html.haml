@@ -1,159 +1,139 @@
 
 
-%h1
-	Coming Soon
-
--# cache( "faq" ) do
+- cache( "faq-v1" ) do
 	%section.clearfix.blogPage.singleBlog.mainContent
 		.container{ style: 'position: relative;' }
 			.row
 				.sideBar.col-md-3.col-sm-4.col-xs-12.hidden-xs
 					%nav.sidebar-scroll-nav
-						%h3
-							Scroll Nav
+						%h4
+							FAQ Categories
 						%ul.list-unstyled.nav.sidebar-nav
 							%li
 								%a{ href: '#top' }
 									Top
 							%li
-								%a{ href: '#section1' }
-									Section 1
+								%a{ href: '#general' }
+									General Questions
 							%li
-								%a{ href: '#section2' }
-									Section 2
+								%a{ href: '#products' }
+									Products
 							%li
-								%a{ href: '#section3' }
-									Section 3
+								%a{ href: '#store' }
+									Store
 							%li
-								%a{ href: '#section4' }
-									Section 4
+								%a{ href: '#shipping' }
+									Shipping
 
 				#content.col-md-9.col-sm-8.col-xs-12{ style: 'border-left: 1px solid #ddd;', data: { spy: 'scroll', target: '#spy', offset: 50 } }
 
-					%h1#top.content-title
+					#top.anchor
+					%h1.content-title
 						FAQs
 
 
 					%p
-						Here are some questions that we get asked sometimes. We hope that the answers to these questions are helpful or interesting to you. You may have your own questions. If so,
+						Websites commonly put up pages that they call FAQs, but in reality they are thinly veiled marketing ploys filled with ridiculous questions that they wish people had asked "How is it that you are so wonderful?" 
+					%p
+						Here are some questions that we actually do get asked frequently (or at least sometimes). We hope that the answers to these questions are helpful or entertaining to you. 
+					%p
+						You may have your own questions that are not yet answered here. If so,
 						%a{ href: swell_media.new_contact_path, style: 'text-decoration:underline;' }
-							please do get in touch.
-						The answers to your questions might be intersting for other readers, too! Besides, we just love hearing from you - that's why we're paying for all these pixels to be here in the first place.
+							please get in touch.
+						The answers to your questions might be intersting for other visitors, too! 
 
-					%h3#section1
-						Site
+					#general.anchor{ style: 'margin-top:2em;' }
+					%h3{ style: 'border-bottom:1px #ddd solid;'} 
+						General Questions
 
-					%h4
+					%h4{ style: 'margin-top:25px;margin-bottom: 12px;font-size:18px;' }
 						Who Are you?
 					%p{ style: 'margin-left:2em;' }
-						Read about us here
-					%h4
-						How should I care for my tees, crewnecks, and hoodies? Will they shrink?
-					%p{ style: 'margin-left:2em;' }
-						We recommend turning them inside out and machine or hand washing on cold. Since all of the shirts have some percentage of cotton, they will tend to shrink a little after being washed and dried. To minimize the shrinking, machine dry low or hang dry.
-
-					%h4
-						What type of printing process is used on your clothing?
-					%p{ style: 'margin-left:2em;' }
-						All of our shirts and hoodies are screenprinted. Most of the shirts are printed with water-based or discharge ink which leaves an extremely soft print. A few of the shirts use a soft-hand plastisol ink to get a bright white print. Check the product pages for the specific type of printing for each individual product.
-
-					%h4
+						We are startup geeks who happen to also share a passion for fitness. We met at our last venture which was a typical tech startup that raised over $2 million in venture capital, but ultimately wasn't successful. You can read more 
+						%a{ href: '/about' }
+							about us here.
+					
+					%h4{ style: 'margin-top:25px;margin-bottom: 12px;font-size:18px;' }
 						Where Are you?
 					%p{ style: 'margin-left:2em;' }
-						We are in Californai, df sd ai sfdfl df but we often like to ski in nevada
+						We cover nearly the full range of the continental US, with folks from Sand Diego, CA, Victoria, BC, and even Maine. Ware based in beautiful Del Mar, California. But we often like to ski in Utah.
 
-					%h4
-						Will the printing on the tees fade?
+					%h4{ style: 'margin-top:25px;margin-bottom: 12px;font-size:18px;' }
+						We are a (development company, marketing agency, PR firm, etc.) located in (some offshore/non-US locale), who should we contact about your (development, hiring, marketing, PR, etc.) needs?
 					%p{ style: 'margin-left:2em;' }
-						We use high quality water-based inks to produce the softest printing possible. Some of the printing may fade a little after multiple washes.
+						No. Just no. We're not interested.
 
-					%h3#section2
+
+
+					#products.anchor{ style: 'margin-top:2em;' }
+					%h3{ style: 'border-bottom:1px #ddd solid;'} 
+						Products
+
+
+					%h4{ style: 'margin-top:25px;margin-bottom: 12px;font-size:18px;' }
+						What's the Life Meter?
+					%p{ style: 'margin-left:2em;' }
+						We're developing a really cool new natural-language fitness tracking platform. We call it Life Meter. Right now, it's in closed beta testing. You can learn more and/or request an invitation at 
+						%a{ href: 'http://lifemeterapp.com' }
+							lifemeterapp.com. 		
+
+
+					%h4{ style: 'margin-top:25px;margin-bottom: 12px;font-size:18px;' }
+						How should I care for my shirts?
+					%p{ style: 'margin-left:2em;' }
+						We recommend turning them inside out and machine or hand washing on cold. To minimize shrinking, machine dry low or hang dry. Please consult the care instructions on the garment label.		
+
+					%h4{ style: 'margin-top:25px;margin-bottom: 12px;font-size:18px;' }
+						Will the shirts shrink??
+					%p{ style: 'margin-left:2em;' }
+						All our shirts and tanks are pre-washed, so they shouldn't shrink too much. That said, they do contain cotton, so they may shrink a bit, and they may shrink a bit more than that if they are not washed or cared for properly.
+
+					%h4{ style: 'margin-top:25px;margin-bottom: 12px;font-size:18px;' }
+						Will the printing on the shirts and tanks fade?
+					%p{ style: 'margin-left:2em;' }
+						We use high quality water-based inks to produce the softest printing possible. Our gear is designed to take on the heaviest workouts. Some print may fade a little after multiple washes, but will only serve as a reminder that you wear it AMRAP.
+
+					
+
+
+					#store.anchor{ style: 'margin-top:2em;' }
+					%h3{ style: 'border-bottom:1px #ddd solid;'} 
 						Store
 
-					%h4
+					%h4{ style: 'margin-top:25px;margin-bottom: 12px;font-size:18px;' }
 						What is your return policy?
-					%p
-						We want you to be 100% satisfied with your Ugmonk purchase. Items in new condition (unworn/unwashed) can be returned or exchanged within 30 days of delivery. Please note that original shipping charges are non-refundable. If we made a mistake or the item arrived defective, please contact us here and we’ll make things right.
+					%p{ style: 'margin-left:2em;' }
+						We want you to be 100% satisfied with your purchase. Items in new condition (unworn/unwashed) can be returned or exchanged within 14 days of delivery.  If we made a mistake or the item arrived defective, please 
+						%a{ href: '/contacts/new' }
+							contact us here 
+						and we’ll make things right. Please be sure to double-check the measurements listed on the product page for each garment before ordering. 
 
-					%h4
+					%h4{ style: 'margin-top:25px;margin-bottom: 12px;font-size:18px;' }
 						What forms of payment do you accept?
 					%p{ style: 'margin-left:2em;' }
-						We accept major credit cards such as Visa, MasterCard, American Express, and Discover or directly payment through PayPal.
+						We accept major credit cards such as Visa, MasterCard, American Express, and Discover.
 
-					%h4
-						Who Are you?
-					%p{ style: 'margin-left:2em;' }
-						Read about us here
 
-					%h4
-						Who Are you?
-					%p{ style: 'margin-left:2em;' }
-						Read about us here
 
-					%h4
-						Who Are you?
-					%p{ style: 'margin-left:2em;' }
-						Read about us here
-
-					%h3#section3
+					#shipping.anchor{ style: 'margin-top:2em;' }
+					%h3{ style: 'border-bottom:1px #ddd solid;'} 
 						Shipping
-
-					%h3#section3
-						Section4
-					%h5
-						I love the design of your website. Where did you get your template?
+					
+					%h4{ style: 'margin-top:25px;margin-bottom: 12px;font-size:18px;' }
+						How much is shipping?
 					%p{ style: 'margin-left:2em;' }
-						Thanks, we’re glad you like it. We designed our site from scratch and spent hundreds of hours (and cups of coffee) building it. We put a lot of thought and time into creating a unique experience to communicate what our brand is all about. Please do not copy or use any parts of our site as your own.
-
-
--##content.content.section.row
-	- cache( "faq" ) do
-		.col-md-8.bg-base.col-lg-8.col-xl-9
-			.ribbon.ribbon-highlight
-				%ol.breadcrumb.ribbon-inner
-					%li
-						%a{:href => swell_media.root_path()} Home
-					%li.active{:title => "About Us" }
-						FAQs
-
-			%article.entry.style-single.type-post
-				.entry-content
-					%h1
-						FAQs
-
-
-					%p
-						Here are some questions that we get asked sometimes. We hope that the answers to these questions are helpful or interesting to you. You may have your own questions. If so,
-						%a{ href: swell_media.new_contact_path, style: 'text-decoration:underline;' }
-							please do get in touch.
-						The answers to your questions might be intersting for other readers, too! Besides, we just love hearing from you - that's why we're paying for all these pixels to be here in the first place.
-
-					%h3
-						Site
-
-					%h4
-						Who Are you?
+						We hate it when companies use shady tricks like discounting their products, but charging ridiculous amounts for shipping. Our shipping is always free to the continental US. There is no minimum order.
+					
+					%h4{ style: 'margin-top:25px;margin-bottom: 12px;font-size:18px;' }
+						How long does it take to get my items?
 					%p{ style: 'margin-left:2em;' }
-						Read about us here
-
-					%h4
-						Where Are you?
+						Please allow for a couple days for us to process your order, then up to a week for shipping.
+					
+					%h4{ style: 'margin-top:25px;margin-bottom: 12px;font-size:18px;' }
+						Can my order be rushed?
 					%p{ style: 'margin-left:2em;' }
-						We are in Californai, df sd ai sfdfl df but we often like to ski in nevada
+						Unfortunately, we are a fairly small outfit with limited inventory and we can't rush orders at this time. We've chosen to offer fair, clear shipping policies (i.e. free) vs complicated shipping options. That said, if your order contains a gift and you're behind the proverbial 8-ball, plase 
+						%a{ href: '/contacts/new' }
+							drop us a line 
+						and well see what we can do.
 
-					%h4
-						Why Are you?
-					%p{ style: 'margin-left:2em;' }
-						We are because we are and that is all that we are at least for now it is.
-
-					%h3
-						Store
-
-					%h4
-						What is your return policy?
-					%p
-						one is the loneliest number
-
-				%hr/
-	.sidebar.col-md-4.col-lg-4.col-xl-3
-		= render 'swell_media/articles/sidebar'
