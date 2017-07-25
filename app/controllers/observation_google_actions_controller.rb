@@ -43,7 +43,7 @@ class ObservationGoogleActionsController < ActionController::Base
 			return
 		end
 
-		redirect_uri = params[:redirect_uri]
+		redirect_uri = params[:redirect_uri] || params[:return_url]
 		session[:oauth_uri] = login_success_observation_google_actions_url( client_id: params[:client_id], state: params[:state], redirect_uri: redirect_uri )
 
 		redirect_to main_app.lifemeter_index_path()
@@ -51,7 +51,7 @@ class ObservationGoogleActionsController < ActionController::Base
 
 	def login_success
 
-		redirect_uri = params[:redirect_uri]
+		redirect_uri = params[:redirect_uri] || params[:return_url]
 
 		if redirect_uri == "https://oauth-redirect.googleusercontent.com/r/#{ENV['GOOGLE_ASSISTANT_LIFEMETER_BOT_APP_ID']}" || redirect_uri == 'https://www.google.com/'
 			oauth_credential = current_user.oauth_credentials.where( provider: 'google.assistant' ).first_or_initialize
