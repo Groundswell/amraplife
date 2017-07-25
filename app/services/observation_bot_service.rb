@@ -38,6 +38,17 @@ class ObservationBotService < AbstractBotService
 		login: {
 			utterances: [ 'login', 'sign me in', 'sign in', 'log in', 'log me in' ]
 		},
+		log_drink_observation:{
+			utterances: [
+				'(?:that)?(?:i)?\s*(drank|drink)\s*{value}\s*{action}',
+				#'(?:that)?(?:i)?\s*(drank|drink)\s*{value}\s*{unit}\s*{action}',
+			],
+			slots: {
+				action: 'Action',
+				value: 'Amount',
+				unit: 'Unit',
+			},
+		},
 		log_duration_observation: {
 			utterances: [
 				'(?:that)?(?:i)?\s*{action}\s*for\s*{duration}',
@@ -578,6 +589,24 @@ class ObservationBotService < AbstractBotService
 		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'created', source: options[:source], result_status: 'success' )
 
 	end
+
+	def log_drink_observation
+		unless user.present?
+			login
+			return
+		end
+
+		metric_alias = params[:action].gsub( /.+of/, '' ).strip
+		unit = params[:action].split( /of/ )[0]
+
+		metric = get_user_metric( user, metric_alias, unit, true )
+
+		observation = Observation.create( user: user, observed: metric, value: params[:value], unit: unit )
+
+		add_speech( observation.to_s( user ) )
+		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'created', source: options[:source], result_status: 'success', system_notes: "Spoke: #{observation.to_s( user )}" )
+	end
+
 
 	def log_journal_observation
 		unless user.present?

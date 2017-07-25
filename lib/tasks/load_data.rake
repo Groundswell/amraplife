@@ -55,9 +55,9 @@ namespace :amraplife do
 		nutrition = Metric.create title: 'Protein', metric_type: 'nutrition',	aliases: ['prot', 'grams protein', 'grams of protein' ], unit: 'g', target_type: :sum_value, target_direction: :at_least, target_period: :daily
 		nutrition = Metric.create title: 'Fat', metric_type: 'nutrition', 		aliases: ['fat', 'grams fat', 'grams of fat' ], unit: 'g', target_type: :sum_value, target_direction: :at_most, target_period: :daily
 		nutrition = Metric.create title: 'Carb', metric_type: 'nutrition', 		aliases: ['carb', 'carbs', 'carbohydrates', 'grams carb', 'grams of carb', 'net carbs' ], unit: 'g', target_type: :sum_value, target_direction: :at_most, target_period: :daily
-		nutrition = Metric.create title: 'Sugar', metric_type: 'nutrition', 		aliases: ['sugars', 'grams sugar', 'grams of sugar' ], unit: 'g', target_type: :sum_value, target_direction: :at_most, target_period: :daily
-		nutrition = Metric.create title: 'Water', metric_type: 'nutrition', 		aliases: ['of water' ], unit: 'oz', target_type: :sum_value, target_direction: :at_least, target_period: :daily
-		nutrition = Metric.create title: 'Alcohol', metric_type: 'nutrition', 		aliases: [ 'of alcohol', 'of beer', 'of  wine' ], unit: 'oz', target_type: :sum_value, target_direction: :at_most, target_period: :daily
+		nutrition = Metric.create title: 'Sugar', metric_type: 'nutrition', 	aliases: ['sugars', 'grams sugar', 'grams of sugar' ], unit: 'g', target_type: :sum_value, target_direction: :at_most, target_period: :daily
+		nutrition = Metric.create title: 'Water', metric_type: 'nutrition', 	aliases: ['of water' ], unit: 'oz', target_type: :sum_value, target_direction: :at_least, target_period: :daily
+		nutrition = Metric.create title: 'Alcohol', metric_type: 'nutrition', 	aliases: [ 'of alcohol', 'beer', 'wine', 'liquor' ], unit: 'oz', target_type: :sum_value, target_direction: :at_most, target_period: :daily
 
 		act = Metric.create title: 'Sleep', metric_type: 'activity', 	aliases: ['slp', 'sleeping', 'slept', 'nap', 'napping', 'napped'], unit: 'sec', target_type: :sum_value, target_direction: :at_least, target_period: :daily, target: 28800
 		act = Metric.create title: 'Meditation', metric_type: 'activity', aliases: ['med', 'meditating', 'meditated'], unit: 'sec', target_type: :sum_value, target_direction: :at_least, target_period: :daily, target: 1200
