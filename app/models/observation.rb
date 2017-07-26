@@ -3,6 +3,8 @@ class Observation < ActiveRecord::Base
 
 	# attr_accessor :content, :stop, :start
 
+	#enum measure_type: { 'score' => 0, 'time' => 2, 'length' => 4, 'mass' => 6, 'volume' => 8, 'energy' => 10, 'reps' => 12, 'percent' => 14, 'temperature' => 16, 'pressure' => 18 }
+
 	before_create 	:set_defaults
 	validate 		:gotta_have_value_or_notes
 
@@ -29,26 +31,12 @@ class Observation < ActiveRecord::Base
 
 
 
-	def human_value
-		if self.observed.try( :workout_type ) == 'amrap'
-			return "#{self.value.to_i} rds & #{self.sub_value.to_i} reps"
-
-		elsif self.observed.try( :workout_type ) == 'strength'
-			return "#{self.value.to_i}"
-
-		elsif self.value.present? && self.unit == 'sec'
-			ChronicDuration.output( self.value, format: :chrono )
-		else
-			"#{self.value} #{self.unit}"
-		end
+	def display_value
+		Metric.convert_to_display( self.value, self )	
 	end
 
-	def formatted_value
-		if self.value.present? && self.unit == 'sec'
-			ChronicDuration.output( self.value, format: :chrono )
-		else
-			"#{self.value} #{self.unit}s"
-		end
+	def is_time?
+		self.unit == 's'
 	end
 
 	def stop!
@@ -67,7 +55,7 @@ class Observation < ActiveRecord::Base
 		end
 
 		if self.value.present?
-			str += "recorded #{self.human_value} for #{self.observed.try( :title )} "
+			str += "recorded #{self.display_value} for #{self.observed.try( :title )} "
 		elsif self.started_at.present? && self.ended_at.nil?
 			str += "started #{self.observed.try( :title )} "
 		else
@@ -97,8 +85,9 @@ class Observation < ActiveRecord::Base
 
 			if self.observed.try( :unit ).present?
 				self.unit ||= self.observed.unit
+				self.display_unit ||= self.observed.display_unit
 			end
-			#self.value = self.duration if self.activity.present? && self.activity.is_time? && self.started_at && self.ended_at
+		
 		end
 
 end

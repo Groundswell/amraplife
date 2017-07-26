@@ -7,7 +7,9 @@
 		%table.table.table-striped
 			%thead
 				%th Title
-				%th Unit
+				%th Type
+				%th
+					Unit
 				%th Observations
 				%th
 			%tbody
@@ -16,7 +18,23 @@
 						%td
 							= link_to metric.title, edit_metric_path( metric )
 						%td
-							= metric.unit
+							- if metric.unit == 's'
+								Time
+							- elsif metric.unit == 'm'
+								Distance/Length
+							- elsif metric.unit == 'g'
+								Weight
+							- elsif metric.unit == 'l'
+								Volume
+							- elsif metric.unit == '%'
+								= '%'
+							- else
+								Arbitrary
+						%td
+							- if not( current_user.use_metric_units? )
+								= Metric.convert_to_imperial( metric.display_unit )
+							- else
+								= metric.display_unit
 						%td
 							= metric.observations.count
 						%td

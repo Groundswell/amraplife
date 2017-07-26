@@ -1,6 +1,6 @@
 class Metric < ActiveRecord::Base
 
-	before_create 	:set_aliases
+	before_create 	:set_defaults
 	validate 		:unique_aliases
 
 	enum availability: { 'just_me' => 0, 'trainer' => 1, 'team' => 3, 'community' => 5, 'anyone' => 10 }
@@ -16,8 +16,52 @@ class Metric < ActiveRecord::Base
 	include FriendlyId
 	friendly_id :slugger, use: [ :slugged ]
 
+
+	def self.convert_to_display( num, obj, opts={} )
+		precision = opts[:precision] || 2
+
+		if num.present? && obj.unit == 's'
+			ChronicDuration.output( num, format: :chrono )
+		elsif num.present?
+			unit = obj.display_unit
+			if not( obj.user.use_metric_units? ) 
+				unit = Metric.convert_to_imperial( obj.display_unit )
+			end
+			begin
+				value = Unitwise( num, obj.unit ).convert_to( unit ).to_f.round( precision )
+			rescue
+				value = num
+			end
+			return value == 1 ? "#{value} #{unit}" : "#{value} #{unit}s"
+		else
+			nil
+		end
+	end
+
+	def self.convert_to_imperial( unit )
+		if Metric.imperial_units[ unit ].present?
+			unit = Metric.imperial_units[ unit ]
+		else
+			unit
+		end
+	end
+
 	def self.find_by_alias( term )
 		where( ":term = ANY( aliases )", term: term.parameterize ).first
+	end
+
+	def self.imperial_units
+		{
+			'cm' => 'in',
+			'm' => 'yd', 
+			'km' => 'mi',
+
+			'g'  => 'ounce',
+			'kg' => 'lb',
+
+			'ml' => 'fluid ounce',
+			'l' => 'gallon'
+		}		
 	end
 
 
@@ -31,15 +75,6 @@ class Metric < ActiveRecord::Base
 		self.aliases = aliases_csv.split( /,\s*/ )
 	end
 
-
-	def formatted_target
-		if self.target.present? && self.unit == 'sec'
-			ChronicDuration.output( self.target, format: :chrono )
-		else
-			"#{self.target} #{self.unit}s"
-		end
-	end
-
 	def slugger
 		"#{self.title}#{self.user_id}"
 	end
@@ -49,7 +84,8 @@ class Metric < ActiveRecord::Base
 	end
 
 	private
-		def set_aliases
+		def set_defaults
+			self.display_unit ||= self.unit
 			self.aliases << self.title.parameterize unless self.aliases.include?( self.title.parameterize )
 			self.aliases.each_with_index do |value, index|
 				self.aliases[index] = value.parameterize
