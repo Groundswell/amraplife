@@ -13,12 +13,13 @@ class ObservationAlexaSkillsController < ActionController::Base
 
 	def create
 		# @todo Check that it's a valid Alexa request
+		puts request.raw_post
 		json_post = JSON.parse(request.raw_post)
 		json_post['version'] ||= 1 #bug, AlexaRubykit requires a version which is no longer provided?
 
 		@alexa_request	= AlexaRubykit.build_request( json_post )
 		@alexa_session	= @alexa_request.session
-		@alexa_response	= AlexaRubykit::Response.new
+		@alexa_response	= AlexaResponse.new
 		@alexa_response.define_singleton_method(:add_directive)
 		@alexa_params 	= {}
 		@alexa_params	= Hash[*@alexa_request.slots.values.collect{|values| [values['name'].to_sym,values['value']]}.flatten] if @alexa_request.respond_to?(:slots) && @alexa_request.slots.present?
@@ -108,6 +109,10 @@ class ObservationAlexaSkillsController < ActionController::Base
 		@alexa_response.add_card(type, title , subtitle, content)
 	end
 
+	def add_clear_audio_queue( args = {} )
+		@alexa_response.add_clear_audio_queue(args)
+	end
+
 	def add_hash_card( card )
 		@alexa_response.add_hash_card( card )
 	end
@@ -126,6 +131,31 @@ class ObservationAlexaSkillsController < ActionController::Base
 
 	def add_session_attribute( key, value )
 		@alexa_response.add_session_attribute( key, value )
+	end
+
+	def add_stop_audio()
+		@alexa_response.add_stop_audio()
+	end
+
+end
+
+class AlexaResponse < AlexaRubykit::Response
+
+	def add_stop_audio
+		@directives << {
+			'type' => 'AudioPlayer.Stop'
+		}
+	end
+
+	def add_clear_audio_queue( args = {} )
+
+		clear_behaviour = 'CLEAR_ALL'
+		clear_behaviour = 'CLEAR_ENQUEUED' if args[:clear].present? && args[:clear].to_s == 'queue'
+
+		@directives << {
+			'type' => 'AudioPlayer.ClearQueue',
+			'clearBehavior' =>
+		}
 	end
 
 end

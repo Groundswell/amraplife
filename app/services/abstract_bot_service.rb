@@ -211,6 +211,22 @@ class AbstractBotService
 		end
 	end
 
+	def add_clear_audio_queue( args = {} )
+		if response.to_s == 'puts'
+			puts "add_clear_audio_queue: #{args}"
+		else
+			response.add_clear_audio_queue( args )
+		end
+	end
+
+	def add_stop_audio()
+		if response.to_s == 'puts'
+			puts "add_stop_audio"
+		else
+			response.add_stop_audio()
+		end
+	end
+
 	def add_card(type = nil, title = nil , subtitle = nil, content = nil)
 		if response.to_s == 'puts'
 			puts "add_card (#{type}): #{title} (#{subtitle}) - #{content}"
@@ -286,6 +302,16 @@ class DefaultActionResponse
 	def add_audio_url( url, args = {} )
 		puts "add_audio_url: #{url}"
 		@queue << [ :audio_url, url, args ]
+	end
+
+	def add_clear_audio_queue( args = {} )
+		puts "add_clear_audio_queue: #{args.to_json}"
+		@queue << [ :add_clear_audio_queue, args ]
+	end
+
+	def add_stop_audio()
+		puts "add_stop_audio"
+		@queue << [ :add_stop_audio ]
 	end
 
 	def add_card(type = nil, title = nil , subtitle = nil, content = nil)

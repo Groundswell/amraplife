@@ -2,8 +2,17 @@ class ObservationBotService < AbstractBotService
 
 	 add_intents( {
 		cancel: {
-			utterances: [ 'cancel' ]
+			utterances: [ 'cancel' ],
+			slots: {}
 		},
+   		stop: {
+   			utterances: [ 'stop', 'pause' ],
+			slots: {}
+   		},
+   		resume: {
+   			utterances: [ 'resume' ],
+			slots: {}
+   		},
 		check_metric: {
 			utterances: [
 				'(to)?\s*check\s*(my)?\s*{action}',
@@ -24,7 +33,8 @@ class ObservationBotService < AbstractBotService
 			utterances: [
 				'(?:to )?\s*(inspire |motivate )\s*me',
 				'(?:to )?\s*(?:for )?\s*(?:give me )?\s*(inspiration|motivation)'
-			 ]
+			 ],
+ 			slots: {}
 		},
 		help: {
 			utterances: [ 'help', 'for help' ]
@@ -367,6 +377,9 @@ class ObservationBotService < AbstractBotService
 
 	def cancel
 		add_speech("Cancelling")
+		add_stop_audio()
+
+		user.user_inputs.create( content: raw_input, action: 'cancel', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{raw_input || 'cancel'}'" ) if user.present?
 	end
 
 	def assign_metric
@@ -798,6 +811,18 @@ class ObservationBotService < AbstractBotService
 
 	end
 
+	def pause
+		add_speech("Pausing workout.")
+		add_stop_audio()
+		user.user_inputs.create( content: raw_input, action: 'pause', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{raw_input || 'pause'}'" ) if user.present?
+	end
+
+	def resume
+		add_audio_url('https://cdn1.amraplife.com/assets/c45ca8e9-2a8f-4522-bdcb-b7df58f960f8.mp3', offset: 20500 )
+		add_stop_audio()
+		user.user_inputs.create( content: raw_input, action: 'resume', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{raw_input || 'resume'}'" ) if user.present?
+	end
+
 	# def report_sum_value_observation
 	# 	unless user.present?
 	# 		login
@@ -938,6 +963,7 @@ class ObservationBotService < AbstractBotService
 
 	def stop
 		add_speech("Stopping.")
+		add_stop_audio()
 	end
 
 	def target_remaining

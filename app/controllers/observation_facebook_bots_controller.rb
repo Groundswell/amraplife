@@ -61,6 +61,14 @@ class ObservationFacebookBotsController < ActionController::Base
 		puts "add_audio_url: #{url}"
 	end
 
+	def add_clear_audio_queue( args = {} )
+		puts "add_clear_audio_queue: #{args}"
+	end
+
+	def add_stop_audio()
+		puts "add_stop_audio"
+	end
+
 	def add_card(type = nil, title = nil , subtitle = nil, content = nil)
 		puts "add_card (#{type}): #{title} (#{subtitle}) - #{content}"
 	end
