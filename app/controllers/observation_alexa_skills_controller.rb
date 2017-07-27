@@ -154,7 +154,7 @@ class AlexaResponse < AlexaRubykit::Response
 
 		@directives << {
 			'type' => 'AudioPlayer.ClearQueue',
-			'clearBehavior' =>
+			'clearBehavior' => clear_behaviour,
 		}
 	end
 
