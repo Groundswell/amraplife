@@ -1061,6 +1061,7 @@ class ObservationBotService < AbstractBotService
 
 		add_speech("Great!  I am logging your time.")
 		sys_notes = "Spoke: 'Great!  I am logging your time.'."
+		add_stop_audio()
 
 		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'updated', source: options[:source], result_status: 'success', system_notes: sys_notes )
 

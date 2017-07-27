@@ -15,7 +15,7 @@ class ObservationFacebookBotsController < ActionController::Base
 				entry[:messaging].each do |messaging|
 					@user = SwellMedia::OauthCredential.where( uid: messaging[:sender][:id], provider: "chat.facebook" ).first.try(:user)
 
-					@bot_service = ObservationBotService.new( response: self, user: @user, params: {}, source: 'facebook' )
+					@bot_service = ObservationBotService.new( response: self, user: @user, params: {}, source: 'facebook', except: [ :workout_complete, :workout_start ] )
 
 					@messaging = messaging
 

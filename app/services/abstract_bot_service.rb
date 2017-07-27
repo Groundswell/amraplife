@@ -54,6 +54,7 @@ class AbstractBotService
 		@user 		= args[:user]
 		@dialog		= args[:dialog] || {}
 		@options	= args
+		@except_intents = (args[:except] || []).collect(&:to_sym)
 
 	end
 
@@ -67,7 +68,7 @@ class AbstractBotService
 		requested_intent_matches = nil
 
 		compiled_intents.each do |intent_name, intent|
-			unless ( matches = intent[:regex].match( text ) ).nil?
+			unless ( matches = intent[:regex].match( text ) ).nil? || @except_intents.include?(intent_name.to_sym)
 				requested_intent_name = intent_name
 				requested_intent_matches = matches
 				break

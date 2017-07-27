@@ -5,7 +5,7 @@ class UserInputsController < ApplicationController
 	# web interface posts here for user all commands
 	def create
 
-		@bot_service = ObservationBotService.new( user: current_user, source: 'dash' )
+		@bot_service = ObservationBotService.new( user: current_user, source: 'dash', except: [ :workout_complete, :workout_start ] )
 
 		unless @bot_service.respond_to_text( user_input_params[:content] )
 
