@@ -99,7 +99,7 @@ class ObservationAlexaSkillsController < ActionController::Base
 
 	def add_audio_url( url, args = {} )
 		args[:offset] ||= 0
-		args[:token] ||= ''
+		args[:token] ||= SecureRandom.hex(10)
 		@alexa_response.add_audio_url( url, args[:token], args[:offset] )
 	end
 

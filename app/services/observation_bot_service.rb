@@ -251,12 +251,12 @@ class ObservationBotService < AbstractBotService
 
 		workout_describe: {
 			utterances: [
-				'what is {workoutname}',
-				'(to\s+)?describe {workoutname}',
-				'(to\s+)?describe today\'s workout',
-				'what is todays workout',
-				'what is the wod',
-				'what is the workout of the day',
+				'what is {workoutname}(\?)?',
+				'(to\s+)?describe {workoutname}(\?)?',
+				'(to\s+)?describe today\'s workout(\?)?',
+				'what is todays workout(\?)?',
+				'what is the wod(\?)?',
+				'what is the workout of the day(\?)?',
 			],
 			slots:{
 				workoutname: 'WorkoutName',
