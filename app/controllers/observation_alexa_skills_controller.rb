@@ -20,7 +20,6 @@ class ObservationAlexaSkillsController < ActionController::Base
 		@alexa_request	= AlexaRubykit.build_request( json_post )
 		@alexa_session	= @alexa_request.session
 		@alexa_response	= AlexaResponse.new
-		@alexa_response.define_singleton_method(:add_directive)
 		@alexa_params 	= {}
 		@alexa_params	= Hash[*@alexa_request.slots.values.collect{|values| [values['name'].to_sym,values['value']]}.flatten] if @alexa_request.respond_to?(:slots) && @alexa_request.slots.present?
 
