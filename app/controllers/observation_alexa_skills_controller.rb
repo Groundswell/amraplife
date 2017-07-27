@@ -5,10 +5,10 @@ class ObservationAlexaSkillsController < ActionController::Base
 	DEFAULT_DIALOG = {
 
 		help: "To log fitness information just say \"Alexa tell Life Meter I ate 100 calories\", or use a fitness timer by saying \"Alexa ask Life Meter to start a workout timer\".  Life Meter will remember, report and provide insights into what you have told it.",
-		launch_user: "Welcome to Life Meter by AMRAP Life.  To log fitness information just say \"Alexa tell Life Meter I ate 100 calories\", or use a fitness timer by saying \"Alexa ask Life Meter to start a workout timer\". Life Meter will remember, report and provide insights into what you have told it.",
-		launch_guest: "Welcome to Life Meter by AMRAP Life.  To log fitness information just say \"Alexa tell Life Meter I ate 100 calories\", or use a fitness timer by saying \"Alexa ask Life Meter to start a workout timer\".  Life Meter will remember, report and provide insights into what you have told it.  To get started open your Alexa app, and complete AMRAP Life registration.",
+		launch_user: "Welcome to Life Meter.  To log fitness information just say \"Alexa tell Life Meter I ate 100 calories\", or use a fitness timer by saying \"Alexa ask Life Meter to start a workout timer\". Life Meter will remember, report and provide insights into what you have told it.",
+		launch_guest: "Welcome to Life Meter.  To log fitness information just say \"Alexa tell Life Meter I ate 100 calories\", or use a fitness timer by saying \"Alexa ask Life Meter to start a workout timer\".  Life Meter will remember, report and provide insights into what you have told it.  To get started open your Alexa app, and complete Life Meter registration.",
 
-		login: "Open your Alexa app, and complete the AMRAP Life registration to continue",
+		login: "Open your Alexa app, and complete the Life Meter registration to continue",
 	}
 
 	def create
@@ -19,6 +19,7 @@ class ObservationAlexaSkillsController < ActionController::Base
 		@alexa_request	= AlexaRubykit.build_request( json_post )
 		@alexa_session	= @alexa_request.session
 		@alexa_response	= AlexaRubykit::Response.new
+		@alexa_response.define_singleton_method(:add_directive)
 		@alexa_params 	= {}
 		@alexa_params	= Hash[*@alexa_request.slots.values.collect{|values| [values['name'].to_sym,values['value']]}.flatten] if @alexa_request.respond_to?(:slots) && @alexa_request.slots.present?
 

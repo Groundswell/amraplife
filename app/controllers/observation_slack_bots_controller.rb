@@ -60,7 +60,7 @@ class ObservationSlackBotsController < ActionController::Base
 			})
 		)
 
-		set_flash( 'AMRAP Life Slack Bot was Successfully Installed.' )
+		set_flash( 'Life Meter Slack Bot was Successfully Installed.' )
 		redirect_to '/'
 
 	end
