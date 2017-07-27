@@ -77,6 +77,41 @@ class ObservationBotService < AbstractBotService
 				notes: 'Notes',
 			}
 		},
+
+
+		workout_start: {
+			utterances: [
+				# (that) (i) (am) start(ed|ing) (to) working
+				'(to )?(i am )?(start|starting) the workout of the day',
+				'(to )?(i am )?(start|starting) workout of the day',
+				'(to )?(i am )?(start|starting) working out',
+				'(to )?(i am )?(start|starting) the workout',
+				'(to )?(i am )?(start|starting) the wod',
+				'(to )?(i am )?(start|starting) wod',
+				'(to )?(i am )?(start|starting) the {workoutname} workout',
+				'(to )?(i am )?(start|starting) {workoutname} workout',
+			],
+			slots:{
+				workoutname: 'WorkoutName',
+			},
+		},
+
+		workout_complete: {
+			utterances: [
+				'(to )?(i am )?(stop|done|finished|finish|complete) the workout of the day',
+				'(to )?(i am )?(stop|done|finished|finish|complete) workout of the day',
+				'(to )?(i am )?(stop|done|finished|finish|complete) the wod',
+				'(to )?(i am )?(stop|done|finished|finish|complete) workout',
+				'(to )?(i am )?(stop|done|finished|finish|complete) the workout',
+				'(to )?(i am )?(stop|done|finished|finish|complete) working out',
+				'(to )?(i am )?(stop|done|finished|finish|complete) wod',
+				'(to )?(i am )?(stop|done|finished|finish|complete) the {workoutname} workout',
+			],
+			slots:{
+				workoutname: 'WorkoutName',
+			},
+		},
+
 		log_start_observation: {
 			utterances: [
 				# (that) (i) (am) start(ed|ing) (to) working
@@ -197,21 +232,43 @@ class ObservationBotService < AbstractBotService
 				'set\s*(?:a)?\s*target of {value}\s*{unit} for {action}',
 				'set\s*(?:a)?\s*target\s*(?:for)?{action} of {value}',
 				'set\s*(?:a)?\s*target\s*(?:for)?{action} of {value}\s*{unit}',
-				],
+			],
 			slots:{
 				action: 'Action',
 				value: 'Amount',
 				unit: 'Unit'
-				},
+			},
 		},
 
 		tell_about: {
 			utterances: [
 				'(to)?\s*tell me about\s*(?:my)?\s*{action}',
-				],
+			],
 			slots:{
 				action: 'Action',
-				},
+			},
+		},
+
+		workout_describe: {
+			utterances: [
+				'what is {workoutname}',
+				'(to\s+)?describe {workoutname}',
+				'(to\s+)?describe today\'s workout',
+				'what is todays workout',
+				'what is the wod',
+				'what is the workout of the day',
+			],
+			slots:{
+				workoutname: 'WorkoutName',
+			},
+		},
+
+		workout_list: {
+			utterances: [
+				'(to )?list workouts',
+				'(to )?list all workouts',
+			],
+			slots:{},
 		},
 
 	} )
@@ -297,6 +354,15 @@ class ObservationBotService < AbstractBotService
 		        { value: "rep", synonyms: [] },
 	      ]
 	  },
+	  WorkoutName: {
+		  regex: [
+			  '.+'
+		  ],
+		  values: [
+			  { value: "Glen", synonyms: [] },
+			  { value: "Helen", synonyms: [] },
+		]
+	  }
   	} )
 
 	def cancel
@@ -955,6 +1021,79 @@ class ObservationBotService < AbstractBotService
 		sys_notes = "Spoke: 'You have logged #{metric.title} #{obs_count_total} times in all. #{obs_count_last_week} times last week, and #{obs_count_this_week} times so far this week. The average value for #{metric.title} is #{average_value}. The max value is #{max_value} and the minimum is #{min_value}.'"
 
 		user.user_inputs.create( content: raw_input, action: 'reported', source: options[:source], result_status: 'success', system_notes: sys_notes )
+
+	end
+
+	def workout_complete
+
+		unless user.present?
+			login
+			return
+		end
+
+		observation = nil
+
+		add_speech("Great!  I am logging your time.")
+		sys_notes = "Spoke: 'Great!  I am logging your time.'."
+
+		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'updated', source: options[:source], result_status: 'success', system_notes: sys_notes )
+
+	end
+
+	def workout_describe
+		unless user.present?
+			login
+			return
+		end
+
+		workout_name = params[:workoutname]
+
+
+		add_speech("Today's workout is the 3 minute airsquat challenge.  Do as many air squats as you can in 3 minutes.")
+		sys_notes = "Spoke: 'Today's workout is the 3 minute airsquat challenge.  Do as many air squats as you can in 3 minutes.'."
+
+		user.user_inputs.create( content: raw_input, action: 'created', source: options[:source], result_status: 'success', system_notes: sys_notes )
+
+	end
+
+	def workout_list
+		unless user.present?
+			login
+			return
+		end
+
+		add_speech("These are our most popular workouts. 3 minute airsquat challenge. 3 minute push up challenge.  3 minute sit up challenge.")
+		sys_notes = "Spoke: 'These are our most popular workouts. 3 minute airsquat challenge. 3 minute push up challenge.  3 minute sit up challenge.'."
+
+		user.user_inputs.create( content: raw_input, action: 'created', source: options[:source], result_status: 'success', system_notes: sys_notes )
+
+	end
+
+	def workout_start
+		unless user.present?
+			login
+			return
+		end
+
+		workout_name = params[:workoutname]
+
+		observation = nil
+		# metric = get_user_metric( user, workout_name, 'sec', true )
+		#
+		# observation = Observation.create( user: user, observed: metric, started_at: Time.zone.now, notes: notes )
+
+		if workout_name.present?
+			add_speech("Starting the #{workout_name} workout")
+			sys_notes = "Spoke: 'Starting the #{workout_name} workout'."
+		else
+			add_speech("Starting the workout of the day")
+			sys_notes = "Spoke: 'Starting the workout of the day'."
+		end
+
+		add_audio_url('https://cdn1.amraplife.com/assets/c45ca8e9-2a8f-4522-bdcb-b7df58f960f8.mp3')
+
+		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'created', source: options[:source], result_status: 'success', system_notes: sys_notes )
+
 
 	end
 

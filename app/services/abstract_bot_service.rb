@@ -203,11 +203,11 @@ class AbstractBotService
 	end
 
 
-	def add_audio_url( url, token='', offset=0)
+	def add_audio_url( url, args = {} )
 		if response.to_s == 'puts'
 			puts "add_audio_url: #{url}"
 		else
-			response.add_audio_url( url, token, offset )
+			response.add_audio_url( url, args )
 		end
 	end
 
@@ -283,9 +283,9 @@ class DefaultActionResponse
 		@queue << [ :ask, speech_text, args ]
 	end
 
-	def add_audio_url( url, token='', offset=0)
+	def add_audio_url( url, args = {} )
 		puts "add_audio_url: #{url}"
-		@queue << [ :audio_url, url, token, offset ]
+		@queue << [ :audio_url, url, args ]
 	end
 
 	def add_card(type = nil, title = nil , subtitle = nil, content = nil)

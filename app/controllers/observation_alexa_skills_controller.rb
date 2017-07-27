@@ -97,8 +97,10 @@ class ObservationAlexaSkillsController < ActionController::Base
 		alexa_response.add_reprompt( args[:reprompt_text], !!(args[:ssml] || args[:speech_ssml]) ) if args[:reprompt_text].present?
 	end
 
-	def add_audio_url( url, token='', offset=0)
-		@alexa_response.add_audio_url( url, token, offset )
+	def add_audio_url( url, args = {} )
+		args[:offset] ||= 0
+		args[:token] ||= ''
+		@alexa_response.add_audio_url( url, args[:token], args[:offset] )
 	end
 
 	def add_card(type = nil, title = nil , subtitle = nil, content = nil)
