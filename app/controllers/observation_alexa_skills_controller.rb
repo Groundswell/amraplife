@@ -79,7 +79,6 @@ class ObservationAlexaSkillsController < ActionController::Base
 
 		else
 			# @todo manage audio events
-			add_speech('test')
 		end
 
 		render json: @alexa_response.build_response( !!!@ask_response )
