@@ -375,6 +375,21 @@ class ObservationBotService < AbstractBotService
 	  }
   	} )
 
+	def audio_event
+
+		if params['event'] == 'AudioPlayer.PlaybackNearlyFinished' && ( repeat = (get_session_context( 'workout.audio.repeat' ) || 0).to_i ) != 0
+
+			set_session_context( 'workout.audio.repeat', repeat-1 ) if repeat > 0
+
+			audio_url = get_session_context( "workout.audio[#{repeat}].url" )
+			audio_url ||= get_session_context( 'workout.audio.url' )
+
+			add_audio_url( audio_url, enqueue: params[:token] )
+
+		end
+
+	end
+
 	def cancel
 		add_speech("Cancelling")
 		add_clear_audio_queue()
@@ -1096,6 +1111,8 @@ class ObservationBotService < AbstractBotService
 	end
 
 	def workout_start
+		new_context
+
 		unless user.present?
 			login
 			return
@@ -1110,10 +1127,13 @@ class ObservationBotService < AbstractBotService
 
 		speech = "Before we start the 3 minute airsquat challenge workout, let's quickly go over it.  As soon as I say. 3, 2, 1, go! Start doing air squats.  Do as many as you can in 3 minutes.  I will let you know when you're done.  Ready.  3, 2, 1, Go!"
 
+		add_session_context( 'workout.name', '3 minute airsquat challenge workout' )
+		add_session_context( 'workout.audio.url','https://cdn1.amraplife.com/assets/c45ca8e9-2a8f-4522-bdcb-b7df58f960f8.mp3' )
+		add_session_context( 'workout.audio[1].url','https://www.soundboard.com/handler/DownLoadTrack.ashx?cliptitle=Beeping+and+whistling&filename=mt/MTQ1MzI4MzAzMTQ1Mzgw_jwPFPnna9_2bs.mp3')
+		add_session_context( 'workout.audio.repeat', 2 )
+
 		add_speech(speech)
-		add_audio_url('https://cdn1.amraplife.com/assets/c45ca8e9-2a8f-4522-bdcb-b7df58f960f8.mp3', token: 'workout-player')
-		# add_audio_url('https://cdn1.amraplife.com/assets/c45ca8e9-2a8f-4522-bdcb-b7df58f960f8.mp3', token: 'workout-player', enqueue: true )
-		# add_audio_url('https://cdn1.amraplife.com/assets/c45ca8e9-2a8f-4522-bdcb-b7df58f960f8.mp3', token: 'workout-player', enqueue: true )
+		add_audio_url( get_session_context( 'workout.audio.url' ) )
 
 		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'created', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{speech}'." )
 

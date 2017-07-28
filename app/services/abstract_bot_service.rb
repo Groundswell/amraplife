@@ -299,12 +299,24 @@ class AbstractBotService
 		@session.add_session_property( key, value )
 	end
 
+	def add_session_context( key, value )
+		@session.add_session_context( key, value )
+	end
+
 	def get_session_property( key )
 		@session.get_session_property( key )
 	end
 
+	def get_session_context( key )
+		@session.get_session_context( key )
+	end
+
 	def get_dialog( key, args = {} )
 		return @dialog[key.to_sym] || args[:default]
+	end
+
+	def new_context
+		@session.clear_context
 	end
 
 end

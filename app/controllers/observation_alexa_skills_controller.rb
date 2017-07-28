@@ -75,11 +75,19 @@ class ObservationAlexaSkillsController < ActionController::Base
 				end
 			end
 
-			@bot_session.save_if_used
-
 		else
-			# @todo manage audio events
+
+			@alexa_params = json_post['request'].symbolize_keys
+			@alexa_params[:offset] = @alexa_params.delete(:offsetInMilliseconds)
+			@alexa_params[:event] = @alexa_params.delete(:type)
+
+			@bot_service = ObservationBotService.new( response: self, session: @bot_session, audio_player: @alexa_audio_player, params: @alexa_params, user: @alexa_user, dialog: DEFAULT_DIALOG, source: 'alexa' )
+
+			@bot_service.audio_event
+
 		end
+
+		@bot_session.save_if_used
 
 		render json: @alexa_response.build_response( !!!@ask_response )
 	end
@@ -128,7 +136,7 @@ class ObservationAlexaSkillsController < ActionController::Base
 		args[:offset] ||= 0
 		args[:token] ||= SecureRandom.hex(10)
 		play_behavior = "ENQUEUE" if args[:enqueue]
-		@alexa_response.add_audio_url( url, args[:token], args[:offset], play_behavior )
+		@alexa_response.add_audio_url( url, args[:token], args[:offset], play_behavior, args[:enqueue] )
 	end
 
 	def add_card(type = nil, title = nil , subtitle = nil, content = nil)
@@ -162,8 +170,8 @@ class ObservationAlexaSkillsController < ActionController::Base
 end
 
 class AlexaResponse < AlexaRubykit::Response
-	def add_audio_url(url, token='', offset=0, play_behavior = nil)
-		@directives << {
+	def add_audio_url(url, token='', offset=0, play_behavior = nil, expectedPreviousToken = nil)
+		directive = {
 			'type' => 'AudioPlayer.Play',
 			'playBehavior' => play_behavior || 'REPLACE_ALL',
 			'audioItem' => {
@@ -174,6 +182,10 @@ class AlexaResponse < AlexaRubykit::Response
 				}
 			}
 		}
+
+		directive['audioItem']['stream']['expectedPreviousToken'] = expectedPreviousToken if expectedPreviousToken.present?
+
+		@directives << directive
 	end
 
 	def add_stop_audio

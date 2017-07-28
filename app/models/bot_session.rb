@@ -24,7 +24,7 @@ class BotSession < ActiveRecord::Base
 	end
 
 	def save_if_used
-		if self.persisted? || self.properties.present?
+		if self.persisted? || self.properties.present? || self.context.present? || self.expected_intents.present?
 			self.save
 		end
 	end
@@ -33,8 +33,21 @@ class BotSession < ActiveRecord::Base
 		self.properties = self.properties.merge( key.to_s => value )
 	end
 
-	def get_session_attribute( key )
+	def add_session_context( key, value )
+		self.context = self.properties.merge( key.to_s => value )
+	end
+
+	def clear_context
+		self.context = {}
+		self.expected_intents = []
+	end
+
+	def get_session_property( key )
 		self.properties[key.to_s]
+	end
+
+	def get_session_context( key )
+		self.context[key.to_s]
 	end
 
 end
