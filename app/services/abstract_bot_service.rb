@@ -268,12 +268,12 @@ class AbstractBotService
 		end
 	end
 
-	def add_session_attribute( key, value )
-		if response.to_s == 'puts'
-			puts "add_session_attribute: #{key} -> #{value}"
-		else
-			response.add_session_attribute( key, value )
-		end
+	def set_session_attribute( key, value )
+		@session.set_attribute( key, value )
+	end
+
+	def get_session_attribute( key )
+		@session.get_attribute( key )
 	end
 
 	def get_dialog( key, args = {} )
@@ -338,11 +338,6 @@ class DefaultActionResponse
 	def add_speech(speech_text, ssml = false)
 		puts "add_speech: #{speech_text}"
 		@queue << [ :speech, speech_text ]
-	end
-
-	def add_session_attribute( key, value )
-		puts "add_session_attribute: #{key} -> #{value}"
-		@queue << [ :session_attribute, key, value ]
 	end
 
 end

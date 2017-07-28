@@ -16,12 +16,16 @@ class ObservationSlackBotsController < ActionController::Base
 			@team = Team.find_by( slack_team_id: params[:team_id] )
 			@user = SwellMedia::OauthCredential.where( uid: params[:event][:user], provider: "#{params[:team_id]}.slack" ).first.try(:user)
 			@user ||= @team.team_users.find_by( slack_user_id: params[:event][:user] ).try(:user) if @team.present?
+			@bot_session = BotSession.find_or_initialize_for( provider: "#{params[:team_id]}.slack", uid: params[:event][:user], user: @user )
 
-			@bot_service = ObservationBotService.new( response: self, user: @user, params: { event: params[:event] }, source: 'slack', except: [ :workout_complete, :workout_start ] )
+
+			@bot_service = ObservationBotService.new( response: self, session: @bot_session, user: @user, params: { event: params[:event] }, source: 'slack', except: [ :workout_complete, :workout_start ] )
 
 			unless @bot_service.respond_to_text( params[:event][:text] )
 				add_speech( "Sorry, I don't know about that." )
 			end
+
+			@bot_session.save_if_used
 
 			render text: 'OK', content_type: 'text/plain'
 			return
@@ -135,10 +139,6 @@ class ObservationSlackBotsController < ActionController::Base
 		else
 			chat_post_message( speech_text, channel: params[:event][:channel] )
 		end
-	end
-
-	def add_session_attribute( key, value )
-		puts "add_session_attribute: #{key} -> #{value}"
 	end
 
 	private

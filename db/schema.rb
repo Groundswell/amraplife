@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170720002304) do
+ActiveRecord::Schema.define(version: 20170727205200) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -69,6 +69,18 @@ ActiveRecord::Schema.define(version: 20170720002304) do
   add_index "assignments", ["assigned_by_id"], name: "index_assignments_on_assigned_by_id", using: :btree
   add_index "assignments", ["assigned_id", "assigned_type"], name: "index_assignments_on_assigned_id_and_assigned_type", using: :btree
   add_index "assignments", ["user_id"], name: "index_assignments_on_user_id", using: :btree
+
+  create_table "bot_sessions", force: :cascade do |t|
+    t.integer  "user_id"
+    t.string   "provider"
+    t.string   "uid"
+    t.hstore   "properties", default: {}
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "bot_sessions", ["provider", "uid", "user_id"], name: "index_bot_sessions_on_provider_and_uid_and_user_id", using: :btree
+  add_index "bot_sessions", ["updated_at"], name: "index_bot_sessions_on_updated_at", using: :btree
 
   create_table "cart_items", force: :cascade do |t|
     t.integer  "cart_id"

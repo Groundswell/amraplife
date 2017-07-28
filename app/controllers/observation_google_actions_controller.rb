@@ -15,11 +15,11 @@ class ObservationGoogleActionsController < ActionController::Base
 		assistant_response = GoogleAssistant.respond_to(params, response) do |assistant|
 
 			@user = SwellMedia::OauthCredential.where( token: assistant.user.access_token, provider: 'google.assistant' ).first.try(:user) if assistant.user.access_token.present?
-
+			@bot_session = BotSession.find_or_initialize_for( provider: "google.assistant", uid: assistant.user.access_token, user: @user )
 
 			assistant.intent.main do
 				action_response = GoogleActionResponse.new
-				@bot_service = ObservationBotService.new( response: action_response, user: @user, params: {}, dialog: DEFAULT_DIALOG, source: 'google_actions' )
+				@bot_service = ObservationBotService.new( response: action_response, session: @bot_session, user: @user, params: {}, dialog: DEFAULT_DIALOG, source: 'google_actions' )
 
 				request_text = params[:inputs].first[:raw_inputs].first[:query]
 				request_text = request_text.gsub(/^.* (lifemeter|life\s+meter|amraplife|amrap\s+life|am\s+wrap\s+life)/i, '').strip
@@ -30,6 +30,8 @@ class ObservationGoogleActionsController < ActionController::Base
 
 				action_response.respond( assistant )
 			end
+
+			@bot_session.save_if_used
 		end
 
 		puts "assistant_response #{assistant_response}"
@@ -122,10 +124,6 @@ class GoogleActionResponse
 	def add_speech(speech_text, ssml = false)
 		puts "add_speech: #{speech_text}"
 		@queue << [ :tell, speech_text ]
-	end
-
-	def add_session_attribute( key, value )
-		puts "add_session_attribute: #{key} -> #{value}"
 	end
 
 end

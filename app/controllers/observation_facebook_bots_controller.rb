@@ -13,9 +13,14 @@ class ObservationFacebookBotsController < ActionController::Base
 
 			params[:entry].each do |entry|
 				entry[:messaging].each do |messaging|
-					@user = SwellMedia::OauthCredential.where( uid: messaging[:sender][:id], provider: "chat.facebook" ).first.try(:user)
 
-					@bot_service = ObservationBotService.new( response: self, user: @user, params: {}, source: 'facebook', except: [ :workout_complete, :workout_start ] )
+
+					@bot_session = BotSession.where( provider: "chat.facebook", uid: messaging[:sender][:id] ).first_or_create
+
+					@user = SwellMedia::OauthCredential.where( uid: messaging[:sender][:id], provider: "chat.facebook" ).first.try(:user)
+					@bot_session = BotSession.find_or_initialize_for( provider: "chat.facebook", uid: messaging[:sender][:id], user: @user )
+
+					@bot_service = ObservationBotService.new( response: self, session: @bot_session, user: @user, params: {}, source: 'facebook', except: [ :workout_complete, :workout_start ] )
 
 					@messaging = messaging
 
@@ -24,6 +29,9 @@ class ObservationFacebookBotsController < ActionController::Base
 						chat_post_message( "Sorry, I don't know about that." )
 
 					end
+
+					@bot_session.save_if_used
+
 				end
 			end
 
@@ -93,10 +101,6 @@ class ObservationFacebookBotsController < ActionController::Base
 		else
 			chat_post_message( speech_text )
 		end
-	end
-
-	def add_session_attribute( key, value )
-		puts "add_session_attribute: #{key} -> #{value}"
 	end
 
 	private

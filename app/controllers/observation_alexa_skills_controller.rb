@@ -26,6 +26,10 @@ class ObservationAlexaSkillsController < ActionController::Base
 		@alexa_user = User.where( authorization_code: @alexa_session.access_token ).first if @alexa_session.access_token.present?
 		@alexa_user ||= SwellMedia::OauthCredential.where( token: @alexa_session.access_token, provider: 'amazon:alexa' ).first.try(:user) if @alexa_session.access_token.present?
 
+		@bot_session = BotSession.find_or_initialize_for( provider: "amazon:alexa", uid: @alexa_session.sessionId, user: @user )
+
+
+
 		@bot_service = ObservationBotService.new( request: @alexa_request, response: self, session: @alexa_session, params: @alexa_params, user: @alexa_user, dialog: DEFAULT_DIALOG, source: 'alexa' )
 
 		if (@alexa_request.type == 'SESSION_ENDED_REQUEST')
@@ -54,6 +58,8 @@ class ObservationAlexaSkillsController < ActionController::Base
 
 			end
 		end
+
+		@bot_session.save_if_used
 
 		render json: @alexa_response.build_response( !!!@ask_response )
 	end
@@ -126,10 +132,6 @@ class ObservationAlexaSkillsController < ActionController::Base
 
 	def add_speech(speech_text, ssml = false)
 		@alexa_response.add_speech( speech_text, ssml )
-	end
-
-	def add_session_attribute( key, value )
-		@alexa_response.add_session_attribute( key, value )
 	end
 
 	def add_stop_audio()
