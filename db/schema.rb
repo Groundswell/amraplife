@@ -74,7 +74,9 @@ ActiveRecord::Schema.define(version: 20170727205200) do
     t.integer  "user_id"
     t.string   "provider"
     t.string   "uid"
-    t.hstore   "properties", default: {}
+    t.string   "expected_intents", default: [], array: true
+    t.hstore   "context",          default: {}
+    t.hstore   "properties",       default: {}
     t.datetime "created_at"
     t.datetime "updated_at"
   end

@@ -68,7 +68,12 @@ class AbstractBotService
 		requested_intent_name = nil
 		requested_intent_matches = nil
 
-		compiled_intents.each do |intent_name, intent|
+		# place expected intents first, before public intents
+		intent_names = (@session.try(:expected_intents) || []).collect(&:to_sym) + compiled_public_intents.keys
+
+		intent_names.each do |intent_name|
+			intent = compiled_intents[intent_name]
+
 			unless ( matches = intent[:regex].match( text ) ).nil? || @except_intents.include?(intent_name.to_sym)
 				requested_intent_name = intent_name
 				requested_intent_matches = matches
@@ -76,7 +81,6 @@ class AbstractBotService
 			end
 		end
 
-		puts requested_intent_name
 
 		if requested_intent_name.present?
 			requested_intent = compiled_intents[requested_intent_name.to_sym]
@@ -184,6 +188,23 @@ class AbstractBotService
 
 	end
 
+	def self.compiled_public_intents
+
+		unless @compiled_public_intents.present?
+
+			@compiled_public_intents = {}
+
+			self.compiled_intents.each do |intent_name, intent|
+
+				@compiled_public_intents[intent_name] = @compiled_intents[intent_name] unless intent[:private]
+
+			end
+
+		end
+
+		@compiled_public_intents
+	end
+
 	def self.intents
 		@intents ||= DEFAULT_INTENTS
 		@intents
@@ -273,12 +294,12 @@ class AbstractBotService
 		end
 	end
 
-	def set_session_attribute( key, value )
-		@session.set_attribute( key, value )
+	def add_session_property( key, value )
+		@session.add_session_property( key, value )
 	end
 
-	def get_session_attribute( key )
-		@session.get_attribute( key )
+	def get_session_property( key )
+		@session.get_session_property( key )
 	end
 
 	def get_dialog( key, args = {} )

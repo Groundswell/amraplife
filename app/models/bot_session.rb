@@ -29,7 +29,7 @@ class BotSession < ActiveRecord::Base
 		end
 	end
 
-	def add_session_attribute( key, value )
+	def add_session_property( key, value )
 		self.properties = self.properties.merge( key.to_s => value )
 	end
 

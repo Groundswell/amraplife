@@ -6,6 +6,8 @@ class BotSessionMigration < ActiveRecord::Migration
 			t.belongs_to 	:user
 			t.string		:provider
 			t.string		:uid
+			t.string 		:expected_intents, array: true, default: '{}'
+			t.hstore 		:context, default: {}
 			t.hstore 		:properties, default: {}
 			t.timestamps
 		end
