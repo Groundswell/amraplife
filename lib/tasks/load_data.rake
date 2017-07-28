@@ -37,7 +37,7 @@ namespace :amraplife do
 		UserInput.destroy_all
 
 		puts "Adding some Metrics"
-		wt = Metric.create title: 'Weight', metric_type: 'physical', aliases: ['wt', 'lbs', 'weigh', 'weighed'], unit: 'g', display_unit: 'kg', target_type: :value, target_direction: :at_most, target_period: :all_time
+		wt = Metric.create title: 'Weight', metric_type: 'physical', aliases: ['wt', 'weigh', 'weighed'], unit: 'g', display_unit: 'kg', target_type: :value, target_direction: :at_most, target_period: :all_time
 		wst = Metric.create title: 'Waist', metric_type: 'physical', aliases: ['wst'], unit: 'm', display_unit: 'cm', target_type: :value, target_direction: :at_most, target_period: :all_time
 		wst = Metric.create title: 'Hips', metric_type: 'physical', aliases: ['hip'], unit: 'm', display_unit: 'cm', target_type: :value, target_direction: :at_most, target_period: :all_time
 		rhr = Metric.create title: 'Resting Heart Rate', metric_type: 'physical', aliases: ['pulse', 'heart rate', 'rhr'], unit: 'bpm', target_type: :value, target_direction: :at_most, target_period: :all_time
@@ -81,9 +81,10 @@ namespace :amraplife do
 		act = Metric.create title: '100m Time', metric_type: 'benchmark', aliases: ['hundred', 'one hundred', 'hundred time', 'hundred meter time', 'hundred meter'], unit: 's', target_type: :value, target_direction: :at_most, target_period: :all_time
 		act = Metric.create title: '400m Time', metric_type: 'benchmark', aliases: ['four_hundred'], unit: 's', target_type: :value, target_direction: :at_most, target_period: :all_time
 		act = Metric.create title: 'Mile Time', metric_type: 'benchmark', aliases: ['mile', 'one mile'], unit: 's', target_type: :value, target_direction: :at_most, target_period: :all_time
-		act = Metric.create title: 'Max Pushups', metric_type: 'benchmark', aliases: ['pushups'], unit: 'rep', target_type: :value, target_direction: :at_least, target_period: :all_time
-		act = Metric.create title: 'Max Pullups', metric_type: 'benchmark', aliases: ['pullups'], unit: 'rep', target_type: :value, target_direction: :at_least, target_period: :all_time
-		act = Metric.create title: 'Max Burpees', metric_type: 'benchmark', aliases: ['burpees'], unit: 'rep', target_type: :value, target_direction: :at_least, target_period: :all_time
+		# act = Metric.create title: 'Max Pushups', metric_type: 'benchmark', aliases: ['pushups'], unit: 'rep', target_type: :value, target_direction: :at_least, target_period: :all_time
+		# act = Metric.create title: 'Max Pullups', metric_type: 'benchmark', aliases: ['pullups'], unit: 'rep', target_type: :value, target_direction: :at_least, target_period: :all_time
+		# act = Metric.create title: 'Max Burpees', metric_type: 'benchmark', aliases: ['burpees'], unit: 'rep', target_type: :value, target_direction: :at_least, target_period: :all_time
+		# act = Metric.create title: 'Max Situps', metric_type: 'benchmark', aliases: ['burpees'], unit: 'rep', target_type: :value, target_direction: :at_least, target_period: :all_time
 
 
 	end

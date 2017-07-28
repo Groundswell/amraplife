@@ -36,7 +36,7 @@ class MetricAdminController < SwellMedia::AdminController
 
 	private
 		def metric_params
-			params.require( :metric ).permit( :title, :description, :unit, :movement_id, :aliases_csv, :metric_type )
+			params.require( :metric ).permit( :title, :description, :unit, :display_unit, :movement_id, :aliases_csv, :metric_type )
 		end
 
 		def set_metric

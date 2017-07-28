@@ -28,6 +28,10 @@ class MetricsController < ApplicationController
 
 	def update
 		@metric.update( metric_params )
+		if not( current_user.use_metric_units? ) && Metric.imperial_units[@metric.unit] && params[:metric][:display_unit].blank?
+			@metric.update( display_unit: Metric.imperial_units[@metric.unit] )
+		end
+
 		set_flash 'Updated'
 
 		if params[:metric][:reassign_to_metric_id].present?
@@ -42,6 +46,8 @@ class MetricsController < ApplicationController
 			redirect_to metrics_path
 			return false
 		end
+
+
 		
 		redirect_to :back
 	end
@@ -53,7 +59,7 @@ class MetricsController < ApplicationController
 		end
 
 		def metric_params
-			params[:metric][:unit] = params[:metric][:unit].singularize
+			params[:metric][:unit] = params[:metric][:unit].singularize.chomp( '.' )
 
 			params[:metric][:target] = ChronicDuration.parse( params[:metric][:target] ) if params[:metric][:target_type].match( /value/) && ChronicDuration.parse( params[:metric][:target] )
 			

@@ -464,9 +464,7 @@ ActiveRecord::Schema.define(version: 20170725200228) do
     t.string   "title"
     t.string   "content"
     t.float    "value"
-    t.float    "sub_value"
     t.string   "unit"
-    t.string   "sub_unit"
     t.string   "rx"
     t.text     "notes"
     t.datetime "started_at"
@@ -752,7 +750,7 @@ ActiveRecord::Schema.define(version: 20170725200228) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "authorization_code"
-    t.boolean  "use_metric_units",       default: false
+    t.boolean  "use_metric",             default: false
   end
 
   add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", unique: true, using: :btree

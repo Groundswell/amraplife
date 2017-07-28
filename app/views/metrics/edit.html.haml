@@ -26,7 +26,7 @@
 							- @metric.observations.order( recorded_at: :desc ).limit( 50 ).each do |obs|
 								%tr
 									%td
-										= Metric.convert_to_display( obs.value, obs )
+										= UnitService.new( val: obs.value, display_unit: obs.display_unit, stored_unit: obs.unit, use_metric: current_user.use_metric ).convert_to_display
 									%td
 										= obs.notes
 									%td
@@ -42,7 +42,7 @@
 
 						.form-group#display_unit
 							= f.label :display_unit
-							= f.text_field :display_unit, value: Metric.convert_to_imperial( @metric.display_unit ),class: 'form-control'
+							= f.text_field :display_unit, value: UnitService.new.translate_to_imperial( @metric.display_unit ),class: 'form-control'
 
 						.form-group
 							= f.label :aliases_csv, 'Aliases'
@@ -70,7 +70,7 @@
 								
 							.form-group
 								= f.label :target, 'Value:'
-								= f.text_field :target, value: Metric.convert_to_display( @metric.target, @metric ), class: 'form-control'
+								= f.text_field :target, value: UnitService.new( val: @metric.target, disp_unit: @metric.display_unit, base_unit: @metric.unit, use_metric: current_user.use_metric ).convert_to_display, class: 'form-control'
 							
 						
 						

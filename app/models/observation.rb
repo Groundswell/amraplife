@@ -32,7 +32,7 @@ class Observation < ActiveRecord::Base
 
 
 	def display_value
-		Metric.convert_to_display( self.value, self )	
+		UnitService.new( val: self.value, stored_unit: self.unit, display_unit: self.display_unit, use_metric: self.user.use_metric ).convert_to_display
 	end
 
 	def is_time?
@@ -83,11 +83,9 @@ class Observation < ActiveRecord::Base
 			self.recorded_at ||= Time.zone.now
 			#self.started_at ||= Time.zone.now
 
-			if self.observed.try( :unit ).present?
-				self.unit ||= self.observed.unit
-				self.display_unit ||= self.observed.display_unit
-			end
-		
+			self.unit ||= self.observed.unit
+			self.display_unit ||= self.observed.display_unit
+
 		end
 
 end
