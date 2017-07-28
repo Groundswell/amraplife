@@ -1112,8 +1112,8 @@ class ObservationBotService < AbstractBotService
 
 		add_speech(speech)
 		add_audio_url('https://cdn1.amraplife.com/assets/c45ca8e9-2a8f-4522-bdcb-b7df58f960f8.mp3', token: 'workout-player')
-		add_audio_url('https://cdn1.amraplife.com/assets/c45ca8e9-2a8f-4522-bdcb-b7df58f960f8.mp3', token: 'workout-player', enqueue: true )
-		add_audio_url('https://cdn1.amraplife.com/assets/c45ca8e9-2a8f-4522-bdcb-b7df58f960f8.mp3', token: 'workout-player', enqueue: true )
+		# add_audio_url('https://cdn1.amraplife.com/assets/c45ca8e9-2a8f-4522-bdcb-b7df58f960f8.mp3', token: 'workout-player', enqueue: true )
+		# add_audio_url('https://cdn1.amraplife.com/assets/c45ca8e9-2a8f-4522-bdcb-b7df58f960f8.mp3', token: 'workout-player', enqueue: true )
 
 		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'created', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{speech}'." )
 
