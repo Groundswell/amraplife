@@ -377,7 +377,7 @@ class ObservationBotService < AbstractBotService
 
 	def cancel
 		add_speech("Cancelling")
-		add_stop_audio()
+		add_clear_audio_queue()
 
 		user.user_inputs.create( content: raw_input, action: 'cancel', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{raw_input || 'cancel'}'" ) if user.present?
 	end
@@ -963,7 +963,7 @@ class ObservationBotService < AbstractBotService
 
 	def stop
 		add_speech("Stopping.")
-		add_stop_audio()
+		add_clear_audio_queue()
 	end
 
 	def target_remaining
@@ -1061,7 +1061,7 @@ class ObservationBotService < AbstractBotService
 
 		add_speech("Great!  I am logging your time.")
 		sys_notes = "Spoke: 'Great!  I am logging your time.'."
-		add_stop_audio()
+		add_clear_audio_queue()
 
 		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'updated', source: options[:source], result_status: 'success', system_notes: sys_notes )
 
