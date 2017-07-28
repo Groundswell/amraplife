@@ -17,26 +17,36 @@ class ObservationAlexaSkillsController < ActionController::Base
 		json_post = JSON.parse(request.raw_post)
 		json_post['version'] ||= 1 #bug, AlexaRubykit requires a version which is no longer provided?
 
-		unless json_post['request']['type'].start_with?('AudioPlayer.')
+
+
+		if json_post['context'].present? && json_post['context']["AudioPlayer"].present?
+			@alexa_audio_player = { offset: json_post['context']["AudioPlayer"]['offsetInMilliseconds'], state: json_post['context']["AudioPlayer"]['playerActivity'].downcase, token: json_post['context']["AudioPlayer"]['token'] }
+		end
+
+		if ( json_post['session'].present? && ( request_user = json_post['session']['user'] ).present? ) || ( request_user = json_post['context']['System']['user'] ).present?
+
+			@alexa_user = SwellMedia::OauthCredential.where( token: request_user['accessToken'], provider: 'amazon:alexa' ).first.try(:user) if request_user['accessToken'].present?
+
+		end
+
+		@alexa_response	= AlexaResponse.new
+
+		if json_post['context'].present?
+			@bot_session = BotSession.find_or_initialize_for( provider: "amazon:alexa", uid: json_post['context']["System"]['device']['deviceId'], user: @alexa_user )
+		elsif json_post['session']
+			@bot_session = BotSession.find_or_initialize_for( provider: "amazon:alexa", uid: json_post['session']['sessionId'], user: @alexa_user )
+		end
+		@alexa_user ||= @bot_session.user
+
+
+		if not( json_post['request']['type'].start_with?('AudioPlayer.') )
 			@alexa_request	= AlexaRubykit.build_request( json_post )
 			@alexa_session	= @alexa_request.session
-			@alexa_response	= AlexaResponse.new
 			@alexa_params 	= {}
 			@alexa_params	= Hash[*@alexa_request.slots.values.collect{|values| [values['name'].to_sym,values['value']]}.flatten] if @alexa_request.respond_to?(:slots) && @alexa_request.slots.present?
 
-			if json_post['context'].present? && json_post['context']["AudioPlayer"].present?
-				@alexa_audio_player = { offset: json_post['context']["AudioPlayer"]['offsetInMilliseconds'], state: json_post['context']["AudioPlayer"]['playerActivity'].downcase, token: json_post['context']["AudioPlayer"]['token'] }
-			end
 
-
-			@alexa_user = User.where( authorization_code: @alexa_session.access_token ).first if @alexa_session.access_token.present?
-			@alexa_user ||= SwellMedia::OauthCredential.where( token: @alexa_session.access_token, provider: 'amazon:alexa' ).first.try(:user) if @alexa_session.access_token.present?
-
-			@bot_session = BotSession.find_or_initialize_for( provider: "amazon:alexa", uid: @alexa_session.session_id, user: @user )
-
-
-
-			@bot_service = ObservationBotService.new( request: @alexa_request, response: self, session: @alexa_session, audio_player: @alexa_audio_player, params: @alexa_params, user: @alexa_user, dialog: DEFAULT_DIALOG, source: 'alexa' )
+			@bot_service = ObservationBotService.new( request: @alexa_request, response: self, session: @bot_session, audio_player: @alexa_audio_player, params: @alexa_params, user: @alexa_user, dialog: DEFAULT_DIALOG, source: 'alexa' )
 
 			if (@alexa_request.type == 'SESSION_ENDED_REQUEST')
 				# Wrap up whatever we need to do.
@@ -67,11 +77,12 @@ class ObservationAlexaSkillsController < ActionController::Base
 
 			@bot_session.save_if_used
 
-			render json: @alexa_response.build_response( !!!@ask_response )
 		else
 			# @todo manage audio events
-			render json: { "version": "1.0", "response": {} }
+			add_speech('test')
 		end
+
+		render json: @alexa_response.build_response( !!!@ask_response )
 	end
 
 	def login
