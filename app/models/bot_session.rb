@@ -2,8 +2,6 @@ class BotSession < ActiveRecord::Base
 
 	belongs_to :user
 
-	before_save :update_expire
-
 	def self.find_or_initialize_for( args = {} )
 		provider = args[:provider]
 		uid = args[:uid]

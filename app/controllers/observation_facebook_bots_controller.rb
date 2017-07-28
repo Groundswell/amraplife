@@ -14,9 +14,6 @@ class ObservationFacebookBotsController < ActionController::Base
 			params[:entry].each do |entry|
 				entry[:messaging].each do |messaging|
 
-
-					@bot_session = BotSession.where( provider: "chat.facebook", uid: messaging[:sender][:id] ).first_or_create
-
 					@user = SwellMedia::OauthCredential.where( uid: messaging[:sender][:id], provider: "chat.facebook" ).first.try(:user)
 					@bot_session = BotSession.find_or_initialize_for( provider: "chat.facebook", uid: messaging[:sender][:id], user: @user )
 
