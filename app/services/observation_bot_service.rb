@@ -818,8 +818,8 @@ class ObservationBotService < AbstractBotService
 	end
 
 	def resume
-		add_audio_url('https://cdn1.amraplife.com/assets/c45ca8e9-2a8f-4522-bdcb-b7df58f960f8.mp3', offset: 20500 )
-		add_stop_audio()
+		add_speech("Resuming workout.")
+		add_audio_url('https://cdn1.amraplife.com/assets/c45ca8e9-2a8f-4522-bdcb-b7df58f960f8.mp3', token: 'workout-player', offset: audio_player[:offset] )
 		user.user_inputs.create( content: raw_input, action: 'resume', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{raw_input || 'resume'}'" ) if user.present?
 	end
 
@@ -1117,7 +1117,7 @@ class ObservationBotService < AbstractBotService
 			sys_notes = "Spoke: 'Starting the workout of the day'."
 		end
 
-		add_audio_url('https://cdn1.amraplife.com/assets/c45ca8e9-2a8f-4522-bdcb-b7df58f960f8.mp3')
+		add_audio_url('https://cdn1.amraplife.com/assets/c45ca8e9-2a8f-4522-bdcb-b7df58f960f8.mp3', token: 'workout-player')
 
 		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'created', source: options[:source], result_status: 'success', system_notes: sys_notes )
 

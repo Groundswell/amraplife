@@ -55,6 +55,7 @@ class AbstractBotService
 		@dialog		= args[:dialog] || {}
 		@options	= args
 		@except_intents = (args[:except] || []).collect(&:to_sym)
+		@audio_player = args[:audio_player] || { offset: 0, state: 'stopped', token: nil }
 
 	end
 
@@ -91,6 +92,10 @@ class AbstractBotService
 			user.user_inputs.create( content: @raw_input, action: 'failed', source: options[:source], result_status: 'parse failure', system_notes: "I didn't understand '#{@raw_input}'" ) if user.present?
 			return false
 		end
+	end
+
+	def audio_player
+		@audio_player
 	end
 
 	def options
