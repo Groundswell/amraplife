@@ -1075,11 +1075,10 @@ class ObservationBotService < AbstractBotService
 
 		workout_name = params[:workoutname]
 
+		speech = "Today's workout is the 3 minute airsquat challenge.  Do as many air squats as you can in 3 minutes.  This workout is suitable for athletes of all levels."
+		add_speech(speech)
 
-		add_speech("Today's workout is the 3 minute airsquat challenge.  Do as many air squats as you can in 3 minutes.")
-		sys_notes = "Spoke: 'Today's workout is the 3 minute airsquat challenge.  Do as many air squats as you can in 3 minutes.'."
-
-		user.user_inputs.create( content: raw_input, action: 'created', source: options[:source], result_status: 'success', system_notes: sys_notes )
+		user.user_inputs.create( content: raw_input, action: 'created', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{speech}'." )
 
 	end
 
@@ -1109,17 +1108,14 @@ class ObservationBotService < AbstractBotService
 		#
 		# observation = Observation.create( user: user, observed: metric, started_at: Time.zone.now, notes: notes )
 
-		if workout_name.present?
-			add_speech("Starting the #{workout_name} workout")
-			sys_notes = "Spoke: 'Starting the #{workout_name} workout'."
-		else
-			add_speech("Starting the workout of the day")
-			sys_notes = "Spoke: 'Starting the workout of the day'."
-		end
+		speech = "Before we start the 3 minute airsquat challenge workout, let's quickly go over it.  As soon as I say. 3, 2, 1, go! Start doing air squats.  Do as many as you can in 3 minutes.  I will let you know when you're done.  Ready.  3, 2, 1, Go!"
 
+		add_speech(speech)
 		add_audio_url('https://cdn1.amraplife.com/assets/c45ca8e9-2a8f-4522-bdcb-b7df58f960f8.mp3', token: 'workout-player')
+		add_audio_url('https://cdn1.amraplife.com/assets/c45ca8e9-2a8f-4522-bdcb-b7df58f960f8.mp3', token: 'workout-player', enqueue: true )
+		add_audio_url('https://cdn1.amraplife.com/assets/c45ca8e9-2a8f-4522-bdcb-b7df58f960f8.mp3', token: 'workout-player', enqueue: true )
 
-		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'created', source: options[:source], result_status: 'success', system_notes: sys_notes )
+		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'created', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{speech}'." )
 
 
 	end

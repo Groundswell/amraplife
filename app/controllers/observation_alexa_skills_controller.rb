@@ -128,7 +128,8 @@ class ObservationAlexaSkillsController < ActionController::Base
 	def add_audio_url( url, args = {} )
 		args[:offset] ||= 0
 		args[:token] ||= SecureRandom.hex(10)
-		@alexa_response.add_audio_url( url, args[:token], args[:offset] )
+		play_behavior = "ENQUEUE" if args[:enqueue]
+		@alexa_response.add_audio_url( url, args[:token], args[:offset], play_behavior )
 	end
 
 	def add_card(type = nil, title = nil , subtitle = nil, content = nil)
@@ -162,6 +163,19 @@ class ObservationAlexaSkillsController < ActionController::Base
 end
 
 class AlexaResponse < AlexaRubykit::Response
+	def add_audio_url(url, token='', offset=0, play_behavior = nil)
+		@directives << {
+			'type' => 'AudioPlayer.Play',
+			'playBehavior' => play_behavior || 'REPLACE_ALL',
+			'audioItem' => {
+				'stream' => {
+					'token' => token,
+					'url' => url,
+					'offsetInMilliseconds' => offset
+				}
+			}
+		}
+	end
 
 	def add_stop_audio
 		@directives << {
