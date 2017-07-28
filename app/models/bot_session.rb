@@ -34,7 +34,7 @@ class BotSession < ActiveRecord::Base
 	end
 
 	def add_session_context( key, value )
-		self.context = self.properties.merge( key.to_s => value )
+		self.context = self.context.merge( key.to_s => value )
 	end
 
 	def clear_context
