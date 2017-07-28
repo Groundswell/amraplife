@@ -63,7 +63,8 @@ class AbstractBotService
 		text = text.strip
 		@raw_input = text
 
-		compiled_intents = self.class.compiled_intents
+		compiled_intents 		= self.class.compiled_intents
+		compiled_public_intents = self.class.compiled_public_intents
 
 		requested_intent_name = nil
 		requested_intent_matches = nil
