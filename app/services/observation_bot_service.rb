@@ -393,6 +393,7 @@ class ObservationBotService < AbstractBotService
 	end
 
 	def cancel
+		new_context
 		add_speech("Cancelling")
 		add_clear_audio_queue()
 
@@ -829,9 +830,16 @@ class ObservationBotService < AbstractBotService
 	end
 
 	def pause
-		add_speech("Pausing workout.")
-		add_stop_audio()
-		user.user_inputs.create( content: raw_input, action: 'pause', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{raw_input || 'pause'}'" ) if user.present?
+
+		if get_session_context( 'workout.type' ) == 'FT'
+
+			workout_complete()
+
+		else
+			add_speech("Pausing workout.")
+			add_stop_audio()
+			user.user_inputs.create( content: raw_input, action: 'pause', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{raw_input || 'pause'}'" ) if user.present?
+		end
 	end
 
 	def resume
@@ -1074,13 +1082,36 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
+		if get_session_context( 'workout.type' ).blank?
+
+			add_speech("Sorry, you haven't done that workout yet.")
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found' )
+			return
+
+		end
+
+
+
 		observation = nil
 
-		add_speech("Great!  I am logging your time.")
-		sys_notes = "Spoke: 'Great!  I am logging your time.'."
-		add_clear_audio_queue()
+		workout_name = get_session_context( 'workout.name' )
 
-		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'updated', source: options[:source], result_status: 'success', system_notes: sys_notes )
+		if get_session_context( 'workout.type' ) == 'FT'
+
+			seconds_lapsed = Time.now.to_i - get_session_context( 'workout.started_at' ).to_i
+			speech = "Good Job. Logging a time of #{seconds_lapsed} seconds for the #{workout_name} workout."
+
+		else
+
+			speech = "Good Job. Logging a score of #{params[:score] || 'NO SCORE'} for the #{workout_name} workout."
+
+		end
+
+		add_speech(speech)
+		add_clear_audio_queue()
+		new_context()
+
+		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'updated', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{speech}'." )
 
 	end
 
@@ -1127,12 +1158,36 @@ class ObservationBotService < AbstractBotService
 		#
 		# observation = Observation.create( user: user, observed: metric, started_at: Time.zone.now, notes: notes )
 
-		speech = "Before we start the 3 minute airsquat challenge workout, let's quickly go over it.  As soon as I say. 3, 2, 1, go! Start doing air squats.  Do as many as you can in 3 minutes.  I will let you know when you're done.  Ready.  3, 2, 1, Go!"
+		workouts = [
+			{
+				name: '3 Minute Air Squat Challenge',
+				explanation: "Before we start the 3 minute air squat challenge workout, let's quickly go over it.  As soon as I say. 3, 2, 1, go! Start doing air squats.  Do as many as you can in 3 minutes.  I will let you know when you're done.  Ready.  3, 2, 1, Go!",
+				context: {
+					'workout.type' => 'AMRAP',
+					'workout.audio.url' => 'https://cdn1.amraplife.com/assets/c45ca8e9-2a8f-4522-bdcb-b7df58f960f8.mp3',
+					'workout.audio[1].url' => 'https://www.soundboard.com/handler/DownLoadTrack.ashx?cliptitle=Beeping+and+whistling&filename=mt/MTQ1MzI4MzAzMTQ1Mzgw_jwPFPnna9_2bs.mp3',
+					'workout.audio.repeat' => 2,
+				}
+			},
+			{
+				name: '100 Burpee Challenge',
+				explanation: "Before we start the 100 burpee challenge, let's quickly go over it.  As soon as I say. 3, 2, 1, go! Start do 100 burpees, and let me know when you are done, by saying \"Alexa Stop\".  Ready ready.  3, 2, 1, Go!",
+				context: {
+					'workout.type' => 'FT',
+					'workout.audio.url' => 'https://cdn1.amraplife.com/assets/c45ca8e9-2a8f-4522-bdcb-b7df58f960f8.mp3',
+					'workout.audio.repeat' => -1,
+				}
+			}
+		]
+		workout = workouts.sample
 
-		add_session_context( 'workout.name', '3 minute airsquat challenge workout' )
-		add_session_context( 'workout.audio.url','https://cdn1.amraplife.com/assets/c45ca8e9-2a8f-4522-bdcb-b7df58f960f8.mp3' )
-		add_session_context( 'workout.audio[1].url','https://www.soundboard.com/handler/DownLoadTrack.ashx?cliptitle=Beeping+and+whistling&filename=mt/MTQ1MzI4MzAzMTQ1Mzgw_jwPFPnna9_2bs.mp3')
-		add_session_context( 'workout.audio.repeat', 2 )
+		speech = workout[:explanation]
+
+		add_session_context( 'workout.name', workout[:name] )
+		add_session_context( 'workout.started_at', Time.now.to_i )
+		workout[:context].each do |key, value|
+			add_session_context( key, value )
+		end
 
 		add_speech(speech)
 		add_audio_url( get_session_context( 'workout.audio.url' ) )
