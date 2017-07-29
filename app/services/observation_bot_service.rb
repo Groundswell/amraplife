@@ -1181,6 +1181,7 @@ class ObservationBotService < AbstractBotService
 
 			add_session_context( 'workout.audio.url', one_minute_audio )
 			add_session_context( 'workout.audio.repeat', -1 )
+			unit = 'sec'
 
 		elsif workout.workout_type == 'amrap'
 
@@ -1189,11 +1190,12 @@ class ObservationBotService < AbstractBotService
 			add_session_context( 'workout.audio.url', one_minute_audio )
 			add_session_context( 'workout.audio[1].url', all_done_audio )
 			add_session_context( 'workout.audio.repeat', rounds_of_audio )
+			unit = 'reps'
 
 		end
 
 		# observe the start of the workout.
-		observation = Observation.create( user: user, observed: workout, started_at: Time.zone.now, notes: nil )
+		observation = Observation.create( user: user, observed: workout, unit: unit, started_at: Time.zone.now, notes: nil )
 
 		# explain workout
 		add_speech(speech)
