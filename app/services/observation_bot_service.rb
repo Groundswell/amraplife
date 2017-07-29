@@ -831,7 +831,7 @@ class ObservationBotService < AbstractBotService
 
 	def pause
 
-		if get_session_context( 'workout.type' ) == 'FT'
+		if get_session_context( 'workout.type' ) == 'ft'
 
 			workout_complete()
 
@@ -1082,28 +1082,31 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
-		if get_session_context( 'workout.type' ).blank?
 
-			add_speech("Sorry, you haven't done that workout yet.")
+		workout = Workout.find( get_session_context( 'workout.id' ).to_i )
+
+		observation = user.observations.of( workout ).where( value: nil ).where( 'started_at is not null' ).order( started_at: :desc ).first
+
+		unless observation.present?
+
+			add_speech("Sorry, you haven't started a workout yet.")
 			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found' )
 			return
 
 		end
 
+		if workout.workout_type == 'ft'
 
+			observation.stop!
 
-		observation = nil
+			speech = "Good Job. Logging a time of #{observation.value.to_i} #{observation.unit} for the #{workout.title}."
 
-		workout_name = get_session_context( 'workout.name' )
+		elsif workout.workout_type == 'amrap'
 
-		if get_session_context( 'workout.type' ) == 'FT'
+			observation.value = params[:score]
+			observation.save
 
-			seconds_lapsed = Time.now.to_i - get_session_context( 'workout.started_at' ).to_i
-			speech = "Good Job. Logging a time of #{seconds_lapsed} seconds for the #{workout_name} workout."
-
-		else
-
-			speech = "Good Job. Logging a score of #{params[:score] || 'NO SCORE'} for the #{workout_name} workout."
+			speech = "Good Job. Logging a score of #{params[:score] || 'NO SCORE'} for the #{workout.title} workout."
 
 		end
 
@@ -1121,10 +1124,10 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
-		workout_name = params[:workoutname]
-		workout = get_workout( workout_name )
+		workout_title = params[:workoutname]
+		workout = get_workout( workout_title )
 
-		speech = workout[:description]
+		speech = workout.description_speech
 		add_speech(speech)
 
 		user.user_inputs.create( content: raw_input, action: 'created', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{speech}'." )
@@ -1137,11 +1140,7 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
-		add_speech("These are our most popular workouts. 3 minute airsquat challenge. 3 minute push up challenge.  3 minute sit up challenge.")
-		sys_notes = "Spoke: 'These are our most popular workouts. 3 minute airsquat challenge. 3 minute push up challenge.  3 minute sit up challenge.'."
-
-		user.user_inputs.create( content: raw_input, action: 'created', source: options[:source], result_status: 'success', system_notes: sys_notes )
-
+		# @todo
 	end
 
 	def workout_start
@@ -1152,24 +1151,55 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
-		workout_name = params[:workoutname]
+		workout_title = params[:workoutname]
 
 		observation = nil
-		# metric = get_user_metric( user, workout_name, 'sec', true )
-		#
-		# observation = Observation.create( user: user, observed: metric, started_at: Time.zone.now, notes: notes )
 
-		workout = get_workout( workout_name )
+		workout = get_workout( workout_title )
 
-		speech = workout[:explanation]
+		speech = "Before we start the #{workout.title}, let's quickly go over it.  "
+		if workout.workout_type == 'ft'
+			speech = "#{speech}#{workout.start_speech}  I will let you know when you're done.  Ready ready.  3, 2, 1, Go!"
+		elsif workout.workout_type == 'amrap'
 
-		add_session_context( 'workout.name', workout[:name] )
-		add_session_context( 'workout.started_at', Time.now.to_i )
-		workout[:context].each do |key, value|
-			add_session_context( key, value )
+			speech = "#{speech}#{workout.start_speech}  When you are done let me, by saying \"Alexa Stop\" and I will record your time.  Ready ready.  3, 2, 1, Go!"
+		else
+			speech = "#{speech}#{workout.start_speech}  Ready ready.  3, 2, 1, Go!"
 		end
 
+		# remember workout information
+		add_session_context( 'workout.id', workout.id )
+		add_session_context( 'workout.title', workout.title )
+		add_session_context( 'workout.started_at', Time.now.to_i )
+		add_session_context( 'workout.type', workout.workout_type )
+
+
+		# set audio context for workout
+		one_minute_audio 	= 'https://cdn1.amraplife.com/assets/c45ca8e9-2a8f-4522-bdcb-b7df58f960f8.mp3'
+		all_done_audio 		= 'https://www.soundboard.com/handler/DownLoadTrack.ashx?cliptitle=Beeping+and+whistling&filename=mt/MTQ1MzI4MzAzMTQ1Mzgw_jwPFPnna9_2bs.mp3'
+
+		if workout.workout_type == 'ft'
+
+			add_session_context( 'workout.audio.url', one_minute_audio )
+			add_session_context( 'workout.audio.repeat', -1 )
+
+		elsif workout.workout_type == 'amrap'
+
+			rounds_of_audio = (workout.total_duration / 1.minute.to_f).floor
+
+			add_session_context( 'workout.audio.url', one_minute_audio )
+			add_session_context( 'workout.audio[1].url', all_done_audio )
+			add_session_context( 'workout.audio.repeat', rounds_of_audio )
+
+		end
+
+		# observe the start of the workout.
+		observation = Observation.create( user: user, observed: workout, started_at: Time.zone.now, notes: nil )
+
+		# explain workout
 		add_speech(speech)
+
+		# and lay down those funky beats.
 		add_audio_url( get_session_context( 'workout.audio.url' ) )
 
 		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'created', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{speech}'." )
@@ -1196,61 +1226,48 @@ class ObservationBotService < AbstractBotService
 			observed_metric
 		end
 
-		def get_workout( workout_name = nil )
+		def get_workout( workout_title = nil )
 
 			workouts = [
 				{
-					name: '3 Minute Air Squat Challenge',
-					description: "3 Minute Air Squat Challenge.  Do as many air squats as you can in 3 minutes.  This workout is suitable for people of all fitness levels.",
-					explanation: "Before we start the 3 minute air squat challenge workout, let's quickly go over it.  As soon as I say, Go! Start doing air squats.  That is, from standing position, with your feet shoulder length apart, sit back and down, while pushing your knees out, until you knees are above your hips.  Raise your arms in front of you to assist in balancing.  Do as many as you can in 3 minutes.  I will let you know when you're done.  Ready ready.  3, 2, 1, Go!",
-					context: {
-						'workout.type' => 'AMRAP',
-						'workout.audio.url' => 'https://cdn1.amraplife.com/assets/c45ca8e9-2a8f-4522-bdcb-b7df58f960f8.mp3',
-						'workout.audio[1].url' => 'https://www.soundboard.com/handler/DownLoadTrack.ashx?cliptitle=Beeping+and+whistling&filename=mt/MTQ1MzI4MzAzMTQ1Mzgw_jwPFPnna9_2bs.mp3',
-						'workout.audio.repeat' => 2,
-					}
+					title: '3 Minute Air Squat Challenge',
+					description_speech: "3 Minute Air Squat Challenge.  Do as many air squats as you can in 3 minutes.  This workout is suitable for people of all fitness levels.",
+					start_speech: "As soon as I say, Go! Start doing air squats.  That is, from standing position, with your feet shoulder length apart, sit back and down, while pushing your knees out, until you knees are above your hips.  Raise your arms in front of you to assist in balancing.  Do as many as you can in 3 minutes.",
+					workout_type: 'amrap',
+					total_duration: 60*3
 				},
 				{
-					name: '100 Burpee Challenge',
-					description: "100 Burpee Challenge.  Do 100 burpees for time.  This workout is suitable for moderately athletic people.",
-					explanation: "Before we start the 100 burpee challenge, let's quickly go over it.  As soon as I say, Go! Start do 100 burpees, and let me know when you are done, by saying \"Alexa Stop\".  Ready ready.  3, 2, 1, Go!",
-					context: {
-						'workout.type' => 'FT',
-						'workout.audio.url' => 'https://cdn1.amraplife.com/assets/c45ca8e9-2a8f-4522-bdcb-b7df58f960f8.mp3',
-						'workout.audio.repeat' => -1,
-					}
+					title: '100 Burpee Challenge',
+					description_speech: "100 Burpee Challenge.  Do 100 burpees for time.  This workout is suitable for moderately athletic people.",
+					start_speech: "As soon as I say, Go! Start do 100 burpees.",
+					workout_type: 'ft',
+					total_duration: nil
 				},
 				{
-					name: '3 Minute Sit Up Challenge',
-					description: "3 Minute Sit Up Challenge.  Do as many sit ups as you can in 3 minutes.  This workout is suitable for people of all fitness levels.",
-					explanation: "Before we start the 3 minute sit up challenge, let's quickly go over it.  As soon as I say, Go! Start doing sit ups.  That is laying down with your legs in the lotus position and your arms touching the ground above your head.  From this position sit up and touch your feet.  Do as many as you can in 3 minutes.  I will let you know when you're done.  Ready ready.  3, 2, 1, Go!",
-					context: {
-						'workout.type' => 'AMRAP',
-						'workout.audio.url' => 'https://cdn1.amraplife.com/assets/c45ca8e9-2a8f-4522-bdcb-b7df58f960f8.mp3',
-						'workout.audio[1].url' => 'https://www.soundboard.com/handler/DownLoadTrack.ashx?cliptitle=Beeping+and+whistling&filename=mt/MTQ1MzI4MzAzMTQ1Mzgw_jwPFPnna9_2bs.mp3',
-						'workout.audio.repeat' => 2,
-					}
+					title: '3 Minute Sit Up Challenge',
+					description_speech: "3 Minute Sit Up Challenge.  Do as many sit ups as you can in 3 minutes.  This workout is suitable for people of all fitness levels.",
+					start_speech: "As soon as I say, Go! Start doing sit ups.  That is laying down with your legs in the lotus position and your arms touching the ground above your head.  From this position sit up and touch your feet.  Do as many as you can in 3 minutes.",
+					workout_type: 'amrap',
+					total_duration: 60*3
 				},
 				{
-					name: '3 Minute Push Up Challenge',
-					description: "3 Minute Push Up Challenge.  Do as many push ups as you can in 3 minutes.  This workout is suitable for people of all fitness levels.",
-					explanation: "Before we start the 3 minute push up challenge, let's quickly go over it.  As soon as I say, Go! Start doing push ups.  That is while laying down on your stomach, with your hands beneith your shoulders and your feet together, push your body off the floor until your arms are completely extended.  Your chest should touch the floor with every rep.  Do as many as you can in 3 minutes.  I will let you know when you're done.  Ready ready.  3, 2, 1, Go!",
-					context: {
-						'workout.type' => 'AMRAP',
-						'workout.audio.url' => 'https://cdn1.amraplife.com/assets/c45ca8e9-2a8f-4522-bdcb-b7df58f960f8.mp3',
-						'workout.audio[1].url' => 'https://www.soundboard.com/handler/DownLoadTrack.ashx?cliptitle=Beeping+and+whistling&filename=mt/MTQ1MzI4MzAzMTQ1Mzgw_jwPFPnna9_2bs.mp3',
-						'workout.audio.repeat' => 2,
-					}
+					title: '3 Minute Push Up Challenge',
+					description_speech: "3 Minute Push Up Challenge.  Do as many push ups as you can in 3 minutes.  This workout is suitable for people of all fitness levels.",
+					start_speech: "As soon as I say, Go! Start doing push ups.  That is while laying down on your stomach, with your hands beneith your shoulders and your feet together, push your body off the floor until your arms are completely extended.  Your chest should touch the floor with every rep.  Do as many as you can in 3 minutes.",
+					workout_type: 'amrap',
+					total_duration: 60*3
 				},
 			]
 
 
 
 			wod_index = Date.today.yday() % workouts.length
-			workout = workouts[wod_index]
+			workout_attributes = workouts[wod_index]
+
+			workout = Workout.where( title: workout_attributes[:title] ).first_or_initialize( workout_attributes )
+			workout.save
 
 			workout
-
 		end
 
 end

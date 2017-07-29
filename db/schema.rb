@@ -827,6 +827,8 @@ ActiveRecord::Schema.define(version: 20170727205200) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.hstore   "properties",          default: {}
+    t.text     "description_speech"
+    t.text     "start_speech"
   end
 
   add_index "workouts", ["slug"], name: "index_workouts_on_slug", unique: true, using: :btree
