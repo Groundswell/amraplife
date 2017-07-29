@@ -1229,7 +1229,7 @@ class ObservationBotService < AbstractBotService
 
 		def get_workout( workout_title = nil )
 
-			workouts = Workout.active.where.not( description_speech: nil, start_speech: nil )
+			workouts = Workout.active.where.not( description_speech: nil, start_speech: nil, description_speech: '', start_speech: '' )
 
 			workout_count = workouts.count
 
