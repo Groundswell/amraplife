@@ -1227,46 +1227,14 @@ class ObservationBotService < AbstractBotService
 
 		def get_workout( workout_title = nil )
 
-			workouts = [
-				{
-					title: '3 Minute Air Squat Challenge',
-					description_speech: "3 Minute Air Squat Challenge.  Do as many air squats as you can in 3 minutes.  This workout is suitable for people of all fitness levels.",
-					start_speech: "As soon as I say, Go! Start doing air squats.  That is, from standing position, with your feet shoulder length apart, sit back and down, while pushing your knees out, until you knees are above your hips.  Raise your arms in front of you to assist in balancing.  Do as many as you can in 3 minutes.",
-					workout_type: 'amrap',
-					total_duration: 60*3
-				},
-				{
-					title: '100 Burpee Challenge',
-					description_speech: "100 Burpee Challenge.  Do 100 burpees for time.  This workout is suitable for moderately athletic people.",
-					start_speech: "As soon as I say, Go! Start do 100 burpees.",
-					workout_type: 'ft',
-					total_duration: nil
-				},
-				{
-					title: '3 Minute Sit Up Challenge',
-					description_speech: "3 Minute Sit Up Challenge.  Do as many sit ups as you can in 3 minutes.  This workout is suitable for people of all fitness levels.",
-					start_speech: "As soon as I say, Go! Start doing sit ups.  That is laying down with your legs in the lotus position and your arms touching the ground above your head.  From this position sit up and touch your feet.  Do as many as you can in 3 minutes.",
-					workout_type: 'amrap',
-					total_duration: 60*3
-				},
-				{
-					title: '3 Minute Push Up Challenge',
-					description_speech: "3 Minute Push Up Challenge.  Do as many push ups as you can in 3 minutes.  This workout is suitable for people of all fitness levels.",
-					start_speech: "As soon as I say, Go! Start doing push ups.  That is while laying down on your stomach, with your hands beneith your shoulders and your feet together, push your body off the floor until your arms are completely extended.  Your chest should touch the floor with every rep.  Do as many as you can in 3 minutes.",
-					workout_type: 'amrap',
-					total_duration: 60*3
-				},
-			]
+			workouts = Workout.active.where.not( description_speech: nil, start_speech: nil )
 
+			workout_count = workouts.count
 
+			wod_index = ( ENV['TEST_WORKOUT_INDEX'] || Date.today.yday() % workout_count )
 
-			wod_index = Date.today.yday() % workouts.length
-			workout_attributes = workouts[(ENV['TEST_WORKOUT_INDEX'] || wod_index).to_i]
+			workouts.offset( wod_index ).first
 
-			workout = Workout.where( title: workout_attributes[:title] ).first_or_initialize( workout_attributes )
-			workout.save
-
-			workout
 		end
 
 end
