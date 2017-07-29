@@ -89,7 +89,10 @@ class ObservationAlexaSkillsController < ActionController::Base
 
 		@bot_session.save_if_used
 
-		render json: @alexa_response.build_response( !!!@ask_response )
+		response_json = @alexa_response.build_response( !!!@ask_response )
+		puts response_json
+
+		render json: response_json
 	end
 
 	def login
