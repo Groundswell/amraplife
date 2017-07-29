@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/Groundswell/swell_ecom.git
-  revision: 589398809b8e54b77221be8d82488fb830148d56
+  revision: dee28159a4c2a9f31206602ca9d7f2477ce10475
   specs:
     swell_ecom (0.0.1)
       stripe
@@ -490,7 +490,7 @@ GEM
       rserve-client (~> 0.3)
       rubyvis (~> 0.6.1)
       spreadsheet (~> 1.1)
-    stripe (2.12.0)
+    stripe (3.0.3)
       faraday (~> 0.9)
     tax_cloud (0.3.0)
       activesupport (>= 3.0)
