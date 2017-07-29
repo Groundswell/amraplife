@@ -381,7 +381,7 @@ class ObservationBotService < AbstractBotService
 
 		if params[:event] == 'AudioPlayer.PlaybackNearlyFinished' && ( repeat = (get_session_context( 'workout.audio.repeat' ) || 0).to_i ) != 0
 
-			set_session_context( 'workout.audio.repeat', repeat-1 ) if repeat > 0
+			add_session_context( 'workout.audio.repeat', repeat-1 ) if repeat > 0
 
 			audio_url = get_session_context( "workout.audio[#{repeat}].url" )
 			audio_url ||= get_session_context( 'workout.audio.url' )
