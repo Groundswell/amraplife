@@ -15,5 +15,8 @@ class BotSessionMigration < ActiveRecord::Migration
 		add_index :bot_sessions, [ :updated_at ]
 
 
+		add_column :workouts, :description_speech, :text
+		add_column :workouts, :start_speech, :text
+
 	end
 end
