@@ -1,10 +1,10 @@
 
-class WorkoutAdminController < SwellMedia::AdminController 
+class WorkoutAdminController < SwellMedia::AdminController
 	before_action :set_workout, only: [:show, :edit, :update, :destroy]
 
 	def create
 		@workout = Workout.new( workout_params )
-		@workout.save 
+		@workout.save
 		redirect_to edit_workout_admin_path( @workout )
 	end
 
@@ -31,7 +31,7 @@ class WorkoutAdminController < SwellMedia::AdminController
 		# 	@segment = @workout.workout_segments.first || WorkoutSegment.new( every_interval: 1 )
 		# 	render 'edit_eotm'
 		# end
-		
+
 	end
 
 	def index
@@ -45,7 +45,7 @@ class WorkoutAdminController < SwellMedia::AdminController
 		end
 
 		@workouts = @workouts.page( params[:page] )
-		
+
 	end
 
 	def update
@@ -56,7 +56,7 @@ class WorkoutAdminController < SwellMedia::AdminController
 
 	private
 		def workout_params
-			params.require( :workout ).permit( :title, :description, :content, :workout_type, :status, :tags_csv, :slug_pref ) 	
+			params.require( :workout ).permit( :title, :description, :content, :workout_type, :status, :tags_csv, :slug_pref, :description_speech, :start_speech, :total_duration ) 	
 		end
 
 		def set_workout

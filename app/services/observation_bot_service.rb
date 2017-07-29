@@ -1159,7 +1159,7 @@ class ObservationBotService < AbstractBotService
 
 		speech = "Before we start the #{workout.title}, let's quickly go over it.  "
 		if workout.workout_type == 'ft'
-			speech = "#{speech}#{workout.start_speech}  When you are done let me, by saying \"Alexa Stop\" and I will record your time.  Ready ready.  3, 2, 1, Go!"
+			speech = "#{speech}#{workout.start_speech}  When you are done let me know by saying \"Alexa Stop\" and I will record your time.  Ready ready.  3, 2, 1, Go!"
 		elsif workout.workout_type == 'amrap'
 			speech = "#{speech}#{workout.start_speech}  I will let you know when you're done.  Ready ready.  3, 2, 1, Go!"
 		else
