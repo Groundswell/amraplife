@@ -377,7 +377,9 @@ class ObservationBotService < AbstractBotService
 
 	def audio_event
 
-		if params['event'] == 'AudioPlayer.PlaybackNearlyFinished' && ( repeat = (get_session_context( 'workout.audio.repeat' ) || 0).to_i ) != 0
+
+
+		if params[:event] == 'AudioPlayer.PlaybackNearlyFinished' && ( repeat = (get_session_context( 'workout.audio.repeat' ) || 0).to_i ) != 0
 
 			set_session_context( 'workout.audio.repeat', repeat-1 ) if repeat > 0
 
