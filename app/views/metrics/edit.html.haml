@@ -42,7 +42,7 @@
 
 						.form-group#display_unit
 							= f.label :display_unit
-							= f.text_field :display_unit, value: UnitService.new.translate_to_imperial( @metric.display_unit ),class: 'form-control'
+							= f.text_field :display_unit, class: 'form-control'
 
 						.form-group
 							= f.label :aliases_csv, 'Aliases'

@@ -13,9 +13,9 @@
 					.form-group
 						= f.label :value
 						.input-group
-							= f.text_field :value, value: @observation.formatted_value, class: 'form-control'
+							= f.text_field :value, value: @observation.display_value, class: 'form-control'
 							%span.input-group-addon
-								= @observation.unit
+								= @observation.display_unit
 
 					.form-group
 						= f.label :notes

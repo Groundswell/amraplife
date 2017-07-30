@@ -30,10 +30,7 @@
 							- else
 								Arbitrary
 						%td
-							- if not( current_user.use_metric? )
-								= UnitService.new.translate_to_imperial( metric.display_unit )
-							- else
-								= metric.display_unit
+							= metric.display_unit
 						%td
 							= metric.observations.count
 						%td

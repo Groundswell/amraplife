@@ -52,9 +52,9 @@ namespace :amraplife do
 
 		nutrition = Metric.create title: 'Calories', metric_type: 'nutrition', 	aliases: ['eat', 'ate', 'eating', 'eaten', 'cal', 'cals', 'meal', 'breakfast', 'lunch', 'dinner', 'snack', 'block', 'blocks'], unit: 'Cal', target_type: :sum_value, target_direction: :at_most, target_period: :daily, target: 2000
 		nutrition = Metric.create title: 'Blocks', metric_type: 'nutrition', 	aliases: ['eat', 'ate', 'eating', 'meal', 'breakfast', 'lunch', 'dinner', 'snack', 'block', 'blocks'], unit: 'block', target_type: :sum_value, target_direction: :at_most, target_period: :daily, target: 15
-		nutrition = Metric.create title: 'Protein', metric_type: 'nutrition',	aliases: ['prot', 'grams protein', 'grams of protein' ], unit: 'g', target_type: :sum_value, target_direction: :at_least, target_period: :daily
-		nutrition = Metric.create title: 'Fat', metric_type: 'nutrition', 		aliases: ['fat', 'grams fat', 'grams of fat' ], unit: 'g', target_type: :sum_value, target_direction: :at_most, target_period: :daily
-		nutrition = Metric.create title: 'Carb', metric_type: 'nutrition', 		aliases: ['carb', 'carbs', 'carbohydrates', 'grams carb', 'grams of carb', 'net carbs' ], unit: 'g', target_type: :sum_value, target_direction: :at_most, target_period: :daily
+		nutrition = Metric.create title: 'Protein', metric_type: 'nutrition',	aliases: ['prot', 'grams protein', 'grams of protein' ], unit: 'g', display_unit: 'g', target_type: :sum_value, target_direction: :at_least, target_period: :daily
+		nutrition = Metric.create title: 'Fat', metric_type: 'nutrition', 		aliases: ['fat', 'grams fat', 'grams of fat' ], unit: 'g', display_unit: 'g', target_type: :sum_value, target_direction: :at_most, target_period: :daily
+		nutrition = Metric.create title: 'Carb', metric_type: 'nutrition', 		aliases: ['carb', 'carbs', 'carbohydrates', 'grams carb', 'grams of carb', 'net carbs' ], unit: 'g', display_unit: 'g', target_type: :sum_value, target_direction: :at_most, target_period: :daily
 		nutrition = Metric.create title: 'Sugar', metric_type: 'nutrition', 	aliases: ['sugars', 'grams sugar', 'grams of sugar' ], unit: 'g', target_type: :sum_value, target_direction: :at_most, target_period: :daily
 		nutrition = Metric.create title: 'Water', metric_type: 'nutrition', 	aliases: ['of water' ], unit: 'l', display_unit: 'ml', target_type: :sum_value, target_direction: :at_least, target_period: :daily
 		nutrition = Metric.create title: 'Alcohol', metric_type: 'nutrition', 	aliases: [ 'of alcohol', 'beer', 'wine', 'liquor' ], unit: 'l', display_unit: 'ml', target_type: :sum_value, target_direction: :at_most, target_period: :daily
@@ -69,7 +69,8 @@ namespace :amraplife do
 		act = Metric.create title: 'Run', metric_type: 'activity', aliases: ['running', 'ran', 'jog', 'jogging', 'jogged'], unit: 's'
 
 		bmi = Metric.create title: 'Workout', metric_type: 'activity', aliases: ['wkout', 'worked out', 'exercise', 'exercised'], unit: 's'
-		bmi = Metric.create title: 'AMRAP', metric_type: 'activity', aliases: ['amrap'], unit: 'rep'
+		# workouts must have time... record scores, reps, etc as sub observations.
+		# bmi = Metric.create title: 'AMRAP', metric_type: 'activity', aliases: ['amrap'], unit: 'rep'
 
 		act = Metric.create title: 'Max Bench', metric_type: 'benchmark', aliases: ['bench', 'bench press'], unit: 'g', display_unit: 'kg', target_type: :value, target_direction: :at_least, target_period: :all_time
 		act = Metric.create title: 'Max Deadlift', metric_type: 'benchmark', aliases: ['deadlift', 'dl', 'dead lift'], unit: 'g', display_unit: 'kg', target_type: :value, target_direction: :at_least, target_period: :all_time

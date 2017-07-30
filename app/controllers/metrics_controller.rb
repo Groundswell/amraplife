@@ -28,11 +28,11 @@ class MetricsController < ApplicationController
 
 	def update
 		@metric.update( metric_params )
-		if not( current_user.use_metric_units? ) && Metric.imperial_units[@metric.unit] && params[:metric][:display_unit].blank?
-			@metric.update( display_unit: Metric.imperial_units[@metric.unit] )
-		end
 
-		set_flash 'Updated'
+		
+		if @metric.previous_changes.include?( :display_unit )
+			@metric.observations.update_all( display_unit: @metric.display_unit )
+		end
 
 		if params[:metric][:reassign_to_metric_id].present?
 			# sanity-check that this is a valid assigned metric for the user
@@ -47,7 +47,7 @@ class MetricsController < ApplicationController
 			return false
 		end
 
-
+		set_flash 'Updated'
 		
 		redirect_to :back
 	end
@@ -59,9 +59,8 @@ class MetricsController < ApplicationController
 		end
 
 		def metric_params
-			params[:metric][:unit] = params[:metric][:unit].singularize.chomp( '.' )
 
-			params[:metric][:target] = ChronicDuration.parse( params[:metric][:target] ) if params[:metric][:target_type].match( /value/) && ChronicDuration.parse( params[:metric][:target] )
+			params[:metric][:target] = UnitService.new( val: params[:metric][:target], unit: @metric.unit, disp_unit: @metric.display_unit, use_metric: current_user.use_metric ).convert_to_stored_value
 			
 			params.require( :metric ).permit( :title, :unit, :display_unit, :aliases_csv, :description, :target, :target_type, :target_period, :target_direction )
 		end

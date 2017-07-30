@@ -79,14 +79,17 @@ class UnitService
 
 	def initialize( opts={} )
 		@val = opts[:val] || opts[:value]
-		@stored_unit = opts[:stored_unit] || opts[:base_unit]
-		@display_unit = opts[:display_unit] || opts[:disp_unit]
+		
+		@stored_unit = opts[:stored_unit] || opts[:base_unit] || opts[:unit]
+		
+		@user_unit = opts[:display_unit] || opts[:disp_unit] || opts[:user_unit]
+		@user_unit = @user_unit.chomp( 's' ).chomp( '.' ) if @user_unit.present?
+
 		@use_metric = opts[:use_metric] || false
 		@precision = opts[:precision] || 2
 	end
 
 	def convert_to_display
-
 		return nil if @val.nil?
 
 		if @stored_unit == 's'
@@ -94,29 +97,51 @@ class UnitService
 		elsif @stored_unit == '%'
 			return "#{( @val * 100.to_f ).round( @precision )}%"
 		else
-			users_unit = @display_unit
-			if not( @use_metric ) 
-				users_unit = translate_to_imperial( users_unit )
-			end
+			# if not( @use_metric ) 
+			# 	@user_unit = translate_to_imperial( @user_unit )
+			# end
 			begin
-				value = Unitwise( @val, @stored_unit ).convert_to( users_unit ).to_f.round( @precision )
+				value = Unitwise( @val, @stored_unit ).convert_to( @user_unit ).to_f.round( @precision )
 			rescue
 				value = @val
 			end
-			unless users_unit.blank?
-				return value == 1 ? "#{value} #{users_unit}" : "#{value} #{users_unit}s"
+			unless @user_unit.blank?
+				return value == 1 ? "#{value} #{@user_unit}" : "#{value} #{@user_unit}s"
 			else
 				return "#{value}"
 			end
 		end
 	end
 
-	def convert_to_stored( val, disp_unit, stored_unit, opts={} )
-		use_metric = opts[:use_metric] || false
-		precision = opts[:precision] || 2
+	def convert_to_stored_value
+		value = @val
+
+		@stored_unit = convert_to_stored_unit if @stored_unit.nil?
+		
+		if @stored_unit == 's'
+			value = ChronicDuration.parse( "#{@val} #{@display_unit}" )
+
+		elsif @stored_unit == '%'
+			value = ( @val / 100.to_f ).round( @precision )
+
+		elsif STORED_UNIT_MAP.values.uniq.include?( @stored_unit )
+			begin
+				value = Unitwise( @val, @user_unit ).convert_to( @stored_unit ).to_f.round( @precision )
+			rescue
+				value = @val
+			end
+		end
+
+		return value
 	end
 
-
+	def convert_to_stored_unit
+		if STORED_UNIT_MAP[ @user_unit ].present?
+			@stored_unit = STORED_UNIT_MAP[ @user_unit ]
+		else
+			@stored_unit = @user_unit
+		end
+	end
 
 
 end
