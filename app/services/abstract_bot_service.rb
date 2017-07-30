@@ -47,16 +47,29 @@ class AbstractBotService
 
 	def initialize( args = {} )
 
-		@request	= args[:request]
-		@session	= args[:session]
-		@response	= args[:response] || DefaultActionResponse.new
-		@params 	= args[:params] || {}
-		@user 		= args[:user]
-		@dialog		= args[:dialog] || {}
-		@options	= args
-		@except_intents = (args[:except] || []).collect(&:to_sym)
-		@audio_player = args[:audio_player] || { offset: 0, state: 'stopped', token: nil }
+		if args.is_a? Hash
+			@request	= args[:request]
+			@session	= args[:session]
+			@response	= args[:response] || DefaultActionResponse.new
+			@params 	= args[:params] || {}
+			@user 		= args[:user]
+			@dialog		= args[:dialog] || {}
+			@options	= args
+			@except_intents = (args[:except] || []).collect(&:to_sym)
+			@audio_player = args[:audio_player] || { offset: 0, state: 'stopped', token: nil }
+		else
 
+			@request	= args.request
+			@session	= args.session
+			@response	= args.response
+			@params 	= args.params
+			@user 		= args.user
+			@dialog		= args.dialog
+			@options	= args.options
+			@except_intents = args.except
+			@audio_player = args.audio_player
+
+		end
 	end
 
 	def respond_to_text( text, args = {} )
@@ -91,7 +104,8 @@ class AbstractBotService
 				@params[name.to_sym] = requested_intent_matches[name]
 			end
 
-			self.send( requested_intent_name )
+
+			self.call_intent( requested_intent_name )
 			return true
 		else
 			user.user_inputs.create( content: @raw_input, action: 'failed', source: options[:source], result_status: 'parse failure', system_notes: "I didn't understand '#{@raw_input}'" ) if user.present?
@@ -101,6 +115,31 @@ class AbstractBotService
 
 	def audio_player
 		@audio_player
+	end
+
+	def call_intent( intent_name )
+
+		if ( bot_service_name = self.class.compiled_intents[intent_name.to_sym][:bot_service] ).present?
+
+			bot_services = self.class.bot_services
+			@bot_service_instances ||= {}
+			@bot_service_instances[bot_service_name.to_sym] ||= bot_services[bot_service_name.to_sym][:class].constantize.new( self )
+
+			@bot_service_instances[bot_service_name.to_sym].call_intent( intent_name )
+		else
+
+			self.send( intent_name )
+
+		end
+
+	end
+
+	def dialog
+		@dialog
+	end
+
+	def except
+		@except
 	end
 
 	def options
@@ -131,6 +170,20 @@ class AbstractBotService
 		@session
 	end
 
+	def self.mount_intent( bot_service, intent )
+		self.mount_intents bot_service, [ intent ]
+	end
+
+	def self.mount_intents( bot_service, options = :all )
+		bot_service = bot_service.to_sym
+		options = options.collect(&:to_sym) if options.is_a? Array
+
+		@bot_services ||= {}
+		@bot_services[bot_service] ||= { class: bot_service.to_s.camelize }
+
+		self.add_intent( "_mount_#{self.intents.count+1}".to_sym, type: :mount, bot_service: bot_service, intents: options )
+	end
+
 	def self.add_intents( intents )
 		intents.each do |name, definition|
 			add_intent( name, definition )
@@ -138,10 +191,16 @@ class AbstractBotService
 	end
 
 	def self.add_intent( name, definition )
-		@intents ||= DEFAULT_INTENTS
-		definition[:utterances].each_with_index do |utterance,index|
-			definition[:utterances][index] = utterance.gsub(/\s+/,'\\s+')
+		@intents ||= ({}.merge(DEFAULT_INTENTS))
+
+		definition[:type] ||= :local
+
+		if definition[:utterances].present?
+			definition[:utterances].each_with_index do |utterance,index|
+				definition[:utterances][index] = utterance.gsub(/\s+/,'\\s+')
+			end
 		end
+
 		@intents[name.to_sym] = definition
 	end
 
@@ -152,8 +211,13 @@ class AbstractBotService
 	end
 
 	def self.add_slot( name, definition )
-		@slots ||= DEFAULT_SLOTS
+		@slots ||= ({}.merge(DEFAULT_SLOTS))
 		@slots[name.to_sym] = definition
+	end
+
+	def self.bot_services
+		@bot_services ||= {}
+		@bot_services
 	end
 
 	def self.compiled_intents
@@ -162,25 +226,41 @@ class AbstractBotService
 			@compiled_intents = {}
 
 			self.intents.each do |intent_name,intent|
-				regex = nil
-				(intent[:utterances] || []).each do |utterance|
-					utterance_regex = utterance
-					(intent[:slots] || {}).each do |slot_name, slot_type|
-						slot = slots[slot_type.to_sym]
 
-						utterance_regex = utterance_regex.gsub("{#{slot_name}}","(?'#{slot_name}'#{slot[:regex].join('|')})")
+				if intent[:type] == :mount
+
+					bot_service_name	= intent[:bot_service]
+					bot_service_class	= @bot_services[bot_service_name][:class].constantize
+					bot_service_class.compiled_intents.each do |bot_service_intent_name, bot_service_intent|
+						if intent[:intents] == :all || intent[:intents].include?(bot_service_intent_name.to_sym)
+							@compiled_intents[bot_service_intent_name] = bot_service_intent.merge( bot_service: bot_service_name )
+						end
 					end
 
-					if ( matches = utterance_regex.match(/\{[a-z][a-z0-9\-_]*\}/i) ).present?
-						raise Exception.new( "ERROR unmatches slots!!! (intent_name: #{intent_name}, utterance: \"#{utterance}\"). #{matches[0]} in \"#{utterance_regex}\"" )
+				else
+
+					regex = nil
+					(intent[:utterances] || []).each do |utterance|
+						utterance_regex = utterance
+						(intent[:slots] || {}).each do |slot_name, slot_type|
+							slot = slots[slot_type.to_sym]
+
+							utterance_regex = utterance_regex.gsub("{#{slot_name}}","(?'#{slot_name}'#{slot[:regex].join('|')})")
+						end
+
+						if ( matches = utterance_regex.match(/\{[a-z][a-z0-9\-_]*\}/i) ).present?
+							raise Exception.new( "ERROR unmatches slots!!! (intent_name: #{intent_name}, utterance: \"#{utterance}\"). #{matches[0]} in \"#{utterance_regex}\"" )
+						end
+
+						regex = regex + '|' if regex.present?
+						regex = (regex || '') + utterance_regex
 					end
 
-					regex = regex + '|' if regex.present?
-					regex = (regex || '') + utterance_regex
+					regex = '^(' + regex + ')$'
+					@compiled_intents[intent_name] = intent.merge( regex: Regexp.new( regex, true ) )
+
 				end
 
-				regex = '^(' + regex + ')$'
-				@compiled_intents[intent_name] = intent.merge( regex: Regexp.new( regex, true ) )
 			end
 
 		end
@@ -207,12 +287,12 @@ class AbstractBotService
 	end
 
 	def self.intents
-		@intents ||= DEFAULT_INTENTS
+		@intents ||= ({}.merge(DEFAULT_INTENTS))
 		@intents
 	end
 
 	def self.slots
-		@slots ||= DEFAULT_SLOTS
+		@slots ||= ({}.merge(DEFAULT_SLOTS))
 		@slots
 	end
 
