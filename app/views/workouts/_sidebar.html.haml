@@ -1,0 +1,21 @@
+
+.panel.panel-default
+	.panel-heading
+		Just a Thought
+	.panel-body
+		- Inspiration.published.order( 'random()' ).limit( 1 ).each do |inspiration|
+			%a{ :href => inspiration.path }
+				%img.img.img-responsive{ src: inspiration.avatar }
+
+
+.panel.panel-default
+	.panel-heading
+		Related Products
+	.panel-body
+		%script{ src: "//z-na.amazon-adsystem.com/widgets/onejs?MarketPlace=US&adInstanceId=9b863990-4462-4a7a-867d-9c30c6fb51cd" }
+
+.panel.panel-default
+	.panel-heading
+		Sponsors
+	.panel-body
+		= render 'application/adsense_sidebar'

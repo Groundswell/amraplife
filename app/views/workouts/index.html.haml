@@ -1,29 +1,32 @@
 
-#content.content.section.row
-	.col-md-8.bg-base.col-lg-8.col-xl-9
-		.ribbon.ribbon-highlight
-			%ol.breadcrumb.ribbon-inner
-				%li
-					%a{ href: swell_media.root_path() }
-						Home
-				%li.active
-					%a{ href: '/workouts' }
-						Workouts
-
-		%h2
-			= pluralize @workouts.total_count, 'Workout'
-
-		= paginate @workouts
-
-		- @workouts.each do |workout|
-			= render 'row', workout: workout
-
-		= paginate @workouts
-		
-	.sidebar.col-md-4.col-lg-4.col-xl-3
-		= render 'swell_media/articles/sidebar'
-	/ /.sidebar col-md-4 col-lg-4 col-xl-3
-/ /#content
 
 
+- cache( "workouts/index/#{params[:page]}", expires_in: 1.day ) do
 
+	%section.clearfix.blogPage.mainContent
+		.container
+			.row
+				.col-md-9.col-sm-8.col-xs-12
+					.ribbon.ribbon-highlight
+						%ol.breadcrumb.ribbon-inner
+							%li
+								%a{ href: swell_media.root_path() }
+									Home
+							%li.active
+								%a{ href: '/workouts' }
+									Workouts
+
+					-# %h2
+						= pluralize @workouts.total_count, 'Workout'
+
+					= paginate @workouts
+
+					.row.productListSingle
+						- @workouts.each do |workout|
+							= render 'row', workout: workout
+
+					.paginator{ style: 'margin-bottom: 2em;' }
+						= raw paginate @workouts
+
+				.sideBar.col-md-3.col-sm-4.col-xs-12
+					= render 'workouts/sidebar'
