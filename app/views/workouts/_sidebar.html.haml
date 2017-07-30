@@ -1,4 +1,17 @@
 
+.panel.panel-default.recentBlogPosts
+	.panel-heading
+		Featured Posts
+	.panel-body
+		- SwellMedia::Article.published.order( "random()" ).limit( 5 ).each do |article|
+			.media
+				%a.media-left{ href: article.url }
+					%img.img.img-responsive.media-object{ src: article.avatar }
+				.media-body
+					%h4.media-heading.text-center
+						%a{ href: article.url }
+							= article.title
+
 .panel.panel-default
 	.panel-heading
 		Just a Thought
