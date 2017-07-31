@@ -55,7 +55,12 @@ class AbstractBotService
 			@user 		= args[:user]
 			@dialog		= args[:dialog] || {}
 			@options	= args
+
 			@except_intents = (args[:except] || []).collect(&:to_sym)
+			@except_intents.each_with_index do |except_intent, index|
+				@except_intents[index] = "root/#{except_intent}".to_sym unless except_intent.to_s.include?('/')
+			end
+
 			@audio_player = args[:audio_player] || { offset: 0, state: 'stopped', token: nil }
 		else
 
@@ -94,7 +99,7 @@ class AbstractBotService
 			intent_names.each do |intent_name|
 				intent = scoped_compiled_intents[intent_name]
 
-				unless ( matches = intent[:regex].match( text ) ).nil? || @except_intents.include?("#{scope}/#{intent_name}".to_sym)
+				unless ( matches = intent[:regex].match( text ) ).nil? || @except_intents.include?("#{intent_scope}/#{intent_name}".to_sym)
 					requested_intent_name 		= intent_name
 					requested_intent_matches 	= matches
 					requested_intent_scope 		= intent_scope
@@ -212,11 +217,12 @@ class AbstractBotService
 	def self.add_intent( name, definition )
 		@intents ||= ({}.merge(DEFAULT_INTENTS))
 
-		scope = definition[:scope] || :root
-		if ( name_parts = name.split('/') ).count > 1
-			name = name_parts.pop()
-			scope = name_parts.join('/')
+		scope = definition[:scope]
+		if ( name_parts = name.to_s.split('/') ).count > 1
+			name	= name_parts.pop().to_sym
+			scope 	= name_parts.join('/').to_sym
 		end
+		scope ||= :root
 
 		definition[:type] ||= :local
 
