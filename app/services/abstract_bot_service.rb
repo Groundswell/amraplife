@@ -138,7 +138,11 @@ class AbstractBotService
 
 		intent = self.class.compiled_intents[intent_scope][intent_name]
 
-		if ( bot_service_name = intent[:bot_service] ).present?
+		if intent.nil?
+
+			return false
+
+		elsif ( bot_service_name = intent[:bot_service] ).present?
 
 			bot_services = self.class.bot_services
 			@bot_service_instances ||= {}
@@ -154,6 +158,8 @@ class AbstractBotService
 			self.send( intent_method )
 
 		end
+
+		return true
 
 	end
 
@@ -203,6 +209,12 @@ class AbstractBotService
 
 		@bot_services ||= {}
 		@bot_services[bot_service] ||= { class: bot_service.to_s.camelize }
+
+		if options.is_a? Array
+			options.each_with_index do |intent_name, index|
+				options[index] = "root/#{intent_name}".to_sym unless intent_name.to_s.include?('/')
+			end
+		end
 
 		count = (self.intents.collect(&:count).sum || 0)+1
 		self.add_intent( "_mount_#{count}".to_sym, type: :mount, bot_service: bot_service, intents: options )
@@ -270,8 +282,9 @@ class AbstractBotService
 							@compiled_intents[bot_service_intent_scope] ||= {}
 
 							bot_service_intents.each do |bot_service_intent_name, bot_service_intent|
+								scoped_bot_service_intent_name = "#{bot_service_intent_scope}/#{bot_service_intent_name}".to_sym
 
-								if intent[:intents] == :all || intent[:intents].include?(bot_service_intent_name.to_sym)
+								if intent[:intents] == :all || intent[:intents].include?(scoped_bot_service_intent_name)
 									@compiled_intents[bot_service_intent_scope][bot_service_intent_name] = bot_service_intent.merge( bot_service: bot_service_name )
 								end
 
