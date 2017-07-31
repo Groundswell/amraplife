@@ -77,23 +77,33 @@ class AbstractBotService
 		@raw_input = text
 
 		compiled_intents 		= self.class.compiled_intents
-		compiled_public_intents = self.class.compiled_public_intents
 
 		requested_intent_name = nil
 		requested_intent_matches = nil
+		requested_intent_scope = nil
 
-		# place expected intents first, before public intents
-		intent_names = (@session.try(:expected_intents) || []).collect(&:to_sym) + compiled_public_intents.keys
+		intent_scopes = [:root] #@todo add scopes from session
 
-		intent_names.each do |intent_name|
-			intent = compiled_intents[intent_name]
+		intent_scopes.each do |intent_scope|
 
-			unless ( matches = intent[:regex].match( text ) ).nil? || @except_intents.include?(intent_name.to_sym)
-				requested_intent_name = intent_name
-				requested_intent_matches = matches
-				break
+			scoped_compiled_intents = compiled_intents[intent_scope]
+
+			# place expected intents first, before public intents
+			intent_names = (@session.try(:expected_intents) || []).collect(&:to_sym) + scoped_compiled_intents.keys
+
+			intent_names.each do |intent_name|
+				intent = scoped_compiled_intents[intent_name]
+
+				unless ( matches = intent[:regex].match( text ) ).nil? || @except_intents.include?("#{scope}/#{intent_name}".to_sym)
+					requested_intent_name 		= intent_name
+					requested_intent_matches 	= matches
+					requested_intent_scope 		= intent_scope
+					break
+				end
 			end
+
 		end
+
 
 
 		if requested_intent_name.present?
@@ -105,7 +115,7 @@ class AbstractBotService
 			end
 
 
-			self.call_intent( requested_intent_name )
+			self.call_intent( requested_intent_name, scope: requested_intent_scope )
 			return true
 		else
 			user.user_inputs.create( content: @raw_input, action: 'failed', source: options[:source], result_status: 'parse failure', system_notes: "I didn't understand '#{@raw_input}'" ) if user.present?
@@ -117,18 +127,26 @@ class AbstractBotService
 		@audio_player
 	end
 
-	def call_intent( intent_name )
+	def call_intent( intent_name, args={} )
+		intent_name = intent_name.to_sym
+		intent_scope = args[:scope] || :root #@todo default to scope from session
 
-		if ( bot_service_name = self.class.compiled_intents[intent_name.to_sym][:bot_service] ).present?
+		intent = self.class.compiled_intents[intent_scope][intent_name]
+
+		if ( bot_service_name = intent[:bot_service] ).present?
 
 			bot_services = self.class.bot_services
 			@bot_service_instances ||= {}
 			@bot_service_instances[bot_service_name.to_sym] ||= bot_services[bot_service_name.to_sym][:class].constantize.new( self )
 
-			@bot_service_instances[bot_service_name.to_sym].call_intent( intent_name )
+			@bot_service_instances[bot_service_name.to_sym].call_intent( intent_name, scope: args[:scope] )
 		else
 
-			self.send( intent_name )
+			intent_method = intent[:method]
+			intent_method ||= intent_name if intent_scope == :root
+			intent_method ||= "#{intent_scope}_#{intent_name}"
+
+			self.send( intent_method )
 
 		end
 
@@ -181,17 +199,24 @@ class AbstractBotService
 		@bot_services ||= {}
 		@bot_services[bot_service] ||= { class: bot_service.to_s.camelize }
 
-		self.add_intent( "_mount_#{self.intents.count+1}".to_sym, type: :mount, bot_service: bot_service, intents: options )
+		count = (self.intents.collect(&:count).sum || 0)+1
+		self.add_intent( "_mount_#{count}".to_sym, type: :mount, bot_service: bot_service, intents: options )
 	end
 
-	def self.add_intents( intents )
-		intents.each do |name, definition|
+	def self.add_intents( new_intents )
+		new_intents.each do |name, definition|
 			add_intent( name, definition )
 		end
 	end
 
 	def self.add_intent( name, definition )
 		@intents ||= ({}.merge(DEFAULT_INTENTS))
+
+		scope = definition[:scope] || :root
+		if ( name_parts = name.split('/') ).count > 1
+			name = name_parts.pop()
+			scope = name_parts.join('/')
+		end
 
 		definition[:type] ||= :local
 
@@ -201,11 +226,12 @@ class AbstractBotService
 			end
 		end
 
-		@intents[name.to_sym] = definition
+		@intents[scope] ||= {}
+		@intents[scope][name.to_sym] = definition
 	end
 
-	def self.add_slots( slots )
-		slots.each do |name, definition|
+	def self.add_slots( new_slots )
+		new_slots.each do |name, definition|
 			add_slot( name, definition )
 		end
 	end
@@ -225,39 +251,52 @@ class AbstractBotService
 		unless @compiled_intents.present?
 			@compiled_intents = {}
 
-			self.intents.each do |intent_name,intent|
+			self.intents.each do |scope_name, scope_intents|
 
-				if intent[:type] == :mount
+				scope_intents.each do |intent_name,intent|
 
-					bot_service_name	= intent[:bot_service]
-					bot_service_class	= @bot_services[bot_service_name][:class].constantize
-					bot_service_class.compiled_intents.each do |bot_service_intent_name, bot_service_intent|
-						if intent[:intents] == :all || intent[:intents].include?(bot_service_intent_name.to_sym)
-							@compiled_intents[bot_service_intent_name] = bot_service_intent.merge( bot_service: bot_service_name )
+					if intent[:type] == :mount
+
+						bot_service_name	= intent[:bot_service]
+						bot_service_class	= @bot_services[bot_service_name][:class].constantize
+
+						bot_service_class.compiled_intents.each do |bot_service_intent_scope, bot_service_intents|
+							@compiled_intents[bot_service_intent_scope] ||= {}
+
+							bot_service_intents.each do |bot_service_intent_name, bot_service_intent|
+
+								if intent[:intents] == :all || intent[:intents].include?(bot_service_intent_name.to_sym)
+									@compiled_intents[bot_service_intent_scope][bot_service_intent_name] = bot_service_intent.merge( bot_service: bot_service_name )
+								end
+
+							end
 						end
+
+					else
+
+						@compiled_intents[scope_name] ||= {}
+
+						regex = nil
+						(intent[:utterances] || []).each do |utterance|
+							utterance_regex = utterance
+							(intent[:slots] || {}).each do |slot_name, slot_type|
+								slot = slots[slot_type.to_sym]
+
+								utterance_regex = utterance_regex.gsub("{#{slot_name}}","(?'#{slot_name}'#{slot[:regex].join('|')})")
+							end
+
+							if ( matches = utterance_regex.match(/\{[a-z][a-z0-9\-_]*\}/i) ).present?
+								raise Exception.new( "ERROR unmatches slots!!! (intent_name: #{intent_name}, utterance: \"#{utterance}\"). #{matches[0]} in \"#{utterance_regex}\"" )
+							end
+
+							regex = regex + '|' if regex.present?
+							regex = (regex || '') + utterance_regex
+						end
+
+						regex = '^(' + regex + ')$'
+						@compiled_intents[scope_name][intent_name] = intent.merge( regex: Regexp.new( regex, true ) )
+
 					end
-
-				else
-
-					regex = nil
-					(intent[:utterances] || []).each do |utterance|
-						utterance_regex = utterance
-						(intent[:slots] || {}).each do |slot_name, slot_type|
-							slot = slots[slot_type.to_sym]
-
-							utterance_regex = utterance_regex.gsub("{#{slot_name}}","(?'#{slot_name}'#{slot[:regex].join('|')})")
-						end
-
-						if ( matches = utterance_regex.match(/\{[a-z][a-z0-9\-_]*\}/i) ).present?
-							raise Exception.new( "ERROR unmatches slots!!! (intent_name: #{intent_name}, utterance: \"#{utterance}\"). #{matches[0]} in \"#{utterance_regex}\"" )
-						end
-
-						regex = regex + '|' if regex.present?
-						regex = (regex || '') + utterance_regex
-					end
-
-					regex = '^(' + regex + ')$'
-					@compiled_intents[intent_name] = intent.merge( regex: Regexp.new( regex, true ) )
 
 				end
 
@@ -267,23 +306,6 @@ class AbstractBotService
 
 		@compiled_intents
 
-	end
-
-	def self.compiled_public_intents
-
-		unless @compiled_public_intents.present?
-
-			@compiled_public_intents = {}
-
-			self.compiled_intents.each do |intent_name, intent|
-
-				@compiled_public_intents[intent_name] = @compiled_intents[intent_name] unless intent[:private]
-
-			end
-
-		end
-
-		@compiled_public_intents
 	end
 
 	def self.intents
