@@ -31,8 +31,8 @@ class Observation < ActiveRecord::Base
 
 
 
-	def display_value
-		UnitService.new( val: self.value, stored_unit: self.unit, display_unit: self.display_unit, use_metric: self.user.use_metric ).convert_to_display
+	def display_value( opts={} )
+		UnitService.new( val: self.value, stored_unit: self.unit, display_unit: self.display_unit, use_metric: self.user.use_metric, show_units: opts[:show_units] ).convert_to_display
 	end
 
 	def is_time?

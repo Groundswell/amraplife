@@ -50,7 +50,8 @@ namespace :amraplife do
 		md = Metric.create title: 'Mood', metric_type: 'mental', aliases: [ 'feeling', 'happiness' ], unit: '%'
 		md = Metric.create title: 'Energy', metric_type: 'mental', aliases: [ 'energy level' ], unit: '%'
 
-		nutrition = Metric.create title: 'Calories', metric_type: 'nutrition', 	aliases: ['eat', 'ate', 'eating', 'eaten', 'cal', 'cals', 'meal', 'breakfast', 'lunch', 'dinner', 'snack', 'block', 'blocks'], unit: 'Cal', target_type: :sum_value, target_direction: :at_most, target_period: :daily, target: 2000
+		nutrition = Metric.create title: 'Calories', metric_type: 'nutrition', 	aliases: ['eat', 'ate', 'eating', 'eaten', 'cal', 'cals', 'meal', 'breakfast', 'lunch', 'dinner', 'snack', 'block', 'blocks'], unit: 'cal', target_type: :sum_value, target_direction: :at_most, target_period: :daily, target: 2000
+		
 		nutrition = Metric.create title: 'Blocks', metric_type: 'nutrition', 	aliases: ['eat', 'ate', 'eating', 'meal', 'breakfast', 'lunch', 'dinner', 'snack', 'block', 'blocks'], unit: 'block', target_type: :sum_value, target_direction: :at_most, target_period: :daily, target: 15
 		nutrition = Metric.create title: 'Protein', metric_type: 'nutrition',	aliases: ['prot', 'grams protein', 'grams of protein' ], unit: 'g', display_unit: 'g', target_type: :sum_value, target_direction: :at_least, target_period: :daily
 		nutrition = Metric.create title: 'Fat', metric_type: 'nutrition', 		aliases: ['fat', 'grams fat', 'grams of fat' ], unit: 'g', display_unit: 'g', target_type: :sum_value, target_direction: :at_most, target_period: :daily
@@ -61,7 +62,7 @@ namespace :amraplife do
 
 		act = Metric.create title: 'Sleep', metric_type: 'activity', 	aliases: ['slp', 'sleeping', 'slept', 'nap', 'napping', 'napped'], unit: 's', target_type: :sum_value, target_direction: :at_least, target_period: :daily, target: 28800
 		act = Metric.create title: 'Meditation', metric_type: 'activity', aliases: ['med', 'meditating', 'meditated'], unit: 's', target_type: :sum_value, target_direction: :at_least, target_period: :daily, target: 1200
-		
+
 		act = Metric.create title: 'Drive', metric_type: 'activity', 	aliases: ['drv', 'driving', 'drove'], unit: 's'
 		act = Metric.create title: 'Work', metric_type: 'activity', 	aliases: ['wrk', 'working', 'worked'], unit: 's'
 		act = Metric.create title: 'Walk', metric_type: 'activity', 	aliases: ['wlk', 'walking', 'walked'], unit: 's'

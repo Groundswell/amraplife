@@ -625,7 +625,7 @@ class ObservationBotService < AbstractBotService
 		# @todo parse notes
 		notes = nil
 		sys_notes = nil
-		unit = params[:unit].chomp( '.' ).singularize
+		unit = params[:unit].chomp( '.' ).singularize if params[:unit].present?
 
 		if params[:action].present?
 
@@ -898,7 +898,7 @@ class ObservationBotService < AbstractBotService
 						observed_metric ||= system_metric.dup
 						observed_metric.user = user
 
-						if not( user.use_metric? )
+						if not( user.use_metric? ) && not( system_metric.metric_type == 'nutrition' ) # hack to keep from converting grams of nutrient to ounces
 							if UnitService::METRIC_TO_IMPERIAL_MAP[ observed_metric.display_unit ].present?
 								observed_metric.display_unit = UnitService::METRIC_TO_IMPERIAL_MAP[ observed_metric.display_unit ]
 							end

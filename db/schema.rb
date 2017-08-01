@@ -390,6 +390,7 @@ ActiveRecord::Schema.define(version: 20170725200228) do
     t.float   "target"
     t.string  "target_direction", default: "at_most"
     t.string  "display_unit"
+    t.string  "target_unit"
   end
 
   add_index "metrics", ["movement_id"], name: "index_metrics_on_movement_id", using: :btree

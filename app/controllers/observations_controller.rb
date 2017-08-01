@@ -34,6 +34,7 @@ class ObservationsController < ApplicationController
 
 	def update
 		@observation.update( observation_params )
+
 		redirect_to :back
 	end
 
@@ -44,13 +45,17 @@ class ObservationsController < ApplicationController
 		end
 
 		def observation_params
-			if params[:observation][:value].match( /:/ )
-				params[:observation][:value] = params[:observation][:value]
-			end
-			# always store time as secs
-			params[:observation][:value] = ChronicDuration.parse( params[:observation][:value] ) if ChronicDuration.parse( params[:observation][:value] )
+			params[:observation][:display_unit] = params[:observation][:display_unit].chomp('.').singularize
 			
-			params.require( :observation ).permit( :recorded_at, :started_at, :ended_at, :value, :notes )
+			val_to_store =  UnitService.new( val: params[:observation][:value], stored_unit: params[:observation][:unit], display_unit: params[:observation][:display_unit] ).convert_to_stored_value
+			
+			if val_to_store == @observation.value
+				params[:observation].delete( :value )
+			else
+				params[:observation][:value] = val_to_store
+			end
+
+			params.require( :observation ).permit( :recorded_at, :started_at, :ended_at, :value, :unit, :display_unit, :notes )
 		end
 
 end

@@ -13,13 +13,23 @@
 					.form-group
 						= f.label :value
 						.input-group
-							= f.text_field :value, value: @observation.display_value, class: 'form-control'
+							= f.text_field :value, value: @observation.display_value( show_units: false ), class: 'form-control'
 							%span.input-group-addon
 								= @observation.display_unit
-
-					.form-group
-						= f.label :notes
-						= f.text_area :notes, class: 'form-control'
+					.row
+						.col-xs-6
+							.form-group
+								= f.label :unit
+								= f.select :unit, options_for_select( [ ['Arbitrary', ''], ['Time', 's'], ['Weight', 'g'], ['Length/Distance', 'm'], ['Volume', 'l'], ['Percent', '%'] ], @observation.unit ), {}, class: 'form-control'
+						.col-xs-6
+							.form-group
+								= f.label :display_unit
+								= f.text_field :display_unit, class: 'form-control'
+					.row
+						.col-xs-12
+							.form-group
+								= f.label :notes
+								= f.text_area :notes, class: 'form-control'
 				.col-sm-4
 					.well
 						.form-group

@@ -17,6 +17,7 @@ class UnitService
 		'm' 	=> 'm',
 		'meter' => 'm',
 		'km' 	=> 'm',
+		'k' 	=> 'm',
 		'kilo'	=> 'm',
 
 		# all weights are in grams
@@ -96,11 +97,11 @@ class UnitService
 
 		@use_metric = opts[:use_metric] || false
 		@precision = opts[:precision] || 2
+		@show_units = opts[:show_units] || false
 	end
 
 	def convert_to_display
 		return nil if @val.nil?
-
 		if @stored_unit == 's'
 			return ChronicDuration.output( @val, format: :chrono )
 		elsif @stored_unit == '%'
@@ -114,7 +115,7 @@ class UnitService
 			rescue
 				value = @val
 			end
-			unless @user_unit.blank?
+			if @show_units && @user_unit.present? 
 				return value == 1 ? "#{value} #{@user_unit}" : "#{value} #{@user_unit}s"
 			else
 				return "#{value}"
