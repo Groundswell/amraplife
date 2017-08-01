@@ -625,19 +625,20 @@ class ObservationBotService < AbstractBotService
 		# @todo parse notes
 		notes = nil
 		sys_notes = nil
+		unit = params[:unit].chomp( '.' ).singularize
 
 		if params[:action].present?
 
 			# fetch the metric
 			metric = get_user_metric( user, params[:action], params[:unit], true )
-			users_unit = params[:unit] || metric.display_unit
+			users_unit = unit || metric.display_unit
+			base_unit = UnitService::STORED_UNIT_MAP[unit] || metric.unit
 
-			unit_service = UnitService.new( val: params[:value], disp_unit: users_unit, stored_unit: metric.unit, use_metric: user.use_metric )
+			unit_service = UnitService.new( val: params[:value], disp_unit: users_unit, stored_unit: base_unit, use_metric: user.use_metric )
 
 			val = unit_service.convert_to_stored_value
-
 			
-			observation = user.observations.create( observed: metric, value: val, notes: notes )
+			observation = user.observations.create( observed: metric, value: val, display_unit: users_unit, unit: base_unit, notes: notes )
 			add_speech( observation.to_s( user ) )
 		else
 			observation = user.observations.create( value: params[:value], unit: params[:unit], notes: notes )

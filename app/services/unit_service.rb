@@ -2,13 +2,22 @@ class UnitService
 
 	# translation of observed units into base units as stored in the DB
 	STORED_UNIT_MAP = {
+		# all time is in seconds
+		's' 	=> 's',
+
 		# all distance/lengths are in meters
 		'in' 	=> 'm',
+		'inch' 	=> 'm',
+		'"' 	=> 'm',
 		'yd' 	=> 'm',
+		'yard'	=> 'm',
 		'mi' 	=> 'm',
+		'mile' 	=> 'm',
 		'cm'	=> 'm',
 		'm' 	=> 'm',
+		'meter' => 'm',
 		'km' 	=> 'm',
+		'kilo'	=> 'm',
 
 		# all weights are in grams
 		'ounce' => 'g',

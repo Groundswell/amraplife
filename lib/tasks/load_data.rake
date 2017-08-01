@@ -61,6 +61,7 @@ namespace :amraplife do
 
 		act = Metric.create title: 'Sleep', metric_type: 'activity', 	aliases: ['slp', 'sleeping', 'slept', 'nap', 'napping', 'napped'], unit: 's', target_type: :sum_value, target_direction: :at_least, target_period: :daily, target: 28800
 		act = Metric.create title: 'Meditation', metric_type: 'activity', aliases: ['med', 'meditating', 'meditated'], unit: 's', target_type: :sum_value, target_direction: :at_least, target_period: :daily, target: 1200
+		
 		act = Metric.create title: 'Drive', metric_type: 'activity', 	aliases: ['drv', 'driving', 'drove'], unit: 's'
 		act = Metric.create title: 'Work', metric_type: 'activity', 	aliases: ['wrk', 'working', 'worked'], unit: 's'
 		act = Metric.create title: 'Walk', metric_type: 'activity', 	aliases: ['wlk', 'walking', 'walked'], unit: 's'
