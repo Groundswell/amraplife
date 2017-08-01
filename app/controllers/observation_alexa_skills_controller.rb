@@ -46,7 +46,7 @@ class ObservationAlexaSkillsController < ActionController::Base
 			@alexa_params	= Hash[*@alexa_request.slots.values.collect{|values| [values['name'].to_sym,values['value']]}.flatten] if @alexa_request.respond_to?(:slots) && @alexa_request.slots.present?
 
 
-			@bot_service = ObservationBotService.new( request: @alexa_request, response: self, session: @bot_session, audio_player: @alexa_audio_player, params: @alexa_params, user: @alexa_user, dialog: DEFAULT_DIALOG, source: 'alexa' )
+			@bot_service = LifeMeterBotService.new( request: @alexa_request, response: self, session: @bot_session, audio_player: @alexa_audio_player, params: @alexa_params, user: @alexa_user, dialog: DEFAULT_DIALOG, source: 'alexa' )
 
 			if (@alexa_request.type == 'SESSION_ENDED_REQUEST')
 				# Wrap up whatever we need to do.
@@ -76,7 +76,7 @@ class ObservationAlexaSkillsController < ActionController::Base
 			@alexa_params[:offset] = @alexa_params.delete(:offsetInMilliseconds)
 			@alexa_params[:event] = @alexa_params.delete(:type)
 
-			@bot_service = ObservationBotService.new( response: self, session: @bot_session, audio_player: @alexa_audio_player, params: @alexa_params, user: @alexa_user, dialog: DEFAULT_DIALOG, source: 'alexa' )
+			@bot_service = LifeMeterBotService.new( response: self, session: @bot_session, audio_player: @alexa_audio_player, params: @alexa_params, user: @alexa_user, dialog: DEFAULT_DIALOG, source: 'alexa' )
 
 			@bot_service.audio_event
 

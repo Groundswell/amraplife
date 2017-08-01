@@ -8,7 +8,7 @@ class UserInputsController < ApplicationController
 		@bot_session = BotSession.find_or_initialize_for( provider: "amraplife.dash", uid: current_user.id, user: current_user )
 
 
-		@bot_service = ObservationBotService.new( user: current_user, session: @bot_session, source: 'dash', except: [ :workout_complete, :workout_start ] )
+		@bot_service = LifeMeterBotService.new( user: current_user, session: @bot_session, source: 'dash', except: [ :workout_complete, :workout_start ] )
 
 		unless @bot_service.respond_to_text( user_input_params[:content] )
 

@@ -19,7 +19,7 @@ class ObservationSlackBotsController < ActionController::Base
 			@bot_session = BotSession.find_or_initialize_for( provider: "#{params[:team_id]}.slack", uid: params[:event][:user], user: @user )
 
 
-			@bot_service = ObservationBotService.new( response: self, session: @bot_session, user: @user, params: { event: params[:event] }, source: 'slack', except: [ :workout_complete, :workout_start ] )
+			@bot_service = LifeMeterBotService.new( response: self, session: @bot_session, user: @user, params: { event: params[:event] }, source: 'slack', except: [ :workout_complete, :workout_start ] )
 
 			unless @bot_service.respond_to_text( params[:event][:text] )
 				add_speech( "Sorry, I don't know about that." )
