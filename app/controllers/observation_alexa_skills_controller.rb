@@ -56,19 +56,14 @@ class ObservationAlexaSkillsController < ActionController::Base
 
 			elsif @alexa_request.type == 'LAUNCH_REQUEST'
 
-				@bot_service.launch()
+				@bot_service.call_intent( :launch )
 
 			elsif @alexa_request.type == 'INTENT_REQUEST'
 				# Process your Intent Request
 
 				action = @alexa_request.name.gsub('AMAZON.','').underscore.gsub('_intent','')
 
-
-				if @bot_service.respond_to?( action )
-
-					@bot_service.send( action )
-
-				else
+				unless @bot_service.call_intent( action )
 
 					add_speech("Recieved Intent #{@alexa_request.name}")
 
