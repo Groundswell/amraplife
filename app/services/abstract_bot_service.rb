@@ -216,7 +216,11 @@ class AbstractBotService
 			end
 		end
 
-		count = (self.intents.collect(&:count).sum || 0)+1
+		count = 0
+		self.intents.each do |scope_name, intents|
+			count = count + intents.count
+		end
+
 		self.add_intent( "_mount_#{count}".to_sym, type: :mount, bot_service: bot_service, intents: options )
 	end
 
