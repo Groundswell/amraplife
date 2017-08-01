@@ -20,7 +20,7 @@ class LifeMeterBotService < AbstractBotService
 	} )
 
 	mount_intents :greetings_bot_service
-	mount_intents :workout_bo_service
+	mount_intents :workout_bot_service
 	mount_intents :observation_bot_service
 
 
