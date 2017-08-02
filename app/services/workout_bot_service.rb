@@ -142,7 +142,7 @@ class WorkoutBotService < AbstractBotService
 	def workout_complete
 
 		unless user.present?
-			login
+			call_intent( :login )
 			return
 		end
 
@@ -184,7 +184,7 @@ class WorkoutBotService < AbstractBotService
 
 	def workout_describe
 		unless user.present?
-			login
+			call_intent( :login )
 			return
 		end
 
@@ -200,7 +200,7 @@ class WorkoutBotService < AbstractBotService
 
 	def workout_list
 		unless user.present?
-			login
+			call_intent( :login )
 			return
 		end
 
@@ -211,7 +211,7 @@ class WorkoutBotService < AbstractBotService
 		new_context
 
 		unless user.present?
-			login
+			call_intent( :login )
 			return
 		end
 

@@ -48,7 +48,7 @@ class GreetingsBotService < AbstractBotService
 
 	def set_name
 		unless user.present?
-			login
+			call_intent( :login )
 			return
 		end
 		user.update( first_name: params[:name] )
