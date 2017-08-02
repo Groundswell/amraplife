@@ -63,6 +63,7 @@ class AbstractBotService
 
 			@audio_player = args[:audio_player] || { offset: 0, state: 'stopped', token: nil }
 		else
+			@parent_bot_service = args
 
 			@request	= args.request
 			@session	= args.session
@@ -139,17 +140,28 @@ class AbstractBotService
 
 		intent = self.class.compiled_intents[intent_scope][intent_name]
 
+		# if no intent could be found for the intent name.
 		if intent.nil?
-
+			
 			return false
 
+		# if this is a mounted service, do not execute the call_intent, but pass
+		# it to the base bot service.
+		elsif @parent_bot_service.present? && args[:from_base_bot] != true
+
+			@parent_bot_service.call_intent( intent_name, scope: args[:scope], raw_input: self.raw_input )
+
+		# if base bot service, and request if for an intent from a mounted bot
+		# service, make a call to that service.
 		elsif ( bot_service_name = intent[:bot_service] ).present?
 
 			bot_services = self.class.bot_services
 			@bot_service_instances ||= {}
 			@bot_service_instances[bot_service_name.to_sym] ||= bot_services[bot_service_name.to_sym][:class].constantize.new( self )
 
-			@bot_service_instances[bot_service_name.to_sym].call_intent( intent_name, scope: args[:scope], raw_input: self.raw_input )
+			@bot_service_instances[bot_service_name.to_sym].call_intent( intent_name, scope: args[:scope], raw_input: self.raw_input, from_base_bot: true )
+
+		# if intent call is for an intent from this bot service, run it.
 		else
 
 			intent_method = intent[:method]
