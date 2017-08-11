@@ -22,7 +22,7 @@
 								%ul
 									- @inputs.each do |input|
 										%li.clearfix{ style: 'list-style: none;text-align:left;' }
-											= image_tag input.user.avatar, width: 24
+											= input.user.avatar_tag width: 24
 
 											You Said:
 											= "'#{input.content}'"

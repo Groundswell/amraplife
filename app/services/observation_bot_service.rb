@@ -192,8 +192,8 @@ class ObservationBotService < AbstractBotService
 		},
 		log_metric_observation: {
 			utterances: [
-				'i ate {value} {unit} of {action}',
-				'i ate {value}{unit} of {action}',
+				'i ate {value}\s*{unit} of {action}',
+				'i ate {value}\s*{unit} {action}',
 				# for input like....
 				# log weight = 176
 				# log weight is 176
@@ -497,7 +497,8 @@ class ObservationBotService < AbstractBotService
 
 
 		else
-			response = "You haven't set a target for #{metric.title} yet. You last recorded #{last_observation.formatted_value} at #{last_observation.recorded_at.to_s( :long )}. You have logged #{formatted_total} so far today."
+			last_observation = metric.observations.order( recorded_at: :desc ).first
+			response = "You haven't set a target for #{metric.title} yet. You last recorded #{last_observation.formatted_value} at #{last_observation.recorded_at.to_s( :long )}."
 		end
 
 		add_speech( response )
