@@ -21,6 +21,16 @@ class ObservationBotService < AbstractBotService
 				action: 'Action',
 			}
 		},
+		convert:{
+			utterances: [
+				'(to)?\s*convert\s*{value}\s*{units}\s*to\s*{action}'
+			],
+			slots: {
+				value: 'Amount',
+				units: 'Unit',
+				action: 'Action'
+			},
+		},
 		define: {
 			utterances: [
 				'(?:to)?\s*def(?:ine)?\s*{term}',
@@ -71,7 +81,6 @@ class ObservationBotService < AbstractBotService
 		assign_metric: {
 			utterances: [
 				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*track {action}',
-				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*track {action}\s*{unit}',
 			],
 			slots: {
 				action: 'Action',
@@ -160,23 +169,6 @@ class ObservationBotService < AbstractBotService
 				unit: 'Unit'
 				},
 		},
-
-		# report_sum_value_observation: {
-		# 	utterances: [
-		# 		# how many calories have I eaten
-		# 		'how (many|much|many)\s*(calories|food )\s*.+(eat|ate|eaten)',
-		# 		'how (many|much|many)\s*(calories|food )\s*.+(eat|ate|eaten)\s*{time_period}',
-
-		# 		'how (much|many|long)\s*(?:do|did|have|i)?\s*(?:i )?\s*{action} {time_period}',
-		# 		'how (much|many|long)\s*(?:do|did|have|i)?\s*(?:i )?\s*{action}',
-
-		# 	],
-		# 	slots: {
-		# 		action: 'Action',
-		# 		time_period: 'TimePeriod',
-		# 	}
-		# },
-
 		set_name: {
 			utterances: [
 				'(?:to )?\s*call me {name}',
@@ -252,8 +244,8 @@ class ObservationBotService < AbstractBotService
 
 		tell_about: {
 			utterances: [
-				'(to)?\s*tell me about\s*(?:my)?\s*{action}',
-			],
+				'(to)?\s*tell\s*(?:me)?\s*about\s*(?:my)?\s*{action}',
+				],
 			slots:{
 				action: 'Action',
 			},
@@ -406,7 +398,7 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
-		metric = get_user_metric( user, params[:action], params[:unit], true )
+		metric = get_user_metric( user, params[:action], nil, true )
 
 		response = "Great, I've added #{metric.title}. You can start logging it by saying '#{metric.title} is some value.'"
 		add_speech( response )
@@ -415,6 +407,7 @@ class ObservationBotService < AbstractBotService
 	end
 
 	def check_metric
+		# todo
 		unless user.present?
 			login
 			return
@@ -432,7 +425,7 @@ class ObservationBotService < AbstractBotService
 
 		if metric.target.present?
 			if metric.target_type == 'value'
-				current = metric.observations.order( created_at: :desc ).first
+				current = metric.observations.order( created_at: :desc ).first.value
 			else
 				case metric.target_period
 				when 'daily'
@@ -471,40 +464,49 @@ class ObservationBotService < AbstractBotService
 
 			end
 
-			unit = metric.unit
+			formatted_target = UnitService.new( val: metric.target, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric ).convert_to_display
 
-			if metric.unit == 'sec'
-				formatted_current = ChronicDuration.output( current, format: :chrono )
-			else
-				formatted_current = "#{current} #{metric.unit}s"
-			end
+			formatted_current = UnitService.new( val: current, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric ).convert_to_display
+
 			delta = current - metric.target
-
-			if metric.unit == 'sec'
-				formatted_delta = ChronicDuration.output( delta.abs, format: :chrono )
-			else
-				formatted_delta = "#{delta.abs} #{metric.unit}s"
-			end
+			formatted_delta = UnitService.new( val: delta.abs, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric ).convert_to_display
 			direction = delta > 0 ? 'over' : 'under'
 
 			if metric.target_type == 'value'
-				response = "You have a target of #{metric.target_direction.gsub( /_/, ' ' )} #{metric.formatted_target}. Your most recent #{metric.title} is #{last_observation.formatted_value}. "
+				response = "You have a target of #{metric.target_direction.gsub( /_/, ' ' )} #{formatted_target}. Your most recent #{metric.title} is #{formatted_current}. "
 				response += "You are #{direction} your target by #{formatted_delta}."
 			else
-				response = "You have a target of #{metric.target_direction.gsub( /_/, ' ' )} #{metric.formatted_target} #{target_type} #{target_period}. Your #{target_type} so far #{current_period} is #{formatted_current}. "
+				response = "You have a target of #{metric.target_direction.gsub( /_/, ' ' )} #{formatted_target} #{target_type} #{target_period}. Your #{target_type} so far #{current_period} is #{formatted_current}. "
 				response += "You are #{direction} your target by #{formatted_delta}."
 			end
 
 
 		else
-			last_observation = metric.observations.order( recorded_at: :desc ).first
-			response = "You haven't set a target for #{metric.title} yet. You last recorded #{last_observation.formatted_value} at #{last_observation.recorded_at.to_s( :long )}."
+			last_observation = metric.observations.order( created_at: :desc ).first
+			total = metric.observations.where( recorded_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day ).sum( :value )
+			formatted_total = UnitService.new( val: total, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric ).convert_to_display
+			response = "You haven't set a target for #{metric.title} yet. You last recorded #{last_observation.display_value} at #{last_observation.recorded_at.to_s( :long )}. You have logged #{formatted_total} so far today."
 		end
 
 		add_speech( response )
 
 		user.user_inputs.create( content: raw_input, action: 'reported', source: options[:source], result_status: 'success', system_notes: "Spoke: #{response}" )
 
+	end
+
+	def convert
+		val = params[:value]
+		unit = params[:units].chomp( 's' )
+		to_unit = params[:action].chomp( 's' )
+
+		result = Unitwise( val, unit ).convert_to( to_unit ).to_f.round( 2 )
+		unit = val == 1 ? "#{unit}" : "#{unit}s"
+		to_unit = val == 1 ? "#{to_unit}" : "#{to_unit}s"
+		response = "#{val} #{unit} equals #{result} #{to_unit}."
+
+		add_speech( response )
+
+		user.user_inputs.create( content: raw_input, action: 'read', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{response}'" ) if user.present?
 	end
 
 	def define
@@ -534,13 +536,9 @@ class ObservationBotService < AbstractBotService
 	end
 
 	def get_motivation
-
 		motivation = Inspiration.published.order('random()').first
-
 		add_speech( ActionController::Base.helpers.strip_tags( motivation.description ) )
-
 		user.user_inputs.create( content: raw_input, result_obj: motivation, action: 'read', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{motivation.description}'" ) if user.present?
-
 	end
 
 	def hello
@@ -559,9 +557,7 @@ class ObservationBotService < AbstractBotService
 		end
 
 		add_speech( message )
-
 		user.user_inputs.create( content: raw_input, action: 'read', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{message}'" ) if user.present?
-
 	end
 
 	def help
@@ -569,9 +565,7 @@ class ObservationBotService < AbstractBotService
 		help_message = get_dialog('help', default: "To log information just say \"I ate 100 calories\", or use a fitness timer by saying \"start a workout timer\". Life Meter will remember, report and provide insights into what you have told it.")
 
 		add_speech( help_message )
-
 		user.user_inputs.create( content: raw_input, action: 'read', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{help_message}'" ) if user.present?
-
 	end
 
 	def launch
@@ -584,18 +578,16 @@ class ObservationBotService < AbstractBotService
 			launch_message = get_dialog('launch_guest', default: "Welcome to Life Meter by Life Meter. To log fitness information just say \"I ate 100 calories\", or use a fitness timer by saying \"start run timer\". Life Meter will remember, report and provide insights into what you have told it. To get started click this link, and complete the Life Meter skill registration on AMRAPLife.com.")
 
 			add_speech(launch_message)
-			add_login_prompt('Create your Life Meter Account on AMRAPLife.com', '', 'In order to record and report your metrics you must first create an account on AMRAPLife.com.')
+			add_login_prompt('Create your Life Meter Account', '', 'In order to record and report your metrics you must first create an account.')
 		end
 		# add_hash_card( { :title => 'Ruby Run', :subtitle => 'Ruby Running Ready!' } )
-
 	end
 
 	def login
-		launch_message = get_dialog('login', default: "Click this link to complete the Life Meter skill registration on AMRAPLife.com")
-
+		launch_message = get_dialog('login', default: "Click this link to complete the Life Meter skill registration")
 
 		add_speech( launch_message )
-		add_login_prompt('Create your Life Meter Account on AMRAPLife.com', '', 'In order to record and report your metrics you must first create an account on AMRAPLife.com.')
+		add_login_prompt('Create your Life Meter Account', '', 'In order to record and report your metrics you must first create an account.')
 
 	end
 
@@ -608,13 +600,13 @@ class ObservationBotService < AbstractBotService
 		# cause {value} slots don't take min sec, etc.
 		# of the form "(I) slept for 8hrs 24mins"
 
-		metric = get_user_metric( user, params[:action], 'sec', true )
+		metric = get_user_metric( user, params[:action], 's', true )
 		value = ChronicDuration.parse( params[:duration] )
 
 		if value.present?
-			observation = metric.observations.create value: value
+			observation = user.observations.create( observed: metric, value: value )
 
-			response = "Logged #{observation.human_value} for #{metric.title}."
+			response = "Logged #{observation.display_value} for #{metric.title}."
 			add_speech( response )
 
 			user.user_inputs.create( content: raw_input, result_obj: observation, action: 'created', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{response}'" )
@@ -624,9 +616,9 @@ class ObservationBotService < AbstractBotService
 
 			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'failed', system_notes: "Spoke: '#{response}'" )
 		end
-
-
 	end
+
+
 
 	def log_food_observation
 		unless user.present?
@@ -734,44 +726,27 @@ class ObservationBotService < AbstractBotService
 		# @todo parse notes
 		notes = nil
 		sys_notes = nil
+		unit = params[:unit].chomp( '.' ).singularize if params[:unit].present?
 
 		if params[:action].present?
 
-			observed_metric = get_user_metric( user, params[:action], params[:unit], true )
+			# fetch the metric
+			metric = get_user_metric( user, params[:action], params[:unit], true )
+			users_unit = unit || metric.display_unit
+			base_unit = UnitService::STORED_UNIT_MAP[unit] || metric.unit
 
-			if observed_metric.nil?
-				add_speech("I'm sorry, I don't know how to log information about #{params[:action]}.")
-			else
-				val = params[:value]
-				# always store time as secs
-				if val.match( /:/ )
-					val = ChronicDuration.parse( val )
-					params[:unit] ||= 'sec'
-				elsif ['minute', 'minutes', 'min', 'mins'].include?( params[:unit] )
-					params[:unit] = 'sec'
-					val = val.to_i * 60
-				elsif ['hour', 'hours', 'hr', 'hrs'].include?( params[:unit] )
-					params[:unit] = 'sec'
-					val = val.to_i * 3600
-				end
-				observation = Observation.create( user: user, observed: observed_metric, value: val, unit: params[:unit], notes: notes )
+			unit_service = UnitService.new( val: params[:value], disp_unit: users_unit, stored_unit: base_unit, use_metric: user.use_metric )
 
-				add_speech( observation.to_s( user ) )
+			val = unit_service.convert_to_stored_value
 
-			end
-
-		else
-
-			observation = Observation.create( user: user, value: params[:value], unit: params[:unit], notes: notes )
-
+			observation = user.observations.create( observed: metric, value: val, display_unit: users_unit, unit: base_unit, notes: notes )
 			add_speech( observation.to_s( user ) )
-
+		else
+			observation = user.observations.create( value: params[:value], unit: params[:unit], notes: notes )
+			add_speech( observation.to_s( user ) )
 		end
 
-		if observation.present?
-			sys_notes = "Logged #{observation.human_value} for #{observation.observed.title}."
-		end
-		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'created', source: options[:source], result_status: 'success', system_notes: sys_notes )
+		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'created', source: options[:source], result_status: 'success', system_notes: "Logged #{observation.display_value} for #{observation.observed.title}." )
 
 	end
 
@@ -786,7 +761,7 @@ class ObservationBotService < AbstractBotService
 
 		params[:action] = params[:action].gsub( /timer/, '' )
 
-		metric = get_user_metric( user, params[:action], 'sec', true )
+		metric = get_user_metric( user, params[:action], 's', true )
 
 		observation = Observation.create( user: user, observed: metric, started_at: Time.zone.now, notes: notes )
 		add_speech("Starting your #{metric.title} timer")
@@ -802,9 +777,10 @@ class ObservationBotService < AbstractBotService
 			login
 			return
 		end
+
 		sys_notes = ''
 
-		metric = get_user_metric( user, params[:action], 'sec' )
+		metric = get_user_metric( user, params[:action], 's' )
 
 		if metric.nil?
 			default_metric ||= Metric.where( user_id: nil ).find_by_alias( params[:action].downcase )
@@ -941,8 +917,8 @@ class ObservationBotService < AbstractBotService
 
 		if obs.present?
 
-			add_speech( "Your #{obs.observed.title} #{verb} #{obs.human_value} #{time_period}." )
-			sys_notes = "Spoke: 'Your #{obs.observed.title} #{verb} #{obs.human_value} #{time_period}.'"
+			add_speech( "Your #{obs.observed.title} #{verb} #{obs.display_value} #{time_period}." )
+			sys_notes = "Spoke: 'Your #{obs.observed.title} #{verb} #{obs.display_value} #{time_period}.'"
 
 			user.user_inputs.create( content: raw_input, action: 'reported', source: options[:source], result_status: 'success', system_notes: sys_notes )
 		else
@@ -959,6 +935,7 @@ class ObservationBotService < AbstractBotService
 			login
 			return
 		end
+
 		user.update( first_name: params[:name] )
 		add_speech("OK, from now on I'll call you #{params[:name]}.")
 		user.user_inputs.create( content: raw_input, result_obj: user, action: 'updated', source: options[:source], result_status: 'success', system_notes: "Spoke: 'OK, from now on I'll call you #{params[:name]}.'" )
@@ -969,6 +946,7 @@ class ObservationBotService < AbstractBotService
 			login
 			return
 		end
+
 		metric = get_user_metric( user, params[:action], params[:unit], true )
 
 		if metric.nil?
@@ -979,11 +957,16 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
-		metric.update( target: params[:value] )
-		add_speech( "I set a target of #{params[:value]} for #{metric.title}." )
-		sys_notes = "Spoke: 'I set a target of #{params[:value]} for #{metric.title}.'"
+		stored_target = UnitService.new( val: params[:value], unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric ).convert_to_stored_value
 
-		user.user_inputs.create( content: raw_input, result_obj: metric, action: 'updated', source: options[:source], result_status: 'success', system_notes: sys_notes )
+		metric.update( target: stored_target )
+
+		formatted_target = UnitService.new( val: metric.target, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric ).convert_to_display
+
+		response = "I set a target of #{formatted_target} for #{metric.title}."
+		add_speech( response )
+
+		user.user_inputs.create( content: raw_input, result_obj: metric, action: 'updated', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{response}'" )
 
 	end
 
@@ -997,12 +980,14 @@ class ObservationBotService < AbstractBotService
 			login
 			return
 		end
+
 		metric = get_user_metric( user, params[:action], params[:unit], false )
+
 		if metric.nil?
 			default_metric ||= Metric.where( user_id: nil ).find_by_alias( params[:action].downcase )
 			action = default_metric.try( :title ) || params[:action]
-			add_speech("Sorry, you haven't recorded anything for #{action} yet.")
-			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found', action: 'reported', system_notes: "Spoke: 'Sorry, I you haven't recorded anything for #{action} yet.'" )
+			add_speech("Sorry, I can't assign a target because you haven't recorded anything for #{action} yet.")
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found', action: 'reported', system_notes: "Spoke: 'Sorry, I can't assign a target because you haven't recorded anything for #{action} yet.'" )
 			return
 		elsif metric.target.nil?
 			add_speech("Sorry, you haven't a target for #{metric.title} yet. Say something like 'Set a target of 100 for #{metric.title}' to set a target.")
@@ -1014,19 +999,12 @@ class ObservationBotService < AbstractBotService
 		target = metric.target
 		delta = ( target-sum ).abs
 
-		unit = metric.unit
-		formatted_sum = sum
-		formatted_target = target
-		formatted_delta = delta
+		formatted_sum = UnitService.new( val: sum, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric ).convert_to_display
+		formatted_target = UnitService.new( val: target, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric ).convert_to_display
+		formatted_delta = UnitService.new( val: delta, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric ).convert_to_display
 
-		if metric.unit == 'sec'
-			formatted_sum = ChronicDuration.output( sum, format: :chrono )
-			formatted_target = ChronicDuration.output( target, format: :chrono )
-			formatted_delta = ChronicDuration.output( delta, format: :chrono )
-			unit = ''
-		end
 
-		response = "Your #{metric.title} target is #{formatted_target} #{unit}. "
+		response = "Your #{metric.title} target is #{formatted_target}. "
 		if sum <= metric.target
 			response += "You have logged #{formatted_sum} so far today, and you have #{formatted_delta} remaining."
 		else
@@ -1062,17 +1040,16 @@ class ObservationBotService < AbstractBotService
 		max_value = user.observations.for( metric ).maximum( :value ) || 0
 		value_sum = user.observations.for( metric ).sum( :value ) || 0
 
-		if metric.unit == 'sec'
-			average_value = ChronicDuration.output( average_value, format: :chrono )
-			min_value = ChronicDuration.output( min_value, format: :chrono )
-			max_value = ChronicDuration.output( max_value, format: :chrono )
-			value_sum = ChronicDuration.output( value_sum, format: :chrono )
-		end
+		formatted_average = UnitService.new( val: average_value, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric ).convert_to_display
+		formatted_min = UnitService.new( val: min_value, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric ).convert_to_display
+		formatted_max = UnitService.new( val: max_value, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric ).convert_to_display
+		formatted_sum = UnitService.new( val: value_sum, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric ).convert_to_display
 
-		add_speech( "You have logged #{metric.title} #{obs_count_total} times in all. #{obs_count_last_week} times last week, and #{obs_count_this_week} times so far this week. The average value for #{metric.title} is #{average_value}. The max value is #{max_value} and the minimum is #{min_value}." )
-		sys_notes = "Spoke: 'You have logged #{metric.title} #{obs_count_total} times in all. #{obs_count_last_week} times last week, and #{obs_count_this_week} times so far this week. The average value for #{metric.title} is #{average_value}. The max value is #{max_value} and the minimum is #{min_value}.'"
+		response = "You have logged #{metric.title} #{obs_count_total} times in all. #{obs_count_last_week} times last week, and #{obs_count_this_week} times so far this week. Your all-time total is #{formatted_sum}. The average value for #{metric.title} is #{formatted_average}. The max value is #{formatted_max} and the minimum is #{formatted_min}."
+		add_speech( response )
 
-		user.user_inputs.create( content: raw_input, action: 'reported', source: options[:source], result_status: 'success', system_notes: sys_notes )
+
+		user.user_inputs.create( content: raw_input, action: 'reported', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{response}'." )
 
 	end
 
@@ -1214,18 +1191,48 @@ class ObservationBotService < AbstractBotService
 		def get_user_metric( user, action, unit=nil, create=false )
 
 			if action.present?
+				# clean up the action string... some of our matchers leave cruft
 				action = action.gsub( /(log |record |to |my | todays | is| are| was| = |i | for|timer)/i, '' ).strip
 
-				observed_metric = Metric.where( user_id: user ).find_by_alias( action.downcase )
-				if create
-					observed_metric ||= Metric.where( user_id: nil ).find_by_alias( action.downcase ).try(:dup)
-					observed_metric ||= Metric.new( title: action, unit: unit ) if action.present?
-					observed_metric.update( user: user ) if observed_metric.present?
+				# first, check the user's existing assigned metrics. Return that if exists...
+				if user.metrics.find_by_alias( action.downcase )
+					return user.metrics.find_by_alias( action.downcase )
 				end
 
+				# if we didn't find it in the user's assigned metric list, and create option is invoked...
+				if create
+					# check the system default metrics
+					system_metric = Metric.where( user_id: nil ).find_by_alias( action.downcase )
+					if system_metric.present?
+						# assign with default display units based on the user's preference
+						observed_metric ||= system_metric.dup
+						observed_metric.user = user
+
+						if not( user.use_metric? ) && not( system_metric.metric_type == 'nutrition' ) # hack to keep from converting grams of nutrient to ounces
+							if UnitService::METRIC_TO_IMPERIAL_MAP[ observed_metric.display_unit ].present?
+								observed_metric.display_unit = UnitService::METRIC_TO_IMPERIAL_MAP[ observed_metric.display_unit ]
+							end
+						end
+
+						observed_metric.save
+						return observed_metric
+					else
+						# gotta make a new metric from scratch
+						observed_metric ||= Metric.new( title: action, unit: unit, display_unit: unit )
+						if UnitService::STORED_UNIT_MAP[ unit ].present?
+							observed_metric.unit = UnitService::STORED_UNIT_MAP[ unit ]
+						end
+						observed_metric.user = user
+						observed_metric.save
+						return observed_metric
+					end
+				end
+
+			else
+				# no action, nothing to do
+				return nil
 			end
 
-			observed_metric
 		end
 
 		def get_workout( workout_title = nil )

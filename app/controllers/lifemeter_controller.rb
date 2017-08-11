@@ -33,7 +33,7 @@ class LifemeterController < ApplicationController
 		current_user.gender = params[:gender] if params[:gender].present?
 		current_user.dob = params[:dob] if params[:dob].present?
 		current_user.email = params[:email] unless params[:email].blank?
-		current_user.use_metric_units = params[:use_metric_units]
+		current_user.use_metric = params[:use_metric]
 		if params[:new_password].present?
 			if current_user.encrypted_password.nil?
 				if params[:new_password] == params[:new_password_confirmation]
@@ -55,6 +55,7 @@ class LifemeterController < ApplicationController
 		end
 
 		current_user.save
+
 		sign_in( current_user, bypass: true )
 
 		redirect_to :back
