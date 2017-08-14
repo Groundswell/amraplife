@@ -61,7 +61,7 @@ class ObservationBotService < AbstractBotService
 		log_drink_observation:{
 			utterances: [
 				'(?:that)?(?:i)?\s*(drank|drink)\s*{value}\s*{action}',
-				#'(?:that)?(?:i)?\s*(drank|drink)\s*{value}\s*{unit}\s*{action}',
+				'(?:that)?(?:i)?\s*(drank|drink)\s*{value}\s*{unit}\s*{action}',
 			],
 			slots: {
 				action: 'Action',
@@ -464,12 +464,12 @@ class ObservationBotService < AbstractBotService
 
 			end
 
-			formatted_target = UnitService.new( val: metric.target, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric ).convert_to_display
+			formatted_target = UnitService.new( val: metric.target, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric, show_units: true ).convert_to_display
 
-			formatted_current = UnitService.new( val: current, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric ).convert_to_display
+			formatted_current = UnitService.new( val: current, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric, show_units: true ).convert_to_display
 
 			delta = current - metric.target
-			formatted_delta = UnitService.new( val: delta.abs, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric ).convert_to_display
+			formatted_delta = UnitService.new( val: delta.abs, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric, show_units: true ).convert_to_display
 			direction = delta > 0 ? 'over' : 'under'
 
 			if metric.target_type == 'value'
@@ -600,11 +600,13 @@ class ObservationBotService < AbstractBotService
 		# cause {value} slots don't take min sec, etc.
 		# of the form "(I) slept for 8hrs 24mins"
 
+		notes = @raw_input
+
 		metric = get_user_metric( user, params[:action], 's', true )
 		value = ChronicDuration.parse( params[:duration] )
 
 		if value.present?
-			observation = user.observations.create( observed: metric, value: value )
+			observation = user.observations.create( observed: metric, value: value, notes: notes )
 
 			response = "Logged #{observation.display_value} for #{metric.title}."
 			add_speech( response )
@@ -686,21 +688,40 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
-
 		if params[:action].match( /of/ )
 			metric_alias = params[:action].gsub( /.+of/, '' ).strip
-			unit = params[:action].split( /of/ )[0]
+			unit = params[:action].split( /of/ )[0].strip.singularize
 		else
-			unit = params[:action].match( /\S+\s/ ).to_s.strip
-			metric_alias = params[:action].gsub( /\S+\s/, '' ).strip
+			unit = params[:action].match( /\S+\s/ ).to_s.strip.singularize
+			metric_alias = params[:action].gsub( /\S+\s/, '' ).strip.singularize
 		end
 
-		metric = get_user_metric( user, metric_alias, unit, true )
+		# fetch the metric
+		metric = get_user_metric( user, metric_alias, 'l', true )
 
-		observation = Observation.create( user: user, observed: metric, value: params[:value], unit: unit )
+		value = params[:value]
+
+		if unit == 'ounce'
+			unit = 'fluid ounce'
+		end
+
+		unit = unit || metric.display_unit
+
+		unit_service = UnitService.new( val: value, disp_unit: params[:action], stored_unit: 'l', use_metric: user.use_metric, precision: 25 )
+		if unit_service.can_convert?
+			val = unit_service.convert_to_stored_value
+		else
+			unit_service = UnitService.new( val: value, disp_unit: unit, stored_unit: 'l', use_metric: user.use_metric, precision: 25 )
+			val = unit_service.convert_to_stored_value
+		end
+
+		observation_unit = user.use_metric? ? 'ml' : 'fluid ounce'
+
+		observation = user.observations.create( observed: metric, value: val, display_unit: observation_unit, unit: 'l', notes: @raw_input )
+
 
 		add_speech( observation.to_s( user ) )
-		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'created', source: options[:source], result_status: 'success', system_notes: "Spoke: #{observation.to_s( user )}" )
+		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'created', source: options[:source], result_status: 'success', system_notes: "Logged #{observation.display_value( show_units: true )} for #{observation.observed.title}." )
 	end
 
 
@@ -724,18 +745,21 @@ class ObservationBotService < AbstractBotService
 		end
 
 		# @todo parse notes
-		notes = nil
+		notes = @raw_input
 		sys_notes = nil
+		# trim the unit
 		unit = params[:unit].chomp( '.' ).singularize if params[:unit].present?
+		# normalize the unit
+		unit = UnitService::NORMALIZATIONS[unit] || unit
 
 		if params[:action].present?
 
 			# fetch the metric
-			metric = get_user_metric( user, params[:action], params[:unit], true )
+			metric = get_user_metric( user, params[:action], unit, true )
 			users_unit = unit || metric.display_unit
 			base_unit = UnitService::STORED_UNIT_MAP[unit] || metric.unit
 
-			unit_service = UnitService.new( val: params[:value], disp_unit: users_unit, stored_unit: base_unit, use_metric: user.use_metric )
+			unit_service = UnitService.new( val: params[:value], disp_unit: users_unit, stored_unit: base_unit, use_metric: user.use_metric, precision: 25 )
 
 			val = unit_service.convert_to_stored_value
 
@@ -746,7 +770,7 @@ class ObservationBotService < AbstractBotService
 			add_speech( observation.to_s( user ) )
 		end
 
-		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'created', source: options[:source], result_status: 'success', system_notes: "Logged #{observation.display_value} for #{observation.observed.title}." )
+		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'created', source: options[:source], result_status: 'success', system_notes: "Logged #{observation.display_value( show_units: true )} for #{observation.observed.title}." )
 
 	end
 
@@ -757,7 +781,7 @@ class ObservationBotService < AbstractBotService
 		end
 
 		# @todo parse notes
-		notes = nil
+		notes = @raw_input
 
 		params[:action] = params[:action].gsub( /timer/, '' )
 
@@ -778,6 +802,7 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
+		notes = @raw_input
 		sys_notes = ''
 
 		metric = get_user_metric( user, params[:action], 's' )
@@ -795,6 +820,8 @@ class ObservationBotService < AbstractBotService
 
 		if observation.present?
 			observation.stop!
+			observation.notes += "\r\n" + notes 
+			observation.save
 			add_speech("Stopping your #{metric.title} timer at #{observation.value.to_i} #{observation.unit}" )
 			sys_notes = "Spoke: 'Stopping your #{metric.title} timer at #{observation.value.to_i} #{observation.unit}'"
 		else
@@ -957,11 +984,11 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
-		stored_target = UnitService.new( val: params[:value], unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric ).convert_to_stored_value
+		stored_target = UnitService.new( val: params[:value], unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric, precision: 25 ).convert_to_stored_value
 
 		metric.update( target: stored_target )
 
-		formatted_target = UnitService.new( val: metric.target, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric ).convert_to_display
+		formatted_target = UnitService.new( val: metric.target, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric, show_units: true ).convert_to_display
 
 		response = "I set a target of #{formatted_target} for #{metric.title}."
 		add_speech( response )

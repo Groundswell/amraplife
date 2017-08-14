@@ -447,7 +447,6 @@ GEM
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
     rserve-client (0.3.2)
-    ruby-measurement (1.2.3)
     ruby-ole (1.2.12.1)
     ruby_http_client (3.0.1)
     rubyvis (0.6.1)
@@ -567,7 +566,6 @@ DEPENDENCIES
   pg (~> 0.15)
   rails (= 4.2.7)
   rest-client
-  ruby-measurement
   sass-rails (~> 5.0)
   sdoc (~> 0.4.0)
   sendgrid-ruby

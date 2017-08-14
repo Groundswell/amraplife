@@ -1,5 +1,6 @@
 class UnitService
 
+
 	# translation of observed units into base units as stored in the DB
 	STORED_UNIT_MAP = {
 		# all time is in seconds
@@ -29,6 +30,7 @@ class UnitService
 		# all volumes in liters
 		'fluid ounce' 	=> 'l',
 		'cup' 			=> 'l',
+		'glass' 		=> 'l',
 		'pint' 			=> 'l',
 		'quart' 		=> 'l',
 		'gallon' 		=> 'l',
@@ -71,6 +73,13 @@ class UnitService
 		'gallon' => 'l'	
 	}
 
+	NORMALIZATIONS = {
+		'pound' => 'lb',
+		'inch' 	=> 'in',
+		'"' 	=> 'in',
+		'mi' 	=> 'mile'
+	}
+
 	def translate_to_imperial( unit )
 		if METRIC_TO_IMPERIAL_MAP[ unit ].present?
 			unit = METRIC_TO_IMPERIAL_MAP[ unit ]
@@ -100,6 +109,14 @@ class UnitService
 		@show_units = opts[:show_units] || false
 	end
 
+	def can_convert?
+		begin
+			return Unitwise( @val, @stored_unit ).convert_to( @user_unit ).to_f.round( @precision )
+		rescue
+			false
+		end
+	end
+
 	def convert_to_display
 		return nil if @val.nil?
 		if @stored_unit == 's'
@@ -116,7 +133,8 @@ class UnitService
 				value = @val
 			end
 			if @show_units && @user_unit.present? 
-				return value == 1 ? "#{value} #{@user_unit}" : "#{value} #{@user_unit}s"
+				return "#{value} #{@user_unit.pluralize( value )}"
+				# return value == 1 ? "#{value} #{@user_unit}" : "#{value} #{@user_unit}s"
 			else
 				return "#{value}"
 			end
@@ -133,7 +151,6 @@ class UnitService
 
 		elsif @stored_unit == '%'
 			value = ( @val / 100.to_f ).round( @precision )
-
 		elsif STORED_UNIT_MAP.values.uniq.include?( @stored_unit )
 			begin
 				value = Unitwise( @val, @user_unit ).convert_to( @stored_unit ).to_f.round( @precision )

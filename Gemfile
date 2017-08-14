@@ -42,7 +42,6 @@ gem 'memcachier'
 gem 'newrelic_rpm'
 gem 'numbers_in_words'
 gem 'rest-client'
-gem 'ruby-measurement' # for parsing amount/unit strings
 gem 'sendgrid-ruby'
 gem 'statsample' # to muck around with
 gem 'unitwise' # for performing actual amount/unit conversion

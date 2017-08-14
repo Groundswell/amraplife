@@ -70,7 +70,12 @@
 								
 							.form-group
 								= f.label :target, 'Value:'
-								= f.text_field :target, value: UnitService.new( val: @metric.target, disp_unit: @metric.display_unit, base_unit: @metric.unit, use_metric: current_user.use_metric ).convert_to_display, class: 'form-control'
+								.input-group
+									= f.text_field :target, value: UnitService.new( val: @metric.target, disp_unit: @metric.display_unit, base_unit: @metric.unit, use_metric: current_user.use_metric ).convert_to_display, class: 'form-control'
+									%span.input-group-addon
+										= @metric.display_unit.pluralize( UnitService.new( val: @metric.target, disp_unit: @metric.display_unit, base_unit: @metric.unit, use_metric: current_user.use_metric ).convert_to_display )
+									.input-group
+
 							
 						
 						
