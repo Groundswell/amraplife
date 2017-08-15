@@ -766,7 +766,7 @@ class ObservationBotService < AbstractBotService
 			observation = user.observations.create( observed: metric, value: val, display_unit: users_unit, unit: base_unit, notes: notes )
 			add_speech( observation.to_s( user ) )
 		else
-			observation = user.observations.create( value: params[:value], unit: params[:unit], notes: notes )
+			observation = user.observations.create( value: params[:value], unit: unit, notes: notes )
 			add_speech( observation.to_s( user ) )
 		end
 

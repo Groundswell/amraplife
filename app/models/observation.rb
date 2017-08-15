@@ -83,7 +83,7 @@ class Observation < ActiveRecord::Base
 			self.recorded_at ||= Time.zone.now
 			#self.started_at ||= Time.zone.now
 
-			self.unit ||= self.observed.unit
+			self.unit ||= self.observed.try( :unit )
 			self.display_unit ||= self.observed.display_unit
 
 		end
