@@ -84,7 +84,7 @@ class Observation < ActiveRecord::Base
 			#self.started_at ||= Time.zone.now
 
 			self.unit ||= self.observed.try( :unit )
-			self.display_unit ||= self.observed.display_unit
+			self.display_unit ||= self.observed.try( :display_unit )
 
 		end
 
