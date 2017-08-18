@@ -1,6 +1,6 @@
 class Metric < ActiveRecord::Base
 
-	before_create 	:set_aliases
+	before_create 	:set_defaults
 	validate 		:unique_aliases
 
 	enum availability: { 'just_me' => 0, 'trainer' => 1, 'team' => 3, 'community' => 5, 'anyone' => 10 }
@@ -16,12 +16,10 @@ class Metric < ActiveRecord::Base
 	include FriendlyId
 	friendly_id :slugger, use: [ :slugged ]
 
+
 	def self.find_by_alias( term )
 		where( ":term = ANY( aliases )", term: term.parameterize ).first
 	end
-
-
-
 
 	def aliases_csv
 		self.aliases.join( ', ' )
@@ -31,13 +29,8 @@ class Metric < ActiveRecord::Base
 		self.aliases = aliases_csv.split( /,\s*/ )
 	end
 
-
-	def formatted_target
-		if self.target.present? && self.unit == 'sec'
-			ChronicDuration.output( self.target, format: :chrono )
-		else
-			"#{self.target} #{self.unit}s"
-		end
+	def is_time?
+		self.unit == 's'
 	end
 
 	def slugger
@@ -49,7 +42,8 @@ class Metric < ActiveRecord::Base
 	end
 
 	private
-		def set_aliases
+		def set_defaults
+			self.display_unit ||= self.unit
 			self.aliases << self.title.parameterize unless self.aliases.include?( self.title.parameterize )
 			self.aliases.each_with_index do |value, index|
 				self.aliases[index] = value.parameterize

@@ -2,25 +2,25 @@ class EcomResetMigration < ActiveRecord::Migration
 	def change
 
 		# dump legacy in-progress swell_ecom stuff
-		# drop_table 	:carts
-		# drop_table	:cart_items
-		# drop_table 	:coupons 
-		# drop_table 	:coupon_redemptions
-		# drop_table 	:geo_addresses
-		# drop_table 	:geo_countries
-		# drop_table 	:geo_states
-		# drop_table 	:orders
-		# drop_table 	:order_items
-		# drop_table 	:plans
-		# drop_table 	:products
-		# drop_table 	:product_options
-		# drop_table 	:shipments
-		# drop_table 	:shipment_items
-		# drop_table 	:skus
-		# drop_table 	:sku_options
-		# drop_table 	:subscriptions
-		# drop_table 	:tax_rates
-		# drop_table 	:transactions
+		drop_table 	:carts
+		drop_table	:cart_items
+		drop_table 	:coupons 
+		drop_table 	:coupon_redemptions
+		drop_table 	:geo_addresses
+		drop_table 	:geo_countries
+		drop_table 	:geo_states
+		drop_table 	:orders
+		drop_table 	:order_items
+		drop_table 	:plans
+		drop_table 	:products
+		drop_table 	:product_options
+		drop_table 	:shipments
+		drop_table 	:shipment_items
+		drop_table 	:skus
+		drop_table 	:sku_options
+		drop_table 	:subscriptions
+		drop_table 	:tax_rates
+		drop_table 	:transactions
 
 
 		# temporary product table -- just enough to display products for 

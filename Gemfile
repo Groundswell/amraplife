@@ -44,6 +44,7 @@ gem 'numbers_in_words'
 gem 'rest-client'
 gem 'sendgrid-ruby'
 gem 'statsample' # to muck around with
+gem 'unitwise' # for performing actual amount/unit conversion
 
 gem 'momentjs-rails', '>= 2.9.0'
 gem 'bootstrap3-datetimepicker-rails', '~> 4.17.47'

@@ -22,7 +22,7 @@
 								%ul
 									- @inputs.each do |input|
 										%li.clearfix{ style: 'list-style: none;text-align:left;' }
-											= image_tag input.user.avatar, width: 24
+											= input.user.avatar_tag width: 24
 
 											You Said:
 											= "'#{input.content}'"
@@ -33,12 +33,6 @@
 											.response{ style: 'margin-left:2em;margin-top:1em;' }
 												= image_tag 'life-meter-logo.png', width: 24
 												I:
-												= input.action
-
-												- if input.result_obj.present?
-													= input.result_obj.class.name
-													= input.result_obj.id
-
 												= input.system_notes
 													
 

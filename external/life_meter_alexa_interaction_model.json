@@ -1,0 +1,640 @@
+{
+  "intents": [
+    {
+      "name": "AMAZON.CancelIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.HelpIntent",
+      "samples": [
+        "help",
+        "for help"
+      ]
+    },
+    {
+      "name": "AMAZON.PauseIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.ResumeIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.StopIntent",
+      "samples": []
+    },
+    {
+      "name": "GetMotivationIntent",
+      "samples": [
+        "inspire me",
+        "motivate me",
+        "to inspire me",
+        "to motivate me"
+      ],
+      "slots": []
+    },
+    {
+      "name": "LoginIntent",
+      "samples": [
+        "log me in",
+        "log in",
+        "sign in",
+        "sign me in"
+      ],
+      "slots": []
+    },
+    {
+      "name": "LogMetricObservationIntent",
+      "samples": [
+        "Log {value} {unit}",
+        "Log {action} {value} {unit}",
+        "to log {value} {unit}",
+        "I {action} {value} {unit}",
+        "I ate {value} {unit} of {action}"
+      ],
+      "slots": [
+        {
+          "name": "action",
+          "type": "ActionSlotType",
+          "samples": []
+        },
+        {
+          "name": "value",
+          "type": "AMAZON.NUMBER",
+          "samples": []
+        },
+        {
+          "name": "unit",
+          "type": "UnitSlotType",
+          "samples": []
+        }
+      ]
+    },
+    {
+      "name": "LogStartObservationIntent",
+      "samples": [
+        "To start {action} ",
+        "start {action} ",
+        "begin {action} ",
+        "to begin {action} ",
+        "to time {action}",
+        "time {action}",
+        "start timing {action}",
+        "to start {action} timer",
+        "I am starting a {action}"
+      ],
+      "slots": [
+        {
+          "name": "action",
+          "type": "ActionSlotType",
+          "samples": []
+        }
+      ]
+    },
+    {
+      "name": "LogStopObservationIntent",
+      "samples": [
+        "stop {action} ",
+        "to stop {action}",
+        "end {action}",
+        "to end {action}",
+        "stop timing {action}",
+        "stop {action} timer",
+        "I have finished my {action}",
+        "I have completed my {action}"
+      ],
+      "slots": [
+        {
+          "name": "action",
+          "type": "ActionSlotType",
+          "samples": []
+        }
+      ]
+    },
+    {
+      "name": "ReportLastValueObservationIntent",
+      "samples": [
+        "what is my {action}",
+        "what was my {action}",
+        "what is {action}"
+      ],
+      "slots": [
+        {
+          "name": "action",
+          "type": "ActionSlotType",
+          "samples": []
+        }
+      ]
+    },
+    {
+      "name": "SetNameIntent",
+      "samples": [
+        "to call me {name}",
+        "call me {name}",
+        "that my name is {name} ",
+        "my name is {name} "
+      ],
+      "slots": [
+        {
+          "name": "name",
+          "type": "AMAZON.US_FIRST_NAME",
+          "samples": []
+        }
+      ]
+    },
+    {
+      "name": "SetTargetIntent",
+      "samples": [
+        "set a target of {value} for {action}",
+        "set a target of {value} {unit} for {action}",
+        "set a target for {action} of {value}",
+        "set a target for {action} of {value} {unit}"
+      ],
+      "slots": [
+        {
+          "name": "value",
+          "type": "AMAZON.NUMBER",
+          "samples": []
+        },
+        {
+          "name": "action",
+          "type": "ActionSlotType",
+          "samples": []
+        },
+        {
+          "name": "unit",
+          "type": "UnitSlotType",
+          "samples": []
+        }
+      ]
+    },
+    {
+      "name": "TargetRemainingIntent",
+      "samples": [
+        "how much {action} do I have left",
+        "how many {action} do I have left"
+      ],
+      "slots": [
+        {
+          "name": "action",
+          "type": "ActionSlotType",
+          "samples": []
+        }
+      ]
+    },
+    {
+      "name": "WorkoutCompleteIntent",
+      "samples": [
+        "done the workout of the day",
+        "finished the workout of the day",
+        "i am done the workout of the day",
+        "i am finished the workout of the day",
+        "done the wod",
+        "finished the wod",
+        "i am done the wod",
+        "i am finished the wod",
+        "done the workout",
+        "finished the workout",
+        "i am done the workout",
+        "i am finished the workout",
+        "i am done working out",
+        "i am finished working out",
+        "i have completed the wod",
+        "i have completed the workout of the day",
+        "i have completed the workout",
+        "i have completed the {workoutname} workout",
+        "i am done the {workoutname} workout",
+        "done the {workoutname} workout"
+      ],
+      "slots": [
+        {
+          "name": "workoutname",
+          "type": "WorkoutName",
+          "samples": []
+        }
+      ]
+    },
+    {
+      "name": "WorkoutDescribeIntent",
+      "samples": [
+        "what is {workoutname} workout",
+        "to describe {workoutname} workout",
+        "describe {workoutname} workout",
+        "describe today's workout",
+        "to describe today's workout",
+        "what is todays workout",
+        "what is the wod",
+        "what is the workout of the day"
+      ],
+      "slots": [
+        {
+          "name": "workoutname",
+          "type": "WorkoutName",
+          "samples": []
+        }
+      ]
+    },
+    {
+      "name": "WorkoutStartIntent",
+      "samples": [
+        "start the workout of the day",
+        "starting the workout of the day",
+        "i am starting the workout of the day",
+        "to start the workout of the day",
+        "to start workout of the day",
+        "to start working out",
+        "starting working out",
+        "start working out",
+        "to start the workout",
+        "to start workout",
+        "i am starting workout",
+        "starting the wod",
+        "i am starting the wod",
+        "to start the wod",
+        "to start wod",
+        "starting wod",
+        "start wod",
+        "start {workoutname} workout",
+        "starting {workoutname} workout",
+        "i am starting {workoutname} workout",
+        "to start {workoutname} workout",
+        "start the {workoutname} workout",
+        "starting the {workoutname} workout",
+        "i am starting the {workoutname} workout",
+        "to start the {workoutname} workout"
+      ],
+      "slots": [
+        {
+          "name": "workoutname",
+          "type": "WorkoutName",
+          "samples": []
+        }
+      ]
+    }
+  ],
+  "types": [
+    {
+      "name": "ActionSlotType",
+      "values": [
+        {
+          "id": null,
+          "name": {
+            "value": "ran",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "swam",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "biked",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "walked",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "jogged",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "slept",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "drove",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "drive",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "worked",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "ate",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "studying latin",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "bike ride",
+            "synonyms": []
+          }
+        }
+      ]
+    },
+    {
+      "name": "MeasureSlotType",
+      "values": [
+        {
+          "id": null,
+          "name": {
+            "value": "cup",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "gram",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "teaspoon",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "tablespoon",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "liter",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "ounce",
+            "synonyms": []
+          }
+        }
+      ]
+    },
+    {
+      "name": "UnitSlotType",
+      "values": [
+        {
+          "id": null,
+          "name": {
+            "value": "height",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "weight",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "hips",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "resting heart rate",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "systolic blood pressure",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "diastolic blood pressure",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "blood pressure",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "precent body fat",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "heart rate",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "pulse",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "systolic",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "diastolic",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "body fat",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "B.M.I.",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "B M I",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "Calories",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "cal",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "cals",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "protein",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "grams protein",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "grams of protein",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "carbs",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "carbohydrates",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "sleep",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "Working",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "Work",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "miles",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "kilometers",
+            "synonyms": []
+          }
+        }
+      ]
+    },
+    {
+      "name": "WorkoutName",
+      "values": [
+        {
+          "id": "",
+          "name": {
+            "value": "Glen",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "3 Minute Squat Challenge",
+            "synonyms": []
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "3 Minute Pushup Challenge",
+            "synonyms": []
+          }
+        }
+      ]
+    }
+  ]
+}

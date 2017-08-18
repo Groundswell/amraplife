@@ -10,7 +10,6 @@
 			%thead
 				%th Observed
 				%th Value
-				%th Unit
 				%th Recorded
 				%th
 			%tbody
@@ -19,9 +18,7 @@
 						%td
 							= link_to observation.observed.try(:title) || 'Note', edit_observation_path( observation )
 						%td
-							= observation.human_value
-						%td
-							= observation.unit
+							= observation.display_value( show_units: true )
 						%td
 							= observation.recorded_at
 						%td

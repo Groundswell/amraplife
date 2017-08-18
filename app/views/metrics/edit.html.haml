@@ -26,7 +26,7 @@
 							- @metric.observations.order( recorded_at: :desc ).limit( 50 ).each do |obs|
 								%tr
 									%td
-										= obs.human_value
+										= UnitService.new( val: obs.value, display_unit: obs.display_unit, stored_unit: obs.unit, use_metric: current_user.use_metric ).convert_to_display
 									%td
 										= obs.notes
 									%td
@@ -38,7 +38,11 @@
 					.well
 						.form-group
 							= f.label :unit
-							= f.text_field :unit, class: 'form-control'
+							= f.select :unit, options_for_select( [ ['Arbitrary', ''], ['Time', 's'], ['Weight', 'g'], ['Length/Distance', 'm'], ['Volume', 'l'], ['Percent', '%'] ], @metric.unit ), {}, class: 'form-control'
+
+						.form-group#display_unit
+							= f.label :display_unit
+							= f.text_field :display_unit, class: 'form-control'
 
 						.form-group
 							= f.label :aliases_csv, 'Aliases'
@@ -66,7 +70,12 @@
 								
 							.form-group
 								= f.label :target, 'Value:'
-								= f.text_field :target, value: @metric.formatted_target, class: 'form-control'
+								.input-group
+									= f.text_field :target, value: UnitService.new( val: @metric.target, disp_unit: @metric.display_unit, base_unit: @metric.unit, use_metric: current_user.use_metric ).convert_to_display, class: 'form-control'
+									%span.input-group-addon
+										= @metric.display_unit.pluralize( UnitService.new( val: @metric.target, disp_unit: @metric.display_unit, base_unit: @metric.unit, use_metric: current_user.use_metric ).convert_to_display )
+									.input-group
+
 							
 						
 						
