@@ -140,20 +140,21 @@ class AbstractBotService
 
 		intent = self.class.compiled_intents[intent_scope][intent_name]
 
-		# if no intent could be found for the intent name.
-		if intent.nil?
+		# if this is a mounted service, do not execute the call_intent, but pass
+		# it to the base bot service.
+		if @parent_bot_service.present? && args[:from_base_bot] != true
+
+			@parent_bot_service.call_intent( intent_name, scope: args[:scope], raw_input: self.raw_input, from_base_bot: false )
+
+
+		# if not mounted service, and there is no intent, the one doesn't exist
+		elsif intent.nil?
 
 			return false
 
-		# if this is a mounted service, do not execute the call_intent, but pass
-		# it to the base bot service.
-		elsif @parent_bot_service.present? && args[:from_base_bot] != true
-
-			@parent_bot_service.call_intent( intent_name, scope: args[:scope], raw_input: self.raw_input )
-
-		# if base bot service, and request if for an intent from a mounted bot
+		# if base bot service, and request is for an intent from a mounted bot
 		# service, make a call to that service.
-		elsif ( bot_service_name = intent[:bot_service] ).present?
+		elsif @parent_bot_service.nil? && ( bot_service_name = intent[:bot_service] ).present?
 
 			bot_services = self.class.bot_services
 			@bot_service_instances ||= {}
@@ -315,7 +316,7 @@ class AbstractBotService
 						regex = nil
 						(intent[:utterances] || []).each do |utterance|
 							utterance_regex = utterance
-							
+
 							(intent[:slots] || {}).each do |slot_name, slot_type|
 								slot = slots[slot_type.to_sym]
 
