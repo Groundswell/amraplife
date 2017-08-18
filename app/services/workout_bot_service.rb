@@ -52,9 +52,6 @@ class WorkoutBotService < AbstractBotService
 				workoutname: 'WorkoutName',
 			},
 		},
-		stop: {
-			utterances: [ 'stop' ]
-		},
 
 		workout_describe: {
 			utterances: [
@@ -119,7 +116,7 @@ class WorkoutBotService < AbstractBotService
 
 		if get_session_context( 'workout.type' ) == 'ft'
 
-			workout_complete()
+			call_intent( :workout_complete )
 
 		else
 			add_speech("Pausing workout.")
