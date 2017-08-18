@@ -315,10 +315,10 @@ class AbstractBotService
 						regex = nil
 						(intent[:utterances] || []).each do |utterance|
 							utterance_regex = utterance
-							puts "utterance: \"#{utterance}\""
+							
 							(intent[:slots] || {}).each do |slot_name, slot_type|
 								slot = slots[slot_type.to_sym]
-								puts "slot_name: \"#{slot_name}\""
+
 								utterance_regex = utterance_regex.gsub("{#{slot_name}}","(?'#{slot_name}'#{slot[:regex].join('|')})")
 							end
 
