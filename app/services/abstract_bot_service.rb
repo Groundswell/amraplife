@@ -63,6 +63,7 @@ class AbstractBotService
 
 			@audio_player = args[:audio_player] || { offset: 0, state: 'stopped', token: nil }
 		else
+			@parent_bot_service = args
 
 			@request	= args.request
 			@session	= args.session
@@ -99,7 +100,7 @@ class AbstractBotService
 			intent_names.each do |intent_name|
 				intent = scoped_compiled_intents[intent_name]
 
-				unless ( matches = intent[:regex].match( text ) ).nil? || @except_intents.include?("#{intent_scope}/#{intent_name}".to_sym)
+				unless intent[:regex].nil? || ( matches = intent[:regex].match( text ) ).nil? || @except_intents.include?("#{intent_scope}/#{intent_name}".to_sym)
 					requested_intent_name 		= intent_name
 					requested_intent_matches 	= matches
 					requested_intent_scope 		= intent_scope
@@ -120,7 +121,7 @@ class AbstractBotService
 			end
 
 
-			self.call_intent( requested_intent_name, scope: requested_intent_scope )
+			self.call_intent( requested_intent_name, scope: requested_intent_scope, raw_input: text )
 			return true
 		else
 			user.user_inputs.create( content: @raw_input, action: 'failed', source: options[:source], result_status: 'parse failure', system_notes: "I didn't understand '#{@raw_input}'" ) if user.present?
@@ -135,20 +136,32 @@ class AbstractBotService
 	def call_intent( intent_name, args={} )
 		intent_name = intent_name.to_sym
 		intent_scope = args[:scope] || :root #@todo default to scope from session
+		self.raw_input = args[:raw_input] if args.key? :raw_input
 
 		intent = self.class.compiled_intents[intent_scope][intent_name]
 
+		# if no intent could be found for the intent name.
 		if intent.nil?
 
 			return false
 
+		# if this is a mounted service, do not execute the call_intent, but pass
+		# it to the base bot service.
+		elsif @parent_bot_service.present? && args[:from_base_bot] != true
+
+			@parent_bot_service.call_intent( intent_name, scope: args[:scope], raw_input: self.raw_input )
+
+		# if base bot service, and request if for an intent from a mounted bot
+		# service, make a call to that service.
 		elsif ( bot_service_name = intent[:bot_service] ).present?
 
 			bot_services = self.class.bot_services
 			@bot_service_instances ||= {}
 			@bot_service_instances[bot_service_name.to_sym] ||= bot_services[bot_service_name.to_sym][:class].constantize.new( self )
 
-			@bot_service_instances[bot_service_name.to_sym].call_intent( intent_name, scope: args[:scope] )
+			@bot_service_instances[bot_service_name.to_sym].call_intent( intent_name, scope: args[:scope], raw_input: self.raw_input, from_base_bot: true )
+
+		# if intent call is for an intent from this bot service, run it.
 		else
 
 			intent_method = intent[:method]
@@ -302,9 +315,10 @@ class AbstractBotService
 						regex = nil
 						(intent[:utterances] || []).each do |utterance|
 							utterance_regex = utterance
+							puts "utterance: \"#{utterance}\""
 							(intent[:slots] || {}).each do |slot_name, slot_type|
 								slot = slots[slot_type.to_sym]
-
+								puts "slot_name: \"#{slot_name}\""
 								utterance_regex = utterance_regex.gsub("{#{slot_name}}","(?'#{slot_name}'#{slot[:regex].join('|')})")
 							end
 
@@ -316,8 +330,12 @@ class AbstractBotService
 							regex = (regex || '') + utterance_regex
 						end
 
-						regex = '^(' + regex + ')$'
-						@compiled_intents[scope_name][intent_name] = intent.merge( regex: Regexp.new( regex, true ) )
+						if regex.present?
+							regex = '^(' + regex + ')$'
+							regex_obj = Regexp.new( regex, true )
+						end
+
+						@compiled_intents[scope_name][intent_name] = intent.merge( regex: regex_obj )
 
 					end
 
