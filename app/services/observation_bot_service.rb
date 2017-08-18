@@ -1,6 +1,23 @@
 class ObservationBotService < AbstractBotService
 
 	 add_intents( {
+
+ 		set_target:{
+ 			utterances: [
+ 				'set\s+(a\s+)?target\s+of\s+{value}\s+for\s+{action}',
+ 				'set\s+(a\s+)?target\s+of\s+{value}\s+{unit}\s+for\s+{action}',
+ 				'set\s+(a\s+)?target\s*(for\s+)?{action}\s+of\s+{value}',
+ 				'set\s+(a\s+)?target\s*(for\s+)?{action}\s+of\s+{value}\s*{unit}',
+ 				'set\s+(a\s+)?{action}\s+target\s+of\s+{value}\s+{unit}',
+ 				'set\s+(a\s+)?{action}\s+target\s+of\s+{value}',
+ 			],
+ 			slots:{
+ 				action: 'Action',
+ 				value: 'Amount',
+ 				unit: 'Unit'
+ 			},
+ 		},
+
 		check_metric: {
 			utterances: [
 				'(to)?\s*check\s*(my)?\s*{action}',
@@ -124,7 +141,9 @@ class ObservationBotService < AbstractBotService
 				'(?:that )?\s*i {action} {value}\s*{unit}',
 				'(?:that )?\s*i {action} for {value}',
 				'(?:that )?\s*i {action} for {value}\s*{unit}',
-				'(?:that )?\s*i did {value}\s*{unit} of {action}'
+				'(?:that )?\s*i did {value}\s*{unit} of {action}',
+				'my {action} is {value} {unit}',
+				'my {action} is {value}',
 
 			],
 			slots: {
@@ -147,19 +166,6 @@ class ObservationBotService < AbstractBotService
 		# 		portion: 'Number',
 		# 	}
 		# },
-		set_target:{
-			utterances: [
-				'set\s*(?:a)?\s*target of {value} for {action}',
-				'set\s*(?:a)?\s*target of {value}\s*{unit} for {action}',
-				'set\s*(?:a)?\s*target\s*(?:for)?{action} of {value}',
-				'set\s*(?:a)?\s*target\s*(?:for)?{action} of {value}\s*{unit}',
-			],
-			slots:{
-				action: 'Action',
-				value: 'Amount',
-				unit: 'Unit'
-			},
-		},
 
 		tell_about: {
 			utterances: [
@@ -613,7 +619,13 @@ class ObservationBotService < AbstractBotService
 
 		if observation.present?
 			observation.stop!
-			observation.notes += "\r\n" + notes
+
+			if observation.notes.present?
+				observation.notes = "#{observation.notes}\r\n#{notes}"
+			else
+				observation.notes = notes
+			end
+
 			observation.save
 			add_speech("Stopping your #{metric.title} timer at #{observation.value.to_i} #{observation.unit}" )
 			sys_notes = "Spoke: 'Stopping your #{metric.title} timer at #{observation.value.to_i} #{observation.unit}'"
