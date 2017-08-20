@@ -54,8 +54,10 @@ class Observation < ActiveRecord::Base
 			str = "#{self.user} "
 		end
 
-		if self.value.present?
+		if self.value.present? && self.observed.present?
 			str += "recorded #{self.display_value} for #{self.observed.try( :title )} "
+		elsif self.value.present? && self.observed.nil?
+			str += "recorded #{self.display_value} "
 		elsif self.started_at.present? && self.ended_at.nil?
 			str += "started #{self.observed.try( :title )} "
 		else
@@ -64,7 +66,7 @@ class Observation < ActiveRecord::Base
 
 		str += self.notes if self.notes.present?
 
-		str
+		str.strip
 	end
 
 

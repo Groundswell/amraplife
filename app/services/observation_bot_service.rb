@@ -543,6 +543,13 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
+		if params[:value].blank? || ( params[:action].blank? && params[:unit].blank? )
+
+			add_speech( "I'm sorry, I didn't understand that." )
+			return
+
+		end
+
 		# @todo parse notes
 		notes = @raw_input
 		sys_notes = nil
