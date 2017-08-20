@@ -51,6 +51,12 @@ class GreetingsBotService < AbstractBotService
 			call_intent( :login )
 			return
 		end
+
+		unless params[:name].present?
+			add_ask("Can you please repeat that. I didn't catch your name.")
+			return
+		end
+
 		user.update( first_name: params[:name] )
 		add_speech("OK, from now on I'll call you #{params[:name]}.")
 		user.user_inputs.create( content: raw_input, result_obj: user, action: 'updated', source: options[:source], result_status: 'success', system_notes: "Spoke: 'OK, from now on I'll call you #{params[:name]}.'" )

@@ -47,28 +47,40 @@ class ObservationAlexaSkillsController < ActionController::Base
 			@alexa_params	= Hash[*@alexa_request.slots.values.collect{|values| [values['name'].to_sym,values['value']]}.flatten] if @alexa_request.respond_to?(:slots) && @alexa_request.slots.present?
 
 
-			@bot_service = LifeMeterBotService.new( request: @alexa_request, response: self, session: @bot_session, audio_player: @alexa_audio_player, params: @alexa_params, user: @alexa_user, dialog: DEFAULT_DIALOG, source: 'alexa' )
+			begin
 
-			if (@alexa_request.type == 'SESSION_ENDED_REQUEST')
-				# Wrap up whatever we need to do.
-				puts "#{@alexa_request.type}"
-				puts "#{@alexa_request.reason}"
-				# halt 200
+				@bot_service = LifeMeterBotService.new( request: @alexa_request, response: self, session: @bot_session, audio_player: @alexa_audio_player, params: @alexa_params, user: @alexa_user, dialog: DEFAULT_DIALOG, source: 'alexa' )
 
-			elsif @alexa_request.type == 'LAUNCH_REQUEST'
 
-				@bot_service.call_intent( :launch )
+				if (@alexa_request.type == 'SESSION_ENDED_REQUEST')
+					# Wrap up whatever we need to do.
+					puts "#{@alexa_request.type}"
+					puts "#{@alexa_request.reason}"
+					# halt 200
 
-			elsif @alexa_request.type == 'INTENT_REQUEST'
-				# Process your Intent Request
+				elsif @alexa_request.type == 'LAUNCH_REQUEST'
 
-				action = @alexa_request.name.gsub('AMAZON.','').underscore.gsub('_intent','')
+					@bot_service.call_intent( :launch )
 
-				unless @bot_service.call_intent( action )
+				elsif @alexa_request.type == 'INTENT_REQUEST'
+					# Process your Intent Request
 
-					add_speech("Recieved Intent #{@alexa_request.name}")
+					action = @alexa_request.name.gsub('AMAZON.','').underscore.gsub('_intent','')
 
+					unless @bot_service.call_intent( action )
+
+						add_speech("Recieved Intent #{@alexa_request.name}")
+
+					end
 				end
+
+			rescue Exception => e
+				raise e if Rails.env.development?
+
+				NewRelic::Agent.notice_error(e)
+				add_speech("I'm sorry, I didn't understand that.")
+
+
 			end
 
 		else

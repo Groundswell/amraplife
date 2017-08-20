@@ -749,6 +749,11 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
+		unless params[:action].present? && params[:value].present?
+			add_ask("Sounds like you were trying to set a fitness target, but I didn't catch what it was.  Next time be sure to specify what it is you want to track, and what your goal is.  For example \"set a target of one thousand eight hundred for calories\".  Now give it another try.")
+			return
+		end
+
 		metric = get_user_metric( user, params[:action], params[:unit], true )
 
 		if metric.nil?
