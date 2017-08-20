@@ -79,7 +79,7 @@ class LifeMeterBotService < AbstractBotService
 
 	def help
 
-		help_message = get_dialog('help', default: "To log information just say \"I ate 100 calories\", or use a fitness timer by saying \"start a workout timer\". Life Meter will remember, report and provide insights into what you have told it.")
+		help_message = get_dialog('help', default: "To log information just say \"I ate one hundred calories\", or use a fitness timer by saying \"start a workout timer\". Life Meter will remember, report and provide insights into what you have told it.")
 
 		add_speech( help_message )
 
@@ -90,11 +90,11 @@ class LifeMeterBotService < AbstractBotService
 	def launch
 		# Process your Launch Request
 		if user.present?
-			launch_message = get_dialog('launch_user', default: "Welcome to Life Meter by Life Meter. To log information just say \"I ate 100 calories\", or use a fitness timer by saying \"start run timer\".  Life Meter will remember, report and provide insights into what you have told it.")
+			launch_message = get_dialog('launch_user', default: "Welcome to Life Meter by Life Meter. To log information just say \"I ate one hundred calories\", or use a fitness timer by saying \"start run timer\".  Life Meter will remember, report and provide insights into what you have told it.")
 
 			add_ask(launch_message, reprompt_text: 'I\'m sorry, I couldn\'t hear you.  Try saying that again.' )
 		else
-			launch_message = get_dialog('launch_guest', default: "Welcome to Life Meter by Life Meter. To log fitness information just say \"I ate 100 calories\", or use a fitness timer by saying \"start run timer\". Life Meter will remember, report and provide insights into what you have told it. To get started click this link, and complete the Life Meter skill registration.")
+			launch_message = get_dialog('launch_guest', default: "Welcome to Life Meter by Life Meter. To log fitness information just say \"I ate one hundred calories\", or use a fitness timer by saying \"start run timer\". Life Meter will remember, report and provide insights into what you have told it. To get started click this link, and complete the Life Meter skill registration.")
 
 			add_speech(launch_message)
 			add_login_prompt('Create your Life Meter Account', '', 'In order to record and report your metrics you must first create an account.')

@@ -5,9 +5,9 @@ class ObservationAlexaSkillsController < ActionController::Base
 
 	DEFAULT_DIALOG = {
 
-		help: "To log fitness information just say \"Alexa tell Life Meter I ate 100 calories\", or use a fitness timer by saying \"Alexa ask Life Meter to start a workout timer\".  Life Meter will remember, report and provide insights into what you have told it.",
-		launch_user: "Welcome to Life Meter.  To log fitness information just say \"Alexa tell Life Meter I ate 100 calories\", or use a fitness timer by saying \"Alexa ask Life Meter to start a workout timer\". Life Meter will remember, report and provide insights into what you have told it.",
-		launch_guest: "Welcome to Life Meter.  To log fitness information just say \"Alexa tell Life Meter I ate 100 calories\", or use a fitness timer by saying \"Alexa ask Life Meter to start a workout timer\".  Life Meter will remember, report and provide insights into what you have told it.  To get started open your Alexa app, and complete Life Meter registration.",
+		help: "To log fitness information just say \"Alexa tell Life Meter I ate one hundred calories\", or use a fitness timer by saying \"Alexa ask Life Meter to start a workout timer\".  Life Meter will remember, report and provide insights into what you have told it.",
+		launch_user: "Welcome to Life Meter.  To log fitness information just say \"Alexa tell Life Meter I ate one hundred calories\", or use a fitness timer by saying \"Alexa ask Life Meter to start a workout timer\". Life Meter will remember, report and provide insights into what you have told it.",
+		launch_guest: "Welcome to Life Meter.  To log fitness information just say \"Alexa tell Life Meter I ate one hundred calories\", or use a fitness timer by saying \"Alexa ask Life Meter to start a workout timer\".  Life Meter will remember, report and provide insights into what you have told it.  To get started open your Alexa app, and complete Life Meter registration.",
 
 		login: "Open your Alexa app, and complete the Life Meter registration to continue",
 	}
@@ -27,6 +27,8 @@ class ObservationAlexaSkillsController < ActionController::Base
 		if ( json_post['session'].present? && ( request_user = json_post['session']['user'] ).present? ) || ( request_user = json_post['context']['System']['user'] ).present?
 
 			@alexa_user = SwellMedia::OauthCredential.where( token: request_user['accessToken'], provider: 'amazon:alexa' ).first.try(:user) if request_user['accessToken'].present?
+			@alexa_user ||= User.friendly.find( ENV['TEST_USER_APP_USER_ID'] ) if ENV['TEST_USER_APP_USER_ID'].present? && ENV['TEST_USER_ALEXA_USER_ID'].present? && ENV['TEST_USER_ALEXA_USER_ID'] == request_user['userId']
+
 
 		end
 
