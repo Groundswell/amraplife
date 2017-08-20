@@ -545,7 +545,7 @@ class ObservationBotService < AbstractBotService
 
 		if params[:value].blank? || ( params[:action].blank? && params[:unit].blank? )
 
-			add_speech( "I'm sorry, I didn't understand that." )
+			ask_speech( "I'm sorry, I didn't understand that.  You must supply a unit or action with your value in order to log it.  For example \"log one hundred calories\" or \"my weight is one hundred sixty\".  Now, give it another try." )
 			return
 
 		end
