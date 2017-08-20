@@ -92,7 +92,7 @@ class LifeMeterBotService < AbstractBotService
 		if user.present?
 			launch_message = get_dialog('launch_user', default: "Welcome to Life Meter by Life Meter. To log information just say \"I ate 100 calories\", or use a fitness timer by saying \"start run timer\".  Life Meter will remember, report and provide insights into what you have told it.")
 
-			add_speech(launch_message)
+			add_ask(launch_message, reprompt_text: 'I\'m sorry, I couldn\'t hear you.  Try saying that again.' )
 		else
 			launch_message = get_dialog('launch_guest', default: "Welcome to Life Meter by Life Meter. To log fitness information just say \"I ate 100 calories\", or use a fitness timer by saying \"start run timer\". Life Meter will remember, report and provide insights into what you have told it. To get started click this link, and complete the Life Meter skill registration.")
 
