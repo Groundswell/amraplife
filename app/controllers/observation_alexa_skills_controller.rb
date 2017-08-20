@@ -141,8 +141,8 @@ class ObservationAlexaSkillsController < ActionController::Base
 
 	def add_ask(speech_text, args = {} )
 		@ask_response = true
-		alexa_response.add_speech( speech_text, !!(args[:ssml] || args[:speech_ssml]) )
-		alexa_response.add_reprompt( args[:reprompt_text], !!(args[:ssml] || args[:speech_ssml]) ) if args[:reprompt_text].present?
+		@alexa_response.add_speech( speech_text, !!(args[:ssml] || args[:speech_ssml]) )
+		@alexa_response.add_reprompt( args[:reprompt_text], !!(args[:ssml] || args[:speech_ssml]) ) if args[:reprompt_text].present?
 	end
 
 	def add_audio_url( url, args = {} )
