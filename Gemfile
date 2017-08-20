@@ -28,6 +28,7 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'sitemap_generator'
 
 gem 'alexa_rubykit'
+gem 'alexa_verifier'
 gem 'carrierwave'
 gem 'chronic_duration'
 gem 'dalli'

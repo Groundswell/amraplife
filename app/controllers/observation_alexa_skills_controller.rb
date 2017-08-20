@@ -1,6 +1,7 @@
 
 class ObservationAlexaSkillsController < ActionController::Base
 	protect_from_forgery :except => [:create]
+	before_filter :verify_alexa_authenticity, only: [:create], if: "Rails.env.production?"
 
 	DEFAULT_DIALOG = {
 
@@ -12,7 +13,7 @@ class ObservationAlexaSkillsController < ActionController::Base
 	}
 
 	def create
-		# @todo Check that it's a valid Alexa request
+
 		puts request.raw_post
 		json_post = JSON.parse(request.raw_post)
 		json_post['version'] ||= 1 #bug, AlexaRubykit requires a version which is no longer provided?
@@ -163,6 +164,34 @@ class ObservationAlexaSkillsController < ActionController::Base
 
 	def add_stop_audio()
 		@alexa_response.add_stop_audio()
+	end
+
+	private
+
+	def verify_alexa_authenticity
+
+		verifier = AlexaVerifier.build do |c|
+		  c.verify_signatures = true
+		  c.verify_timestamps = true
+		  c.timestamp_tolerance = 60 # seconds
+		end
+
+		begin
+
+			request_verified = verifier.verify!(
+				request.headers['SignatureCertChainUrl'],
+				request.headers['Signature'],
+				request.body.read
+			)
+
+		rescue AlexaVerifier::VerificationError => ve
+			puts ve.message
+			NewRelic::Agent.notice_error(ve)
+
+			render( :text => '400 Bad Request', :status => 400)
+		end
+
+		return request_verified
 	end
 
 end
