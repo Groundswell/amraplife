@@ -545,7 +545,7 @@ class ObservationBotService < AbstractBotService
 
 		if params[:value].blank? || ( params[:action].blank? && params[:unit].blank? )
 
-			ask_speech( "I'm sorry, I didn't understand that.  You must supply a unit or action with your value in order to log it.  For example \"log one hundred calories\" or \"my weight is one hundred sixty\".  Now, give it another try." )
+			add_ask( "I'm sorry, I didn't understand that.  You must supply a unit or action with your value in order to log it.  For example \"log one hundred calories\" or \"my weight is one hundred sixty\".  Now, give it another try." )
 			return
 
 		end
@@ -589,7 +589,7 @@ class ObservationBotService < AbstractBotService
 
 		if params[:action].blank?
 
-			ask_speech( "I'm sorry, I didn't understand that.  You must supply an action in order to start a timer.  For example \"start jogging timer\" or \"start bike ride\".  Now, give it another try." )
+			add_ask( "I'm sorry, I didn't understand that.  You must supply an action in order to start a timer.  For example \"start jogging timer\" or \"start bike ride\".  Now, give it another try." )
 			return
 
 		end
@@ -619,7 +619,7 @@ class ObservationBotService < AbstractBotService
 
 		if params[:action].blank?
 
-			ask_speech( "I'm sorry, I didn't understand that.  You must supply an action in order to stop a timer.  For example \"stop jogging timer\" or \"stop bike ride\".  Now, give it another try." )
+			add_ask( "I'm sorry, I didn't understand that.  You must supply an action in order to stop a timer.  For example \"stop jogging timer\" or \"stop bike ride\".  Now, give it another try." )
 			return
 
 		end
