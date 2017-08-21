@@ -53,7 +53,7 @@ class GreetingsBotService < AbstractBotService
 		end
 
 		unless params[:name].present?
-			add_ask("Can you please repeat that. I didn't catch your name.")
+			add_ask("Can you please repeat that. I didn't catch your name.", reprompt_text: "I still didn't catch your name.  Say it now or say exit to abort." )
 			return
 		end
 

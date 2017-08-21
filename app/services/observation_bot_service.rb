@@ -545,7 +545,7 @@ class ObservationBotService < AbstractBotService
 
 		if params[:value].blank? || ( params[:action].blank? && params[:unit].blank? )
 
-			add_ask( "I'm sorry, I didn't understand that.  You must supply a unit or action with your value in order to log it.  For example \"log one hundred calories\" or \"my weight is one hundred sixty\".  Now, give it another try." )
+			add_ask( "I'm sorry, I didn't understand that.  You must supply a unit or action with your value in order to log it.  For example \"log one hundred calories\" or \"my weight is one hundred sixty\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it." )
 			return
 
 		end
@@ -589,7 +589,7 @@ class ObservationBotService < AbstractBotService
 
 		if params[:action].blank?
 
-			add_ask( "I'm sorry, I didn't understand that.  You must supply an action in order to start a timer.  For example \"start jogging timer\" or \"start bike ride\".  Now, give it another try." )
+			add_ask( "I'm sorry, I didn't understand that.  You must supply an action in order to start a timer.  For example \"start jogging timer\" or \"start bike ride\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply an action in order to start a timer." )
 			return
 
 		end
@@ -619,7 +619,7 @@ class ObservationBotService < AbstractBotService
 
 		if params[:action].blank?
 
-			add_ask( "I'm sorry, I didn't understand that.  You must supply an action in order to stop a timer.  For example \"stop jogging timer\" or \"stop bike ride\".  Now, give it another try." )
+			add_ask( "I'm sorry, I didn't understand that.  You must supply an action in order to stop a timer.  For example \"stop jogging timer\" or \"stop bike ride\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply an action in order to stop a timer." )
 			return
 
 		end
@@ -773,7 +773,7 @@ class ObservationBotService < AbstractBotService
 		end
 
 		unless params[:action].present? && params[:value].present?
-			add_ask("Sounds like you were trying to set a target, but I didn't catch what it was.  Next time be sure to specify what it is you want to track, and what your goal is.  For example \"set a target of one thousand eight hundred for calories\".  Now give it another try.")
+			add_ask("Sounds like you were trying to set a target, but I didn't catch what it was.  Next time be sure to specify what it is you want to track, and what your goal is.  For example \"set a target of one thousand eight hundred for calories\".  Now give it another try.", reprompt_text: "I still didn't understand that.  To set a target you must specify what it is you want to track, and what your goal is." )
 			return
 		end
 
