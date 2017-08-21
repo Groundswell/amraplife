@@ -198,9 +198,9 @@ class ObservationAlexaSkillsController < ActionController::Base
 				request.body.read
 			)
 
-		rescue AlexaVerifier::VerificationError => ve
-			puts ve.message
-			NewRelic::Agent.notice_error(ve)
+		rescue Exception => e
+			puts e.message
+			NewRelic::Agent.notice_error(e)
 
 			render( :text => '400 Bad Request', :status => 400)
 		end
