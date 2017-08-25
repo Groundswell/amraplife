@@ -3,6 +3,8 @@ class ObservationAlexaSkillsController < ActionController::Base
 	protect_from_forgery :except => [:create]
 	before_filter :verify_alexa_authenticity, only: [:create], if: "Rails.env.production?"
 
+	AUDIO_ENABLED = false
+
 	DEFAULT_DIALOG = {
 
 		help: "To log fitness information just say \"Alexa tell Life Meter I ate one hundred calories\", or use a fitness timer by saying \"Alexa ask Life Meter to start a workout timer\".  To stop a fitness timer say \"Alexa ask Life Meter to stop a workout timer.\"  If you are interested in checking in on your progress, just say \"Alexa ask Life Meter to check my calories.\"  When you are done, simply say \"Cancel\" or \"Stop\" and Life Meter will stop and wait for your next request.  Now, what can Life Meter do for you today?",
@@ -147,6 +149,7 @@ class ObservationAlexaSkillsController < ActionController::Base
 	end
 
 	def add_audio_url( url, args = {} )
+		return true unless AUDIO_ENABLED
 		args[:offset] ||= 0
 		args[:token] ||= SecureRandom.hex(10)
 		play_behavior = "ENQUEUE" if args[:enqueue]
@@ -158,6 +161,7 @@ class ObservationAlexaSkillsController < ActionController::Base
 	end
 
 	def add_clear_audio_queue( args = {} )
+		return true unless AUDIO_ENABLED
 		@alexa_response.add_clear_audio_queue(args)
 	end
 
@@ -178,6 +182,7 @@ class ObservationAlexaSkillsController < ActionController::Base
 	end
 
 	def add_stop_audio()
+		return true unless AUDIO_ENABLED
 		@alexa_response.add_stop_audio()
 	end
 
