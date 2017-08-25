@@ -61,6 +61,11 @@ class ObservationAlexaSkillsController < ActionController::Base
 					puts "#{@alexa_request.type}"
 					puts "#{@alexa_request.reason}"
 					# halt 200
+
+					if @alexa_request.reason == 'ERROR' && (error = json_post['request']['error']).present?
+						NewRelic::Agent.notice_error( Exception.new( "#{error['type']}: #{error['message']}" ) )
+					end
+
 					@bot_service.call_intent( :end_session )
 
 				elsif @alexa_request.type == 'LAUNCH_REQUEST'
