@@ -5,7 +5,7 @@ class ObservationAlexaSkillsController < ActionController::Base
 
 	DEFAULT_DIALOG = {
 
-		help: "To log fitness information just say \"Alexa tell Life Meter I ate one hundred calories\", or use a fitness timer by saying \"Alexa ask Life Meter to start a workout timer\".  Life Meter will remember, report and provide insights into what you have told it.  Now, what can I do for you today?",
+		help: "To log fitness information just say \"Alexa tell Life Meter I ate one hundred calories\", or use a fitness timer by saying \"Alexa ask Life Meter to start a workout timer\".  To stop a fitness timer say \"Alexa ask Life Meter to stop a workout timer.\"  If you are interested in checking in on your progress, just say \"Alexa ask Life Meter to check my calories.\"  When you are done, simply say \"Cancel\" or \"Stop\" and Life Meter will stop and wait for your next request.  Now, what can Life Meter do for you today?",
 		launch_user: "Welcome to Life Meter.  To log fitness information just say \"Alexa tell Life Meter I ate one hundred calories\", or use a fitness timer by saying \"Alexa ask Life Meter to start a workout timer\". Life Meter will remember, report and provide insights into what you have told it.  Now, what can I do for you today?",
 		launch_guest: "Welcome to Life Meter.  To log fitness information just say \"Alexa tell Life Meter I ate one hundred calories\", or use a fitness timer by saying \"Alexa ask Life Meter to start a workout timer\".  Life Meter will remember, report and provide insights into what you have told it.  To get started open your Alexa app, and complete Life Meter registration.",
 
