@@ -5,8 +5,8 @@ class ObservationAlexaSkillsController < ActionController::Base
 
 	DEFAULT_DIALOG = {
 
-		help: "To log fitness information just say \"Alexa tell Life Meter I ate one hundred calories\", or use a fitness timer by saying \"Alexa ask Life Meter to start a workout timer\".  Life Meter will remember, report and provide insights into what you have told it.",
-		launch_user: "Welcome to Life Meter.  To log fitness information just say \"Alexa tell Life Meter I ate one hundred calories\", or use a fitness timer by saying \"Alexa ask Life Meter to start a workout timer\". Life Meter will remember, report and provide insights into what you have told it.",
+		help: "To log fitness information just say \"Alexa tell Life Meter I ate one hundred calories\", or use a fitness timer by saying \"Alexa ask Life Meter to start a workout timer\".  Life Meter will remember, report and provide insights into what you have told it.  Now, what can I do for you today?",
+		launch_user: "Welcome to Life Meter.  To log fitness information just say \"Alexa tell Life Meter I ate one hundred calories\", or use a fitness timer by saying \"Alexa ask Life Meter to start a workout timer\". Life Meter will remember, report and provide insights into what you have told it.  Now, what can I do for you today?",
 		launch_guest: "Welcome to Life Meter.  To log fitness information just say \"Alexa tell Life Meter I ate one hundred calories\", or use a fitness timer by saying \"Alexa ask Life Meter to start a workout timer\".  Life Meter will remember, report and provide insights into what you have told it.  To get started open your Alexa app, and complete Life Meter registration.",
 
 		login: "Open your Alexa app, and complete the Life Meter registration to continue",
@@ -59,6 +59,7 @@ class ObservationAlexaSkillsController < ActionController::Base
 					puts "#{@alexa_request.type}"
 					puts "#{@alexa_request.reason}"
 					# halt 200
+					@bot_service.call_intent( :end_session )
 
 				elsif @alexa_request.type == 'LAUNCH_REQUEST'
 

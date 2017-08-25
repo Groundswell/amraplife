@@ -67,6 +67,10 @@ class LifeMeterBotService < AbstractBotService
 		end
 	end
 
+	def end_session
+		
+	end
+
 	def get_motivation
 
 		motivation = Inspiration.published.order('random()').first
@@ -79,9 +83,11 @@ class LifeMeterBotService < AbstractBotService
 
 	def help
 
-		help_message = get_dialog('help', default: "To log information just say \"I ate one hundred calories\", or use a fitness timer by saying \"start a workout timer\". Life Meter will remember, report and provide insights into what you have told it.")
+		help_message = get_dialog('help', default: "To log information just say \"I ate one hundred calories\", or use a fitness timer by saying \"start a workout timer\". Life Meter will remember, report and provide insights into what you have told it.  Now, what can I do for you today?")
 
-		add_speech( help_message )
+		add_ask( help_message, reprompt_text: 'I\'m sorry, I couldn\'t hear you.  Try saying that again.' )
+
+
 
 		user.user_inputs.create( content: raw_input, action: 'read', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{help_message}'" ) if user.present?
 
@@ -90,7 +96,7 @@ class LifeMeterBotService < AbstractBotService
 	def launch
 		# Process your Launch Request
 		if user.present?
-			launch_message = get_dialog('launch_user', default: "Welcome to Life Meter by Life Meter. To log information just say \"I ate one hundred calories\", or use a fitness timer by saying \"start run timer\".  Life Meter will remember, report and provide insights into what you have told it.")
+			launch_message = get_dialog('launch_user', default: "Welcome to Life Meter by Life Meter. To log information just say \"I ate one hundred calories\", or use a fitness timer by saying \"start run timer\".  Life Meter will remember, report and provide insights into what you have told it.  Now, what can I do for you today?")
 
 			add_ask(launch_message, reprompt_text: 'I\'m sorry, I couldn\'t hear you.  Try saying that again.' )
 		else

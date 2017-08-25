@@ -12,7 +12,7 @@ class WorkoutBotService < AbstractBotService
 			slots: {}
 		},
    		stop: {
-   			utterances: [ 'stop', 'pause' ],
+   			utterances: [ 'stop', 'pause', 'end' ],
 			slots: {}
    		},
    		resume: {
@@ -107,6 +107,7 @@ class WorkoutBotService < AbstractBotService
 	def cancel
 		new_context
 		add_speech("Cancelling")
+
 		add_clear_audio_queue()
 
 		user.user_inputs.create( content: raw_input, action: 'cancel', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{raw_input || 'cancel'}'" ) if user.present?
@@ -114,7 +115,11 @@ class WorkoutBotService < AbstractBotService
 
 	def pause
 
-		if get_session_context( 'workout.type' ) == 'ft'
+		if get_session_context( 'workout.type' ).blank?
+
+			add_speech("You do not have any activity to pause.")
+
+		elsif get_session_context( 'workout.type' ) == 'ft'
 
 			call_intent( :workout_complete )
 
@@ -126,9 +131,18 @@ class WorkoutBotService < AbstractBotService
 	end
 
 	def resume
-		add_speech("Resuming workout.")
-		add_audio_url('https://cdn1.amraplife.com/assets/c45ca8e9-2a8f-4522-bdcb-b7df58f960f8.mp3', token: 'workout-player', offset: audio_player[:offset] )
+
+		if get_session_context( 'workout.type' ).blank?
+
+			add_speech("You do not have any activity to resume.")
+
+		else
+			add_speech("Resuming workout.")
+			add_audio_url('https://cdn1.amraplife.com/assets/c45ca8e9-2a8f-4522-bdcb-b7df58f960f8.mp3', token: 'workout-player', offset: audio_player[:offset] )
+		end
+
 		user.user_inputs.create( content: raw_input, action: 'resume', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{raw_input || 'resume'}'" ) if user.present?
+
 	end
 
 	def stop
