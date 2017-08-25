@@ -148,9 +148,15 @@ class ObservationAlexaSkillsController < ActionController::Base
 	end
 
 	def add_ask(speech_text, args = {} )
+
 		@ask_response = true
-		@alexa_response.add_speech( speech_text, !!(args[:ssml] || args[:speech_ssml]) )
-		@alexa_response.add_reprompt( args[:reprompt_text], !!(args[:ssml] || args[:speech_ssml]) ) if args[:reprompt_text].present?
+
+		if args[:deligate_if_possible]
+			@alexa_response.add_delegate_directive( args[:deligate_if_possible] )
+		else
+			@alexa_response.add_speech( speech_text, !!(args[:ssml] || args[:speech_ssml]) )
+			@alexa_response.add_reprompt( args[:reprompt_text], !!(args[:ssml] || args[:speech_ssml]) ) if args[:reprompt_text].present?
+		end
 	end
 
 	def add_audio_url( url, args = {} )
@@ -236,6 +242,14 @@ class AlexaResponse < AlexaRubykit::Response
 		}
 
 		directive['audioItem']['stream']['expectedPreviousToken'] = expectedPreviousToken if expectedPreviousToken.present?
+
+		@directives << directive
+	end
+
+	def add_delegate_directive( args = {} )
+		directive = {
+			'type' => 'Dialog.Delegate'
+		}
 
 		@directives << directive
 	end
