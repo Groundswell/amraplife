@@ -1,0 +1,64 @@
+
+.row
+	.col-sm-12
+		%h3 Quick Log
+		= form_for UserInput.new, html: { style: 'margin: auto 1em;' } do |f|
+			= f.text_field :content, class: 'form-control', placeholder: 'Hi There!'
+			.pull-right= f.submit 'Submit', class: 'btn btn-success btn-lg', style: 'margin: 0.5em auto;'
+			.clearfix
+.row
+	.col-sm-12
+		.main-box.clearfix.project-box.purple-box
+			.main-box-body.clearfix
+				.project-box-header.purple-bg
+					.name
+						%a{ href: '#' }
+							Recent Activity
+				.project-box-content
+					- if @inputs.present?
+						= raw paginate @inputs
+						.main-box.feed
+							.main-box-body.clearfix
+								%ul
+									- @inputs.each do |input|
+										%li.clearfix{ style: 'list-style: none;text-align:left;' }
+											= input.user.avatar_tag width: 24
+
+											You Said:
+											= "'#{input.content}'"
+											from
+											= input.source
+
+											
+											.response{ style: 'margin-left:2em;margin-top:1em;' }
+												= image_tag 'life-meter-logo.png', width: 24
+												I:
+												= input.system_notes
+													
+
+
+
+											.time-ago
+												%i.fa.fa-clock-o
+												= time_ago_in_words input.created_at
+												ago.
+												%br
+												= input.created_at.to_s( :slashed_time )
+											
+
+					- else
+						%center
+							%h1
+								No Activity Yet
+							%p
+								To start tracking, just type something like: "weight is 173" or "ate 300" into the box above. 
+							%p
+								%a{ href: '/lifemeter/help' }
+									Read the guide
+								to learn all about what Life Meter can do.
+
+
+
+
+
+

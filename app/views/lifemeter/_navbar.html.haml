@@ -2,7 +2,7 @@
 	.container
 		%a#logo.navbar-brand{ href: swell_media.root_path }
 			= image_tag 'amrap_logo_wht.png', class: "normal-logo logo-white"
-		
+
 		.clearfix
 			%button.navbar-toggle{ type: :button, data: { target: ".navbar-ex1-collapse", toggle: :collapse } }
 				%span.sr-only
@@ -48,7 +48,7 @@
 						= image_tag 'life_meter_full_logo.png', height: 40, style: 'margin-top:4px;'
 			#header-nav.nav-no-collapse.pull-right
 				%ul.nav.navbar-nav.pull-right
-					%li.mobile-search
+					-# %li.mobile-search
 						%a.btn
 							%i.fa.fa-search
 						.dropdown-search
@@ -82,5 +82,3 @@
 					%li.hidden-xxs
 						%a.btn{ href: main_app.logout_path }
 							%i.fa.fa-power-off
-
-

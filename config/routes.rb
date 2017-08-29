@@ -9,6 +9,7 @@ Rails.application.routes.draw do
 		put :update_settings, on: :collection
 		get :dash, on: :collection
 		get :help, on: :collection
+		get :log, on: :collection
 	end
 
 	scope 'lifemeter' do

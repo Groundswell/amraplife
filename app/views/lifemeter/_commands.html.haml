@@ -1,0 +1,186 @@
+.table-responsive
+	%table.table.table-bordered.table-striped
+		%thead
+			%th Command
+			%th Medium
+			%th Action
+			%th Alternate Commands
+		%tbody
+			%tr
+				%td
+					.primary-command " help "
+				%td
+					All
+				%td
+					Help
+				%td
+			%tr
+				%td
+					.primary-command
+						" call me
+						%u< your name
+						"
+					.example-command ex. " call me Cindy "
+				%td
+					All
+				%td
+					Update your name
+				%td
+					" my name is
+					%u< your name
+					"
+			%tr
+				%td
+					.primary-command " inspire me " or " motivate me "
+				%td
+					All
+				%td
+					Gives motivation
+				%td
+					" give me inspiration ", " give me motivation "
+			%tr
+				%td
+					.primary-command
+						" check
+						%u metric or activity
+						"
+					.example-command ex. " check calories " or " check bench press "
+				%td
+					All
+				%td
+					Gives a report for how you're doing for that metric relative to your target if any.
+				%td
+			-# %tr
+				%td
+					.primary-command "define {term}"
+				%td
+					All
+				%td
+					Gives the definition of the term from our extensive CrossFit Glossary.
+			%tr
+				%td
+					.primary-command
+						" log
+						%u amount
+						for
+						%u metric or activity
+						"
+					.example-command ex. " log 200 calories ", " log 140 pounds for bench press ", " my weight is 110 pounds "
+				%td
+					All
+				%td
+					Creates an observation of value for the metric. Used only for Duration. E.g. "I worked for 3 hours"
+				%td
+					" Log
+					%u amount
+					for
+					%u metric or activity
+					",
+					" my
+					%u metric or activity
+					is
+					%u amount
+					",
+					" record
+					%u metric or activity
+					%u amount
+					"
+			-# %tr
+				%td
+					.primary-command "Track {metric}"
+				%td
+					All
+				%td
+					Assigns a Metric to begin tracking.
+
+			-# %tr
+				%td
+					.primary-command "[journal | dear diary] {notes}"
+				%td
+					All
+				%td
+					Creates a free-form journal entry without metrics or observations.
+			%tr
+				%td
+					.primary-command
+						" start
+						%u metric or activity
+						timer "
+					.example-command ex. " start jogging timer "
+				%td
+					All
+				%td
+					Begins a timer for the metric.
+				%td
+					" start
+					%u metric or activity
+					"
+			%tr
+				%td
+					.primary-command
+						" stop
+						%u metric or activity
+						timer "
+					.example-command ex. " stop jogging timer "
+				%td
+					All
+				%td
+					Stops a timer for the metric and assigns the resulting duration to an observation for it. The metric must have an actively running timer.
+				%td
+					" top
+					%u metric or activity
+					"
+
+			-# %tr
+				%td
+					.primary-command "what is (my) {metric}"
+				%td
+					All
+				%td
+					Reports the last logged value for the metric.
+			-# %tr
+				%td
+					.primary-command "set a target of {value} for {metric}"
+				%td
+					All
+				%td
+					Creates a target for the metric. You may want to further edit the target type in your dashboard.
+			%tr
+				%td
+					.primary-command
+						" set my target
+						%u metric or activity
+						to
+						%u amount
+						"
+					.example-command ex. " set my target calories to 1800 " or " set my target bench press to 150 pounds "
+				%td
+					All
+				%td
+					Creates a target for the metric. You may want to further edit the target type in your dashboard.
+				%td
+					" set my target
+					%u metric or activity
+					to
+					%u amount
+					%u unit
+					",
+					" set target
+					%u metric or activity
+					to
+					%u amount
+					",
+					" set target
+					%u metric or activity
+					to
+					%u amount
+					%u unit
+					"
+
+			-# %tr
+				%td
+					.primary-command "tell (me) about {metric}"
+				%td
+					All
+				%td
+					Gives an overall report for the metric.

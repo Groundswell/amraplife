@@ -1,64 +1,204 @@
+- if @top_metrics.present?
+	.row
+		.col-xs-12
+			%h3.text
+				Your Last 30 Days
+		- @top_metrics.each do |metric|
+			.col-xs-12.col-md-6
 
-.row
-	.col-sm-12
-		%h3 Quick Log
-		= form_for UserInput.new, html: { style: 'margin: auto 1em;' } do |f|
-			= f.text_field :content, class: 'form-control', placeholder: 'Hi There!'
-			.pull-right= f.submit 'Submit', class: 'btn btn-success btn-lg', style: 'margin: 0.5em auto;'
-			.clearfix
-.row
-	.col-sm-12
-		.main-box.clearfix.project-box.purple-box
-			.main-box-body.clearfix
-				.project-box-header.purple-bg
-					.name
-						%a{ href: '#' }
-							Recent Activity
-				.project-box-content
-					- if @inputs.present?
-						= raw paginate @inputs
-						.main-box.feed
-							.main-box-body.clearfix
-								%ul
-									- @inputs.each do |input|
-										%li.clearfix{ style: 'list-style: none;text-align:left;' }
-											= input.user.avatar_tag width: 24
+				.main-box
+					%header.main-box-header.clearfix
+						%h2
+							= metric.title
+							- if @comp_stat.present?
+								vs
+								= @comp_stat.title
+						-# %div
+							for
+							= @start_date.strftime( '%m/%d/%Y')
+							to
+							= @end_date.strftime( '%m/%d/%Y')
+					.main-box-body.clearfix
+						.flot-chart{ id: "chart_metric_#{metric.id}", style: "width:100%;height:250px;"}
 
-											You Said:
-											= "'#{input.content}'"
-											from
-											= input.source
+		.col-xs-12
+			%h3.text
+				Commands and formats
+			%p.text
+				Here is a list of commands and expected behaviors. anything in parentheses (to) means it is optional and will be ignored. Anything in brackets separated by a pipe are commands with different options (e.g. [call me | my name is] are two ways of invoking the name command). Anything in braces {name} means it will be data sent to Life Meter. Some commands are different when spoken (e.g. to Echo or Google Home) vs when typed (e.g. in web interface or to a Life Meter bot)
+			%p
+				= render 'commands'
 
-											
-											.response{ style: 'margin-left:2em;margin-top:1em;' }
-												= image_tag 'life-meter-logo.png', width: 24
-												I:
-												= input.system_notes
-													
+	- @top_metrics.each do |metric|
+		= render 'stats/morris_chart', args: { data: @top_metric_observations[metric.id], stat: metric, chart_container: "chart_metric_#{metric.id}" }
+
+- else
+	.row
+		.col-xs-12
+			%h2
+				Welcome
+				%strong #{current_user.full_name}
+				to your Life Meter!
+
+			%p.text
+				Life Meter is a first-of-its-kind natural language platform that let's you easily track any health-related metrics or activities.
+			%p.text
+				Life Meter is designed to help you get the most out of life by making it easy to measure, control, and analyze the behaviors most important to your health and wellbeing. Read on to get the most out of your Life Meter!
+
+			%h3.text
+				A note on Beta-Testing
+			%p.text
+				First off, we're really excited about Life Meter and we really appreciate your help in making it better. Just a couple things to note before we begin...
+			%p.text
+				Life Meter is currently Beta. The term 'Beta' gets grossly over-used in software development, but in this case we really mean it. Life Meter is under active development. That means:
+				%ol
+					%li.text{ style: 'margin-bottom:1em;' }
+						Things just may not work.... that's kind of Beta-Testing 101. If things don't work as expected, we'd love to hear about it so we can hopefully fix it and make it better.
+					%li.text{ style: 'margin-bottom:1em;' }
+						Features and functionality may change at any time. We'll try to communicate any changes before they happen, but we will be fixing critical bugs and incorporating your feedback continuously
+					%li.text{ style: 'margin-bottom:1em;' }
+						YOU MAY LOOSE ANY DATA YOU LOG DURING THE TEST. Some fixes, updates, and changes may require a hard-reset to the Life Meter database. We will try very hard not to permanently destroy data, but there's a good chance it could happen. Please don't use Life Meter for anything you really need or haven't backed up during the beta phase.
+					%li.text{ style: 'margin-bottom:1em;' }
+						For debugging and testing purposes, THE DATA YOU LOG MAY NOT BE PRIVATE. Please don't log sensitive personal data that you wouldn't want the developers of Life Meter to see. Once live, Life Meter will be secured over https and private, but engineers may need to access data to debug issues during the beta test. Please be mindful of this.
+
+			%h3.text
+				What can Life Meter do?
+			%p.text
+				In a nutshell, you can use Life Meter to track, report on, and analyze any vital stat that you care about. You can log and track information like your weight or pulse. You can track your calories or macronutrients. You can use Life Meter as a timer to log and track time you spend doing various activities. Life Meter will keep track of everything you report to it and give you useful reports andinsights into your data. You can even set targets for anything you track. Want to keep your caloric intake under 2000 calories per day? Just let Life Meter know, and it will let you know how many calories ou've eaten and how many you have left until your target.
+
+			%h3.text
+				Getting Started
+			%p.text
+				To use Life Meter you need an account. To get an account, you need an invitation.
+			%p.text
+				Then you can use the web interface to start tracking. Simply type into the box at the top of the page to get started. You can log information by typing things like: "My weight is 167", or "I ate 430 calories", or "pulse is 54", or "I slept for 7hrs and 29mins".
+
+			%h3.text
+				Using the Facebook Bot
+			%p.text
+				To use Life Meter on Facebook....
+
+			%h3.text
+				Using the Slack Bot
+			%p.text
+				To use Life Meter on Slack...
+
+			%h3.text
+				Tracking Basics
+			%p.text
+				We refer to anything you might track such as your weight, your max bench, your calory intake, time you spend sleeping, etc. as a Metric.
+			%p.text
+				When you record or log a value for any Metric, we call that an Observation. So, if you tell Life Meter "My weight is 159". We create an observation with a value of 159 for the metric Weight.
+			%p.text
+				You can add any metric to Life Meter simply by observing it.
+
+			%h3.text
+				Metrics
+			%p.text
+				You can add a new Metric to track either by simply observing it or explicitly by typing: "track weight". You will find the list of Metrics that Life Meter is tracking for you in the 'Things You're Tracking' menu.
+			%p.text
+				You may want to edit some of your Metrics to give Life Meter more fine-grained control. To do that, simply click 'Things You're Tracking', then select the Metric. You will then see the basic Metric information along with recent observations you have made of that Metric. You can change the title, add a description, or change the units. You may have made a mistake and want to re-assign all the observations of one Metric to another. E.g. let's say you mis-typed a metric name as 'slep' and want to move all 'slep' observations to 'sleep'. Simply select 'sleep' in the Reassign to Metric drop down and hit Update. All slep observations will move to Sleep and slep will be destroyed.
+			%p.text
+				%strong
+					Aliases
+				You may want to add a list of aliases to any new metrics you add. This helps Life Meter's natural language processor understand what you mean. In particular, if you add any activities to track, you'll want to add all the verb forms of those acitivities as aliases. Example: I  want to track my Work Hours. I'd add 'work', 'working', 'worked' as aliases to the 'Work Hours' metric.
+
+			%h3.text
+				Targets
+			%p.text
+				You can also add targets to the Metrics you are tracking. There are currently four kinds of targets:
+				%ul
+					%li.text{ style: 'margin-bottom: 1em;' }
+						%strong
+							Accumulated Value
+						Use this for metrics where you want to add up the observation values for a given time-period. A great example is calories. You want to monitor the total sum of calories you eat during a daily period.
+					%li.text{ style: 'margin-bottom: 1em;' }
+						%strong
+							Value
+						Use this for metrics where you want to track the value as it changes over time. A classic example is weight. If you want to loose wome weight, you may set a target weight value. Each time you record your weight, you set a new current weight value.
+					%li.text{ style: 'margin-bottom: 1em;' }
+						%strong
+							Number of Observations
+						This simply sets a target for a number of times you want to record an observation for a metric. By example, you may have a goal of working out 4 times a week.
+					%li.text{ style: 'margin-bottom: 1em;' }
+						%strong
+							Average Value
+						You can also set targets based on the average value of a metric. You may want to mointor your average mood or energy level.
+			%p.text
+				These targets can be scoped to the following time-periods:
+
+				%ul
+					%li.text{ style: 'margin-bottom: 1em;' }
+						%strong
+							Daily
+						Resets the target every night at midnight. This is most useful for things like daily accumulated calories or hours of sleep.
+					%li.text{ style: 'margin-bottom: 1em;' }
+						%strong
+							Weekly
+						Resets the target every Sunday at midnight. This is useful for weekly totals like number of workouts or total hours of work or meditation.
+					%li.text{ style: 'margin-bottom: 1em;' }
+						%strong
+							Monthly
+						Resets the target on the first of each month.
+					%li.text{ style: 'margin-bottom: 1em;' }
+						%strong
+							All-Time
+						Never resets the target. Compares your current total/average/count to those of everything you've ever recorded for that metric.
+			%p.text
+				Note that Value targets behave as All-Time targets regardless of time period.
+			%p.text
+				You can set a target direction of 'At least' or 'At most' for any target to specify whether you want your activity to fall above or below respectively the targetted amount.
 
 
+			%h3.text
+				Timers
+			%p.text
+				Life Meter can time activities for you and automatically keep track of the time you doing various things. To start a timer, just say or type: 'Start...' then the activity name. E.g. "Start working" will start a wok timer. So will "Start to work" or "Start work".
+			%p.text
+				Similarly, you can say or type "Stop..." to stop a running timer. So, following the example above, "Stop working", or "Stop work timer" will stop the timer and record the amount of time spent working. There must be an actively running timer for the metric named in order for stop to work. You can create timers for any metric or activity that can be measured by time.
 
-											.time-ago
-												%i.fa.fa-clock-o
-												= time_ago_in_words input.created_at
-												ago.
-												%br
-												= input.created_at.to_s( :slashed_time )
-											
+			%h3.text
+				Checking in
+			%p.text
+				You can check the last recorded value for a metric by asking Life Meter: "What is my...". For example, asking "What is my weight?" will tell you your last recorded weight. Similarly, "What is my bench?" will tell you your last recorded Max Bench Press. This is most useful for metrics that are measured primarily by a single alue that changes over time.
+			%p.text
+				If you've set a target for a Metric, you can also ask Life Meter to check the status of the Metric relative to your target. Just say or type: "Check....". For example, "Check sleep" will report the sleep you've logged, the target you've set for sleep, and the difference between your actual sleep and your target. Note, this only works for Metrics with active targets.
+			%p.text
+				You can get a summary report of any Metric, just by typing or saying: "Tell me about...". So, "Tell my about my sleep" will give an overall report of the sleep you have logged to Life Meter.
 
-					- else
-						%center
-							%h1
-								No Activity Yet
-							%p
-								To start tracking, just type something like: "weight is 173" or "ate 300" into the box above. 
-							%p
-								%a{ href: '/lifemeter/help' }
-									Read the guide
-								to learn all about what Life Meter can do.
+			-#%h3.text
+				Charts
+			-#%p.text
+				Comparing 2 metrics
 
+			%h3.text
+				Journal Entries
+			%p.text
+				You can use Life Meter as a journal or diary by saying or typing: "Journal...." or "Dear diary....". Journal entries are just free-form text, so they don't contain any values. They don't effect targets, and can't be charted or graphed. We've had some beta-testers simply use Life Meter as a handy audio diary over the Echo, simply recording their thoughts, feeling, and ideas throughout the day.
 
+			%h3.text
+				Fun Stuff
+			%p.text
+				Like any good bot, Life Meter has a few Easter Eggs. Some we'll let you discover on your own. Here are a few to let you know about...
 
+			%h4.text
+				Tell Life Meter your name.
+			%p.text
+				You can tell Life Meter: "Call me.." or "My name is..." and Life Meter will update your name.
 
+			%h4.text
+				Get inspired.
+			%p.text
+				We all could use a little pick me up from time-to-time. Life Meter will try to motivate you or at least provide some words of wisdom. Just say: "Inspire me.." or "Give me motivation..."
 
+			%h4.text
+				What the???
+			%p.text
+				We've compiled the world's largest (as far a we know) CrossFit Glossary. We've defined over 300 terms common to the world of Boxes and WODs. You might learn a thing or two. Just say: "Define..." to search for a term you're curious about.
 
+			%h3.text
+				Commands and formats
+			%p.text
+				Here is a list of commands and expected behaviors. anything in parentheses (to) means it is optional and will be ignored. Anything in brackets separated by a pipe are commands with different options (e.g. [call me | my name is] are two ways of invoking the name command). Anything in braces {name} means it will be data sent to Life Meter. Some commands are different when spoken (e.g. to Echo or Google Home) vs when typed (e.g. in web interface or to a Life Meter bot)
+			%p
+				= render 'commands'
