@@ -14,6 +14,13 @@
 						= f.password_field :password, placeholder: "password", class: 'form-control'
 
 					= f.submit 'log in', class: "btn btn-primary btn-block"
-					
+
 					%button.btn.btn-link.btn-block{ type: "button" }
 						Forgot Password?
+
+				%p.social-text
+					Or login with
+					
+				%a.btn.btn-primary.btn-facebook.btn-block.auth-pop{ href: user_facebook_omniauth_authorize_path( ga_client_id: ':ga_client_id' ) }
+					%i.fa.fa-facebook
+					Facebook
