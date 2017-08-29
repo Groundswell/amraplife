@@ -6,8 +6,9 @@ class RegistrationsController < Devise::RegistrationsController
 		email = params[:user][:email] || params[:user][:login]
 		# todo -- check validity of email param?
 
-		user = User.where( email: email ).first ||
-				User.new( email: email, full_name: params[:user][:name], name: params[:user][:name], ip: request.ip )
+		user_attributes = { email: email, full_name: params[:user][:name], name: params[:user][:name], ip: request.ip }
+
+		user = User.where( email: email ).first || User.new_with_session( user_attributes, session )
 
 		if user.encrypted_password.present?
 			# this email is already registered for this site
