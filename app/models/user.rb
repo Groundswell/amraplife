@@ -27,7 +27,7 @@ class User < SwellMedia::User
 
 		user = oauth_credential.user
 
-		user ||= self.where( email: auth.info.email ).first_or_create do |user|
+		user ||= where( email: auth.info.email ).first_or_create do |user|
 
 			user.email = auth.info.email
 			user.password = Devise.friendly_token[0,20]
