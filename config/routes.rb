@@ -4,7 +4,7 @@ Rails.application.routes.draw do
 	# 	get :success, on: :member
 	# end
 
-	resources :lifemeter, only: :index do 
+	resources :lifemeter, only: :index do
 		get :settings, on: :collection
 		put :update_settings, on: :collection
 		get :dash, on: :collection
@@ -91,7 +91,7 @@ Rails.application.routes.draw do
 		get '/logout' => 'sessions#destroy', as: 'logout'
 		get '/register' => 'registrations#new', as: 'register'
 	end
-	devise_for :users, :controllers => { :omniauth_callbacks => 'oauth', :registrations => 'registrations', :sessions => 'sessions' }
+	devise_for :users, :controllers => { :omniauth_callbacks => "users/omniauth_callbacks", :registrations => 'registrations', :sessions => 'sessions' }
 
 	mount SwellEcom::Engine, :at => '/'
 

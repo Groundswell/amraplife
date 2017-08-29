@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170727205200) do
+ActiveRecord::Schema.define(version: 20170829150217) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -592,17 +592,14 @@ ActiveRecord::Schema.define(version: 20170727205200) do
     t.text     "shopify_code"
     t.string   "title"
     t.string   "caption"
-    t.integer  "seq",             default: 1
     t.string   "slug"
     t.string   "avatar"
-    t.string   "brand_model"
     t.integer  "status",          default: 0
     t.text     "description"
     t.text     "content"
     t.datetime "publish_at"
     t.integer  "price",           default: 0
     t.integer  "suggested_price", default: 0
-    t.integer  "shipping_price",  default: 0
     t.string   "currency",        default: "USD"
     t.string   "tags",            default: [],      array: true
     t.hstore   "properties",      default: {}
@@ -613,11 +610,12 @@ ActiveRecord::Schema.define(version: 20170727205200) do
     t.text     "size_info"
     t.text     "notes"
     t.integer  "collection_id"
+    t.integer  "shipping_price",  default: 0
     t.string   "tax_code",        default: "00000"
+    t.integer  "seq",             default: 1
   end
 
   add_index "products", ["category_id"], name: "index_products_on_category_id", using: :btree
-  add_index "products", ["seq"], name: "index_products_on_seq", using: :btree
   add_index "products", ["slug"], name: "index_products_on_slug", unique: true, using: :btree
   add_index "products", ["status"], name: "index_products_on_status", using: :btree
   add_index "products", ["tags"], name: "index_products_on_tags", using: :gin
@@ -644,6 +642,22 @@ ActiveRecord::Schema.define(version: 20170727205200) do
   add_index "recipes", ["category_id"], name: "index_recipes_on_category_id", using: :btree
   add_index "recipes", ["slug"], name: "index_recipes_on_slug", unique: true, using: :btree
   add_index "recipes", ["tags"], name: "index_recipes_on_tags", using: :gin
+
+  create_table "targets", force: :cascade do |t|
+    t.integer  "parent_obj_id"
+    t.integer  "user_id"
+    t.float    "value"
+    t.float    "min"
+    t.float    "max"
+    t.string   "direction",     default: "at_most"
+    t.string   "period",        default: "all_time"
+    t.string   "unit"
+    t.datetime "start_at"
+    t.datetime "end_at"
+    t.integer  "status"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "team_users", force: :cascade do |t|
     t.integer  "team_id"
@@ -672,10 +686,9 @@ ActiveRecord::Schema.define(version: 20170727205200) do
   create_table "terms", force: :cascade do |t|
     t.string   "title"
     t.string   "slug"
-    t.text     "description"
     t.text     "content"
-    t.text     "aliases",     default: [], array: true
-    t.integer  "status",      default: 1
+    t.text     "aliases",    default: [], array: true
+    t.integer  "status",     default: 1
     t.datetime "created_at"
     t.datetime "updated_at"
   end
