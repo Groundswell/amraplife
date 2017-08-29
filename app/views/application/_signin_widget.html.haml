@@ -1,35 +1,39 @@
 #login-box-inner
-	= form_for resource, as: (args[:resource_name] || 'user'), url: registration_path( (args[:resource_name] || 'user') ), role: :form do |f|
-		.input-group
-			%span.input-group-addon
-				%i.fa.fa-user
-			= f.text_field :name, placeholder: 'User Name', class: 'form-control'
-		.input-group
-			%span.input-group-addon
-				%i.fa.fa-envelope
-			= f.text_field :login, autofocus: true, placeholder: "email", class: 'form-control'
-		.input-group
-			%span.input-group-addon
-				%i.fa.fa-lock
-			= f.password_field :password, placeholder: "password", class: 'form-control'
-		.input-group
-			%span.input-group-addon
-				%i.fa.fa-unlock-alt
-			= f.password_field :password_confirmation, placeholder: 'Confirm Password', class: 'form-control'
+	= form_for (args[:resource] || User.new), as: (args[:resource_name] || 'user'), url: registration_path( (args[:resource_name] || 'user') ), role: :form do |f|
+		.form-group
+			.input-group
+				%span.input-group-addon
+					%i.fa.fa-user
+				= f.text_field :name, placeholder: 'User Name', class: 'form-control'
+		.form-group
+			.input-group
+				%span.input-group-addon
+					%i.fa.fa-envelope
+				= f.text_field :login, autofocus: true, placeholder: "email", class: 'form-control'
+		.form-group
+			.input-group
+				%span.input-group-addon
+					%i.fa.fa-lock
+				= f.password_field :password, placeholder: "password", class: 'form-control'
+		.form-group
+			.input-group
+				%span.input-group-addon
+					%i.fa.fa-unlock-alt
+				= f.password_field :password_confirmation, placeholder: 'Confirm Password', class: 'form-control'
 
 		#remember-me-wrapper
 			.row
 				.col-xs-12
-					.checkbox-nice
+					.checkbox-nice.text-center
 						= f.check_box :terms, checked: true
 						= f.label :terms, "I accept terms and conditions"
 
 			.row
-				.col-xs-12
+				.col-xs-12.col-sm-8.col-sm-offset-2
 					= f.submit "Register", class: 'btn btn-success col-xs-12'
 		.row
 			.col-xs-12
-				%p.social-text
+				%p.social-text.text-center
 					Or Create an account with
 		.row
 			.col-xs-12.col-sm-8.col-sm-offset-2
@@ -44,7 +48,7 @@
 
 		.row
 			.col-xs-12
-				%p.social-text{ style: 'font-size: 16px;' }
+				%p.social-text.text-center{ style: 'font-size: 16px;' }
 					Already have an account?
 					%a{ href: main_app.login_path }
 						Log In
