@@ -15,7 +15,7 @@
 						.input-group
 							= f.text_field :value, value: @observation.display_value( show_units: false ), class: 'form-control'
 							%span.input-group-addon
-								= @observation.display_unit
+								= @observation.unit.abbrev
 					.row
 						.col-xs-6
 							.form-group
@@ -23,8 +23,8 @@
 								= f.select :unit, options_for_select( [ ['Arbitrary', ''], ['Time', 's'], ['Weight', 'g'], ['Length/Distance', 'm'], ['Volume', 'l'], ['Percent', '%'] ], @observation.unit ), {}, class: 'form-control'
 						.col-xs-6
 							.form-group
-								= f.label :display_unit
-								= f.text_field :display_unit, class: 'form-control'
+								= f.label :unit
+								= f.text_field :unit, class: 'form-control'
 					.row
 						.col-xs-12
 							.form-group

@@ -35,62 +35,171 @@ namespace :amraplife do
 		Metric.destroy_all
 		Observation.destroy_all
 		UserInput.destroy_all
+		Target.destroy_all
+		Unit.destroy_all
+
+		puts "Adding some Units"
+
+		bpm = Unit.create name: 'BPM', abbrev: 'bpm', aliases: ['heart rate'], unit_type: 'custom'
+		
+		bmi = Unit.create name: 'Bodymass Index', abbrev: 'bmi', unit_type: 'custom'
+		block = Unit.create name: 'Block', abbrev: 'block', unit_type: 'custom'
+		rep = Unit.create name: 'Rep', abbrev: 'rep', unit_type: 'custom'
+
+		per = Unit.create name: 'Percent', abbrev: '%', unit_type: 'percent'
+
+		mmhg = Unit.create name: 'Millimeters Mercury', abbrev: 'mmHg', unit_type: 'pressure'
+		psi = Unit.create name: 'Pounds Per Square Inch', abbrev: 'psi', unit_type: 'pressure'
+
+		cal = Unit.create name: 'Calorie', abbrev: 'cal', aliases: ['kCal'], unit_type: 'energy'
+		jl = Unit.create name: 'Joule', abbrev: 'j', unit_type: 'energy', base_unit: cal, conversion_factor: 0.239006
+
+		g = Unit.create name: 'Gram', abbrev: 'g', unit_type: 'weight', metric: true
+		kg = Unit.create name: 'Kilogram', abbrev: 'kg', aliases: ['kilo'], unit_type: 'weight', base_unit: g, conversion_factor: 1000, metric: true
+		lb = Unit.create name: 'Pound', abbrev: 'lb', aliases: ['#'], unit_type: 'weight', base_unit: g, conversion_factor: 453.592
+		oz = Unit.create name: 'Ounce', abbrev: 'oz', aliases: ['oz'], unit_type: 'weight', base_unit: g, conversion_factor: 28.3495
+
+		m = Unit.create name: 'Meter', abbrev: 'm', unit_type: 'length', metric: true
+		cm = Unit.create name: 'Centimeter', abbrev: 'cm', unit_type: 'length', base_unit: m, conversion_factor: 0.01, metric: true
+		mm = Unit.create name: 'Millimeter', abbrev: 'mm', unit_type: 'length', base_unit: m, conversion_factor: 0.001, metric: true
+		km = Unit.create name: 'Kilometer', abbrev: 'km', unit_type: 'length', base_unit: m, conversion_factor: 1000, metric: true
+		inch = Unit.create name: 'Inch', abbrev: 'in', unit_type: 'length', aliases: ['"'], base_unit: m, conversion_factor: 0.0254
+		ft = Unit.create name: 'Foot', abbrev: 'ft', unit_type: 'length', aliases: ["'"], base_unit: m, conversion_factor: 0.3048
+		yd = Unit.create name: 'Yard', abbrev: 'yd', unit_type: 'length', base_unit: m, conversion_factor: 0.9144
+		mi = Unit.create name: 'Mile', abbrev: 'mi', unit_type: 'length', base_unit: m, conversion_factor: 1609.34
+
+		l = Unit.create name: 'Liter', abbrev: 'l', unit_type: 'volume', metric: true
+		ml = Unit.create name: 'Milliliter', abbrev: 'l', unit_type: 'volume', base_unit: l, conversion_factor: 0.001, metric: true
+		cup = Unit.create name: 'Cup', abbrev: 'cup', unit_type: 'volume', base_unit: l, conversion_factor: 0.24
+		gal = Unit.create name: 'Gallon', abbrev: 'gal', unit_type: 'volume', base_unit: l, conversion_factor: 3.78541
+		qt = Unit.create name: 'Quart', abbrev: 'qt', unit_type: 'volume', base_unit: l, conversion_factor: 0.946352499983857
+		pt = Unit.create name: 'Pint', abbrev: 'pt', unit_type: 'volume', base_unit: l, conversion_factor: 0.47317624999192847701
+		floz = Unit.create name: 'Fluid Ounce', abbrev: 'fl oz', unit_type: 'volume', base_unit: l, conversion_factor: 0.0295735
+
+		sec = Unit.create name: 'Second', abbrev: 's', unit_type: 'time'
+		min = Unit.create name: 'Minute', abbrev: 'min', unit_type: 'time', base_unit: sec, conversion_factor: 60
+		hr = Unit.create name: 'Hour', abbrev: 'hr', unit_type: 'time', base_unit: sec, conversion_factor: 3600
+		day = Unit.create name: 'Day', abbrev: 'day', unit_type: 'time', base_unit: sec, conversion_factor: 86400
+		
 
 		puts "Adding some Metrics"
-		wt = Metric.create title: 'Weight', metric_type: 'physical', aliases: ['wt', 'weigh', 'weighed', 'wait'], unit: 'g', display_unit: 'kg', target_type: :value, target_direction: :at_most, target_period: :all_time
-		wst = Metric.create title: 'Waist', metric_type: 'physical', aliases: ['wst'], unit: 'm', display_unit: 'cm', target_type: :value, target_direction: :at_most, target_period: :all_time
-		wst = Metric.create title: 'Hips', metric_type: 'physical', aliases: ['hip'], unit: 'm', display_unit: 'cm', target_type: :value, target_direction: :at_most, target_period: :all_time
-		rhr = Metric.create title: 'Resting Heart Rate', metric_type: 'physical', aliases: ['pulse', 'heart rate', 'rhr'], unit: 'bpm', target_type: :value, target_direction: :at_most, target_period: :all_time
-		systolic = Metric.create title: 'Systolic Blood Pressure', metric_type: 'physical', aliases: ['sbp', 'systolic'], unit: 'mmHg', target_type: :value, target_direction: :at_most, target_period: :all_time
-		diastolic = Metric.create title: 'Diastolic Blood Pressure', metric_type: 'physical', aliases: ['dbp', 'diastolic'], unit: 'mmHg', target_type: :value, target_direction: :at_most, target_period: :all_time
-		bp = Metric.create title: 'Blood Pressure', metric_type: 'physical', aliases: ['bp', 'blood pressure'], unit: 'mmHg' # use sub units for sys/dias observations
-		pbf = Metric.create title: 'Percent Body Fat', metric_type: 'physical', aliases: ['pbf', 'bodyfat', 'body fat', 'body fat percent'], unit: '%', target_type: :value, target_direction: :at_most, target_period: :all_time
-		bmi = Metric.create title: 'Body Mass Index', metric_type: 'physical', aliases: ['bmi'], unit: 'bmi', target_type: :value, target_direction: :at_most, target_period: :all_time
+		wt = Metric.create title: 'Weight', metric_type: 'physical', aliases: ['wt', 'weigh', 'weighed', 'wait'], unit: kg
+		wt.targets.create target_type: :value, direction: :at_most, period: :all_time
 
-		md = Metric.create title: 'Mood', metric_type: 'mental', aliases: [ 'feeling', 'happiness' ], unit: '%'
-		md = Metric.create title: 'Energy', metric_type: 'mental', aliases: [ 'energy level' ], unit: '%'
+		wst = Metric.create title: 'Waist', metric_type: 'physical', aliases: ['wst'], unit: cm
+		wst.targets.create target_type: :value, direction: :at_most, period: :all_time
 
-		nutrition = Metric.create title: 'Calories', metric_type: 'nutrition', 	aliases: ['cal', 'cals'], unit: 'cal', target_type: :sum_value, target_direction: :at_most, target_period: :daily, target: 2000
+		hps = Metric.create title: 'Hips', metric_type: 'physical', aliases: ['hip'], unit: cm
+		hps.targets.create target_type: :value, direction: :at_most, period: :all_time
 
-		nutrition = Metric.create title: 'Blocks', metric_type: 'nutrition', 	aliases: ['block'], unit: 'block', display_unit: 'block', target_type: :sum_value, target_direction: :at_most, target_period: :daily, target: 15
-		nutrition = Metric.create title: 'Protein', metric_type: 'nutrition',	aliases: ['prot', 'grams protein', 'grams of protein' ], unit: 'g', display_unit: 'g', target_type: :sum_value, target_direction: :at_least, target_period: :daily
-		nutrition = Metric.create title: 'Fat', metric_type: 'nutrition', 		aliases: ['fat', 'grams fat', 'grams of fat' ], unit: 'g', display_unit: 'g', target_type: :sum_value, target_direction: :at_most, target_period: :daily
-		nutrition = Metric.create title: 'Carb', metric_type: 'nutrition', 		aliases: ['carb', 'carbs', 'carbohydrates', 'grams carb', 'grams of carb', 'net carbs' ], unit: 'g', display_unit: 'g', target_type: :sum_value, target_direction: :at_most, target_period: :daily
-		nutrition = Metric.create title: 'Sugar', metric_type: 'nutrition', 	aliases: ['sugars', 'grams sugar', 'grams of sugar' ], unit: 'g', target_type: :sum_value, target_direction: :at_most, target_period: :daily
+		rhr = Metric.create title: 'Resting Heart Rate', metric_type: 'physical', aliases: ['pulse', 'heart rate', 'rhr'], unit: bpm
+		rhr.targets.create target_type: :value, direction: :at_most, period: :all_time
+
+		systolic = Metric.create title: 'Systolic Blood Pressure', metric_type: 'physical', aliases: ['sbp', 'systolic'], unit: mmhg
+		systolic.targets.create target_type: :value, direction: :at_most, period: :all_time
+
+		diastolic = Metric.create title: 'Diastolic Blood Pressure', metric_type: 'physical', aliases: ['dbp', 'diastolic'], unit: mmhg
+		diastolic.targets.create target_type: :value, direction: :at_most, period: :all_time
+
+		bp = Metric.create title: 'Blood Pressure', metric_type: 'physical', aliases: ['bp', 'blood pressure'], unit: mmhg # use sub units for sys/dias observations
 		
-		nutrition = Metric.create title: 'Water', metric_type: 'nutrition', 	aliases: ['of water' ], unit: 'l', display_unit: 'ml', target_type: :sum_value, target_direction: :at_least, target_period: :daily
-		nutrition = Metric.create title: 'Juice', metric_type: 'nutrition', 	aliases: ['of juice', 'fruit juice', 'orange juice', 'apple juice' ], unit: 'l', display_unit: 'ml', target_type: :sum_value, target_direction: :at_least, target_period: :daily
-		nutrition = Metric.create title: 'Soda', metric_type: 'nutrition', 	aliases: [ 'of soda', 'coke', 'pepsi' ], unit: 'l', display_unit: 'ml', target_type: :sum_value, target_direction: :at_most, target_period: :daily
-		nutrition = Metric.create title: 'Alcohol', metric_type: 'nutrition', 	aliases: [ 'of alcohol', 'beer', 'wine', 'liquor' ], unit: 'l', display_unit: 'ml', target_type: :sum_value, target_direction: :at_most, target_period: :daily
+		pbf = Metric.create title: 'Percent Body Fat', metric_type: 'physical', aliases: ['pbf', 'bodyfat', 'body fat', 'body fat percent'], unit: per
+		pbf.targets.create target_type: :value, direction: :at_most, period: :all_time
 
-		act = Metric.create title: 'Sleep', metric_type: 'activity', 	aliases: ['slp', 'sleeping', 'slept', 'nap', 'napping', 'napped'], unit: 's', target_type: :sum_value, target_direction: :at_least, target_period: :daily, target: 28800
-		act = Metric.create title: 'Meditation', metric_type: 'activity', aliases: ['med', 'meditating', 'meditated'], unit: 's', target_type: :sum_value, target_direction: :at_least, target_period: :daily, target: 1200
+		bmi = Metric.create title: 'Body Mass Index', metric_type: 'physical', aliases: ['bmi'], unit: bmi
+		bmi.targets.create target_type: :value, direction: :at_most, period: :all_time
 
-		act = Metric.create title: 'Drive', metric_type: 'activity', 	aliases: ['drv', 'driving', 'drove'], unit: 's'
-		act = Metric.create title: 'Work', metric_type: 'activity', 	aliases: ['wrk', 'working', 'worked'], unit: 's'
-		act = Metric.create title: 'Walk', metric_type: 'activity', 	aliases: ['wlk', 'walking', 'walked'], unit: 's'
-		act = Metric.create title: 'Cycle', metric_type: 'activity', aliases: ['cycling', 'cycled', 'bike', 'biked', 'biking', 'bicycling', 'bicycled', 'bicycle' ], unit: 's'
-		act = Metric.create title: 'Swim', metric_type: 'activity', aliases: ['swimming', 'swam'], unit: 's'
-		act = Metric.create title: 'Run', metric_type: 'activity', aliases: ['running', 'ran', 'jog', 'jogging', 'jogged'], unit: 's'
+		md = Metric.create title: 'Mood', metric_type: 'mental', aliases: [ 'feeling', 'happiness' ], unit: per
+		md = Metric.create title: 'Energy', metric_type: 'mental', aliases: [ 'energy level' ], unit: per
 
-		bmi = Metric.create title: 'Workout', metric_type: 'activity', aliases: ['wkout', 'worked out', 'exercise', 'exercised'], unit: 's'
+		nutrition = Metric.create title: 'Calories', metric_type: 'nutrition', 	aliases: ['cal', 'cals', 'calory', 'calorie'], unit: cal
+		nutrition.targets.create target_type: :sum_value, direction: :at_most, period: :daily, value: 2000
+
+		nutrition = Metric.create title: 'Blocks', metric_type: 'nutrition', 	aliases: ['block'], unit: block
+		nutrition.targets.create target_type: :sum_value, direction: :at_most, period: :daily, value: 15
+
+		nutrition = Metric.create title: 'Protein', metric_type: 'nutrition',	aliases: ['prot', 'grams protein', 'grams of protein' ], unit: g
+		nutrition.targets.create target_type: :sum_value, direction: :at_least, period: :daily
+
+		nutrition = Metric.create title: 'Fat', metric_type: 'nutrition', 	aliases: ['fat', 'grams fat', 'grams of fat' ], unit: g
+		nutrition.targets.create target_type: :sum_value, direction: :at_most, period: :daily
+
+		nutrition = Metric.create title: 'Carb', metric_type: 'nutrition', 		aliases: ['carb', 'carbs', 'carbohydrates', 'grams carb', 'grams of carb', 'net carbs' ], unit: g
+		nutrition.targets.create target_type: :sum_value, direction: :at_most, period: :daily
+		
+		nutrition = Metric.create title: 'Sugar', metric_type: 'nutrition', 	aliases: ['sugars', 'grams sugar', 'grams of sugar' ], unit: g
+		nutrition.targets.create target_type: :sum_value, direction: :at_most, period: :daily
+		
+		nutrition = Metric.create title: 'Water', metric_type: 'nutrition', 	aliases: ['of water' ], unit: ml
+		nutrition.targets.create target_type: :sum_value, direction: :at_least, period: :daily
+
+		nutrition = Metric.create title: 'Juice', metric_type: 'nutrition', 	aliases: ['of juice', 'fruit juice', 'orange juice', 'apple juice' ], unit: ml
+		nutrition.targets.create target_type: :sum_value, direction: :at_least, period: :daily
+
+		nutrition = Metric.create title: 'Soda', metric_type: 'nutrition', 	aliases: [ 'of soda', 'coke', 'pepsi' ], unit: ml
+		nutrition.targets.create target_type: :sum_value, direction: :at_most, period: :daily
+
+		nutrition = Metric.create title: 'Alcohol', metric_type: 'nutrition', 	aliases: [ 'of alcohol', 'beer', 'wine', 'liquor' ], unit: ml
+		nutrition.targets.create target_type: :sum_value, direction: :at_most, period: :daily
+
+		act = Metric.create title: 'Sleep', metric_type: 'activity', 	aliases: ['slp', 'sleeping', 'slept', 'nap', 'napping', 'napped'], unit: sec
+		act.targets.create target_type: :sum_value, direction: :at_least, period: :daily, value: 28800
+
+		act = Metric.create title: 'Meditation', metric_type: 'activity', aliases: ['med', 'meditating', 'meditated'], unit: sec
+		act.targets.create target_type: :sum_value, direction: :at_least, period: :daily, value: 1200
+
+		act = Metric.create title: 'Drive', metric_type: 'activity', 	aliases: ['drv', 'driving', 'drove'], unit: sec
+		act = Metric.create title: 'Work', metric_type: 'activity', 	aliases: ['wrk', 'working', 'worked'], unit: sec
+		act = Metric.create title: 'Walk', metric_type: 'activity', 	aliases: ['wlk', 'walking', 'walked'], unit: sec
+		act = Metric.create title: 'Cycle', metric_type: 'activity', aliases: ['cycling', 'cycled', 'bike', 'biked', 'biking', 'bicycling', 'bicycled', 'bicycle' ], unit: sec
+		act = Metric.create title: 'Swim', metric_type: 'activity', aliases: ['swimming', 'swam'], unit: sec
+		act = Metric.create title: 'Run', metric_type: 'activity', aliases: ['running', 'ran', 'jog', 'jogging', 'jogged'], unit: sec
+
+		bmi = Metric.create title: 'Workout', metric_type: 'activity', aliases: ['wkout', 'worked out', 'exercise', 'exercised'], unit: sec
 		# workouts must have time... record scores, reps, etc as sub observations.
 		# bmi = Metric.create title: 'AMRAP', metric_type: 'activity', aliases: ['amrap'], unit: 'rep'
 
-		act = Metric.create title: 'Max Bench', metric_type: 'benchmark', aliases: ['bench', 'bench press'], unit: 'g', display_unit: 'kg', target_type: :value, target_direction: :at_least, target_period: :all_time
-		act = Metric.create title: 'Max Deadlift', metric_type: 'benchmark', aliases: ['deadlift', 'dl', 'dead lift'], unit: 'g', display_unit: 'kg', target_type: :value, target_direction: :at_least, target_period: :all_time
-		act = Metric.create title: 'Max Backsquat', metric_type: 'benchmark', aliases: ['squat', 'back squat'], unit: 'g', display_unit: 'kg', target_type: :value, target_direction: :at_least, target_period: :all_time
-		act = Metric.create title: 'Max Press', metric_type: 'benchmark', aliases: ['press'], unit: 'g', display_unit: 'kg', target_type: :value, target_direction: :at_least, target_period: :all_time
-		act = Metric.create title: 'Max Clean', metric_type: 'benchmark', aliases: ['clean', 'power clean'], unit: 'g', display_unit: 'kg', target_type: :value, target_direction: :at_least, target_period: :all_time
-		act = Metric.create title: 'Max Clean & Jerk', metric_type: 'benchmark', aliases: ['clean n jerk', 'clean and jerk', 'clean jerk'], unit: 'g', display_unit: 'kg', target_type: :value, target_direction: :at_least, target_period: :all_time
-		act = Metric.create title: 'Max Snatch', metric_type: 'benchmark', aliases: ['snatch'], unit: 'g', display_unit: 'kg', target_type: :value, target_direction: :at_least, target_period: :all_time
-		act = Metric.create title: '100m Time', metric_type: 'benchmark', aliases: ['hundred', 'one hundred', 'hundred time', 'hundred meter time', 'hundred meter'], unit: 's', target_type: :value, target_direction: :at_most, target_period: :all_time
-		act = Metric.create title: '400m Time', metric_type: 'benchmark', aliases: ['four_hundred'], unit: 's', target_type: :value, target_direction: :at_most, target_period: :all_time
-		act = Metric.create title: 'Mile Time', metric_type: 'benchmark', aliases: ['mile', 'one mile'], unit: 's', target_type: :value, target_direction: :at_most, target_period: :all_time
-		# act = Metric.create title: 'Max Pushups', metric_type: 'benchmark', aliases: ['pushups'], unit: 'rep', target_type: :value, target_direction: :at_least, target_period: :all_time
-		# act = Metric.create title: 'Max Pullups', metric_type: 'benchmark', aliases: ['pullups'], unit: 'rep', target_type: :value, target_direction: :at_least, target_period: :all_time
-		# act = Metric.create title: 'Max Burpees', metric_type: 'benchmark', aliases: ['burpees'], unit: 'rep', target_type: :value, target_direction: :at_least, target_period: :all_time
-		# act = Metric.create title: 'Max Situps', metric_type: 'benchmark', aliases: ['burpees'], unit: 'rep', target_type: :value, target_direction: :at_least, target_period: :all_time
+		act = Metric.create title: 'Max Bench', metric_type: 'benchmark', aliases: ['bench', 'bench press'], unit: kg, movement: Movement.find_by_alias( 'bench' )
+		act.targets.create target_type: :value, direction: :at_least, period: :all_time
+		
+		act = Metric.create title: 'Max Deadlift', metric_type: 'benchmark', aliases: ['deadlift', 'dl', 'dead lift'], unit: kg, movement: Movement.find_by_alias( 'dl' )
+		act.targets.create target_type: :value, direction: :at_least, period: :all_time
+
+		act = Metric.create title: 'Max Backsquat', metric_type: 'benchmark', aliases: ['squat', 'back squat'], unit: kg, movement: Movement.find_by_alias( 'squat' )
+		act.targets.create target_type: :value, direction: :at_least, period: :all_time
+		
+		act = Metric.create title: 'Max Press', metric_type: 'benchmark', aliases: ['press'], unit: kg, movement: Movement.find_by_alias( 'press' )
+		act.targets.create target_type: :value, direction: :at_least, period: :all_time
+		
+		act = Metric.create title: 'Max Clean', metric_type: 'benchmark', aliases: ['clean', 'power clean'], unit: kg, movement: Movement.find_by_alias( 'cln' )
+		act.targets.create target_type: :value, direction: :at_least, period: :all_time
+		
+		act = Metric.create title: 'Max Clean & Jerk', metric_type: 'benchmark', aliases: ['clean n jerk', 'clean and jerk', 'clean jerk'], unit: kg, movement: Movement.find_by_alias( 'c&j' )
+		act.targets.create target_type: :value, direction: :at_least, period: :all_time
+		
+		act = Metric.create title: 'Max Snatch', metric_type: 'benchmark', aliases: ['snatch'], unit: kg, movement: Movement.find_by_alias( 'snatch' )
+		act.targets.create target_type: :value, direction: :at_least, period: :all_time
+		
+		act = Metric.create title: '100m Time', metric_type: 'benchmark', aliases: ['hundred', 'one hundred', 'hundred time', 'hundred meter time', 'hundred meter'], unit: sec, movement: Movement.find_by_alias( 'run' )
+		act.targets.create target_type: :value, direction: :at_most, period: :all_time
+		
+		act = Metric.create title: '400m Time', metric_type: 'benchmark', aliases: ['four_hundred'], unit: sec, movement: Movement.find_by_alias( 'run' )
+		act.targets.create target_type: :value, direction: :at_most, period: :all_time
+		
+		act = Metric.create title: 'Mile Time', metric_type: 'benchmark', aliases: ['mile', 'one mile'], unit: sec, movement: Movement.find_by_alias( 'run' )
+		act.targets.create target_type: :value, direction: :at_most, period: :all_time
+
+		act = Metric.create title: 'Max Pushups', metric_type: 'benchmark', aliases: ['pushups'], unit: rep, movement: Movement.find_by_alias( 'pushup' )
+		act.targets.create target_type: :value, direction: :at_least, period: :all_time
+		
+		act = Metric.create title: 'Max Pullups', metric_type: 'benchmark', aliases: ['pullups'], unit: rep, movement: Movement.find_by_alias( 'pullup' )
+		act.targets.create target_type: :value, direction: :at_least, period: :all_time
+		
+		act = Metric.create title: 'Max Burpees', metric_type: 'benchmark', aliases: ['burpees'], unit: rep, movement: Movement.find_by_alias( 'burpee' )
+		act.targets.create target_type: :value, direction: :at_least, period: :all_time
+		
+		act = Metric.create title: 'Max Situps', metric_type: 'benchmark', aliases: ['burpees'], unit: rep, movement: Movement.find_by_alias( 'situp' )
+		act.targets.create target_type: :value, direction: :at_least, period: :all_time
 
 
 	end

@@ -391,20 +391,12 @@ ActiveRecord::Schema.define(version: 20170829150217) do
     t.integer "movement_id"
     t.string  "title"
     t.string  "slug"
-    t.text    "aliases",          default: [],         array: true
-    t.string  "unit"
+    t.text    "aliases",      default: [], array: true
     t.integer "user_id"
     t.string  "metric_type"
     t.text    "description"
-    t.string  "target_period",    default: "all_time"
-    t.string  "target_type",      default: "value"
-    t.float   "target_min"
-    t.float   "target_max"
-    t.integer "availability",     default: 0
-    t.float   "target"
-    t.string  "target_direction", default: "at_most"
-    t.string  "display_unit"
-    t.string  "target_unit"
+    t.integer "availability", default: 0
+    t.integer "unit_id"
   end
 
   add_index "metrics", ["movement_id"], name: "index_metrics_on_movement_id", using: :btree
@@ -479,7 +471,6 @@ ActiveRecord::Schema.define(version: 20170829150217) do
     t.string   "title"
     t.string   "content"
     t.float    "value"
-    t.string   "unit"
     t.string   "rx"
     t.text     "notes"
     t.datetime "started_at"
@@ -488,7 +479,7 @@ ActiveRecord::Schema.define(version: 20170829150217) do
     t.hstore   "properties",    default: {}
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "display_unit"
+    t.integer  "unit_id"
   end
 
   add_index "observations", ["parent_id"], name: "index_observations_on_parent_id", using: :btree
@@ -592,14 +583,17 @@ ActiveRecord::Schema.define(version: 20170829150217) do
     t.text     "shopify_code"
     t.string   "title"
     t.string   "caption"
+    t.integer  "seq",             default: 1
     t.string   "slug"
     t.string   "avatar"
+    t.string   "brand_model"
     t.integer  "status",          default: 0
     t.text     "description"
     t.text     "content"
     t.datetime "publish_at"
     t.integer  "price",           default: 0
     t.integer  "suggested_price", default: 0
+    t.integer  "shipping_price",  default: 0
     t.string   "currency",        default: "USD"
     t.string   "tags",            default: [],      array: true
     t.hstore   "properties",      default: {}
@@ -610,12 +604,11 @@ ActiveRecord::Schema.define(version: 20170829150217) do
     t.text     "size_info"
     t.text     "notes"
     t.integer  "collection_id"
-    t.integer  "shipping_price",  default: 0
     t.string   "tax_code",        default: "00000"
-    t.integer  "seq",             default: 1
   end
 
   add_index "products", ["category_id"], name: "index_products_on_category_id", using: :btree
+  add_index "products", ["seq"], name: "index_products_on_seq", using: :btree
   add_index "products", ["slug"], name: "index_products_on_slug", unique: true, using: :btree
   add_index "products", ["status"], name: "index_products_on_status", using: :btree
   add_index "products", ["tags"], name: "index_products_on_tags", using: :gin
@@ -645,12 +638,14 @@ ActiveRecord::Schema.define(version: 20170829150217) do
 
   create_table "targets", force: :cascade do |t|
     t.integer  "parent_obj_id"
+    t.string   "parent_obj_type"
     t.integer  "user_id"
+    t.string   "target_type",     default: "value"
     t.float    "value"
     t.float    "min"
     t.float    "max"
-    t.string   "direction",     default: "at_most"
-    t.string   "period",        default: "all_time"
+    t.string   "direction",       default: "at_most"
+    t.string   "period",          default: "all_time"
     t.string   "unit"
     t.datetime "start_at"
     t.datetime "end_at"
@@ -658,6 +653,9 @@ ActiveRecord::Schema.define(version: 20170829150217) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "targets", ["parent_obj_id", "parent_obj_type"], name: "index_targets_on_parent_obj_id_and_parent_obj_type", using: :btree
+  add_index "targets", ["user_id"], name: "index_targets_on_user_id", using: :btree
 
   create_table "team_users", force: :cascade do |t|
     t.integer  "team_id"
@@ -686,9 +684,10 @@ ActiveRecord::Schema.define(version: 20170829150217) do
   create_table "terms", force: :cascade do |t|
     t.string   "title"
     t.string   "slug"
+    t.text     "description"
     t.text     "content"
-    t.text     "aliases",    default: [], array: true
-    t.integer  "status",     default: 1
+    t.text     "aliases",     default: [], array: true
+    t.integer  "status",      default: 1
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -709,6 +708,23 @@ ActiveRecord::Schema.define(version: 20170829150217) do
 
   add_index "transactions", ["parent_obj_id", "parent_obj_type"], name: "index_transactions_on_parent_obj_id_and_parent_obj_type", using: :btree
   add_index "transactions", ["reference_code"], name: "index_transactions_on_reference_code", using: :btree
+
+  create_table "units", force: :cascade do |t|
+    t.integer  "base_unit_id"
+    t.integer  "user_id"
+    t.float    "conversion_factor", default: 1.0
+    t.string   "name"
+    t.string   "slug"
+    t.string   "abbrev"
+    t.integer  "unit_type",         default: 0
+    t.text     "aliases",           default: [],    array: true
+    t.boolean  "metric",            default: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "units", ["base_unit_id"], name: "index_units_on_base_unit_id", using: :btree
+  add_index "units", ["user_id"], name: "index_units_on_user_id", using: :btree
 
   create_table "user_inputs", force: :cascade do |t|
     t.integer  "user_id"
@@ -778,7 +794,7 @@ ActiveRecord::Schema.define(version: 20170829150217) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "authorization_code"
-    t.boolean  "use_metric",             default: false
+    t.boolean  "use_metric_units",       default: false
   end
 
   add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", unique: true, using: :btree

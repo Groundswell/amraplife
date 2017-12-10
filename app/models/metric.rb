@@ -7,8 +7,12 @@ class Metric < ActiveRecord::Base
 
 	belongs_to :movement
 	belongs_to :user
+	
 
 	has_many 	:observations, as: :observed, dependent: :destroy
+	has_many 	:targets, as: :parent_obj, dependent: :destroy
+
+	belongs_to :unit
 
 	attr_accessor :reassign_to_metric_id
 
@@ -29,10 +33,6 @@ class Metric < ActiveRecord::Base
 		self.aliases = aliases_csv.split( /,\s*/ )
 	end
 
-	def is_time?
-		self.unit == 's'
-	end
-
 	def slugger
 		"#{self.title}#{self.user_id}"
 	end
@@ -43,7 +43,6 @@ class Metric < ActiveRecord::Base
 
 	private
 		def set_defaults
-			self.display_unit ||= self.unit
 			self.aliases << self.title.parameterize unless self.aliases.include?( self.title.parameterize )
 			self.aliases.each_with_index do |value, index|
 				self.aliases[index] = value.parameterize

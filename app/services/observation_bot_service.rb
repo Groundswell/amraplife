@@ -504,19 +504,12 @@ class ObservationBotService < AbstractBotService
 			unit = 'fluid ounce'
 		end
 
-		unit = unit || metric.display_unit
+		unit = unit || metric.unit
+		user_unit = Unit.find_by_alias( unit ) || metric.unit
 
-		unit_service = UnitService.new( val: value, disp_unit: params[:action], stored_unit: 'l', use_metric: user.use_metric, precision: 25 )
-		if unit_service.can_convert?
-			val = unit_service.convert_to_stored_value
-		else
-			unit_service = UnitService.new( val: value, disp_unit: unit, stored_unit: 'l', use_metric: user.use_metric, precision: 25 )
-			val = unit_service.convert_to_stored_value
-		end
+		val = params[:value].to_f * user_unit.conversion_factor
 
-		observation_unit = user.use_metric? ? 'ml' : 'fluid ounce'
-
-		observation = user.observations.create( observed: metric, value: val, display_unit: observation_unit, unit: 'l', notes: @raw_input )
+		observation = user.observations.create( observed: metric, value: val, unit: user_unit, notes: @raw_input )
 
 
 		add_speech( observation.to_s( user ) )
@@ -555,21 +548,21 @@ class ObservationBotService < AbstractBotService
 		sys_notes = nil
 		# trim the unit
 		unit = params[:unit].chomp( '.' ).singularize if params[:unit].present?
-		# normalize the unit
-		unit = UnitService::NORMALIZATIONS[unit] || unit
 
 		if params[:action].present?
 
 			# fetch the metric
 			metric = get_user_metric( user, params[:action], unit, true )
-			users_unit = unit || metric.display_unit
-			base_unit = UnitService::STORED_UNIT_MAP[unit] || metric.unit
+			
+			user_unit = Unit.find_by_alias( unit ) || metric.unit
 
-			unit_service = UnitService.new( val: params[:value], disp_unit: users_unit, stored_unit: base_unit, use_metric: user.use_metric, precision: 25 )
+			if user_unit.present?
+				val = params[:value].to_f * user_unit.conversion_factor
+			else
+				val = params[:value].to_f
+			end
 
-			val = unit_service.convert_to_stored_value
-
-			observation = user.observations.create( observed: metric, value: val, display_unit: users_unit, unit: base_unit, notes: notes )
+			observation = user.observations.create( observed: metric, value: val, unit: user_unit, notes: notes )
 			add_speech( observation.to_s( user ) )
 		else
 			observation = user.observations.create( value: params[:value], unit: unit, notes: notes )
@@ -905,20 +898,29 @@ class ObservationBotService < AbstractBotService
 						observed_metric ||= system_metric.dup
 						observed_metric.user = user
 
-						if not( user.use_metric? ) && not( system_metric.metric_type == 'nutrition' ) # hack to keep from converting grams of nutrient to ounces
-							if UnitService::METRIC_TO_IMPERIAL_MAP[ observed_metric.display_unit ].present?
-								observed_metric.display_unit = UnitService::METRIC_TO_IMPERIAL_MAP[ observed_metric.display_unit ]
-							end
+						#if not( user.use_metric? ) && not( system_metric.metric_type == 'nutrition' ) # hack to keep from converting grams of nutrient to ounces
+							#if UnitService::METRIC_TO_IMPERIAL_MAP[ observed_metric.display_unit ].present?
+							#	observed_metric.display_unit = UnitService::METRIC_TO_IMPERIAL_MAP[ observed_metric.display_unit ]
+							#end
+						#end
+
+						# convert unit user gave us to base correct unit
+						if users_unit = Unit.find_by_alias( unit )
+							observed_metric.unit = users_unit
 						end
 
 						observed_metric.save
 						return observed_metric
 					else
 						# gotta make a new metric from scratch
-						observed_metric ||= Metric.new( title: action, unit: unit, display_unit: unit )
-						if UnitService::STORED_UNIT_MAP[ unit ].present?
-							observed_metric.unit = UnitService::STORED_UNIT_MAP[ unit ]
+						observed_metric ||= Metric.new( title: action )
+						
+						if users_unit = Unit.find_by_alias( unit )
+							observed_metric.unit = users_unit
+						elsif unit.present?
+							observed_metric.unit = Unit.create( user_id: user.id, name: unit, abbrev: unit )
 						end
+
 						observed_metric.user = user
 						observed_metric.save
 						return observed_metric

@@ -1,8 +1,9 @@
 class SignupReleaseMigration < ActiveRecord::Migration
 	def change
 		create_table :targets do |t|
-			t.references	:parent_obj
+			t.references	:parent_obj, polymorphic: true
 			t.references 	:user 
+			t.string		:target_type, default: "value"
 			t.float 		:value 
 			t.float 		:min 
 			t.float 		:max
@@ -14,5 +15,49 @@ class SignupReleaseMigration < ActiveRecord::Migration
 			t.integer 		:status
 			t.timestamps
 		end
+		add_index :targets, [ :parent_obj_id, :parent_obj_type ]
+		add_index :targets, :user_id
+
+		if column_exists?( :metrics, :unit )
+			remove_column :metrics, :unit, :string
+			remove_column :metrics, :display_unit, :string
+		end
+
+		if column_exists?( :metrics, :target )
+			remove_column :metrics, :target
+			remove_column :metrics, :target_direction
+			remove_column :metrics, :target_unit
+			remove_column :metrics, :target_period
+			remove_column :metrics, :target_type
+			remove_column :metrics, :target_min
+			remove_column :metrics, :target_max
+		end
+
+		if column_exists?( :observations, :display_unit )
+			remove_column :observations, :display_unit
+			remove_column :observations, :unit
+		end
+
+
+		create_table :units do |t| 
+			t.references 	:base_unit
+			t.references 	:user
+			t.float 		:conversion_factor, default: 1
+			t.string		:name
+			t.string		:slug
+			t.string		:abbrev
+			t.integer 		:unit_type, 		default: 0 # custom, volume, length, mass, time
+			t.text			:aliases,     		default: [], array: true
+			t.boolean 		:metric, 			default: false
+			t.timestamps
+		end
+		add_index 	:units, :user_id
+		add_index 	:units, :base_unit_id
+
+		add_column		:metrics, :unit_id, :integer
+		add_column		:observations, :unit_id, :integer
+
+		rename_column :users, :use_metric, :use_metric_units
+
 	end
 end
