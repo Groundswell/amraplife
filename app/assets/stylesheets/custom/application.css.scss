@@ -120,12 +120,17 @@ a.color-white:hover, a.color-white:active {
   border-color: #2980b9; }
 .btn-success:hover, .btn-success:focus, .btn-success:active, .btn-success.active, .open .dropdown-toggle.btn-success {
   background-color: #2980b9;
-  border-color: #1c5c87; }
+  border-color: #1c5c87;
+}
 
 
 .social-text {
-margin: 0;
-padding: 15px 0;
-text-align: center;
-font-size: 0.875em;
+	margin: 0;
+	padding: 15px 0;
+	text-align: center;
+	font-size: 0.875em;
+}
+
+.content ul li {
+    list-style-type: disc;
 }
