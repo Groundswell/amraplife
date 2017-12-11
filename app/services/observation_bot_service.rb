@@ -907,6 +907,10 @@ class ObservationBotService < AbstractBotService
 						# convert unit user gave us to base correct unit
 						if users_unit = Unit.find_by_alias( unit )
 							observed_metric.unit = users_unit
+						elsif user.use_imperial_units?
+							# didn't get a unit from the user... translate to their preference
+							# by default, system metric units are metric
+							observed_metric.unit = observed_metric.unit.imperial_correlate || observed_metric.unit
 						end
 
 						observed_metric.save

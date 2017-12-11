@@ -711,19 +711,21 @@ ActiveRecord::Schema.define(version: 20170829150217) do
 
   create_table "units", force: :cascade do |t|
     t.integer  "base_unit_id"
+    t.integer  "imperial_correlate_id"
     t.integer  "user_id"
-    t.float    "conversion_factor", default: 1.0
+    t.float    "conversion_factor",     default: 1.0
     t.string   "name"
     t.string   "slug"
     t.string   "abbrev"
-    t.integer  "unit_type",         default: 0
-    t.text     "aliases",           default: [],    array: true
-    t.boolean  "metric",            default: false
+    t.integer  "unit_type",             default: 0
+    t.text     "aliases",               default: [],   array: true
+    t.boolean  "imperial",              default: true
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   add_index "units", ["base_unit_id"], name: "index_units_on_base_unit_id", using: :btree
+  add_index "units", ["imperial_correlate_id"], name: "index_units_on_imperial_correlate_id", using: :btree
   add_index "units", ["user_id"], name: "index_units_on_user_id", using: :btree
 
   create_table "user_inputs", force: :cascade do |t|
@@ -794,7 +796,7 @@ ActiveRecord::Schema.define(version: 20170829150217) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "authorization_code"
-    t.boolean  "use_metric_units",       default: false
+    t.boolean  "use_imperial_units",     default: true
   end
 
   add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", unique: true, using: :btree

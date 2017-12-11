@@ -41,6 +41,7 @@ class SignupReleaseMigration < ActiveRecord::Migration
 
 		create_table :units do |t| 
 			t.references 	:base_unit
+			t.references 	:imperial_correlate
 			t.references 	:user
 			t.float 		:conversion_factor, default: 1
 			t.string		:name
@@ -48,16 +49,18 @@ class SignupReleaseMigration < ActiveRecord::Migration
 			t.string		:abbrev
 			t.integer 		:unit_type, 		default: 0 # custom, volume, length, mass, time
 			t.text			:aliases,     		default: [], array: true
-			t.boolean 		:metric, 			default: false
+			t.boolean 		:imperial, 			default: true
 			t.timestamps
 		end
 		add_index 	:units, :user_id
 		add_index 	:units, :base_unit_id
+		add_index 	:units, :imperial_correlate_id
 
 		add_column		:metrics, :unit_id, :integer
 		add_column		:observations, :unit_id, :integer
 
-		rename_column :users, :use_metric, :use_metric_units
+		rename_column :users, :use_metric, :use_imperial_units
+		change_column_default :users, :use_imperial_units, true
 
 	end
 end

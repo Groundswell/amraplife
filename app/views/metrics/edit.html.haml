@@ -26,7 +26,7 @@
 							- @metric.observations.order( recorded_at: :desc ).limit( 50 ).each do |obs|
 								%tr
 									%td
-										= UnitService.new( val: obs.value, display_unit: obs.display_unit, stored_unit: obs.unit, use_metric: current_user.use_metric ).convert_to_display
+										= obs.display_value
 									%td
 										= obs.notes
 									%td
@@ -41,8 +41,8 @@
 							= f.select :unit, options_for_select( [ ['Arbitrary', ''], ['Time', 's'], ['Weight', 'g'], ['Length/Distance', 'm'], ['Volume', 'l'], ['Percent', '%'] ], @metric.unit ), {}, class: 'form-control'
 
 						.form-group#display_unit
-							= f.label :display_unit
-							= f.text_field :display_unit, class: 'form-control'
+							= f.label :unit
+							= f.text_field :unit, class: 'form-control'
 
 						.form-group
 							= f.label :aliases_csv, 'Aliases'
@@ -57,23 +57,23 @@
 								= @metric.title 
 								Target
 							.form-group
-								= f.select :target_type, options_for_select( [ ['Accumulated Value', 'sum_value'], [ 'Value', 'value'], ['Number of Observations', 'count'], ['Average Value', 'avg_value'] ], @metric.target_type ), {}, class: 'form-control'
+								=# f.select :target_type, options_for_select( [ ['Accumulated Value', 'sum_value'], [ 'Value', 'value'], ['Number of Observations', 'count'], ['Average Value', 'avg_value'] ], @metric.target_type ), {}, class: 'form-control'
 							
 							.form-group
 								= f.label :target_period
-								= f.select :target_period, options_for_select( [ ['Per Day', 'daily'], ['Per Week', 'weekly'], ['Per Month', 'monthly'], ['All-Time', 'value'] ], @metric.target_period ), {}, class: 'form-control'
+								=# f.select :target_period, options_for_select( [ ['Per Day', 'daily'], ['Per Week', 'weekly'], ['Per Month', 'monthly'], ['All-Time', 'value'] ], @metric.target_period ), {}, class: 'form-control'
 
 							.form-group
 								= f.label :target_direction, 'Should be:'
-								= f.select :target_direction, options_for_select( [ ['At Least', 'at_least'], ['At Most', 'at_most'], ['Exactly', 'exactly'] ], @metric.target_direction ), {}, class: 'form-control'
+								=# f.select :target_direction, options_for_select( [ ['At Least', 'at_least'], ['At Most', 'at_most'], ['Exactly', 'exactly'] ], @metric.target_direction ), {}, class: 'form-control'
 								
 								
 							.form-group
 								= f.label :target, 'Value:'
 								.input-group
-									= f.text_field :target, value: UnitService.new( val: @metric.target, disp_unit: @metric.display_unit, base_unit: @metric.unit, use_metric: current_user.use_metric ).convert_to_display, class: 'form-control'
+									=# f.text_field :target, value: UnitService.new( val: @metric.target, disp_unit: @metric.display_unit, base_unit: @metric.unit, use_metric: current_user.use_metric ).convert_to_display, class: 'form-control'
 									%span.input-group-addon
-										= @metric.display_unit.pluralize( UnitService.new( val: @metric.target, disp_unit: @metric.display_unit, base_unit: @metric.unit, use_metric: current_user.use_metric ).convert_to_display )
+										=# @metric.display_unit.pluralize( UnitService.new( val: @metric.target, disp_unit: @metric.display_unit, base_unit: @metric.unit, use_metric: current_user.use_metric ).convert_to_display )
 									.input-group
 
 							
