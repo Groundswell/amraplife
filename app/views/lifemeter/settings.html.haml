@@ -39,8 +39,8 @@
 				.col-sm-4
 					.well
 						.form-group
-							= check_box_tag :use_metric, true, current_user.use_metric?, { class: 'form-control', style: 'width:40px;'  }
-							= label_tag :use_metric, 'Use Metric Units?', style: 'display:inline;'
+							= check_box_tag :use_imperial_units, true, current_user.use_imperial_units?, { class: 'form-control', style: 'width:40px;'  }
+							= label_tag :use_imperial_units, 'Use Imperial Units?', style: 'display:inline;'
 
 						.form-group
 							= label_tag :gender

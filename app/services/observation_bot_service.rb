@@ -92,6 +92,36 @@ class ObservationBotService < AbstractBotService
 				action: 'Action',
 			}
 		},
+		# log_food_observation: {
+		# 	utterances: [
+		# 		'i ate {quantity} serving of {food}',
+		# 		'i ate {quantity} {measure} of {food}',
+		# 		'i ate {quantity} {food}',
+		# 		'i ate {portion} portion of {food}',
+		# 	],
+		# 	slots: {
+		# 		quantity: 'Number',
+		# 		food: 'Food',
+		# 		measure: 'Measure',
+		# 		portion: 'Number',
+		# 	}
+		# },
+
+		# log_ate_observation: {
+		# 	utterances: [
+		# 		'i ate {value}\s*{unit} of {action}',
+		# 		'i ate {value}\s*{unit} {action}',
+
+		# 		'i ate {quantity} serving of {food}',
+		# 		'i ate {quantity} {measure} of {food}',
+		# 		'i ate {quantity} {food}',
+		# 		'i ate {portion} portion of {food}',
+		# 	],
+		# 	slots: {
+		# 		value: 'Amount',
+		# 		unit: 'Unit',
+		# 	}
+		# },
 
 		report_last_value_observation:{
 			utterances: [
@@ -115,8 +145,7 @@ class ObservationBotService < AbstractBotService
 		},
 		log_metric_observation: {
 			utterances: [
-				'i ate {value}\s*{unit} of {action}',
-				'i ate {value}\s*{unit} {action}',
+				
 				# for input like....
 				# log weight = 176
 				# log weight is 176
@@ -152,20 +181,7 @@ class ObservationBotService < AbstractBotService
 				unit: 'Unit',
 			}
 		},
-		# log_food_observation: {
-		# 	utterances: [
-		# 		'i ate {quantity} serving of {food}',
-		# 		'i ate {quantity} {measure} of {food}',
-		# 		'i ate {quantity} {food}',
-		# 		'i ate {portion} portion of {food}',
-		# 	],
-		# 	slots: {
-		# 		quantity: 'Number',
-		# 		food: 'Food',
-		# 		measure: 'Measure',
-		# 		portion: 'Number',
-		# 	}
-		# },
+		
 
 		tell_about: {
 			utterances: [
@@ -549,22 +565,29 @@ class ObservationBotService < AbstractBotService
 		# trim the unit
 		unit = params[:unit].chomp( '.' ).singularize if params[:unit].present?
 
+		action = params[:action].gsub( /(log|record|to |my | todays | is| are| was| = |i | for)/i, '' ).strip if params[:action].present?
+
 		if params[:action].present?
 
 			# fetch the metric
-			metric = get_user_metric( user, params[:action], unit, true )
-			
-			user_unit = Unit.find_by_alias( unit ) || metric.unit
+			if metric = get_user_metric( user, params[:action], unit, true )
 
-			if user_unit.present?
-				val = params[:value].to_f * user_unit.conversion_factor
+				user_unit = Unit.find_by_alias( unit ) || metric.unit
+
+				if user_unit.present?
+					val = params[:value].to_f * user_unit.conversion_factor
+				else
+					val = params[:value].to_f
+				end
+
+				observation = user.observations.create( observed: metric, value: val, unit: user_unit, notes: notes )
+				add_speech( observation.to_s( user ) )
 			else
-				val = params[:value].to_f
+				add_ask( "I'm sorry, I didn't understand that.  You must supply a unit or action with your value in order to log it.  For example \"log one hundred calories\" or \"my weight is one hundred sixty\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it.", deligate_if_possible: true )
+				return
 			end
-
-			observation = user.observations.create( observed: metric, value: val, unit: user_unit, notes: notes )
-			add_speech( observation.to_s( user ) )
 		else
+			# not sure we should ever do this... record observation without an observed???
 			observation = user.observations.create( value: params[:value], unit: unit, notes: notes )
 			add_speech( observation.to_s( user ) )
 		end
@@ -881,18 +904,25 @@ class ObservationBotService < AbstractBotService
 		def get_user_metric( user, action, unit=nil, create=false )
 
 			if action.present?
+				
 				# clean up the action string... some of our matchers leave cruft
-				action = action.gsub( /(log |record |to |my | todays | is| are| was| = |i | for|timer)/i, '' ).strip
+				action = action.gsub( /(log|record|to |my | todays | is| are| was| = |i | for|timer)/i, '' ).strip
 
 				# first, check the user's existing assigned metrics. Return that if exists...
 				if user.metrics.find_by_alias( action.downcase )
 					return user.metrics.find_by_alias( action.downcase )
+				end
+				# also check the user's existing assigned metrics based on unit that if exists...
+				if user.metrics.find_by_alias( unit.downcase )
+					return user.metrics.find_by_alias( unit.downcase )
 				end
 
 				# if we didn't find it in the user's assigned metric list, and create option is invoked...
 				if create
 					# check the system default metrics
 					system_metric = Metric.where( user_id: nil ).find_by_alias( action.downcase )
+					system_metric ||= Metric.where( user_id: nil ).find_by_alias( unit.downcase )
+
 					if system_metric.present?
 						# assign with default display units based on the user's preference
 						observed_metric ||= system_metric.dup
@@ -926,8 +956,11 @@ class ObservationBotService < AbstractBotService
 						end
 
 						observed_metric.user = user
-						observed_metric.save
-						return observed_metric
+						if observed_metric.save
+							return observed_metric
+						else
+							return false
+						end
 					end
 				end
 

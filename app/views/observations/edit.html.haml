@@ -15,7 +15,7 @@
 						.input-group
 							= f.text_field :value, value: @observation.display_value( show_units: false ), class: 'form-control'
 							%span.input-group-addon
-								= @observation.unit.abbrev
+								= @observation.unit.try( :abbrev )
 					.row
 						.col-xs-6
 							.form-group
