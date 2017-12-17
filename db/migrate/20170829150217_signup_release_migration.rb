@@ -3,19 +3,20 @@ class SignupReleaseMigration < ActiveRecord::Migration
 		create_table :targets do |t|
 			t.references	:parent_obj, polymorphic: true
 			t.references 	:user 
+			t.references 	:unit
 			t.string		:target_type, default: "value"
 			t.float 		:value 
 			t.float 		:min 
 			t.float 		:max
 			t.string 		:direction, default: "at_most"
 			t.string 		:period,    default: "all_time"
-			t.string 		:unit
 			t.datetime 		:start_at
 			t.datetime 		:end_at
-			t.integer 		:status
+			t.integer 		:status, 	default: 1
 			t.timestamps
 		end
 		add_index :targets, [ :parent_obj_id, :parent_obj_type ]
+		add_index :targets, :unit_id
 		add_index :targets, :user_id
 
 		if column_exists?( :metrics, :unit )

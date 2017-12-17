@@ -7,6 +7,7 @@ class User < SwellMedia::User
 	# App declarations
 	has_many :metrics
 	has_many :observations
+	has_many :targets
 	has_many :user_inputs
 
 

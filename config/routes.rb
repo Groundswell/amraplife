@@ -13,9 +13,11 @@ Rails.application.routes.draw do
 	end
 
 	scope 'lifemeter' do
+		resources :journal_entries
 		resources :metrics
 		resources :observations
 		resources :stats
+		resources :targets
 	end
 
 	resources :equipment

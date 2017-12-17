@@ -24,6 +24,7 @@ class Metric < ActiveRecord::Base
 
 
 	def self.find_by_alias( term )
+		return false if term.blank?
 		where( ":term = ANY( aliases )", term: term.parameterize ).first
 	end
 

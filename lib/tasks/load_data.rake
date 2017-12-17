@@ -45,6 +45,9 @@ namespace :amraplife do
 		none = Unit.create name: 'None', unit_type: 'custom'
 
 		bpm = Unit.create name: 'BPM', abbrev: 'bpm', aliases: ['heart rate'], unit_type: 'custom'
+
+		mgdl = Unit.create name: 'mg/dL', abbrev: 'mg/dL', aliases: ['mgdL'], unit_type: 'custom'
+		mmoll = Unit.create name: 'mmol/L', abbrev: 'mmol/L', aliases: ['mmolL'], unit_type: 'custom', base_unit: mgdl, conversion_factor: 18
 		
 		bmi = Unit.create name: 'Bodymass Index', abbrev: 'bmi', unit_type: 'custom'
 		block = Unit.create name: 'Block', abbrev: 'block', unit_type: 'custom'
@@ -79,7 +82,7 @@ namespace :amraplife do
 		km.update( imperial_correlate_id: mi.id )
 
 		l = Unit.create name: 'Liter', abbrev: 'l', unit_type: 'volume', imperial: false
-		ml = Unit.create name: 'Milliliter', abbrev: 'l', unit_type: 'volume', base_unit: l, conversion_factor: 0.001, imperial: false
+		ml = Unit.create name: 'Milliliter', abbrev: 'ml', unit_type: 'volume', base_unit: l, conversion_factor: 0.001, imperial: false
 		cup = Unit.create name: 'Cup', abbrev: 'cup', unit_type: 'volume', base_unit: l, conversion_factor: 0.24
 		gal = Unit.create name: 'Gallon', abbrev: 'gal', unit_type: 'volume', base_unit: l, conversion_factor: 3.78541
 		qt = Unit.create name: 'Quart', abbrev: 'qt', unit_type: 'volume', base_unit: l, conversion_factor: 0.946352499983857
@@ -114,6 +117,8 @@ namespace :amraplife do
 		diastolic.targets.create target_type: :value, direction: :at_most, period: :all_time
 
 		bp = Metric.create title: 'Blood Pressure', metric_type: 'physical', aliases: ['bp', 'blood pressure'], unit: mmhg # use sub units for sys/dias observations
+		
+		bs = Metric.create title: 'Blood Sugar', metric_type: 'physical', aliases: ['glucose level', 'blood glucose'], unit: mgdl 
 		
 		pbf = Metric.create title: 'Percent Body Fat', metric_type: 'physical', aliases: ['pbf', 'bodyfat', 'body fat', 'body fat percent'], unit: per
 		pbf.targets.create target_type: :value, direction: :at_most, period: :all_time

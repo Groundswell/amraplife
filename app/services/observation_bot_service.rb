@@ -26,16 +26,16 @@ class ObservationBotService < AbstractBotService
 				action: 'Action',
 			}
 		},
-		convert:{
-			utterances: [
-				'(to)?\s*convert\s*{value}\s*{units}\s*to\s*{action}'
-			],
-			slots: {
-				value: 'Amount',
-				units: 'Unit',
-				action: 'Action'
-			},
-		},
+		# convert:{
+		# 	utterances: [
+		# 		'(to)?\s*convert\s*{value}\s*{units}\s*to\s*{action}'
+		# 	],
+		# 	slots: {
+		# 		value: 'Amount',
+		# 		units: 'Unit',
+		# 		action: 'Action'
+		# 	},
+		# },
 		log_drink_observation:{
 			utterances: [
 				'(?:that)?(?:i)?\s*(drank|drink)\s*{value}\s*{action}',
@@ -107,21 +107,18 @@ class ObservationBotService < AbstractBotService
 		# 	}
 		# },
 
-		# log_ate_observation: {
-		# 	utterances: [
-		# 		'i ate {value}\s*{unit} of {action}',
-		# 		'i ate {value}\s*{unit} {action}',
-
-		# 		'i ate {quantity} serving of {food}',
-		# 		'i ate {quantity} {measure} of {food}',
-		# 		'i ate {quantity} {food}',
-		# 		'i ate {portion} portion of {food}',
-		# 	],
-		# 	slots: {
-		# 		value: 'Amount',
-		# 		unit: 'Unit',
-		# 	}
-		# },
+		log_ate_observation: {
+			utterances: [
+				'(?:i)?\s*ate {value}\s*{unit} of {action}', # e.g. 30 grams of protein
+				'(?:i)?\s*ate {value}\s*{unit}', # e.g. 480 calories
+				'(?:i)?\s*ate {value}\s*', # e.g. ate 300 defaults to calories
+			],
+			slots: {
+				action: 'Action',
+				value: 'Amount',
+				unit: 'Unit',
+			}
+		},
 
 		report_last_value_observation:{
 			utterances: [
@@ -379,31 +376,31 @@ class ObservationBotService < AbstractBotService
 
 	end
 
-	def convert
-		val = params[:value]
-		unit = params[:units].chomp( 's' )
-		to_unit = params[:action].chomp( 's' )
+	# def convert
+	# 	val = params[:value]
+	# 	unit = params[:units].chomp( 's' )
+	# 	to_unit = params[:action].chomp( 's' )
 
-		begin
+	# 	begin
 
-			result = Unitwise( val, unit ).convert_to( to_unit ).to_f.round( 2 )
-			unit = val == 1 ? "#{unit}" : "#{unit}s"
-			to_unit = val == 1 ? "#{to_unit}" : "#{to_unit}s"
-			response = "#{val} #{unit} equals #{result} #{to_unit}."
+	# 		result = Unitwise( val, unit ).convert_to( to_unit ).to_f.round( 2 )
+	# 		unit = val == 1 ? "#{unit}" : "#{unit}s"
+	# 		to_unit = val == 1 ? "#{to_unit}" : "#{to_unit}s"
+	# 		response = "#{val} #{unit} equals #{result} #{to_unit}."
 
-			add_speech( response )
+	# 		add_speech( response )
 
-			user.user_inputs.create( content: raw_input, action: 'read', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{response}'" ) if user.present?
+	# 		user.user_inputs.create( content: raw_input, action: 'read', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{response}'" ) if user.present?
 
-		rescue Unitwise::ExpressionError => e
+	# 	rescue Unitwise::ExpressionError => e
 
-			response = "I'm sorry, I #{e.message.downcase}"
+	# 		response = "I'm sorry, I #{e.message.downcase}"
 
-			add_speech( response )
-			user.user_inputs.create( content: raw_input, action: 'read', source: options[:source], result_status: 'error', system_notes: "Spoke: '#{response}'" ) if user.present?
+	# 		add_speech( response )
+	# 		user.user_inputs.create( content: raw_input, action: 'read', source: options[:source], result_status: 'error', system_notes: "Spoke: '#{response}'" ) if user.present?
 
-		end
-	end
+	# 	end
+	# end
 
 
 	def log_duration_observation
@@ -497,6 +494,60 @@ class ObservationBotService < AbstractBotService
 
 	end
 
+
+	def log_ate_observation
+
+		unless user.present?
+			call_intent( :login )
+			return
+		end
+
+
+		if params[:value].blank?# || ( params[:action].blank? && params[:unit].blank? )
+
+			add_ask( "I'm sorry, I didn't understand that.  You must supply a unit or action with your value in order to log it.  For example \"I ate one hundred calories\" or \"I ate 12 grams of sugar\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it.", deligate_if_possible: true )
+			return
+
+		end
+
+		# @todo parse notes
+		notes = @raw_input
+		sys_notes = nil
+
+
+		# trim the unit
+		unit = params[:unit].chomp( '.' ).singularize if params[:unit].present?
+
+		action = params[:action].gsub( /(log|record|to |my | todays | is| are| was| = |i | for)/i, '' ).strip if params[:action].present?
+
+		action ||= unit 
+
+		action ||= 'cal'
+
+		# fetch the metric
+		if metric = get_user_metric( user, action, unit, true )
+
+			user_unit = Unit.find_by_alias( unit ) || metric.unit
+
+			if user_unit.present?
+				val = params[:value].to_f * user_unit.conversion_factor
+			else
+				val = params[:value].to_f
+			end
+
+			observation = user.observations.create( observed: metric, value: val, unit: user_unit, notes: notes )
+			add_speech( observation.to_s( user ) )
+		else
+			add_ask( "I'm sorry, I didn't understand that.  You must supply a unit or action with your value in order to log it.  For example \"I ate one hundred calories\" or \"I ate 16 grams of sugar\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it.", deligate_if_possible: true )
+			return
+		end
+
+
+		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'created', source: options[:source], result_status: 'success', system_notes: "Logged #{observation.display_value( show_units: true )} for #{observation.observed.try(:title) || params[:action]}." )
+
+	end
+
+
 	def log_drink_observation
 		unless user.present?
 			call_intent( :login )
@@ -505,9 +556,9 @@ class ObservationBotService < AbstractBotService
 
 		if params[:action].match( /of/ )
 			metric_alias = params[:action].gsub( /.+of/, '' ).strip
-			unit = params[:action].split( /of/ )[0].strip.singularize
+			user_unit = params[:action].split( /of/ )[0].strip.singularize
 		else
-			unit = params[:action].match( /\S+\s/ ).to_s.strip.singularize
+			user_unit = params[:action].match( /\S+\s/ ).to_s.strip.singularize
 			metric_alias = params[:action].gsub( /\S+\s/, '' ).strip.singularize
 		end
 
@@ -516,16 +567,15 @@ class ObservationBotService < AbstractBotService
 
 		value = params[:value]
 
-		if unit == 'ounce'
-			unit = 'fluid ounce'
+		if [ 'ounce', 'oz'].include?( :user_unit )
+			user_unit = 'fl oz'
 		end
 
-		unit = unit || metric.unit
-		user_unit = Unit.find_by_alias( unit ) || metric.unit
+		unit = Unit.find_by_alias( user_unit ) || metric.unit
 
-		val = params[:value].to_f * user_unit.conversion_factor
+		val = params[:value].to_f * unit.conversion_factor
 
-		observation = user.observations.create( observed: metric, value: val, unit: user_unit, notes: @raw_input )
+		observation = user.observations.create( observed: metric, value: val, unit: unit, notes: @raw_input )
 
 
 		add_speech( observation.to_s( user ) )
@@ -552,6 +602,7 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
+
 		if params[:value].blank? || ( params[:action].blank? && params[:unit].blank? )
 
 			add_ask( "I'm sorry, I didn't understand that.  You must supply a unit or action with your value in order to log it.  For example \"log one hundred calories\" or \"my weight is one hundred sixty\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it.", deligate_if_possible: true )
@@ -575,7 +626,11 @@ class ObservationBotService < AbstractBotService
 				user_unit = Unit.find_by_alias( unit ) || metric.unit
 
 				if user_unit.present?
-					val = params[:value].to_f * user_unit.conversion_factor
+					if user_unit.is_time?
+						val = ChronicDuration.parse( "#{params[:value]} #{params[:unit]}" )
+					else
+						val = params[:value].to_f * user_unit.conversion_factor
+					end
 				else
 					val = params[:value].to_f
 				end
@@ -913,7 +968,7 @@ class ObservationBotService < AbstractBotService
 					return user.metrics.find_by_alias( action.downcase )
 				end
 				# also check the user's existing assigned metrics based on unit that if exists...
-				if user.metrics.find_by_alias( unit.downcase )
+				if user.metrics.find_by_alias( unit.try( :downcase ) )
 					return user.metrics.find_by_alias( unit.downcase )
 				end
 
@@ -921,7 +976,7 @@ class ObservationBotService < AbstractBotService
 				if create
 					# check the system default metrics
 					system_metric = Metric.where( user_id: nil ).find_by_alias( action.downcase )
-					system_metric ||= Metric.where( user_id: nil ).find_by_alias( unit.downcase )
+					system_metric ||= Metric.where( user_id: nil ).find_by_alias( unit.try( :downcase ) )
 
 					if system_metric.present?
 						# assign with default display units based on the user's preference
