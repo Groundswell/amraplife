@@ -7,6 +7,7 @@ class TargetsController < ApplicationController
 
 	def create
 		@target = current_user.targets.new( target_params )
+		@target.unit = @target.parent_obj.unit
 		@target.save
 		redirect_to :back
 	end

@@ -48,7 +48,7 @@ class Observation < ActiveRecord::Base
 			else
 				value = self.value
 			end
-			"#{value} #{self.unit.abbrev.pluralize( value )}"
+			"#{value} #{self.unit.abbrev}"
 		end
 	end
 

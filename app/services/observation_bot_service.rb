@@ -942,6 +942,8 @@ class ObservationBotService < AbstractBotService
 		value_sum = user.observations.for( metric ).sum( :value ) || 0
 
 		formatted_average = UnitService.new( val: average_value, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric ).convert_to_display
+		formatted_average = metric.unit.display( average_value, use_imperial: user.use_imperial_units )
+
 		formatted_min = UnitService.new( val: min_value, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric ).convert_to_display
 		formatted_max = UnitService.new( val: max_value, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric ).convert_to_display
 		formatted_sum = UnitService.new( val: value_sum, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric ).convert_to_display

@@ -28,6 +28,10 @@ class Unit < ActiveRecord::Base
 		self.aliases = aliases_csv.split( /,\s*/ )
 	end
 
+	def display
+		
+	end
+
 	def is_time?
 		self.unit_type == 'time'
 	end
