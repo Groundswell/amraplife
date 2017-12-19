@@ -640,13 +640,13 @@ ActiveRecord::Schema.define(version: 20170829150217) do
     t.integer  "parent_obj_id"
     t.string   "parent_obj_type"
     t.integer  "user_id"
+    t.integer  "unit_id"
     t.string   "target_type",     default: "value"
     t.float    "value"
     t.float    "min"
     t.float    "max"
     t.string   "direction",       default: "at_most"
     t.string   "period",          default: "all_time"
-    t.string   "unit"
     t.datetime "start_at"
     t.datetime "end_at"
     t.integer  "status"
@@ -655,6 +655,7 @@ ActiveRecord::Schema.define(version: 20170829150217) do
   end
 
   add_index "targets", ["parent_obj_id", "parent_obj_type"], name: "index_targets_on_parent_obj_id_and_parent_obj_type", using: :btree
+  add_index "targets", ["unit_id"], name: "index_targets_on_unit_id", using: :btree
   add_index "targets", ["user_id"], name: "index_targets_on_user_id", using: :btree
 
   create_table "team_users", force: :cascade do |t|

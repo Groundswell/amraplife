@@ -1,0 +1,54 @@
+.row
+	.col-xs-10
+		%h1
+			Targets
+	.col-xs-2
+		%a.btn.btn-success{ data: { toggle: :modal, target: '#new_target' } }
+			%i.fa.fa-plus-square
+			Add a Target
+
+.main-box.clearfix
+	.main-box-header.clearfix
+
+	.main-box-body.clearfix
+		= raw paginate @targets
+		%table.table.table-striped
+			%thead
+				%th Metric
+				%th Type
+				%th Direction
+				%th Value
+				%th Period
+				%th
+			%tbody
+				- @targets.each do |target|
+					%tr
+						%td
+							= link_to target.parent_obj.title, edit_target_path( target )
+						%td
+							= Target.target_types[target.target_type]
+						%td
+							= Target.directions[target.direction]
+						%td
+							= target.display_value
+						%td
+							= Target.periods[target.period]
+						%td
+							.btn-group
+								%button.btn.btn-mini.btn-default.dropdown-toggle{ data: { toggle: :dropdown } }
+									%i.fa.fa-cog
+									%b.caret
+								%ul.dropdown-menu
+									%li
+										%a{ href: edit_target_path( target.id ) }
+											%i.fa.fa-pencil
+											Edit
+									%li.divider
+									%li
+										%a{ href: target_path( target ), data: { method: 'delete', confirm: 'Are you sure?' } }
+											%i.fa.fa-trash-o
+											Delete!
+		= raw paginate @targets
+
+
+= render 'new_modal', args: {}

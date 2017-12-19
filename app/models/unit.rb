@@ -28,6 +28,15 @@ class Unit < ActiveRecord::Base
 		self.aliases = aliases_csv.split( /,\s*/ )
 	end
 
+	def convert_to_base( val, opts={} )
+		# by default, return a formatted string
+		# format_display: false should just return a float
+		defined?( params[:format_display] ) or params[:format_display] = true
+	end
+
+	def convert_from_base( val, opts={} )
+	end
+
 	def is_time?
 		self.unit_type == 'time'
 	end
