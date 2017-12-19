@@ -57,6 +57,7 @@
 								= @metric.title 
 								Target
 							.form-group
+								test
 								=# f.select :target_type, options_for_select( [ ['Accumulated Value', 'sum_value'], [ 'Value', 'value'], ['Number of Observations', 'count'], ['Average Value', 'avg_value'] ], @metric.target_type ), {}, class: 'form-control'
 							
 							.form-group
