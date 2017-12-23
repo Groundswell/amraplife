@@ -649,7 +649,7 @@ ActiveRecord::Schema.define(version: 20170829150217) do
     t.string   "period",          default: "all_time"
     t.datetime "start_at"
     t.datetime "end_at"
-    t.integer  "status"
+    t.integer  "status",          default: 1
     t.datetime "created_at"
     t.datetime "updated_at"
   end

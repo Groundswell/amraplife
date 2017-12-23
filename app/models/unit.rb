@@ -1,7 +1,7 @@
 
 class Unit < ActiveRecord::Base
 	before_create	:set_aliases
-	enum unit_type: { 'custom' => 0, 'volume' => 1, 'weight' => 2, 'length' => 3, 'time' => 4, 'percent' => 5, 'pressure' => 6, 'energy' => 7 }
+	enum unit_type: { 'nada' => -1, 'custom' => 0, 'volume' => 1, 'weight' => 2, 'length' => 3, 'time' => 4, 'percent' => 5, 'pressure' => 6, 'energy' => 7 }
 
 	belongs_to :base_unit, class_name: 'Unit'
 
@@ -29,21 +29,68 @@ class Unit < ActiveRecord::Base
 	end
 
 	def convert_to_base( val, opts={} )
-		# by default, return a formatted string
-		# format_display: false should just return a float
-		defined?( params[:format_display] ) or params[:format_display] = true
+
+		if self.is_time?
+			return ChronicDuration.parse( "#{val} #{self.name}" )
+		elsif self.is_percent?
+			return val.to_f / 100
+		elsif self.base_unit.present?
+			return val.to_f * self.conversion_factor
+		else
+			return val.to_f
+		end
 	end
 
+
 	def convert_from_base( val, opts={} )
+		# by default, return a formatted string
+		# fshow_units: false should just return a float
+		defined?( opts[:show_units] ) or opts[:show_units] = true
+		opts[:precision] ||= 2
+
+		if self.is_nada?
+			return "#{val}"
+		elsif self.is_time?
+			if opts[:show_units]
+				return ChronicDuration.output( val, format: :long )
+			else
+				return ChronicDuration.output( val, format: :chrono )
+			end
+		elsif self.is_percent?
+			if opts[:show_units]
+				return "#{( val * 100.to_f ).round( opts[:precision] )}%"
+			else
+				return "#{( val * 100.to_f ).round( opts[:precision] )}"
+			end
+		else
+			if self.base_unit.present?
+				value = ( val / self.conversion_factor.to_f ).round( opts[:precision] )
+			else
+				value = val
+			end
+			if opts[:show_units]
+				return "#{value} #{self.abbrev}"
+			else
+				return value
+			end
+		end
+
+	end
+
+
+	def is_nada?
+		self.unit_type == 'nada'
+	end
+
+	def is_percent?
+		self.unit_type == 'percent'
 	end
 
 	def is_time?
 		self.unit_type == 'time'
 	end
 
-	def is_percent?
-		self.unit_type == 'percent'
-	end
+	
 
 	def to_s
 		self.name
