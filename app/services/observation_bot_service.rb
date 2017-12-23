@@ -604,7 +604,6 @@ class ObservationBotService < AbstractBotService
 
 
 		if params[:value].blank? || ( params[:action].blank? && params[:unit].blank? )
-
 			add_ask( "I'm sorry, I didn't understand that.  You must supply a unit or action with your value in order to log it.  For example \"log one hundred calories\" or \"my weight is one hundred sixty\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it.", deligate_if_possible: true )
 			return
 
@@ -626,11 +625,13 @@ class ObservationBotService < AbstractBotService
 				user_unit = Unit.find_by_alias( unit ) || metric.unit
 
 				if user_unit.present?
-					if user_unit.is_time?
-						val = ChronicDuration.parse( "#{params[:value]} #{params[:unit]}" )
-					else
-						val = params[:value].to_f * user_unit.conversion_factor
-					end
+					val = user_unit.convert_to_base( params[:value] )
+					
+					# if user_unit.is_time?
+					# 	val = ChronicDuration.parse( "#{params[:value]} #{params[:unit]}" )
+					# else
+					# 	val = params[:value].to_f * user_unit.conversion_factor
+					# end
 				else
 					val = params[:value].to_f
 				end
@@ -941,12 +942,11 @@ class ObservationBotService < AbstractBotService
 		max_value = user.observations.for( metric ).maximum( :value ) || 0
 		value_sum = user.observations.for( metric ).sum( :value ) || 0
 
-		formatted_average = UnitService.new( val: average_value, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric ).convert_to_display
-		formatted_average = metric.unit.display( average_value, use_imperial: user.use_imperial_units )
+		formatted_average = metric.unit.convert_from_base( average_value )
 
-		formatted_min = UnitService.new( val: min_value, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric ).convert_to_display
-		formatted_max = UnitService.new( val: max_value, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric ).convert_to_display
-		formatted_sum = UnitService.new( val: value_sum, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric ).convert_to_display
+		formatted_min = metric.unit.convert_from_base( min_value )
+		formatted_max = metric.unit.convert_from_base( max_value )
+		formatted_sum = metric.unit.convert_from_base( value_sum )
 
 		response = "You have logged #{metric.title} #{obs_count_total} times in all. #{obs_count_last_week} times last week, and #{obs_count_this_week} times so far this week. Your all-time total is #{formatted_sum}. The average value for #{metric.title} is #{formatted_average}. The max value is #{formatted_max} and the minimum is #{formatted_min}."
 		add_speech( response )

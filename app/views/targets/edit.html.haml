@@ -10,17 +10,16 @@
 			.row
 				.col-sm-8
 					.row
-						.col-sm-6
-							= f.label :target_type
-							= f.collection_select :target_type, Target.target_types, :first, :second, {}, class: 'form-control'
-					.row
-						.col-sm-4
+						.col-sm-3
 							= f.label :direction
 							= f.collection_select :direction, Target.directions, :first, :second, {}, class: 'form-control'
-						.col-sm-4
+						.col-sm-3
 							= f.label :value
-							= f.text_field :value, class: 'form-control'
-						.col-sm-4
+							= f.text_field :value, value: @target.unit.convert_from_base( @target.value, show_units: true ), class: 'form-control'
+						.col-sm-3
+							= f.label :target_type
+							= f.collection_select :target_type, Target.target_types, :first, :second, {}, class: 'form-control'
+						.col-sm-3
 							= f.label :period
 							= f.collection_select :period, Target.periods, :first, :second, {}, class: 'form-control'
 				.col-sm-4

@@ -42,7 +42,7 @@ namespace :amraplife do
 
 		puts "Adding some Units"
 
-		none = Unit.create name: 'None', unit_type: 'custom'
+		none = Unit.create name: 'None', unit_type: 'nada'
 
 		bpm = Unit.create name: 'BPM', abbrev: 'bpm', aliases: ['heart rate'], unit_type: 'custom'
 
@@ -165,12 +165,16 @@ namespace :amraplife do
 		act = Metric.create title: 'Meditation', metric_type: 'activity', aliases: ['med', 'meditating', 'meditated'], unit: sec
 		act.targets.create target_type: :sum_value, direction: :at_least, period: :daily, value: 1200
 
+		act = Metric.create title: 'Step', metric_type: 'activity', aliases: ['steps', 'stp', 'stepped' ], unit: none
+		act.targets.create target_type: :sum_value, direction: :at_least, period: :daily, value: 10000
+
 		act = Metric.create title: 'Drive', metric_type: 'activity', 	aliases: ['drv', 'driving', 'drove'], unit: sec
 		act = Metric.create title: 'Work', metric_type: 'activity', 	aliases: ['wrk', 'working', 'worked'], unit: sec
 		act = Metric.create title: 'Walk', metric_type: 'activity', 	aliases: ['wlk', 'walking', 'walked'], unit: sec
 		act = Metric.create title: 'Cycle', metric_type: 'activity', aliases: ['cycling', 'cycled', 'bike', 'biked', 'biking', 'bicycling', 'bicycled', 'bicycle' ], unit: sec
 		act = Metric.create title: 'Swim', metric_type: 'activity', aliases: ['swimming', 'swam'], unit: sec
 		act = Metric.create title: 'Run', metric_type: 'activity', aliases: ['running', 'ran', 'jog', 'jogging', 'jogged'], unit: sec
+		
 
 		bmi = Metric.create title: 'Workout', metric_type: 'activity', aliases: ['wkout', 'worked out', 'exercise', 'exercised'], unit: sec
 		# workouts must have time... record scores, reps, etc as sub observations.

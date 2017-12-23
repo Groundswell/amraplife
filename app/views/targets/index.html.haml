@@ -15,10 +15,11 @@
 		%table.table.table-striped
 			%thead
 				%th Metric
-				%th Type
 				%th Direction
 				%th Value
+				%th Type
 				%th Period
+				%th Status
 				%th
 			%tbody
 				- @targets.each do |target|
@@ -26,13 +27,15 @@
 						%td
 							= link_to target.parent_obj.title, edit_target_path( target )
 						%td
-							= Target.target_types[target.target_type]
-						%td
 							= Target.directions[target.direction]
 						%td
-							= target.display_value
+							= target.display_value( show_units: true )
+						%td
+							= Target.target_types[target.target_type]
 						%td
 							= Target.periods[target.period]
+						%td
+							= target.status
 						%td
 							.btn-group
 								%button.btn.btn-mini.btn-default.dropdown-toggle{ data: { toggle: :dropdown } }
