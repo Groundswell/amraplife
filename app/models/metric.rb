@@ -28,6 +28,12 @@ class Metric < ActiveRecord::Base
 		where( ":term = ANY( aliases )", term: term.parameterize ).first
 	end
 
+
+
+	def active_target
+		self.targets.active.last
+	end
+
 	def aliases_csv
 		self.aliases.join( ', ' )
 	end

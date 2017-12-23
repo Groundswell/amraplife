@@ -2,23 +2,17 @@ class ObservationBotService < AbstractBotService
 
 	 add_intents( {
 
- 		set_target:{
- 			utterances: [
- 				'set\s+(a\s+)?target\s+of\s+{value}\s+for\s+{action}',
- 				'set\s+(a\s+)?target\s+of\s+{value}\s+{unit}\s+for\s+{action}',
- 				'set\s+(a\s+)?target\s*(for\s+)?{action}\s+of\s+{value}',
- 				'set\s+(a\s+)?target\s*(for\s+)?{action}\s+of\s+{value}\s*{unit}',
- 				'set\s+(a\s+)?{action}\s+target\s+of\s+{value}\s+{unit}',
- 				'set\s+(a\s+)?{action}\s+target\s+of\s+{value}',
- 			],
- 			slots:{
- 				action: 'Action',
- 				value: 'Amount',
- 				unit: 'Unit'
- 			},
- 		},
+ 		assign_metric: {
+			utterances: [
+				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*track {action}',
+			],
+			slots: {
+				action: 'Action',
+				unit: 'Unit',
+			}
+		},
 
-		check_metric: {
+ 		check_metric: {
 			utterances: [
 				'(to)?\s*check\s*(my)?\s*{action}',
 				 ],
@@ -26,20 +20,25 @@ class ObservationBotService < AbstractBotService
 				action: 'Action',
 			}
 		},
-		# convert:{
-		# 	utterances: [
-		# 		'(to)?\s*convert\s*{value}\s*{units}\s*to\s*{action}'
-		# 	],
-		# 	slots: {
-		# 		value: 'Amount',
-		# 		units: 'Unit',
-		# 		action: 'Action'
-		# 	},
-		# },
+
+		log_ate_observation: {
+			utterances: [
+				'(?:i)?\s*ate {value}\s*{unit} of {action}', # e.g. 30 grams of protein
+				'(?:i)?\s*ate {value}\s*{unit}', # e.g. 480 calories
+				'(?:i)?\s*ate {value}\s*', # e.g. ate 300 defaults to calories
+			],
+			slots: {
+				action: 'Action',
+				value: 'Amount',
+				unit: 'Unit',
+			}
+		},
+
 		log_drink_observation:{
 			utterances: [
 				'(?:that)?(?:i)?\s*(drank|drink)\s*{value}\s*{action}',
-				'(?:that)?(?:i)?\s*(drank|drink)\s*{value}\s*{unit}\s*{action}',
+				'(?:that)?(?:i)?\s*(drank|drink)\s*{value}\s*{unit}\s*(?:of)?\s*{action}',
+				'(?:that)?(?:i)?\s*(drank|drink)\s*{unit}\s*(?:of)?\s*{action}',
 			],
 			slots: {
 				action: 'Action',
@@ -47,6 +46,7 @@ class ObservationBotService < AbstractBotService
 				unit: 'Unit',
 			},
 		},
+
 		log_duration_observation: {
 			utterances: [
 				'(?:that)?(?:i)?\s*{action}\s*for\s*{duration}',
@@ -56,18 +56,12 @@ class ObservationBotService < AbstractBotService
 				duration: 'Notes',
 			}
 		},
-		assign_metric: {
-			utterances: [
-				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*track {action}',
-			],
-			slots: {
-				action: 'Action',
-				unit: 'Unit',
-			}
-		},
+
 		log_journal_observation: {
 			utterances: [
 				'(?:to)?\s*journal\s*(that)?{notes}',
+				'(?:to)?\s*note\s*(that)?{notes}',
+				'(?:to)?\s*take\s*(?:a)?\s*note\s*(that)?{notes}',
 				'dear diary\s*{notes}',
 			],
 			slots: {
@@ -84,6 +78,7 @@ class ObservationBotService < AbstractBotService
 				action: 'Action',
 			}
 		},
+
 		log_stop_observation: {
 			utterances: [
 				"(?:to )?\s*(?:that )?\s*(?:i )?\s*(stop|end|finish|complete)(?:ed|ing|ped)?\s*(?:my)?\s*{action}\s*(?:timer)?",
@@ -92,45 +87,25 @@ class ObservationBotService < AbstractBotService
 				action: 'Action',
 			}
 		},
-		# log_food_observation: {
-		# 	utterances: [
-		# 		'i ate {quantity} serving of {food}',
-		# 		'i ate {quantity} {measure} of {food}',
-		# 		'i ate {quantity} {food}',
-		# 		'i ate {portion} portion of {food}',
-		# 	],
-		# 	slots: {
-		# 		quantity: 'Number',
-		# 		food: 'Food',
-		# 		measure: 'Measure',
-		# 		portion: 'Number',
-		# 	}
-		# },
 
-		log_ate_observation: {
-			utterances: [
-				'(?:i)?\s*ate {value}\s*{unit} of {action}', # e.g. 30 grams of protein
-				'(?:i)?\s*ate {value}\s*{unit}', # e.g. 480 calories
-				'(?:i)?\s*ate {value}\s*', # e.g. ate 300 defaults to calories
-			],
-			slots: {
-				action: 'Action',
-				value: 'Amount',
-				unit: 'Unit',
-			}
-		},
 
-		report_last_value_observation:{
-			utterances: [
-				# what is my weight
-				'what (is|was) (?:my )?\s*{action} {time_period}',
-				'what (is|was) (?:my )?\s*{action}',
-			],
-			slots: {
-				action: 'Action',
-				time_period: 'TimePeriod',
-			}
-		},
+ 		set_target:{
+ 			utterances: [
+ 				'set\s+(a\s+)?target\s+of\s+{value}\s+for\s+{action}',
+ 				'set\s+(a\s+)?target\s+of\s+{value}\s+{unit}\s+for\s+{action}',
+ 				'set\s+(a\s+)?target\s*(for\s+)?{action}\s+of\s+{value}',
+ 				'set\s+(a\s+)?target\s*(for\s+)?{action}\s+of\s+{value}\s*{unit}',
+ 				'set\s+(a\s+)?{action}\s+target\s+of\s+{value}\s+{unit}',
+ 				'set\s+(a\s+)?{action}\s+target\s+of\s+{value}',
+ 			],
+ 			slots:{
+ 				action: 'Action',
+ 				value: 'Amount',
+ 				unit: 'Unit'
+ 			},
+ 		},
+		
+
 		target_remaining:{
 			utterances: [
 				'how (much|many) {action} do I have left',
@@ -140,6 +115,20 @@ class ObservationBotService < AbstractBotService
 				unit: 'Unit'
 				},
 		},
+
+		tell_about: {
+			utterances: [
+				'(to)?\s*tell\s*(?:me)?\s*about\s*(?:my)?\s*{action}',
+				'(to)?\s*tell\s*(?:me)?\s*about\s*(?:my)?\s*{action}\s+{time_period}',
+				],
+			slots:{
+				action: 'Action',
+				time_period: 'TimePeriod',
+			},
+		},
+
+
+
 		log_metric_observation: {
 			utterances: [
 				
@@ -177,17 +166,10 @@ class ObservationBotService < AbstractBotService
 				action: 'Action',
 				unit: 'Unit',
 			}
-		},
+		}
 		
 
-		tell_about: {
-			utterances: [
-				'(to)?\s*tell\s*(?:me)?\s*about\s*(?:my)?\s*{action}',
-				],
-			slots:{
-				action: 'Action',
-			},
-		},
+		
 
 	} )
 
@@ -252,7 +234,7 @@ class ObservationBotService < AbstractBotService
 		},
 		Unit: {
 			regex: [
-				'[a-zA-Z]+'
+				'(?:a )?[a-zA-Z]+'
 			],
 			values: [
 				{ value: "g", synonyms: [] },
@@ -305,11 +287,11 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
-		if metric.target.present?
-			if metric.target_type == 'value'
+		if metric.active_target.present?
+			if metric.active_target.target_type == 'value'
 				current = metric.observations.order( created_at: :desc ).first.value
 			else
-				case metric.target_period
+				case metric.active_target.period
 				when 'daily'
 					range = Time.zone.now.beginning_of_day..Time.zone.now.end_of_day
 					target_period = 'per day'
@@ -332,7 +314,7 @@ class ObservationBotService < AbstractBotService
 					current_period = ''
 				end
 
-				case metric.target_type
+				case metric.active_target.target_type
 				when 'sum_value'
 					current = metric.observations.where( recorded_at: range ).sum( :value )
 					target_type = "total"
@@ -346,28 +328,30 @@ class ObservationBotService < AbstractBotService
 
 			end
 
-			formatted_target = UnitService.new( val: metric.target, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric, show_units: true ).convert_to_display
+			formatted_target = metric.active_target.unit.convert_from_base( metric.active_target.value, show_units: true ) #UnitService.new( val: metric.target, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric, show_units: true ).convert_to_display
 
-			formatted_current = UnitService.new( val: current, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric, show_units: true ).convert_to_display
+			formatted_current = metric.unit.convert_from_base( current, show_units: true ) #UnitService.new( val: current, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric, show_units: true ).convert_to_display
 
-			delta = current - metric.target
-			formatted_delta = UnitService.new( val: delta.abs, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric, show_units: true ).convert_to_display
+			delta = current - metric.active_target.value
+			formatted_delta = metric.unit.convert_from_base( delta.abs, show_units: true )# UnitService.new( val: delta.abs, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric, show_units: true ).convert_to_display
+			
 			direction = delta > 0 ? 'over' : 'under'
 
-			if metric.target_type == 'value'
-				response = "You have a target of #{metric.target_direction.gsub( /_/, ' ' )} #{formatted_target}. Your most recent #{metric.title} is #{formatted_current}. "
+			if metric.active_target.target_type == 'value'
+				response = "You have a target of #{metric.active_target.direction.gsub( /_/, ' ' )} #{formatted_target}. Your most recent #{metric.title} is #{formatted_current}. "
 				response += "You are #{direction} your target by #{formatted_delta}."
 			else
-				response = "You have a target of #{metric.target_direction.gsub( /_/, ' ' )} #{formatted_target} #{target_type} #{target_period}. Your #{target_type} so far #{current_period} is #{formatted_current}. "
+				response = "You have a target of #{metric.active_target.direction.gsub( /_/, ' ' )} #{formatted_target} #{target_type} #{target_period}. Your #{target_type} so far #{current_period} is #{formatted_current}. "
 				response += "You are #{direction} your target by #{formatted_delta}."
 			end
 
 
 		else
 			last_observation = metric.observations.order( created_at: :desc ).first
+			formatted_last = metric.unit.convert_from_base( last_observation.value, show_units: true )
 			total = metric.observations.where( recorded_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day ).sum( :value )
-			formatted_total = UnitService.new( val: total, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric ).convert_to_display
-			response = "You haven't set a target for #{metric.title} yet. You last recorded #{last_observation.display_value} at #{last_observation.recorded_at.to_s( :long )}. You have logged #{formatted_total} so far today."
+			formatted_total = metric.unit.convert_from_base( total, show_units: true ) #UnitService.new( val: total, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric ).convert_to_display
+			response = "You haven't set a target for #{metric.title} yet. You last recorded #{formatted_last} at #{last_observation.recorded_at.to_s( :long )}. You have logged #{formatted_total} total so far today."
 		end
 
 		add_speech( response )
@@ -375,32 +359,6 @@ class ObservationBotService < AbstractBotService
 		user.user_inputs.create( content: raw_input, action: 'reported', source: options[:source], result_status: 'success', system_notes: "Spoke: #{response}" )
 
 	end
-
-	# def convert
-	# 	val = params[:value]
-	# 	unit = params[:units].chomp( 's' )
-	# 	to_unit = params[:action].chomp( 's' )
-
-	# 	begin
-
-	# 		result = Unitwise( val, unit ).convert_to( to_unit ).to_f.round( 2 )
-	# 		unit = val == 1 ? "#{unit}" : "#{unit}s"
-	# 		to_unit = val == 1 ? "#{to_unit}" : "#{to_unit}s"
-	# 		response = "#{val} #{unit} equals #{result} #{to_unit}."
-
-	# 		add_speech( response )
-
-	# 		user.user_inputs.create( content: raw_input, action: 'read', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{response}'" ) if user.present?
-
-	# 	rescue Unitwise::ExpressionError => e
-
-	# 		response = "I'm sorry, I #{e.message.downcase}"
-
-	# 		add_speech( response )
-	# 		user.user_inputs.create( content: raw_input, action: 'read', source: options[:source], result_status: 'error', system_notes: "Spoke: '#{response}'" ) if user.present?
-
-	# 	end
-	# end
 
 
 	def log_duration_observation
@@ -554,18 +512,28 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
+		user_unit = params[:unit]
+
+		# todo -- this breaks coffee
 		if params[:action].match( /of/ )
 			metric_alias = params[:action].gsub( /.+of/, '' ).strip
-			user_unit = params[:action].split( /of/ )[0].strip.singularize
+			user_unit ||= params[:action].split( /of/ )[0].strip.singularize
 		else
-			user_unit = params[:action].match( /\S+\s/ ).to_s.strip.singularize
 			metric_alias = params[:action].gsub( /\S+\s/, '' ).strip.singularize
+			user_unit ||= params[:action].match( /\S+\s/ ).to_s.strip.singularize
 		end
 
 		# fetch the metric
 		metric = get_user_metric( user, metric_alias, 'l', true )
 
-		value = params[:value]
+		# invocations like 'a cup of milk' leave value params nil
+		# we';ll assume one unless given a number like
+		# 3 pints of beer
+		params[:value] ||= 1
+
+		# take out leading "a " or "an " so "a cup" becomes "cup"
+		user_unit.gsub!( /(\Aa.*\s)/i, '' )
+
 
 		if [ 'ounce', 'oz'].include?( :user_unit )
 			user_unit = 'fl oz'
@@ -733,110 +701,6 @@ class ObservationBotService < AbstractBotService
 
 	end
 
-	# def report_sum_value_observation
-	# 	unless user.present?
-	# 		call_intent( :login )
-	# 		return
-	# 	end
-
-	# 	params[:action] ||= 'Calories'
-
-	# 	observed_metric = get_user_metric( user, params[:action], nil, false )
-
-	# 	time_period = params[:time_period] || 'today'
-	# 	time_period = time_period.downcase.gsub(/\s+/,' ')
-
-	# 	if observed_metric.nil?
-	# 		default_metric ||= Metric.where( user_id: nil ).find_by_alias( params[:action].downcase )
-	# 		action = default_metric.try( :title ) || params[:action]
-	# 		add_speech("Sorry, you haven't recorded anything for #{action} yet.")
-	# 		user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found', action: 'reported', system_notes: "Spoke: 'Sorry, you haven't recorded anything for #{action} yet.'" )
-	# 		return
-	# 	end
-
-	# 	puts "'#{time_period}'"
-
-	# 	if time_period == 'today'
-	# 		range = Time.now.beginning_of_day..Time.zone.now.end_of_day
-	# 	elsif time_period == 'yesterday'
-	# 		range = 1.day.ago.beginning_of_day..1.day.ago.end_of_day
-	# 	elsif ( matches = time_period.match(/this (?'unit'week|month|year)/) ).present?
-	# 		unit = matches['unit']
-	# 		range = Time.zone.now.try("beginning_of_#{unit}").beginning_of_day..Time.zone.now.try("end_of_#{unit}").end_of_day
-	# 	elsif ( matches = time_period.match(/last (?'unit'week|month|year)/) ).present?
-	# 		unit = matches['unit']
-	# 		range = 1.try(unit).ago.try("beginning_of_#{unit}").beginning_of_day..1.try(unit).ago.try("end_of_#{unit}").end_of_day
-	# 	elsif ( matches = time_period.match(/last (?'amount'.+) (?'unit'days|weeks|months|years)/) ).present?
-	# 		amount = NumbersInWords.in_numbers( matches['amount'] )
-	# 		unit = matches['unit']
-	# 		range = amount.try(unit).ago.beginning_of_day..Time.zone.now
-	# 	else
-	# 		add_speech("Sorry, I don't understand that.")
-	# 		user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found' )
-	# 		return
-	# 	end
-
-	# 	sum = user.observations.of( observed_metric ).where( recorded_at: range ).sum( :value )
-	# 	unit = observed_metric.unit
-	# 	if observed_metric.unit == 'sec'
-	# 		sum = ChronicDuration.output( sum, format: :chrono )
-	# 		unit = ''
-	# 	end
-
-	# 	add_speech( "You logged #{sum} #{unit} of #{observed_metric.title} #{time_period}." )
-	# 	sys_notes = "Spoke: 'You logged #{sum} #{unit} of #{observed_metric.title} #{time_period}.'"
-
-	# 	user.user_inputs.create( content: raw_input, action: 'reported', source: options[:source], result_status: 'success', system_notes: sys_notes )
-
-	# end
-
-	def report_last_value_observation
-		unless user.present?
-			call_intent( :login )
-			return
-		end
-
-		observed_metric = get_user_metric( user, params[:action], nil, false )
-
-		if observed_metric.nil?
-			default_metric ||= Metric.where( user_id: nil ).find_by_alias( params[:action].downcase )
-			action = default_metric.try( :title ) || params[:action]
-			add_speech("Sorry, you haven't recorded anything for #{action} yet.")
-			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found', action: 'reported', system_notes: "Spoke: 'Sorry, you haven't recorded anything for #{action} yet.'" )
-			return
-		end
-
-		time_period = params[:time_period] || ''
-		time_period = time_period.downcase.gsub(/\s+/,' ')
-
-		verb = "is"
-
-		observations = user.observations.of( observed_metric ).order( recorded_at: :desc )
-
-		if time_period == 'yesterday'
-			observations = observations.where( "recorded_at <= :time", time: 1.day.ago.beginning_of_day )
-		elsif ( matches = time_period.match(/last (?'unit'week|month|year)/) ).present?
-			verb = 'was'
-			unit = matches['unit']
-			observations = observations.where( "recorded_at <= :time", time: 1.try(unit).ago.try("end_of_#{unit}").end_of_day )
-		end
-
-		obs = observations.first
-
-		if obs.present?
-
-			add_speech( "Your #{obs.observed.title} #{verb} #{obs.display_value} #{time_period}." )
-			sys_notes = "Spoke: 'Your #{obs.observed.title} #{verb} #{obs.display_value} #{time_period}.'"
-
-			user.user_inputs.create( content: raw_input, action: 'reported', source: options[:source], result_status: 'success', system_notes: sys_notes )
-		else
-			observed = observed_metric.try( :title ) || params[:action]
-			add_speech("Sorry, you didn't record #{observed} for #{time_period}.")
-			user.user_inputs.create( content: raw_input, action: 'reported', source: options[:source], result_status: 'not found', system_notes: "Spoke: 'Sorry, you didn't record #{observed} for #{time_period}.'" )
-			return
-		end
-
-	end
 
 	def set_target
 		unless user.present?
@@ -941,20 +805,27 @@ class ObservationBotService < AbstractBotService
 		min_value = user.observations.for( metric ).minimum( :value ) || 0
 		max_value = user.observations.for( metric ).maximum( :value ) || 0
 		value_sum = user.observations.for( metric ).sum( :value ) || 0
+		recent_value = user.observations.for( metric ).order( created_at: :desc ).first.value
 
 		formatted_average = metric.unit.convert_from_base( average_value )
 
 		formatted_min = metric.unit.convert_from_base( min_value )
 		formatted_max = metric.unit.convert_from_base( max_value )
 		formatted_sum = metric.unit.convert_from_base( value_sum )
+		formatted_recent = metric.unit.convert_from_base( recent_value )
 
-		response = "You have logged #{metric.title} #{obs_count_total} times in all. #{obs_count_last_week} times last week, and #{obs_count_this_week} times so far this week. Your all-time total is #{formatted_sum}. The average value for #{metric.title} is #{formatted_average}. The max value is #{formatted_max} and the minimum is #{formatted_min}."
+		response = "You have logged #{metric.title} #{obs_count_total} times in all. #{obs_count_last_week} times last week, and #{obs_count_this_week} times so far this week. Your all-time total is #{formatted_sum}. The average value for #{metric.title} is #{formatted_average}. The max value is #{formatted_max} and the minimum is #{formatted_min}. The most recent recorded value is #{formatted_recent}."
 		add_speech( response )
 
 
 		user.user_inputs.create( content: raw_input, action: 'reported', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{response}'." )
 
 	end
+
+
+
+
+
 
 	private
 
