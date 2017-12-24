@@ -26,11 +26,12 @@
 							- @metric.observations.order( recorded_at: :desc ).limit( 50 ).each do |obs|
 								%tr
 									%td
-										= obs.display_value
+										= obs.display_value( show_units: true )
+									%td
+										= obs.recorded_at.to_s( :long )
 									%td
 										= obs.notes
-									%td
-										= obs.recorded_at.to_s( :slashed )
+									
 									
 
 
