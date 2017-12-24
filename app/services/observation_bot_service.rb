@@ -180,7 +180,11 @@ class ObservationBotService < AbstractBotService
 				'(?:that )?\s*i {action} {value}\s*{unit}',
 				'(?:that )?\s*i {action} for {value}',
 				'(?:that )?\s*i {action} for {value}\s*{unit}',
+
+				'(?:that )?\s*i {action} for {duration}',
+
 				'(?:that )?\s*i did {value}\s*{unit} of {action}',
+
 				'my {action} is {value} {unit}',
 				'my {action} is {value}',
 
@@ -189,6 +193,7 @@ class ObservationBotService < AbstractBotService
 				value: 'Amount',
 				action: 'Action',
 				unit: 'Unit',
+				duration: 'Notes'
 			}
 		}
 		
@@ -218,6 +223,13 @@ class ObservationBotService < AbstractBotService
 		Amount: {
 			regex: [
 				'[0-9.:&]+'
+			],
+			values: [
+			]
+		},
+		Duration: {
+			regex: [
+				'for.*\z'
 			],
 			values: [
 			]
@@ -814,10 +826,13 @@ class ObservationBotService < AbstractBotService
 		end
 
 
-		if params[:value].blank? || ( params[:action].blank? && params[:unit].blank? )
-			add_ask( "I'm sorry, I didn't understand that.  You must supply a unit or action with your value in order to log it.  For example \"log one hundred calories\" or \"my weight is one hundred sixty\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it.", deligate_if_possible: true )
+		if params[:action].blank?
+			add_ask( "I'm sorry, I didn't understand that.  I don't know what to log. You must supply an action with your value in order to log it.  For example \"log one hundred calories\" or \"my weight is one hundred sixty\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it.", deligate_if_possible: true )
 			return
 
+		elsif params[:duration].blank? && params[:value].blank? && params[:unit].blank?
+			add_ask( "I'm sorry, I didn't understand that.  You must supply a unit or value with your action in order to log it.  For example \"log one hundred calories\" or \"my weight is one hundred sixty\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it.", deligate_if_possible: true )
+			return
 		end
 
 		# @todo parse notes
@@ -828,36 +843,31 @@ class ObservationBotService < AbstractBotService
 
 		action = params[:action].gsub( /(log|record|to |my | todays | is| are| was| = |i | for)/i, '' ).strip if params[:action].present?
 
-		if params[:action].present?
 
-			# fetch the metric
-			if metric = get_user_metric( user, params[:action], unit, true )
+		# fetch the metric
+		if metric = get_user_metric( user, params[:action], unit, true )
+
+			if params[:duration].present?
+				val = ChronicDuration.parse( params[:duration] )
+				user_unit = Unit.find_by_alias( 's' )
+			else
 
 				user_unit = Unit.find_by_alias( unit ) || metric.unit
 
 				if user_unit.present?
 					val = user_unit.convert_to_base( params[:value] )
-					
-					# if user_unit.is_time?
-					# 	val = ChronicDuration.parse( "#{params[:value]} #{params[:unit]}" )
-					# else
-					# 	val = params[:value].to_f * user_unit.conversion_factor
-					# end
 				else
 					val = params[:value].to_f
 				end
-
-				observation = user.observations.create( observed: metric, value: val, unit: user_unit, notes: notes )
-				add_speech( observation.to_s( user ) )
-			else
-				add_ask( "I'm sorry, I didn't understand that.  You must supply a unit or action with your value in order to log it.  For example \"log one hundred calories\" or \"my weight is one hundred sixty\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it.", deligate_if_possible: true )
-				return
 			end
-		else
-			# not sure we should ever do this... record observation without an observed???
-			observation = user.observations.create( value: params[:value], unit: unit, notes: notes )
+
+			observation = user.observations.create( observed: metric, value: val, unit: user_unit, notes: notes )
 			add_speech( observation.to_s( user ) )
+		else
+			add_ask( "I'm sorry, I didn't understand that.  You must supply a unit or action with your value in order to log it.  For example \"log one hundred calories\" or \"my weight is one hundred sixty\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it.", deligate_if_possible: true )
+			return
 		end
+
 
 		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'created', source: options[:source], result_status: 'success', system_notes: "Logged #{observation.display_value( show_units: true )} for #{observation.observed.try(:title) || params[:action]}." )
 

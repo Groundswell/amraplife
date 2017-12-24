@@ -47,5 +47,9 @@ class Target < ActiveRecord::Base
 		end
 	end
 
+	def to_s
+		"#{Target.directions[self.direction]} #{self.display_value} #{Target.target_types[self.target_type]} #{Target.periods[self.period]}."
+	end
+
 
 end

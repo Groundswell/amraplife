@@ -16,7 +16,7 @@ class Metric < ActiveRecord::Base
 
 	belongs_to :unit
 
-	attr_accessor :reassign_to_metric_id
+	attr_accessor :reassign_to_metric_id, :unit_alias
 
 
 	include FriendlyId
@@ -43,7 +43,7 @@ class Metric < ActiveRecord::Base
 	end
 
 	def slugger
-		"#{self.title}#{self.user_id}"
+		"#{self.title}_#{self.user_id}"
 	end
 
 	def total_for_day( day=Time.zone.now )

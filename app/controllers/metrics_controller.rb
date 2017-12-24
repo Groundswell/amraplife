@@ -27,11 +27,13 @@ class MetricsController < ApplicationController
 	end
 
 	def update
-		@metric.update( metric_params )
-
+		unit = Unit.find_by_alias( metric_params[:unit_alias] )
 		
-		if @metric.previous_changes.include?( :display_unit )
-			@metric.observations.update_all( display_unit: @metric.display_unit )
+		@metric.update( metric_params )
+		@metric.update( unit_id: unit.id ) if unit.present?
+
+		if @metric.previous_changes.include?( :unit_id )
+			@metric.observations.update_all( unit_id: @metric.unit_id )
 		end
 
 		if params[:metric][:reassign_to_metric_id].present?
@@ -47,7 +49,8 @@ class MetricsController < ApplicationController
 			return false
 		end
 
-		set_flash 'Updated'
+		set_flash "Updated"
+		set_flash "#{metric_params[:unit_alias]} is an unknown unit.", :warning if unit.nil?
 		
 		redirect_to :back
 	end
@@ -59,10 +62,7 @@ class MetricsController < ApplicationController
 		end
 
 		def metric_params
-
-			params[:metric][:target] = UnitService.new( val: params[:metric][:target], unit: @metric.unit, disp_unit: @metric.display_unit, use_metric: current_user.use_metric ).convert_to_stored_value
-			
-			params.require( :metric ).permit( :title, :unit, :display_unit, :aliases_csv, :description, :target, :target_type, :target_period, :target_direction )
+			params.require( :metric ).permit( :title, :unit_alias, :aliases_csv, :description, :target, :target_type, :target_period, :target_direction )
 		end
 
 end
