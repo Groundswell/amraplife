@@ -104,6 +104,9 @@ class ObservationBotService < AbstractBotService
 
  		set_target:{
  			utterances: [
+ 				'set\s+(a\s+)?target\s+for\s+{action}',
+
+
  				'set\s+(a\s+)?target\s+of\s+{target_direction}\s+{value}\s+{unit}\s+{target_type}\s+{target_period}for\s+{action}',
  				'set\s+(a\s+)?target\s*(for\s+)?{action}\s+of\s+{target_direction}\s+{value}\s+{unit}\s+{target_type}\s+{target_period}',
 
@@ -662,27 +665,30 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
-		unless params[:action].present? && params[:value].present?
-			add_ask("Sounds like you were trying to set a target, but I didn't catch what it was.  Next time be sure to specify what it is you want to track, and what your goal is.  For example \"set a target of one thousand eight hundred for calories\".  Now give it another try.", reprompt_text: "I still didn't understand that.  To set a target you must specify what it is you want to track, and what your goal is.", deligate_if_possible: true )
+		unless params[:action].present?
+			add_ask("Sounds like you were trying to set a target, but I didn't catch what it was.  Next time be sure to specify what it is you want to track.  For example \"set a target of one thousand eight hundred for calories\".  Now give it another try.", reprompt_text: "I still didn't understand that.  To set a target you must specify what it is you want to track, and what your goal is.", deligate_if_possible: true )
 			return
 		end
 
 		metric = get_user_metric( user, params[:action], params[:unit], true )
 
-		if metric.nil?
-			default_metric ||= Metric.where( user_id: nil ).find_by_alias( params[:action].downcase )
-			action = default_metric.try( :title ) || params[:action]
-			add_speech("Sorry, I can't assign a target because you haven't recorded anything for #{action} yet.")
-			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found', action: 'reported', system_notes: "Spoke: 'Sorry, I can't assign a target because you haven't recorded anything for #{action} yet.'" )
-			return
-		end
+		system_metric = Metric.where( user_id: nil ).find_by_alias( params[:action].singularize.downcase )
+		system_metric ||= Metric.where( user_id: nil ).find_by_alias( params[:unit] ).try( :singularize ).try( :downcase )
 
-		template_target = Target.where( parent_obj: metric ).where( user_id: nil ).first
+		system_target = system_metric.targets.where( user_id: nil ).first
 
-		todo
+		target = metric.targets.new( user: user, value: params[:value], unit: params[:unit], direction: params[:target_direction], period: params[:target_period], target_type: params[:target_type] )
+		target.value ||= system_target.value
+		target.unit ||= metric.unit 
+		target.direction ||= system_target.direction 
+		target.period ||= system_target.period 
+		target.target_type ||= system_target.target_type 
 
+		target_value = target.unit.convert_to_base( target.value )
 
-		response = "I set a target of #{formatted_target} for #{metric.title}."
+		disp_value = target.unit.convert_from_base( target.value, show_units: true)
+
+		response = "I set a target of #{target.direction} #{target.value} #{target.period} for #{metric.title}."
 		add_speech( response )
 
 		user.user_inputs.create( content: raw_input, result_obj: metric, action: 'updated', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{response}'" )
