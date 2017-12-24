@@ -16,6 +16,43 @@
 						= f.text_area :description, class: 'form-control'
 
 					%h3
+						Summary
+					%table
+						%tbody
+							%tr
+								%td
+									%b Count
+								%td
+									= @metric.observations.count
+							%tr
+								%td
+									%b Last
+								%td
+									= @metric.observations.order( recorded_at: :desc ).first.display_value
+							%tr
+								%td
+									%b Max
+								%td
+									= @metric.unit.convert_from_base( @metric.observations.maximum( :value ) )
+							%tr
+								%td
+									%b Min
+								%td
+									= @metric.unit.convert_from_base( @metric.observations.minimum( :value ) )
+							%tr
+								%td
+									%b Total
+								%td
+									= @metric.unit.convert_from_base( @metric.observations.sum( :value ) )
+							%tr
+								%td
+									%b Avg
+								%td
+									= @metric.unit.convert_from_base( @metric.observations.average( :value ) )
+
+
+
+					%h3
 						Observations of this metric
 					%table.table
 						%thead
