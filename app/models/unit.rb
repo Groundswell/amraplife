@@ -45,8 +45,10 @@ class Unit < ActiveRecord::Base
 	def convert_from_base( val, opts={} )
 		# by default, return a formatted string
 		# fshow_units: false should just return a float
-		defined?( opts[:show_units] ) or opts[:show_units] = true
+		opts[:show_units] = true unless opts[:show_units] == false
 		opts[:precision] ||= 2
+
+		val = val.to_f
 
 		if self.is_nada?
 			return "#{val}"

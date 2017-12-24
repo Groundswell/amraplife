@@ -186,7 +186,7 @@ namespace :amraplife do
 		act = Metric.create title: 'Max Deadlift', metric_type: 'benchmark', aliases: ['deadlift', 'dl', 'dead lift'], unit: kg, movement: Movement.find_by_alias( 'dl' )
 		act.targets.create target_type: :value, direction: :at_least, period: :all_time
 
-		act = Metric.create title: 'Max Backsquat', metric_type: 'benchmark', aliases: ['squat', 'back squat'], unit: kg, movement: Movement.find_by_alias( 'squat' )
+		act = Metric.create title: 'Max Backsquat', metric_type: 'benchmark', aliases: ['squat', 'back squat', 'max squat'], unit: kg, movement: Movement.find_by_alias( 'squat' )
 		act.targets.create target_type: :value, direction: :at_least, period: :all_time
 		
 		act = Metric.create title: 'Max Press', metric_type: 'benchmark', aliases: ['press'], unit: kg, movement: Movement.find_by_alias( 'press' )

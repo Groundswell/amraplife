@@ -105,17 +105,30 @@ class ObservationBotService < AbstractBotService
  		set_target:{
  			utterances: [
  				'set\s+(a\s+)?target\s+for\s+{action}',
+ 				'set\s+(a\s+)?target\s+of\s+{value}\s*(?:{unit})?\s+for\s+{action}',
+ 				'set\s+(a\s+)?target\s+of\s+{target_direction}\s+{value}\s*(?:{unit})?\s+for\s+{action}',
+
+ 				# # set a target for metric -- uses system metric for defaults
+ 				# 'set\s+(a\s+)?target\s+for\s+{action}',
+ 				# # set a target of 100 for metric
+ 				# 'set\s+(a\s+)?target\s+of\s+{value}\s+for\s+{action}',
+ 				# # set a target of 100kgs for metric
+ 				# 'set\s+(a\s+)?target\s+of\s+{value}\s*{unit}\s+for\s+{action}',
+ 				# # set a target of at least 100kgs for metric
+ 				# 'set\s+(a\s+)?target\s+of\s+{target_direction}\s+{value}\s*{unit}\s+for\s+{action}',
+ 				# # set a target of 100kgs per day for metric
+ 				# 'set\s+(a\s+)?target\s+of\s+{value}\s*{unit}\s+for\s+{action}',
 
 
- 				'set\s+(a\s+)?target\s+of\s+{target_direction}\s+{value}\s+{unit}\s+{target_type}\s+{target_period}for\s+{action}',
- 				'set\s+(a\s+)?target\s*(for\s+)?{action}\s+of\s+{target_direction}\s+{value}\s+{unit}\s+{target_type}\s+{target_period}',
+ 				# 'set\s+(a\s+)?target\s+of\s+{target_direction}\s+{value}\s+{unit}\s+{target_type}\s+{target_period}for\s+{action}',
+ 				# 'set\s+(a\s+)?target\s*(for\s+)?{action}\s+of\s+{target_direction}\s+{value}\s+{unit}\s+{target_type}\s+{target_period}',
 
- 				'set\s+(a\s+)?target\s+of\s+{value}\s+for\s+{action}',
- 				'set\s+(a\s+)?target\s+of\s+{value}\s+{unit}\s+for\s+{action}',
- 				'set\s+(a\s+)?target\s*(for\s+)?{action}\s+of\s+{value}',
- 				'set\s+(a\s+)?target\s*(for\s+)?{action}\s+of\s+{value}\s*{unit}',
- 				'set\s+(a\s+)?{action}\s+target\s+of\s+{value}\s+{unit}',
- 				'set\s+(a\s+)?{action}\s+target\s+of\s+{value}',
+ 				# 'set\s+(a\s+)?target\s+of\s+{value}\s+for\s+{action}',
+ 				# 'set\s+(a\s+)?target\s+of\s+{value}\s+{unit}\s+for\s+{action}',
+ 				# 'set\s+(a\s+)?target\s*(for\s+)?{action}\s+of\s+{value}',
+ 				# 'set\s+(a\s+)?target\s*(for\s+)?{action}\s+of\s+{value}\s*{unit}',
+ 				# 'set\s+(a\s+)?{action}\s+target\s+of\s+{value}\s+{unit}',
+ 				# 'set\s+(a\s+)?{action}\s+target\s+of\s+{value}',
  			],
  			slots:{
  				action: 'Action',
@@ -244,7 +257,7 @@ class ObservationBotService < AbstractBotService
 		
 		TargetDirection: {
 			regex: [
-				'(at least|at most|exactly)'
+				'(at least|at most|exactly|minimum|maximum)'
 				],
 				values: []
 		},
@@ -677,18 +690,37 @@ class ObservationBotService < AbstractBotService
 
 		system_target = system_metric.targets.where( user_id: nil ).first
 
-		target = metric.targets.new( user: user, value: params[:value], unit: params[:unit], direction: params[:target_direction], period: params[:target_period], target_type: params[:target_type] )
-		target.value ||= system_target.value
-		target.unit ||= metric.unit 
-		target.direction ||= system_target.direction 
-		target.period ||= system_target.period 
-		target.target_type ||= system_target.target_type 
+		value = params[:value] || system_target.value
+		if params[:unit].present?
+			unit = Unit.find_by_alias( params[:unit].singularize )
+		end 
+		unit ||= metric.unit 
 
-		target_value = target.unit.convert_to_base( target.value )
+		direction = params[:target_direction].try( :downcase )
+		direction.gsub( /\s+/, '_' ) if direction.present?
+		direction = 'at_least' if direction == 'minimum'
+		direction = 'at_most' if direction == 'maximum'
+		direction ||= system_target.direction 
+		
+		period = params[:target_period] || system_target.period 
+		type = params[:target_type] || system_target.target_type
 
-		disp_value = target.unit.convert_from_base( target.value, show_units: true)
+		target = metric.targets.where( user: user ).last || metric.targets.new( user: user )
 
-		response = "I set a target of #{target.direction} #{target.value} #{target.period} for #{metric.title}."
+		target.unit = unit
+		target.direction = direction
+		target.period = period
+		target.target_type = type
+		target.value = metric.unit.convert_to_base( value )
+
+		die
+
+		target.save
+
+		disp_value = target.unit.convert_from_base( target.value )
+
+
+		response = "I set a target of #{Target.directions[target.direction]} #{disp_value} #{Target.periods[target.period]} for #{metric.title}."
 		add_speech( response )
 
 		user.user_inputs.create( content: raw_input, result_obj: metric, action: 'updated', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{response}'" )
