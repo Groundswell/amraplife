@@ -91,7 +91,7 @@ namespace :amraplife do
 		l.update( imperial_correlate_id: gal.id )
 		ml.update( imperial_correlate_id: floz.id )
 
-		sec = Unit.create name: 'Second', abbrev: 's', unit_type: 'time'
+		sec = Unit.create name: 'Second', abbrev: 's', aliases: ['time'], unit_type: 'time'
 		min = Unit.create name: 'Minute', abbrev: 'min', unit_type: 'time', base_unit: sec, conversion_factor: 60
 		hr = Unit.create name: 'Hour', abbrev: 'hr', unit_type: 'time', base_unit: sec, conversion_factor: 3600
 		day = Unit.create name: 'Day', abbrev: 'day', unit_type: 'time', base_unit: sec, conversion_factor: 86400
@@ -140,28 +140,28 @@ namespace :amraplife do
 		nutrition.targets.create target_type: :sum_value, direction: :at_most, period: :daily, value: 15
 
 		nutrition = Metric.create title: 'Protein', metric_type: 'nutrition',	aliases: ['prot', 'grams protein', 'grams of protein' ], unit: g
-		nutrition.targets.create target_type: :sum_value, direction: :at_least, period: :daily
+		nutrition.targets.create target_type: :sum_value, direction: :at_least, period: :daily, value: 80
 
 		nutrition = Metric.create title: 'Fat', metric_type: 'nutrition', 	aliases: ['fat', 'grams fat', 'grams of fat' ], unit: g
-		nutrition.targets.create target_type: :sum_value, direction: :at_most, period: :daily
+		nutrition.targets.create target_type: :sum_value, direction: :at_most, period: :daily, value: 20
 
 		nutrition = Metric.create title: 'Carb', metric_type: 'nutrition', 		aliases: ['carb', 'carbs', 'carbohydrates', 'grams carb', 'grams of carb', 'net carbs' ], unit: g
-		nutrition.targets.create target_type: :sum_value, direction: :at_most, period: :daily
+		nutrition.targets.create target_type: :sum_value, direction: :at_most, period: :daily, value: 40
 		
 		nutrition = Metric.create title: 'Sugar', metric_type: 'nutrition', 	aliases: ['sugars', 'grams sugar', 'grams of sugar' ], unit: g
-		nutrition.targets.create target_type: :sum_value, direction: :at_most, period: :daily
+		nutrition.targets.create target_type: :sum_value, direction: :at_most, period: :daily, value: 20
 		
 		nutrition = Metric.create title: 'Water', metric_type: 'nutrition', 	aliases: ['of water' ], unit: ml
-		nutrition.targets.create target_type: :sum_value, direction: :at_least, period: :daily
+		nutrition.targets.create target_type: :sum_value, direction: :at_least, period: :daily, period: :daily, value: 1892.71
 
 		nutrition = Metric.create title: 'Juice', metric_type: 'nutrition', 	aliases: ['of juice', 'fruit juice', 'orange juice', 'apple juice' ], unit: ml
-		nutrition.targets.create target_type: :sum_value, direction: :at_least, period: :daily
+		nutrition.targets.create target_type: :sum_value, direction: :at_least, period: :daily, period: :weekly, value: 946.353
 
 		nutrition = Metric.create title: 'Soda', metric_type: 'nutrition', 	aliases: [ 'of soda', 'coke', 'pepsi' ], unit: ml
-		nutrition.targets.create target_type: :sum_value, direction: :at_most, period: :daily
+		nutrition.targets.create target_type: :sum_value, direction: :at_most, period: :daily, period: :weekly, value: 946.353
 
 		nutrition = Metric.create title: 'Alcohol', metric_type: 'nutrition', 	aliases: [ 'of alcohol', 'beer', 'wine', 'liquor' ], unit: ml
-		nutrition.targets.create target_type: :sum_value, direction: :at_most, period: :daily
+		nutrition.targets.create target_type: :sum_value, direction: :at_most, period: :weekly, value: 120
 
 		act = Metric.create title: 'Sleep', metric_type: 'activity', 	aliases: ['slp', 'sleeping', 'slept', 'nap', 'napping', 'napped'], unit: sec
 		act.targets.create target_type: :sum_value, direction: :at_least, period: :daily, value: 28800
@@ -173,11 +173,17 @@ namespace :amraplife do
 		act.targets.create target_type: :sum_value, direction: :at_least, period: :daily, value: 10000
 
 		act = Metric.create title: 'Drive', metric_type: 'activity', 	aliases: ['drv', 'driving', 'drove'], unit: sec
+		act.targets.create target_type: :sum_value, direction: :at_most, period: :weekly, value: 7200
 		act = Metric.create title: 'Work', metric_type: 'activity', 	aliases: ['wrk', 'working', 'worked'], unit: sec
+		act.targets.create target_type: :sum_value, direction: :at_least, period: :weekly, value: 144000
 		act = Metric.create title: 'Walk', metric_type: 'activity', 	aliases: ['wlk', 'walking', 'walked'], unit: sec
+		act.targets.create target_type: :sum_value, direction: :at_least, period: :weekly, value: 7200
 		act = Metric.create title: 'Cycle', metric_type: 'activity', aliases: ['cycling', 'cycled', 'bike', 'biked', 'biking', 'bicycling', 'bicycled', 'bicycle' ], unit: sec
+		act.targets.create target_type: :sum_value, direction: :at_least, period: :weekly, value: 3600
 		act = Metric.create title: 'Swim', metric_type: 'activity', aliases: ['swimming', 'swam'], unit: sec
+		act.targets.create target_type: :sum_value, direction: :at_least, period: :weekly, value: 3600
 		act = Metric.create title: 'Run', metric_type: 'activity', aliases: ['running', 'ran', 'jog', 'jogging', 'jogged'], unit: sec
+<<<<<<< HEAD
 
 		act = Metric.create title: 'Plank Time', metric_type: 'activity', aliases: ['plank', 'planked', 'planking'], unit: sec, movement: Movement.find_by_alias( 'plank' )
 		act.targets.create target_type: :value, direction: :at_least, period: :daily, value: 20
@@ -197,6 +203,15 @@ namespace :amraplife do
 		act = Metric.create title: 'Sit-ups', metric_type: 'activity', aliases: ['situp', 'sit-up'], unit: rep, movement: Movement.find_by_alias( 'situp' )
 		act.targets.create target_type: :value, direction: :at_least, period: :daily, value: 10
 
+=======
+		act.targets.create target_type: :sum_value, direction: :at_least, period: :weekly, value: 3600
+		
+		act = Metric.create title: 'Watch TV', metric_type: 'activity', aliases: ['tv', 'screen time', 'watch video', 'wathed tv', 'watched', 'watching', 'watched video', 'watching video', 'watching tv'], unit: sec
+		act.targets.create target_type: :sum_value, direction: :at_most, period: :weekly, value: 3600
+
+		act = Metric.create title: 'Video Game', metric_type: 'activity', aliases: ['play video game', 'computer game', 'play xbox', 'xbox', 'play playstation', 'playstation', 'nintentndo', 'play nintendo', 'play on phone'], unit: sec
+		act.targets.create target_type: :sum_value, direction: :at_most, period: :weekly, value: 3600
+>>>>>>> 33ca1b877e6c223d1cbf9758953c679e55760e6b
 
 		bmi = Metric.create title: 'Workout', metric_type: 'activity', aliases: ['wkout', 'worked out', 'exercise', 'exercised'], unit: sec
 		# workouts must have time... record scores, reps, etc as sub observations.

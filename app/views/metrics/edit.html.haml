@@ -16,6 +16,43 @@
 						= f.text_area :description, class: 'form-control'
 
 					%h3
+						Summary
+					%table
+						%tbody
+							%tr
+								%td
+									%b Count
+								%td
+									= @metric.observations.count
+							%tr
+								%td
+									%b Last
+								%td
+									= @metric.observations.order( recorded_at: :desc ).first.display_value
+							%tr
+								%td
+									%b Max
+								%td
+									= @metric.unit.convert_from_base( @metric.observations.maximum( :value ) )
+							%tr
+								%td
+									%b Min
+								%td
+									= @metric.unit.convert_from_base( @metric.observations.minimum( :value ) )
+							%tr
+								%td
+									%b Total
+								%td
+									= @metric.unit.convert_from_base( @metric.observations.sum( :value ) )
+							%tr
+								%td
+									%b Avg
+								%td
+									= @metric.unit.convert_from_base( @metric.observations.average( :value ) )
+
+
+
+					%h3
 						Observations of this metric
 					%table.table
 						%thead
@@ -37,13 +74,9 @@
 
 				.col-sm-4
 					.well
-						.form-group
-							= f.label :unit
-							= f.select :unit, options_for_select( [ ['Arbitrary', ''], ['Time', 's'], ['Weight', 'g'], ['Length/Distance', 'm'], ['Volume', 'l'], ['Percent', '%'] ], @metric.unit ), {}, class: 'form-control'
-
 						.form-group#display_unit
-							= f.label :unit
-							= f.text_field :unit, class: 'form-control'
+							= f.label :unit_alias, 'Show Units as:'
+							= f.text_field :unit_alias, value: @metric.unit, class: 'form-control'
 
 						.form-group
 							= f.label :aliases_csv, 'Aliases'
@@ -57,27 +90,8 @@
 							%h4 
 								= @metric.title 
 								Targets
-							.form-group
-								test
-								=# f.select :target_type, options_for_select( [ ['Accumulated Value', 'sum_value'], [ 'Value', 'value'], ['Number of Observations', 'count'], ['Average Value', 'avg_value'] ], @metric.target_type ), {}, class: 'form-control'
-							
-							.form-group
-								= f.label :target_period
-								=# f.select :target_period, options_for_select( [ ['Per Day', 'daily'], ['Per Week', 'weekly'], ['Per Month', 'monthly'], ['All-Time', 'value'] ], @metric.target_period ), {}, class: 'form-control'
-
-							.form-group
-								= f.label :target_direction, 'Should be:'
-								=# f.select :target_direction, options_for_select( [ ['At Least', 'at_least'], ['At Most', 'at_most'], ['Exactly', 'exactly'] ], @metric.target_direction ), {}, class: 'form-control'
-								
-								
-							.form-group
-								= f.label :target, 'Value:'
-								.input-group
-									=# f.text_field :target, value: UnitService.new( val: @metric.target, disp_unit: @metric.display_unit, base_unit: @metric.unit, use_metric: current_user.use_metric ).convert_to_display, class: 'form-control'
-									%span.input-group-addon
-										=# @metric.display_unit.pluralize( UnitService.new( val: @metric.target, disp_unit: @metric.display_unit, base_unit: @metric.unit, use_metric: current_user.use_metric ).convert_to_display )
-									.input-group
-
+							- @metric.targets.each do |target|
+								%li= link_to target.to_s, edit_target_path( target )
 							
 						
 						
