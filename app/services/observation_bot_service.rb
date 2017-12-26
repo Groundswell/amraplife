@@ -20,6 +20,7 @@ class ObservationBotService < AbstractBotService
 				'how is\s*(my)?\s*{action}',
 				'how\'s\s*(my)?\s*{action}',
 				'hows\s*(my)?\s*{action}',
+				'(to)?\s*tell\s*(?:me)?\s*about\s*(?:my)?\s*{action}'
 				 ],
 			slots: {
 				action: 'Action',
@@ -134,14 +135,24 @@ class ObservationBotService < AbstractBotService
  			},
  		},
 
-		tell_about: {
+		# tell_about: {
+		# 	utterances: [
+		# 		'(to)?\s*tell\s*(?:me)?\s*about\s*(?:my)?\s*{action}',
+		# 		'(to)?\s*tell\s*(?:me)?\s*about\s*(?:my)?\s*{action}\s+{time_period}',
+		# 		],
+		# 	slots:{
+		# 		action: 'Action'
+		# 	},
+		# },
+
+		quick_report: {
 			utterances: [
-				'(to)?\s*tell\s*(?:me)?\s*about\s*(?:my)?\s*{action}',
-				'(to)?\s*tell\s*(?:me)?\s*about\s*(?:my)?\s*{action}\s+{time_period}',
+				'how\s+(much|many)\s+{action}\s+{notes}',
+				'how\s+(much|many)\s+{action}.*'
 				],
 			slots:{
-				action: 'Action',
-				time_period: 'TimePeriod',
+				action: 'Unit',
+				notes: 'Notes'
 			},
 		},
 
@@ -284,7 +295,6 @@ class ObservationBotService < AbstractBotService
 				],
 				values: []
 		},
-
 		Unit: {
 			regex: [
 				'(?:a )?[a-zA-Z]+'
@@ -732,7 +742,79 @@ class ObservationBotService < AbstractBotService
 	end
 
 
+	def quick_report
+		unless user.present?
+			call_intent( :login )
+			return
+		end
 
+		metric = get_user_metric( user, params[:action], nil, false )
+
+		if metric.aliases.include?( 'cal' ) && ( params[:notes].present? && params[:notes].match( /burn/ ) )
+			metric = get_user_metric( user, 'calories burned' )
+		end
+
+		if metric.nil?
+			default_metric ||= Metric.where( user_id: nil ).find_by_alias( params[:action].downcase )
+			action = default_metric.try( :title ) || params[:action]
+			add_speech("Sorry, you haven't recorded anything for #{default_metric.title} yet.")
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found', action: 'reported', system_notes: "Spoke: 'Sorry, you haven't recorded anything for #{action} yet.'" )
+			return
+		end
+
+		if params[:notes].present?
+			period = params[:notes].match( /(today|yesterday|this week|last week|this month|last month|this year|in the past \d+ hours|in the last \d+ hours|in the past \d+ days|in the last \d+ days)|\d+ hours ago|\d+ days ago|\d+ weeks ago|\d+ months ago/ ).captures.first if params[:notes].match( /(today|yesterday|this week|last week|this month|last month|this year|in the past \d+ hours|in the last \d+ hours|in the past \d+ days|in the last \d+ days)|\d+ hours ago|\d+ days ago|\d+ weeks ago|\d+ months ago/ )
+			if period.present?
+				period_value = period.match( /\d+/ ).captures.first if period.match( /\d+/ )
+				if period_value.present?
+					period_unit = period.match( /(hour|day|week|month|year|hours|days|months|years)/ ).captures.first if period.match( /(hour|day|week|month|year|hours|days|months|years)/ )
+				else
+					# parse this, last, etc...
+				end
+			end
+		end
+
+		if period_value.present?
+			range = eval "Time.zone.now - #{period_value}.#{period_unit}..Time.zone.now"
+		elsif period == 'yesterday'
+			range = ( Time.zone.now-1.day ).beginning_of_day..( Time.zone.now-1.day ).end_of_day
+		elsif period == 'last week'
+			range = ( Time.zone.now-1.week ).beginning_of_week..( Time.zone.now-1.week ).end_of_week
+		elsif period == 'last month'
+			range = ( Time.zone.now-1.month ).beginning_of_month..( Time.zone.now-1.month ).end_of_month
+		elsif period == 'this week'
+			range = ( Time.zone.now ).beginning_of_week..( Time.zone.now ).end_of_week
+		elsif period == 'this month'
+			range = ( Time.zone.now ).beginning_of_month..( Time.zone.now ).end_of_month
+		elsif period == 'this year'
+			range = ( Time.zone.now ).beginning_of_year..( Time.zone.now ).end_of_year
+		end
+
+		# default to today
+		period ||= 'today'
+		range ||= Time.zone.now.beginning_of_day..Time.zone.now.end_of_day
+
+		if user.observations.for( metric ).where( recorded_at: range ).nil?
+			add_speech("Sorry, there are no observations for #{metric.title} #{period}.")
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found', action: 'reported', system_notes: "Spoke: 'Sorry, you haven't recorded anything for #{action} yet.'" )
+			return
+		end
+
+		total_value = user.observations.for( metric ).where( recorded_at: range ).sum( :value )
+
+		formatted_total = metric.unit.convert_from_base( total_value )
+
+		response = "Your #{metric.title} are #{formatted_total} for #{period}."
+		add_speech( response )
+
+		user.user_inputs.create( content: raw_input, action: 'reported', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{response}'." )
+
+		# todo -- parse notes for calories burned modifier
+		# parse notes for time_period
+		# report sum
+
+
+	end
 	
 
 	def log_metric_observation
@@ -816,7 +898,7 @@ class ObservationBotService < AbstractBotService
 					return user.metrics.find_by_alias( action.downcase )
 				end
 				# also check the user's existing assigned metrics based on unit that if exists...
-				if user.metrics.find_by_alias( unit.try( :downcase ) )
+				if unit.present? && user.metrics.find_by_alias( unit.try( :downcase ) )
 					return user.metrics.find_by_alias( unit.downcase )
 				end
 

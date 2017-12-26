@@ -183,15 +183,15 @@ namespace :amraplife do
 		act = Metric.create title: 'Swim', metric_type: 'activity', aliases: ['swimming', 'swam'], unit: sec
 		act.targets.create target_type: :sum_value, direction: :at_least, period: :weekly, value: 3600
 		act = Metric.create title: 'Run', metric_type: 'activity', aliases: ['running', 'ran', 'jog', 'jogging', 'jogged'], unit: sec
-<<<<<<< HEAD
+
 
 		act = Metric.create title: 'Plank Time', metric_type: 'activity', aliases: ['plank', 'planked', 'planking'], unit: sec, movement: Movement.find_by_alias( 'plank' )
 		act.targets.create target_type: :value, direction: :at_least, period: :daily, value: 20
 
-		act = Metric.create title: 'Push-ups', metric_type: 'activity', aliases: ['pushup'], unit: rep, movement: Movement.find_by_alias( 'pushup' )
+		act = Metric.create title: 'Push-ups', metric_type: 'activity', aliases: ['pushup', 'push'], unit: rep, movement: Movement.find_by_alias( 'pushup' )
 		act.targets.create target_type: :sum_value, direction: :at_least, period: :daily, value: 20
 		
-		act = Metric.create title: 'Pull-ups', metric_type: 'activity', aliases: ['pullup', 'pull-up'], unit: rep, movement: Movement.find_by_alias( 'pushup' )
+		act = Metric.create title: 'Pull-ups', metric_type: 'activity', aliases: ['pullup', 'pull-up', 'pull'], unit: rep, movement: Movement.find_by_alias( 'pushup' )
 		act.targets.create target_type: :value, direction: :at_least, period: :daily, value: 10
 
 		act = Metric.create title: 'Burpees', metric_type: 'activity', aliases: ['burpee'], unit: rep, movement: Movement.find_by_alias( 'burpee' )
@@ -203,7 +203,7 @@ namespace :amraplife do
 		act = Metric.create title: 'Sit-ups', metric_type: 'activity', aliases: ['situp', 'sit-up'], unit: rep, movement: Movement.find_by_alias( 'situp' )
 		act.targets.create target_type: :value, direction: :at_least, period: :daily, value: 10
 
-=======
+
 		act.targets.create target_type: :sum_value, direction: :at_least, period: :weekly, value: 3600
 		
 		act = Metric.create title: 'Watch TV', metric_type: 'activity', aliases: ['tv', 'screen time', 'watch video', 'wathed tv', 'watched', 'watching', 'watched video', 'watching video', 'watching tv'], unit: sec
@@ -211,7 +211,7 @@ namespace :amraplife do
 
 		act = Metric.create title: 'Video Game', metric_type: 'activity', aliases: ['play video game', 'computer game', 'play xbox', 'xbox', 'play playstation', 'playstation', 'nintentndo', 'play nintendo', 'play on phone'], unit: sec
 		act.targets.create target_type: :sum_value, direction: :at_most, period: :weekly, value: 3600
->>>>>>> 33ca1b877e6c223d1cbf9758953c679e55760e6b
+
 
 		bmi = Metric.create title: 'Workout', metric_type: 'activity', aliases: ['wkout', 'worked out', 'exercise', 'exercised'], unit: sec
 		# workouts must have time... record scores, reps, etc as sub observations.
