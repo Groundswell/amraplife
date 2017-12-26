@@ -132,6 +132,10 @@ namespace :amraplife do
 		nutrition = Metric.create title: 'Calories', metric_type: 'nutrition', 	aliases: ['cal', 'cals', 'calory', 'calorie'], unit: cal
 		nutrition.targets.create target_type: :sum_value, direction: :at_most, period: :daily, value: 2000
 
+		nutrition = Metric.create title: 'Calories Burned', metric_type: 'activity', 	aliases: ['cals burned', 'burned'], unit: cal
+		nutrition.targets.create target_type: :sum_value, direction: :at_least, period: :daily, value: 400
+
+
 		nutrition = Metric.create title: 'Blocks', metric_type: 'nutrition', 	aliases: ['block'], unit: block
 		nutrition.targets.create target_type: :sum_value, direction: :at_most, period: :daily, value: 15
 
@@ -174,11 +178,31 @@ namespace :amraplife do
 		act = Metric.create title: 'Cycle', metric_type: 'activity', aliases: ['cycling', 'cycled', 'bike', 'biked', 'biking', 'bicycling', 'bicycled', 'bicycle' ], unit: sec
 		act = Metric.create title: 'Swim', metric_type: 'activity', aliases: ['swimming', 'swam'], unit: sec
 		act = Metric.create title: 'Run', metric_type: 'activity', aliases: ['running', 'ran', 'jog', 'jogging', 'jogged'], unit: sec
+
+		act = Metric.create title: 'Plank Time', metric_type: 'activity', aliases: ['plank', 'planked', 'planking'], unit: sec, movement: Movement.find_by_alias( 'plank' )
+		act.targets.create target_type: :value, direction: :at_least, period: :daily, value: 20
+
+		act = Metric.create title: 'Push-ups', metric_type: 'activity', aliases: ['pushup'], unit: rep, movement: Movement.find_by_alias( 'pushup' )
+		act.targets.create target_type: :sum_value, direction: :at_least, period: :daily, value: 20
 		
+		act = Metric.create title: 'Pull-ups', metric_type: 'activity', aliases: ['pullup', 'pull-up'], unit: rep, movement: Movement.find_by_alias( 'pushup' )
+		act.targets.create target_type: :value, direction: :at_least, period: :daily, value: 10
+
+		act = Metric.create title: 'Burpees', metric_type: 'activity', aliases: ['burpee'], unit: rep, movement: Movement.find_by_alias( 'burpee' )
+		act.targets.create target_type: :value, direction: :at_least, period: :daily, value: 10
+
+		act = Metric.create title: 'Squats', metric_type: 'activity', aliases: ['squat'], unit: rep, movement: Movement.find_by_alias( 'squat' )
+		act.targets.create target_type: :value, direction: :at_least, period: :daily, value: 25
+
+		act = Metric.create title: 'Sit-ups', metric_type: 'activity', aliases: ['situp', 'sit-up'], unit: rep, movement: Movement.find_by_alias( 'situp' )
+		act.targets.create target_type: :value, direction: :at_least, period: :daily, value: 10
+
 
 		bmi = Metric.create title: 'Workout', metric_type: 'activity', aliases: ['wkout', 'worked out', 'exercise', 'exercised'], unit: sec
 		# workouts must have time... record scores, reps, etc as sub observations.
 		# bmi = Metric.create title: 'AMRAP', metric_type: 'activity', aliases: ['amrap'], unit: 'rep'
+
+
 
 		act = Metric.create title: 'Max Bench', metric_type: 'benchmark', aliases: ['bench', 'bench press'], unit: kg, movement: Movement.find_by_alias( 'bench' )
 		act.targets.create target_type: :value, direction: :at_least, period: :all_time
@@ -201,6 +225,9 @@ namespace :amraplife do
 		act = Metric.create title: 'Max Snatch', metric_type: 'benchmark', aliases: ['snatch'], unit: kg, movement: Movement.find_by_alias( 'snatch' )
 		act.targets.create target_type: :value, direction: :at_least, period: :all_time
 		
+		act = Metric.create title: 'Max Plank Time', metric_type: 'activity', aliases: ['max plank'], unit: sec, movement: Movement.find_by_alias( 'plank' )
+		act.targets.create target_type: :value, direction: :at_least, period: :all_time
+
 		act = Metric.create title: '100m Time', metric_type: 'benchmark', aliases: ['hundred', 'one hundred', 'hundred time', 'hundred meter time', 'hundred meter'], unit: sec, movement: Movement.find_by_alias( 'run' )
 		act.targets.create target_type: :value, direction: :at_most, period: :all_time
 		
@@ -210,16 +237,16 @@ namespace :amraplife do
 		act = Metric.create title: 'Mile Time', metric_type: 'benchmark', aliases: ['mile', 'one mile'], unit: sec, movement: Movement.find_by_alias( 'run' )
 		act.targets.create target_type: :value, direction: :at_most, period: :all_time
 
-		act = Metric.create title: 'Max Pushups', metric_type: 'benchmark', aliases: ['pushups'], unit: rep, movement: Movement.find_by_alias( 'pushup' )
+		act = Metric.create title: 'Max Pushups', metric_type: 'benchmark', aliases: ['max pushup'], unit: rep, movement: Movement.find_by_alias( 'pushup' )
 		act.targets.create target_type: :value, direction: :at_least, period: :all_time
 		
-		act = Metric.create title: 'Max Pullups', metric_type: 'benchmark', aliases: ['pullups'], unit: rep, movement: Movement.find_by_alias( 'pullup' )
+		act = Metric.create title: 'Max Pullups', metric_type: 'benchmark', aliases: ['max pullup'], unit: rep, movement: Movement.find_by_alias( 'pullup' )
 		act.targets.create target_type: :value, direction: :at_least, period: :all_time
 		
-		act = Metric.create title: 'Max Burpees', metric_type: 'benchmark', aliases: ['burpees'], unit: rep, movement: Movement.find_by_alias( 'burpee' )
+		act = Metric.create title: 'Max Burpees', metric_type: 'benchmark', aliases: ['max burpee'], unit: rep, movement: Movement.find_by_alias( 'burpee' )
 		act.targets.create target_type: :value, direction: :at_least, period: :all_time
 		
-		act = Metric.create title: 'Max Situps', metric_type: 'benchmark', aliases: ['burpees'], unit: rep, movement: Movement.find_by_alias( 'situp' )
+		act = Metric.create title: 'Max Situps', metric_type: 'benchmark', aliases: ['max situp'], unit: rep, movement: Movement.find_by_alias( 'situp' )
 		act.targets.create target_type: :value, direction: :at_least, period: :all_time
 
 
@@ -282,7 +309,8 @@ namespace :amraplife do
 	task load_data: :environment do
 		puts "Loading Data"
 
-
+		Equipment.delete_all
+		Movement.delete_all
 
 		puts "Adding some Equipment"
 		am = Equipment.create title: 'Ab Mat', aliases: ['ab']
@@ -339,7 +367,7 @@ namespace :amraplife do
 		airsquat = Movement.create title: 'Air Squat', aliases: [ 'squat', 'asq', 'sq' ]
 		airsquat = Movement.create title: 'Jumping Squat', aliases: [ 'jsq', 'jump squat' ]
 		burpee = Movement.create title: 'Burpee', aliases: [ 'brp', 'burp' ]
-		burpee = Movement.create title: 'Candlestick', aliases: [ 'cs', 'cndlstk' ]
+		candle = Movement.create title: 'Candlestick', aliases: [ 'cs', 'cndlstk' ]
 		otbb = Movement.create title: 'Over the Bar Burpee', equipment_id: bb.id, aliases: [ 'otbb', 'overbarburpee' ]
 		bfb = Movement.create title: 'Bar Facing Burpee', equipment_id: bb.id, aliases: [ 'bfb' ]
 		otbb = Movement.create title: 'Burpee Pullup', equipment_id: pub.id, aliases: [ 'brppull', 'brpull', 'brppu', 'brpu' ]

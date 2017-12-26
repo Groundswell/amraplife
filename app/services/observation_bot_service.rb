@@ -47,6 +47,17 @@ class ObservationBotService < AbstractBotService
 			}
 		},
 
+		log_burned_observation: {
+			utterances: [
+				'(?:i)?\s*burned {value}\s*{action}', # e.g. burned 250 calories
+				'(?:i)?\s*burned {value}', # e.g. burned 300 defaults to calories
+			],
+			slots: {
+				action: 'Action',
+				value: 'Amount'
+			}
+		},
+
 		log_drink_observation:{
 			utterances: [
 				'(?:that)?(?:i)?\s*(drank|drink)\s*{value}\s*{action}',
@@ -180,7 +191,8 @@ class ObservationBotService < AbstractBotService
 				'(?:that )?\s*i {action} {value}\s*{unit}',
 				'(?:that )?\s*i {action} for {value}',
 				'(?:that )?\s*i {action} for {value}\s*{unit}',
-				'(?:that )?\s*i did {value}\s*{unit} of {action}',
+				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*i did {value}\s*{unit} of {action}',
+				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*i did {value} {action}',
 				'my {action} is {value} {unit}',
 				'my {action} is {value}',
 
@@ -502,6 +514,34 @@ class ObservationBotService < AbstractBotService
 	end
 
 
+	def log_burned_observation
+
+		unless user.present?
+			call_intent( :login )
+			return
+		end
+
+		if params[:value].blank?
+			add_ask( "I'm sorry, I didn't understand that.  You must supply a value in order to log it.  For example \"I burned one hundred calories\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a value in order to log it.", deligate_if_possible: true )
+			return
+		end
+
+		# @todo parse notes
+		notes = @raw_input
+		sys_notes = nil
+
+		val = params[:value].to_f
+
+		metric = get_user_metric( user, 'burned', 'cal', true )
+
+		observation = user.observations.create( observed: metric, value: val, notes: notes )
+		add_speech( observation.to_s( user ) )
+
+		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'created', source: options[:source], result_status: 'success', system_notes: "Logged #{observation.display_value( show_units: true )} for #{observation.observed.try(:title) || params[:action]}." )
+
+	end
+
+
 	def log_drink_observation
 		unless user.present?
 			call_intent( :login )
@@ -701,7 +741,7 @@ class ObservationBotService < AbstractBotService
 		direction = 'at_least' if direction == 'minimum'
 		direction = 'at_most' if direction == 'maximum'
 		direction ||= system_target.direction 
-		
+
 		period = params[:target_period] || system_target.period 
 		type = params[:target_type] || system_target.target_type
 
