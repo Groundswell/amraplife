@@ -196,6 +196,12 @@ class ObservationBotService < AbstractBotService
 				'my {action} is {value} {unit}',
 				'my {action} is {value}',
 
+				# for input like....
+				# 8 grams protein
+				'{value} {unit} {action}',
+				# 10 pushups
+				'{value} {action}'
+
 			],
 			slots: {
 				value: 'Amount',
@@ -763,36 +769,55 @@ class ObservationBotService < AbstractBotService
 		end
 
 		if params[:notes].present?
-			period = params[:notes].match( /(today|yesterday|this week|last week|this month|last month|this year|in the past \d+ hours|in the last \d+ hours|in the past \d+ days|in the last \d+ days)|\d+ hours ago|\d+ days ago|\d+ weeks ago|\d+ months ago/ ).captures.first if params[:notes].match( /(today|yesterday|this week|last week|this month|last month|this year|in the past \d+ hours|in the last \d+ hours|in the past \d+ days|in the last \d+ days)|\d+ hours ago|\d+ days ago|\d+ weeks ago|\d+ months ago/ )
+			period = params[:notes].scan( /today|yesterday|this week|last week|this month|last month|this year/ ).first
+			period ||= params[:notes].scan( /in the past \d+ hour|in the last \d+ hour|in the past \d+ day|in the last \d+ day|\d+ hours ago|\d+ days ago|\d+ weeks ago|\d+ months ago/ ).first
 			if period.present?
-				period_value = period.match( /\d+/ ).captures.first if period.match( /\d+/ )
+				period_value = period.scan( /\d+/ ).first
 				if period_value.present?
-					period_unit = period.match( /(hour|day|week|month|year|hours|days|months|years)/ ).captures.first if period.match( /(hour|day|week|month|year|hours|days|months|years)/ )
-				else
-					# parse this, last, etc...
+					period_unit = period.scan( /hour|day|week|month|year/ ).first
 				end
 			end
 		end
 
 		if period_value.present?
-			range = eval "Time.zone.now - #{period_value}.#{period_unit}..Time.zone.now"
+			if period.scan( /ago/ ).present?
+				start_date = eval( "(Time.zone.now - #{period_value}.#{period_unit}).beginning_of_#{period_unit}" )
+				end_date = eval( "(Time.zone.now - #{period_value}.#{period_unit}).end_of_#{period_unit}" )
+			else # in the last/past x days.... look back x days & ends now
+				start_date =  eval "Time.zone.now - #{period_value}.#{period_unit}"
+				end_date = Time.zone.now
+			end
 		elsif period == 'yesterday'
-			range = ( Time.zone.now-1.day ).beginning_of_day..( Time.zone.now-1.day ).end_of_day
+			start_date = ( Time.zone.now - 1.day ).beginning_of_day
+			end_date = ( Time.zone.now - 1.day ).end_of_day
+
 		elsif period == 'last week'
-			range = ( Time.zone.now-1.week ).beginning_of_week..( Time.zone.now-1.week ).end_of_week
+			start_date = ( Time.zone.now - 1.week ).beginning_of_week
+			end_date = ( Time.zone.now - 1.week ).end_of_week
+
 		elsif period == 'last month'
-			range = ( Time.zone.now-1.month ).beginning_of_month..( Time.zone.now-1.month ).end_of_month
+			start_date = ( Time.zone.now - 1.month ).beginning_of_month
+			end_date = ( Time.zone.now - 1.month ).end_of_month
+
 		elsif period == 'this week'
-			range = ( Time.zone.now ).beginning_of_week..( Time.zone.now ).end_of_week
+			start_date = ( Time.zone.now ).beginning_of_week
+			end_date = ( Time.zone.now ).end_of_week
+
 		elsif period == 'this month'
-			range = ( Time.zone.now ).beginning_of_month..( Time.zone.now ).end_of_month
+			start_date = ( Time.zone.now ).beginning_of_month
+			end_date = ( Time.zone.now ).end_of_month
+
 		elsif period == 'this year'
-			range = ( Time.zone.now ).beginning_of_year..( Time.zone.now ).end_of_year
+			start_date = ( Time.zone.now ).beginning_of_year
+			end_date = ( Time.zone.now ).end_of_year
 		end
 
 		# default to today
 		period ||= 'today'
-		range ||= Time.zone.now.beginning_of_day..Time.zone.now.end_of_day
+		start_date ||= Time.zone.now.beginning_of_day
+		end_date ||= Time.zone.now.end_of_day
+
+		range = start_date..end_date
 
 		if user.observations.for( metric ).where( recorded_at: range ).nil?
 			add_speech("Sorry, there are no observations for #{metric.title} #{period}.")
@@ -804,6 +829,7 @@ class ObservationBotService < AbstractBotService
 
 		formatted_total = metric.unit.convert_from_base( total_value )
 
+		
 		response = "Your #{metric.title} are #{formatted_total} for #{period}."
 		add_speech( response )
 
