@@ -148,7 +148,9 @@ class ObservationBotService < AbstractBotService
 		quick_report: {
 			utterances: [
 				'how\s+(much|many)\s+{action}\s+{notes}',
-				'how\s+(much|many)\s+{action}.*'
+				'how\s+(much|many)\s+{action}.*',
+				'what\s+(is|was)\s*(?:my)?\s*{action}\s+{notes}',
+				'what\s+(is|was)\s*(?:my)?\s*{action}'
 				],
 			slots:{
 				action: 'Unit',
@@ -756,21 +758,21 @@ class ObservationBotService < AbstractBotService
 
 		metric = get_user_metric( user, params[:action], nil, false )
 
-		if metric.aliases.include?( 'cal' ) && ( params[:notes].present? && params[:notes].match( /burn/ ) )
+		if metric.present? && metric.aliases.include?( 'cal' ) && ( params[:notes].present? && params[:notes].match( /burn/ ) )
 			metric = get_user_metric( user, 'calories burned' )
 		end
 
 		if metric.nil?
 			default_metric ||= Metric.where( user_id: nil ).find_by_alias( params[:action].downcase )
 			action = default_metric.try( :title ) || params[:action]
-			add_speech("Sorry, you haven't recorded anything for #{default_metric.title} yet.")
+			add_speech("Sorry, you haven't recorded anything for #{action} yet.")
 			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found', action: 'reported', system_notes: "Spoke: 'Sorry, you haven't recorded anything for #{action} yet.'" )
 			return
 		end
 
 		if params[:notes].present?
 			period = params[:notes].scan( /today|yesterday|this week|last week|this month|last month|this year/ ).first
-			period ||= params[:notes].scan( /in the past \d+ hour|in the last \d+ hour|in the past \d+ day|in the last \d+ day|\d+ hours ago|\d+ days ago|\d+ weeks ago|\d+ months ago/ ).first
+			period ||= params[:notes].scan( /in the past \d+ hour|in the last \d+ hour|in the past \d+ day|in the last \d+ day|in the last \d+ week|in the past \d+ week|in the last \d+ month|in the past \d+ month|\d+ hours ago|\d+ days ago|\d+ weeks ago|\d+ months ago/ ).first
 			if period.present?
 				period_value = period.scan( /\d+/ ).first
 				if period_value.present?
@@ -830,7 +832,7 @@ class ObservationBotService < AbstractBotService
 		formatted_total = metric.unit.convert_from_base( total_value )
 
 		
-		response = "Your #{metric.title} are #{formatted_total} for #{period}."
+		response = "Your #{metric.title} are #{formatted_total} for #{period}. (#{start_date}-#{end_date})"
 		add_speech( response )
 
 		user.user_inputs.create( content: raw_input, action: 'reported', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{response}'." )
@@ -848,7 +850,6 @@ class ObservationBotService < AbstractBotService
 			call_intent( :login )
 			return
 		end
-
 
 		if params[:action].blank?
 			add_ask( "I'm sorry, I didn't understand that.  I don't know what to log. You must supply an action with your value in order to log it.  For example \"log one hundred calories\" or \"my weight is one hundred sixty\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it.", deligate_if_possible: true )

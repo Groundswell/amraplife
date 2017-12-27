@@ -188,10 +188,10 @@ namespace :amraplife do
 		act = Metric.create title: 'Plank Time', metric_type: 'activity', aliases: ['plank', 'planked', 'planking'], unit: sec, movement: Movement.find_by_alias( 'plank' )
 		act.targets.create target_type: :value, direction: :at_least, period: :daily, value: 20
 
-		act = Metric.create title: 'Push-ups', metric_type: 'activity', aliases: ['pushup', 'push'], unit: rep, movement: Movement.find_by_alias( 'pushup' )
+		act = Metric.create title: 'Push-ups', metric_type: 'activity', aliases: ['pushup', 'push', 'puhshups'], unit: rep, movement: Movement.find_by_alias( 'pushup' )
 		act.targets.create target_type: :sum_value, direction: :at_least, period: :daily, value: 20
 		
-		act = Metric.create title: 'Pull-ups', metric_type: 'activity', aliases: ['pullup', 'pull-up', 'pull'], unit: rep, movement: Movement.find_by_alias( 'pushup' )
+		act = Metric.create title: 'Pull-ups', metric_type: 'activity', aliases: ['pullup', 'pull-up', 'pull', 'pullups'], unit: rep, movement: Movement.find_by_alias( 'pushup' )
 		act.targets.create target_type: :value, direction: :at_least, period: :daily, value: 10
 
 		act = Metric.create title: 'Burpees', metric_type: 'activity', aliases: ['burpee'], unit: rep, movement: Movement.find_by_alias( 'burpee' )
@@ -200,7 +200,7 @@ namespace :amraplife do
 		act = Metric.create title: 'Squats', metric_type: 'activity', aliases: ['squat'], unit: rep, movement: Movement.find_by_alias( 'squat' )
 		act.targets.create target_type: :value, direction: :at_least, period: :daily, value: 25
 
-		act = Metric.create title: 'Sit-ups', metric_type: 'activity', aliases: ['situp', 'sit-up'], unit: rep, movement: Movement.find_by_alias( 'situp' )
+		act = Metric.create title: 'Sit-ups', metric_type: 'activity', aliases: ['situp', 'sit-up', 'situps'], unit: rep, movement: Movement.find_by_alias( 'situp' )
 		act.targets.create target_type: :value, direction: :at_least, period: :daily, value: 10
 
 
