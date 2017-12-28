@@ -45,6 +45,8 @@ class ObservationsController < ApplicationController
 		end
 
 		def observation_params
+
+			# todo
 			params[:observation][:display_unit] = params[:observation][:display_unit].chomp('.').singularize
 			
 			val_to_store =  UnitService.new( val: params[:observation][:value], stored_unit: params[:observation][:unit], display_unit: params[:observation][:display_unit] ).convert_to_stored_value

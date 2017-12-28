@@ -147,8 +147,8 @@ class ObservationBotService < AbstractBotService
 
 		quick_report: {
 			utterances: [
-				'how\s+(much|many)\s+{action}\s+{notes}',
-				'how\s+(much|many)\s+{action}.*',
+				'how\s+(much|many|long)\s+{action}\s+{notes}',
+				'how\s+(much|many|long)\s+{action}.*',
 				'what\s+(is|was)\s*(?:my)?\s*{action}\s+{notes}',
 				'what\s+(is|was)\s*(?:my)?\s*{action}'
 				],
@@ -350,10 +350,12 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
-		metric = get_user_metric( user, params[:action], nil, false )
+		action = params[:action].singularize.downcase
+
+		metric = get_user_metric( user, action, nil, false )
 
 		if metric.nil?
-			default_metric ||= Metric.where( user_id: nil ).find_by_alias( params[:action].downcase )
+			default_metric ||= Metric.where( user_id: nil ).find_by_alias( action )
 			action = default_metric.try( :title ) || params[:action]
 			add_speech("Sorry, you haven't recorded anything for #{action} yet.")
 			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found', action: 'reported', system_notes: "Spoke: 'Sorry, you haven't recorded anything for #{action} yet.'" )
@@ -709,45 +711,45 @@ class ObservationBotService < AbstractBotService
 	end
 	
 
-	def tell_about
-		unless user.present?
-			call_intent( :login )
-			return
-		end
-		metric = get_user_metric( user, params[:action] )
+	# def tell_about
+	# 	unless user.present?
+	# 		call_intent( :login )
+	# 		return
+	# 	end
+	# 	metric = get_user_metric( user, params[:action] )
 
-		if metric.nil?
-			default_metric ||= Metric.where( user_id: nil ).find_by_alias( params[:action].downcase )
-			action = default_metric.try( :title ) || params[:action]
-			add_speech("Sorry, you haven't recorded anything for #{action} yet.")
-			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found', action: 'reported', system_notes: "Spoke: 'Sorry, you haven't recorded anything for #{action} yet.'" )
-			return
-		end
+	# 	if metric.nil?
+	# 		default_metric ||= Metric.where( user_id: nil ).find_by_alias( params[:action].downcase )
+	# 		action = default_metric.try( :title ) || params[:action]
+	# 		add_speech("Sorry, you haven't recorded anything for #{action} yet.")
+	# 		user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found', action: 'reported', system_notes: "Spoke: 'Sorry, you haven't recorded anything for #{action} yet.'" )
+	# 		return
+	# 	end
 
-		obs_count_total = user.observations.for( metric ).count
-		obs_count_last_week = user.observations.for( metric ).where( recorded_at: 1.week.ago.beginning_of_week..1.week.ago.end_of_week ).count
-		obs_count_this_week = user.observations.for( metric ).where( recorded_at: Time.zone.now.beginning_of_week..Time.zone.now.end_of_week ).count
+	# 	obs_count_total = user.observations.for( metric ).count
+	# 	obs_count_last_week = user.observations.for( metric ).where( recorded_at: 1.week.ago.beginning_of_week..1.week.ago.end_of_week ).count
+	# 	obs_count_this_week = user.observations.for( metric ).where( recorded_at: Time.zone.now.beginning_of_week..Time.zone.now.end_of_week ).count
 
-		average_value = user.observations.for( metric ).average( :value ).try( :round, 2 ) || 0
-		min_value = user.observations.for( metric ).minimum( :value ) || 0
-		max_value = user.observations.for( metric ).maximum( :value ) || 0
-		value_sum = user.observations.for( metric ).sum( :value ) || 0
-		recent_value = user.observations.for( metric ).order( created_at: :desc ).first.value
+	# 	average_value = user.observations.for( metric ).average( :value ).try( :round, 2 ) || 0
+	# 	min_value = user.observations.for( metric ).minimum( :value ) || 0
+	# 	max_value = user.observations.for( metric ).maximum( :value ) || 0
+	# 	value_sum = user.observations.for( metric ).sum( :value ) || 0
+	# 	recent_value = user.observations.for( metric ).order( created_at: :desc ).first.value
 
-		formatted_average = metric.unit.convert_from_base( average_value )
+	# 	formatted_average = metric.unit.convert_from_base( average_value )
 
-		formatted_min = metric.unit.convert_from_base( min_value )
-		formatted_max = metric.unit.convert_from_base( max_value )
-		formatted_sum = metric.unit.convert_from_base( value_sum )
-		formatted_recent = metric.unit.convert_from_base( recent_value )
+	# 	formatted_min = metric.unit.convert_from_base( min_value )
+	# 	formatted_max = metric.unit.convert_from_base( max_value )
+	# 	formatted_sum = metric.unit.convert_from_base( value_sum )
+	# 	formatted_recent = metric.unit.convert_from_base( recent_value )
 
-		response = "You have logged #{metric.title} #{obs_count_total} times in all. #{obs_count_last_week} times last week, and #{obs_count_this_week} times so far this week. Your all-time total is #{formatted_sum}. The average value for #{metric.title} is #{formatted_average}. The max value is #{formatted_max} and the minimum is #{formatted_min}. The most recent recorded value is #{formatted_recent}."
-		add_speech( response )
+	# 	response = "You have logged #{metric.title} #{obs_count_total} times in all. #{obs_count_last_week} times last week, and #{obs_count_this_week} times so far this week. Your all-time total is #{formatted_sum}. The average value for #{metric.title} is #{formatted_average}. The max value is #{formatted_max} and the minimum is #{formatted_min}. The most recent recorded value is #{formatted_recent}."
+	# 	add_speech( response )
 
 
-		user.user_inputs.create( content: raw_input, action: 'reported', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{response}'." )
+	# 	user.user_inputs.create( content: raw_input, action: 'reported', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{response}'." )
 
-	end
+	# end
 
 
 	def quick_report
