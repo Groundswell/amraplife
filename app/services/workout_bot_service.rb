@@ -55,7 +55,7 @@ class WorkoutBotService < AbstractBotService
 
 		workout_describe: {
 			utterances: [
-				'what is {workoutname}(\?)?',
+				#'what is {workoutname}(\?)?',
 				'(to\s+)?describe {workoutname}(\?)?',
 				'(to\s+)?describe today\'s workout(\?)?',
 				'what is todays workout(\?)?',

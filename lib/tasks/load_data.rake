@@ -213,7 +213,7 @@ namespace :amraplife do
 		act.targets.create target_type: :sum_value, direction: :at_most, period: :weekly, value: 3600
 
 
-		bmi = Metric.create title: 'Workout', metric_type: 'activity', aliases: ['wkout', 'worked out', 'exercise', 'exercised'], unit: sec
+		bmi = Metric.create title: 'Workout', metric_type: 'activity', aliases: ['wkout', 'worked out', 'exercise', 'exercised', 'work out', 'working out', 'exercising'], unit: sec
 		# workouts must have time... record scores, reps, etc as sub observations.
 		# bmi = Metric.create title: 'AMRAP', metric_type: 'activity', aliases: ['amrap'], unit: 'rep'
 

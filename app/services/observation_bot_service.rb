@@ -4,7 +4,7 @@ class ObservationBotService < AbstractBotService
 
  		assign_metric: {
 			utterances: [
-				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*track {action}',
+				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*track\s+(my)?\s*{action}',
 			],
 			slots: {
 				action: 'Action',
@@ -102,28 +102,8 @@ class ObservationBotService < AbstractBotService
  				'set\s+(a\s+)?target\s+for\s+{action}',
  				'set\s+(a\s+)?target\s+of\s+{value}\s*(?:{unit})?\s+for\s+{action}',
  				'set\s+(a\s+)?target\s+of\s+{target_direction}\s+{value}\s*(?:{unit})?\s+for\s+{action}',
+ 				'set\s+(a\s+)?target\s+of\s+{target_direction}\s+{value}\s*(?:{unit})?\s+{target_period}\s+for\s+{action}',
 
- 				# # set a target for metric -- uses system metric for defaults
- 				# 'set\s+(a\s+)?target\s+for\s+{action}',
- 				# # set a target of 100 for metric
- 				# 'set\s+(a\s+)?target\s+of\s+{value}\s+for\s+{action}',
- 				# # set a target of 100kgs for metric
- 				# 'set\s+(a\s+)?target\s+of\s+{value}\s*{unit}\s+for\s+{action}',
- 				# # set a target of at least 100kgs for metric
- 				# 'set\s+(a\s+)?target\s+of\s+{target_direction}\s+{value}\s*{unit}\s+for\s+{action}',
- 				# # set a target of 100kgs per day for metric
- 				# 'set\s+(a\s+)?target\s+of\s+{value}\s*{unit}\s+for\s+{action}',
-
-
- 				# 'set\s+(a\s+)?target\s+of\s+{target_direction}\s+{value}\s+{unit}\s+{target_type}\s+{target_period}for\s+{action}',
- 				# 'set\s+(a\s+)?target\s*(for\s+)?{action}\s+of\s+{target_direction}\s+{value}\s+{unit}\s+{target_type}\s+{target_period}',
-
- 				# 'set\s+(a\s+)?target\s+of\s+{value}\s+for\s+{action}',
- 				# 'set\s+(a\s+)?target\s+of\s+{value}\s+{unit}\s+for\s+{action}',
- 				# 'set\s+(a\s+)?target\s*(for\s+)?{action}\s+of\s+{value}',
- 				# 'set\s+(a\s+)?target\s*(for\s+)?{action}\s+of\s+{value}\s*{unit}',
- 				# 'set\s+(a\s+)?{action}\s+target\s+of\s+{value}\s+{unit}',
- 				# 'set\s+(a\s+)?{action}\s+target\s+of\s+{value}',
  			],
  			slots:{
  				action: 'Action',
@@ -135,22 +115,14 @@ class ObservationBotService < AbstractBotService
  			},
  		},
 
-		# tell_about: {
-		# 	utterances: [
-		# 		'(to)?\s*tell\s*(?:me)?\s*about\s*(?:my)?\s*{action}',
-		# 		'(to)?\s*tell\s*(?:me)?\s*about\s*(?:my)?\s*{action}\s+{time_period}',
-		# 		],
-		# 	slots:{
-		# 		action: 'Action'
-		# 	},
-		# },
 
 		quick_report: {
 			utterances: [
 				'how\s+(much|many|long)\s+{action}\s+{notes}',
 				'how\s+(much|many|long)\s+{action}.*',
-				'what\s+(is|was)\s*(?:my)?\s*{action}\s+{notes}',
-				'what\s+(is|was)\s*(?:my)?\s*{action}'
+				'what\s+(is|was)\s*{action}\s+{notes}',
+				'what\s+(is|was)\s*(?:my)?\s*{action}',
+
 				],
 			slots:{
 				action: 'Unit',
@@ -758,6 +730,7 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
+	
 		metric = get_user_metric( user, params[:action], nil, false )
 
 		if metric.present? && metric.aliases.include?( 'cal' ) && ( params[:notes].present? && params[:notes].match( /burn/ ) )
