@@ -15,11 +15,13 @@ class ObservationBotService < AbstractBotService
 		#todo -- collapse tell_about into this method
  		check_metric: {
 			utterances: [
+				'(to)?\s*check\s*(my)?\s*{action}\s*target',
 				'(to)?\s*check\s*(my)?\s*{action}',
 				'how (much|many) {action} do I have left',
 				'how is\s*(my)?\s*{action}',
 				'how\'s\s*(my)?\s*{action}',
 				'hows\s*(my)?\s*{action}',
+				'how\s*are\s*(my)?\s*{action}',
 				'(to)?\s*tell\s*(?:me)?\s*about\s*(?:my)?\s*{action}'
 				 ],
 			slots: {
@@ -270,7 +272,7 @@ class ObservationBotService < AbstractBotService
 		},
 		ReportPeriod: {
 			regex: [
-				'today|yesterday|this week|last week|this month|last month|this year|last year|in the past \d+ hour|in the last \d+ hour|in the past \d+ day|in the last \d+ day|in the past \d+ week|in the last \d+ week|in the past \d+ month|in the last \d+ month|in the past year|in the last year|\d+ hour(s)? ago|\d+ day(s)? ago|\d+ week(s)? ago|\d+ month(s)? ago'
+				'today|yesterday|last night|this week|last week|this month|last month|this year|last year|in the past \d+ hour|in the last \d+ hour|in the past \d+ day|in the last \d+ day|in the past \d+ week|in the last \d+ week|in the past \d+ month|in the last \d+ month|in the past year|in the last year|\d+ hour(s)? ago|\d+ day(s)? ago|\d+ week(s)? ago|\d+ month(s)? ago'
 				],
 				values: []
 		},
@@ -806,7 +808,7 @@ class ObservationBotService < AbstractBotService
 				start_date =  eval "Time.zone.now - #{period_value}.#{period_unit}"
 				end_date = Time.zone.now
 			end
-		elsif period == 'yesterday'
+		elsif period == 'yesterday' || period == 'last night'
 			start_date = ( Time.zone.now - 1.day ).beginning_of_day
 			end_date = ( Time.zone.now - 1.day ).end_of_day
 
@@ -850,6 +852,8 @@ class ObservationBotService < AbstractBotService
 			value = user.observations.for( metric ).where( recorded_at: range ).average( :value )
 		elsif metric.metric_type == 'stat'
 			value = user.observations.for( metric ).where( recorded_at: range ).order( recorded_at: :desc ).first.value
+		elsif metric.metric_type == 'count'
+			value = user.observations.for( metric ).where( recorded_at: range ).count
 		else # aggregate
 			value = user.observations.for( metric ).where( recorded_at: range ).sum( :value )
 		end

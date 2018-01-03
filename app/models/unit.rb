@@ -20,6 +20,19 @@ class Unit < ActiveRecord::Base
 		where( ":term = ANY( aliases )", term: term ).first
 	end
 
+	def self.pound
+		self.friendly.find( 'pound' )
+	end
+
+	def self.sec
+		self.friendly.find( 'second' )
+	end
+
+	def self.calorie
+		self.friendly.find( 'calorie' )
+	end
+
+
 	def aliases_csv
 		self.aliases.join( ', ' )
 	end

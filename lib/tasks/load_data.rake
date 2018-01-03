@@ -2,31 +2,33 @@
 namespace :amraplife do
 
 	task load_sample_data: :environment do
+
 		wt = Metric.where( user_id: nil ).find_by_alias( 'wt' ).try(:dup)
 		wt.update( user: User.first )
 
 		from_date = Date.new( 2017, 6, 15 )
-		to_date = Date.new( 2017, 7, 18 )
+		to_date = Time.zone.now 
+		u = Unit.pound
 		(from_date..to_date).each do |date|
-			o = User.first.observations.create( observed: wt, recorded_at: date, value: rand(170..195), unit: 'lb' )
+			o = User.first.observations.create( observed: wt, recorded_at: date, value: u.convert_to_base( rand(170..195)), unit: u )
 		end
 
 		cals = Metric.where( user_id: nil ).find_by_alias( 'cal' ).try(:dup)
 		cals.update( user: User.first )
 
 		from_date = Date.new( 2017, 6, 15 )
-		to_date = Date.new( 2017, 7, 18 )
+		to_date = Time.zone.now
 		(from_date..to_date).each do |date|
-			o = User.first.observations.create( observed: cals, recorded_at: date, value: rand(1700..2950), unit: 'cal' )
+			o = User.first.observations.create( observed: cals, recorded_at: date, value: rand(1700..2950), unit: Unit.calorie )
 		end
 
 		sleep = Metric.where( user_id: nil ).find_by_alias( 'sleep' ).try(:dup)
 		sleep.update( user: User.first )
 
 		from_date = Date.new( 2017, 6, 15 )
-		to_date = Date.new( 2017, 7, 18 )
+		to_date =  Time.zone.now
 		(from_date..to_date).each do |date|
-			o = User.first.observations.create( observed: sleep, recorded_at: date, value: rand(20000..36500), unit: 'sec' )
+			o = User.first.observations.create( observed: sleep, recorded_at: date, value: rand(20000..36500), unit: Unit.sec )
 		end
 
 	end
@@ -213,7 +215,9 @@ namespace :amraplife do
 		act.targets.create target_type: :sum_value, direction: :at_most, period: :weekly, value: 3600
 
 
-		bmi = Metric.create title: 'Workout', metric_type: 'aggregate', aliases: ['wkout', 'worked out', 'exercise', 'exercised', 'work out', 'working out', 'exercising'], unit: sec
+		wkt = Metric.create title: 'Workout', metric_type: 'aggregate', aliases: ['wkout', 'worked out', 'exercise', 'exercised', 'work out', 'working out', 'exercising'], unit: sec
+		wod = Metric.create title: 'WoD', metric_type: 'count', aliases: ['workout of the day', 'crossfit', 'cross fit'], unit: sec
+		wod.targets.create target_type: :count, direction: :at_least, period: :weekly, value: 4
 		# workouts must have time... record scores, reps, etc as sub observations.
 		# bmi = Metric.create title: 'AMRAP', metric_type: 'activity', aliases: ['amrap'], unit: 'rep'
 

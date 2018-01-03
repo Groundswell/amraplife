@@ -27,7 +27,7 @@ class MetricsController < ApplicationController
 	end
 
 	def update
-		unit = Unit.find_by_alias( metric_params[:unit_alias] )
+		unit = Unit.find_by_alias( metric_params[:unit_alias].singularize.downcase )
 		
 		@metric.update( metric_params )
 		@metric.update( unit_id: unit.id ) if unit.present?
