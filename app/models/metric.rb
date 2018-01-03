@@ -34,6 +34,17 @@ class Metric < ActiveRecord::Base
 		where( ":term = ANY( aliases )", term: term.parameterize ).first
 	end
 
+	def self.metric_types
+		{
+			'avg_value' 		=> 'Average',
+			'count' 			=> 'Frequency',
+			'current_value' 	=> 'Stat',
+			'max_value' 		=> 'All-Time High',
+			'min_Value'			=> 'All-Time Low',
+			'sum_value' 		=> 'Accumulated'
+		}
+	end
+
 
 
 	def active_target

@@ -17,18 +17,20 @@
 
 					%h3
 						Summary
-					%table
+					%table.table
 						%tbody
 							%tr
 								%td
 									%b Count
 								%td
-									= @metric.observations.count
+									= pluralize @metric.observations.count, 'Observation'
 							%tr
 								%td
 									%b Last
 								%td
 									= @metric.observations.order( recorded_at: :desc ).first.display_value
+									%br
+									= @metric.observations.order( recorded_at: :desc ).first.recorded_at.to_s( :short )
 							%tr
 								%td
 									%b Max
@@ -39,6 +41,7 @@
 									%b Min
 								%td
 									= @metric.unit.convert_from_base( @metric.observations.minimum( :value ) )
+							
 							%tr
 								%td
 									%b Total

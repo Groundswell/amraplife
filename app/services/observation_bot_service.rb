@@ -101,8 +101,11 @@ class ObservationBotService < AbstractBotService
 
  		set_target:{
  			utterances: [
- 				# set a target of 1500 cals 
+ 				# set a target of at most 1500 cals per day
+ 				'set\s+(a\s+)?target\s+of\s+{target_direction}\s+{value}\s+{action}\s+{target_period}',
+ 				# set a target of 1500 cals per day
  				'set\s+(a\s+)?target\s+of\s+{value}\s+{action}\s+{target_period}',
+ 				# set a target of 1500 cals 
  				'set\s+(a\s+)?target\s+of\s+{value}\s+{action}',
 
 
@@ -140,8 +143,8 @@ class ObservationBotService < AbstractBotService
 
 				# how many calories did i eat
 				# how many minutes did i work out
-				'how\s+(much|many|long)\s+{verb}?\s*{action}.*{report_period}',
-				'how\s+(much|many|long)\s+{verb}?\s*{action}.*',
+				'how\s+(much|many|long)\s+{verb}?\s*{action}\D*{report_period}',
+				'how\s+(much|many|long)\s+{verb}?\s*{action}\D*',
 
 				],
 			slots:{
@@ -687,12 +690,23 @@ class ObservationBotService < AbstractBotService
 		unit ||= metric.unit 
 
 		direction = params[:target_direction].try( :downcase )
-		direction.gsub( /\s+/, '_' ) if direction.present?
+		direction.gsub!( /\s+/, '_' ) if direction.present?
 		direction = 'at_least' if direction == 'minimum'
 		direction = 'at_most' if direction == 'maximum'
 		direction ||= system_target.direction 
 
-		period = params[:target_period] || system_target.period 
+		period = params[:target_period] 
+		if period.present?
+			period.gsub!( /\s+/, '_' )
+			period = 'hourly' if period.match( /hour/ )
+			period = 'daily' if period.match( /day/ )
+			period = 'weekly' if period.match( /week/ )
+			period = 'monthly' if period.match( /month/ )
+			period = 'yearly' if period.match( /year/ )
+		else
+			period = system_target.period
+		end
+
 		type = params[:target_type] || system_target.target_type
 
 		target = metric.targets.where( user: user ).last || metric.targets.new( user: user )
@@ -702,6 +716,8 @@ class ObservationBotService < AbstractBotService
 		target.period = period
 		target.target_type = type
 		target.value = metric.unit.convert_to_base( value )
+
+		die
 
 		target.save
 
@@ -715,47 +731,6 @@ class ObservationBotService < AbstractBotService
 
 	end
 	
-
-	# def tell_about
-	# 	unless user.present?
-	# 		call_intent( :login )
-	# 		return
-	# 	end
-	# 	metric = get_user_metric( user, params[:action] )
-
-	# 	if metric.nil?
-	# 		default_metric ||= Metric.where( user_id: nil ).find_by_alias( params[:action].downcase )
-	# 		action = default_metric.try( :title ) || params[:action]
-	# 		add_speech("Sorry, you haven't recorded anything for #{action} yet.")
-	# 		user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found', action: 'reported', system_notes: "Spoke: 'Sorry, you haven't recorded anything for #{action} yet.'" )
-	# 		return
-	# 	end
-
-	# 	obs_count_total = user.observations.for( metric ).count
-	# 	obs_count_last_week = user.observations.for( metric ).where( recorded_at: 1.week.ago.beginning_of_week..1.week.ago.end_of_week ).count
-	# 	obs_count_this_week = user.observations.for( metric ).where( recorded_at: Time.zone.now.beginning_of_week..Time.zone.now.end_of_week ).count
-
-	# 	average_value = user.observations.for( metric ).average( :value ).try( :round, 2 ) || 0
-	# 	min_value = user.observations.for( metric ).minimum( :value ) || 0
-	# 	max_value = user.observations.for( metric ).maximum( :value ) || 0
-	# 	value_sum = user.observations.for( metric ).sum( :value ) || 0
-	# 	recent_value = user.observations.for( metric ).order( created_at: :desc ).first.value
-
-	# 	formatted_average = metric.unit.convert_from_base( average_value )
-
-	# 	formatted_min = metric.unit.convert_from_base( min_value )
-	# 	formatted_max = metric.unit.convert_from_base( max_value )
-	# 	formatted_sum = metric.unit.convert_from_base( value_sum )
-	# 	formatted_recent = metric.unit.convert_from_base( recent_value )
-
-	# 	response = "You have logged #{metric.title} #{obs_count_total} times in all. #{obs_count_last_week} times last week, and #{obs_count_this_week} times so far this week. Your all-time total is #{formatted_sum}. The average value for #{metric.title} is #{formatted_average}. The max value is #{formatted_max} and the minimum is #{formatted_min}. The most recent recorded value is #{formatted_recent}."
-	# 	add_speech( response )
-
-
-	# 	user.user_inputs.create( content: raw_input, action: 'reported', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{response}'." )
-
-	# end
-
 
 	def quick_report
 		unless user.present?
@@ -851,15 +826,15 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
-		if metric.metric_type == 'benchmark'
+		if metric.metric_type == 'value'
 			value = user.observations.for( metric ).where( recorded_at: range ).maximum( :value )
-		elsif metric.metric_type == 'variable'
+		elsif metric.metric_type == 'avg_value'
 			value = user.observations.for( metric ).where( recorded_at: range ).average( :value )
-		elsif metric.metric_type == 'stat'
+		elsif metric.metric_type == 'current_value'
 			value = user.observations.for( metric ).where( recorded_at: range ).order( recorded_at: :desc ).first.value
 		elsif metric.metric_type == 'count'
 			value = user.observations.for( metric ).where( recorded_at: range ).count
-		else # aggregate
+		else # sum_value -- aggregate
 			value = user.observations.for( metric ).where( recorded_at: range ).sum( :value )
 		end
 

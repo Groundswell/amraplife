@@ -9,9 +9,16 @@
 			= form_for Target.new do |f|
 				.modal-body
 					.row
-						.col-xs-12
+						.col-xs-6
 							%h4
-								I Want
+								I Want the
+						.col-xs-6
+							%h4
+								Of My
+					.row
+						.col-sm-6
+							= f.label :target_type
+							= f.collection_select :target_type, Target.target_types, :first, :second, {}, class: 'form-control'
 						.col-sm-6
 							- if args[:parent_obj].present?
 								= f.hidden_field :parent_obj_id, value: args[:parent_obj].id
@@ -20,9 +27,7 @@
 								= f.hidden_field :parent_obj_type, value: 'Metric'
 								= f.label :parent_obj_id, "Metric"
 								= f.collection_select :parent_obj_id, current_user.metrics.order( title: :asc ), :id, :title, {}, class: 'form-control'
-						.col-sm-6
-							= f.label :target_type
-							= f.collection_select :target_type, Target.target_types, :first, :second, {}, class: 'form-control'
+						
 					.row
 						.col-xs-12
 							%h4
