@@ -101,10 +101,15 @@ class ObservationBotService < AbstractBotService
 
  		set_target:{
  			utterances: [
- 				'set\s+(a\s+)?target\s+for\s+{action}',
- 				'set\s+(a\s+)?target\s+of\s+{value}\s*(?:{unit})?\s+for\s+{action}',
- 				'set\s+(a\s+)?target\s+of\s+{target_direction}\s+{value}\s*(?:{unit})?\s+for\s+{action}',
- 				'set\s+(a\s+)?target\s+of\s+{target_direction}\s+{value}\s*(?:{unit})?\s+{target_period}\s+for\s+{action}',
+ 				# set a target of 1500 cals 
+ 				'set\s+(a\s+)?target\s+of\s+{value}\s+{action}\s+{target_period}',
+ 				'set\s+(a\s+)?target\s+of\s+{value}\s+{action}',
+
+
+ 				# 'set\s+(a\s+)?target\s+for\s+{action}',
+ 				# 'set\s+(a\s+)?target\s+of\s+{value}\s*(?:{unit})?\s+for\s+{action}',
+ 				# 'set\s+(a\s+)?target\s+of\s+{target_direction}\s+{value}\s*(?:{unit})?\s+for\s+{action}',
+ 				# 'set\s+(a\s+)?target\s+of\s+{target_direction}\s+{value}\s*(?:{unit})?\s+{target_period}\s+for\s+{action}',
 
  			],
  			slots:{
