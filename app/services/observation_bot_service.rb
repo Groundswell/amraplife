@@ -118,15 +118,29 @@ class ObservationBotService < AbstractBotService
 
 		quick_report: {
 			utterances: [
-				'how\s+(much|many|long)\s+{action}\s+{notes}',
-				'how\s+(much|many|long)\s+{action}.*',
-				'what\s+(is|was)\s*{action}\s+{notes}',
-				'what\s+(is|was)\s*(?:my)?\s*{action}',
+				# what was my weight
+				# what is my blood pressure
+				# what is my max bench
+				'what\s+{verb}\s*(?:my)?\s*{action}\s*{report_period}',
+				'what\s+{verb}\s*(?:my)?\s*{action}',
+
+
+
+				# how much do i weigh
+				
+				# how long did i swim
+				# how much beer did i drink
+
+				# how many calories did i eat
+				# how many minutes did i work out
+				'how\s+(much|many|long)\s+{verb}?\s*{action}.*{report_period}',
+				'how\s+(much|many|long)\s+{verb}?\s*{action}.*',
 
 				],
 			slots:{
-				action: 'Unit',
-				notes: 'Notes'
+				action: 'Action',
+				verb: 'Verb',
+				report_period: 'ReportPeriod'
 			},
 		},
 
@@ -254,24 +268,30 @@ class ObservationBotService < AbstractBotService
 				],
 				values: []
 		},
+		ReportPeriod: {
+			regex: [
+				'today|yesterday|this week|last week|this month|last month|this year|last year|in the past \d+ hour|in the last \d+ hour|in the past \d+ day|in the last \d+ day|in the past \d+ week|in the last \d+ week|in the past \d+ month|in the last \d+ month|in the past year|in the last year|\d+ hour(s)? ago|\d+ day(s)? ago|\d+ week(s)? ago|\d+ month(s)? ago'
+				],
+				values: []
+		},
 		
 		TargetDirection: {
 			regex: [
-				'(at least|at most|exactly|minimum|maximum)'
+				'at least|at most|exactly|minimum|maximum'
 				],
 				values: []
 		},
 
 		TargetPeriod: {
 			regex: [
-				'(per day|per week|per month|daily|weekly|monthly|forever|all time|all-time)'
+				'per day|per week|per month|daily|weekly|monthly|forever|all time|all-time'
 				],
 				values: []
 		},
 
 		TargetType: {
 			regex: [
-				'(total|average|count)'
+				'total|average|count'
 				],
 				values: []
 		},
@@ -297,6 +317,12 @@ class ObservationBotService < AbstractBotService
 		        { value: "rep", synonyms: [] },
 	      ]
 	  },
+	  Verb: {
+			regex: [
+				'is|are|was|were|do i|did i|did i do'
+				],
+				values: []
+		},
   	} )
 
 
@@ -730,29 +756,45 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
-	
-		metric = get_user_metric( user, params[:action], nil, false )
+		
 
-		if metric.present? && metric.aliases.include?( 'cal' ) && ( params[:notes].present? && params[:notes].match( /burn/ ) )
-			metric = get_user_metric( user, 'calories burned' )
+		if params[:action].match( /(calories).*(burn)/i )
+			params[:action] = 'calories burned'
+		end
+		if params[:action].match( /eat/i )
+			params[:action] = 'calories'
+		end
+
+		# deal with greedy-match action param
+		# e.g. 'calories did I eat' or 'beer did i drink' or 'minutes did i work out'
+
+		# first, strip verbs
+		if params[:action].match( /do i|did i|have i|were/i )
+			params[:action].gsub!( /do i|did i|have i|were/i, '' )
+			candidates = params[:action].split( /\s{2,}/ )
+			metric = get_user_metric( user, candidates.first.downcase, nil, false ) || get_user_metric( user, candidates.second.downcase, nil, false )
+		else
+			metric = get_user_metric( user, params[:action], nil, false )
 		end
 
 		if metric.nil?
-			default_metric ||= Metric.where( user_id: nil ).find_by_alias( params[:action].downcase )
+			if candidates.present?
+				Metric.where( user_id: nil ).find_by_alias( candidates.first.downcase ) || Metric.where( user_id: nil ).find_by_alias( candidates.second.downcase )
+			else
+				default_metric ||= Metric.where( user_id: nil ).find_by_alias( params[:action].downcase )
+			end
 			action = default_metric.try( :title ) || params[:action]
 			add_speech("Sorry, you haven't recorded anything for #{action} yet.")
 			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found', action: 'reported', system_notes: "Spoke: 'Sorry, you haven't recorded anything for #{action} yet.'" )
 			return
 		end
 
-		if params[:notes].present?
-			period = params[:notes].scan( /today|yesterday|this week|last week|this month|last month|this year/ ).first
-			period ||= params[:notes].scan( /in the past \d+ hour|in the last \d+ hour|in the past \d+ day|in the last \d+ day|in the last \d+ week|in the past \d+ week|in the last \d+ month|in the past \d+ month|\d+ hours ago|\d+ days ago|\d+ weeks ago|\d+ months ago/ ).first
-			if period.present?
-				period_value = period.scan( /\d+/ ).first
-				if period_value.present?
-					period_unit = period.scan( /hour|day|week|month|year/ ).first
-				end
+		period = params[:report_period]
+
+		if period.present?
+			period_value = period.scan( /\d+/ ).first
+			if period_value.present?
+				period_unit = period.scan( /hour|day|week|month|year/ ).first
 			end
 		end
 
@@ -796,18 +838,37 @@ class ObservationBotService < AbstractBotService
 
 		range = start_date..end_date
 
-		if user.observations.for( metric ).where( recorded_at: range ).nil?
+		if user.observations.for( metric ).where( recorded_at: range ).count < 1
 			add_speech("Sorry, there are no observations for #{metric.title} #{period}.")
 			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found', action: 'reported', system_notes: "Spoke: 'Sorry, you haven't recorded anything for #{action} yet.'" )
 			return
 		end
 
-		total_value = user.observations.for( metric ).where( recorded_at: range ).sum( :value )
+		if metric.metric_type == 'benchmark'
+			value = user.observations.for( metric ).where( recorded_at: range ).maximum( :value )
+		elsif metric.metric_type == 'variable'
+			value = user.observations.for( metric ).where( recorded_at: range ).average( :value )
+		elsif metric.metric_type == 'stat'
+			value = user.observations.for( metric ).where( recorded_at: range ).order( recorded_at: :desc ).first.value
+		else # aggregate
+			value = user.observations.for( metric ).where( recorded_at: range ).sum( :value )
+		end
 
-		formatted_total = metric.unit.convert_from_base( total_value )
+		formatted_value = metric.unit.convert_from_base( value )
 
-		
-		response = "Your #{metric.title} are #{formatted_total} for #{period}. (#{start_date}-#{end_date})"
+		verb = params[:verb]
+		if verb.blank? || verb.to_s.match( /did i|do i/i )
+			if period.present? && not( period.match( /today|this/i ) )
+				verb = 'were'
+			else
+				if params[:action].singularize == params[:action] && params[:action].pluralize != params[:action]
+					verb = 'is'
+				else
+					verb = 'are'
+				end
+			end
+		end
+		response = "Your #{metric.title} #{verb} #{formatted_value} #{period}. (#{start_date}-#{end_date})"
 		add_speech( response )
 
 		user.user_inputs.create( content: raw_input, action: 'reported', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{response}'." )

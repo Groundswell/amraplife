@@ -1,5 +1,11 @@
 class Metric < ActiveRecord::Base
 
+	# metric_type
+	# stat - report last value e.g. weight
+	# variable - report average e.g. mood
+	# aggregate - report sum of values e.g. calories
+	# benchmark - report max all-time e.g. bench
+
 	before_create 	:set_defaults
 	validate 		:unique_aliases
 
