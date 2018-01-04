@@ -717,7 +717,6 @@ class ObservationBotService < AbstractBotService
 		target.target_type = type
 		target.value = metric.unit.convert_to_base( value )
 
-		die
 
 		target.save
 
