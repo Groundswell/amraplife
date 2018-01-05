@@ -21,11 +21,11 @@ class Target < ActiveRecord::Base
 
 	def self.periods
 		{
-			'hourly' => 'per Hour',
-			'daily' => 'per Day',
-			'weekly' => 'per Week',
-			'monthly' => 'per Month',
-			'yearly' => 'per Year',
+			'hour' => 'per Hour',
+			'day' => 'per Day',
+			'week' => 'per Week',
+			'month' => 'per Month',
+			'year' => 'per Year',
 			'all_time' => 'All Time'
 		}
 	end
@@ -61,6 +61,7 @@ class Target < ActiveRecord::Base
 	private
 		def set_defaults
 			self.target_type ||= self.parent_obj.try( :metric_type )
+			self.period ||= self.parent_obj.try( :default_period )
 		end
 
 

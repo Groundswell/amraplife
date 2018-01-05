@@ -191,8 +191,8 @@ class ObservationBotService < AbstractBotService
 
 				'(?:that )?\s*i did {value}\s*{unit} of {action}',
 
-				'my {action} is {value} {unit}',
-				'my {action} is {value}',
+				'my {action} (is|was) {value} {unit}',
+				'my {action} (is|was) {value}',
 
 				# for input like....
 				# 8 grams protein
@@ -375,19 +375,19 @@ class ObservationBotService < AbstractBotService
 				current = metric.observations.order( created_at: :desc ).first.value
 			else
 				case metric.active_target.period
-				when 'daily'
+				when 'day'
 					range = Time.zone.now.beginning_of_day..Time.zone.now.end_of_day
 					target_period = 'per day'
 					current_period = 'today'
-				when 'weekly'
+				when 'week'
 					range = Time.zone.now.beginning_of_week..Time.zone.now.end_of_day
 					target_period = 'per week'
 					current_period = 'this week'
-				when 'monthly'
+				when 'month'
 					range = Time.zone.now.beginning_of_month..Time.zone.now.end_of_day
 					target_period = 'per month'
 					current_period = 'this month'
-				when 'yearly'
+				when 'year'
 					range = Time.zone.now.beginning_of_year..Time.zone.now.end_of_day
 					target_period = 'per year'
 					current_period = 'this year'
@@ -698,11 +698,11 @@ class ObservationBotService < AbstractBotService
 		period = params[:target_period] 
 		if period.present?
 			period.gsub!( /\s+/, '_' )
-			period = 'hourly' if period.match( /hour/ )
-			period = 'daily' if period.match( /day/ )
-			period = 'weekly' if period.match( /week/ )
-			period = 'monthly' if period.match( /month/ )
-			period = 'yearly' if period.match( /year/ )
+			period = 'hour' if period.match( /hour/ )
+			period = 'day' if period.match( /day/ )
+			period = 'week' if period.match( /week/ )
+			period = 'month' if period.match( /month/ )
+			period = 'year' if period.match( /year/ )
 		else
 			period = system_target.period
 		end
@@ -825,8 +825,10 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
-		if metric.metric_type == 'value'
+		if metric.metric_type == 'max_value'
 			value = user.observations.for( metric ).where( recorded_at: range ).maximum( :value )
+		elsif metric.metric_type == 'min_value'
+			value = user.observations.for( metric ).where( recorded_at: range ).minimum( :value )
 		elsif metric.metric_type == 'avg_value'
 			value = user.observations.for( metric ).where( recorded_at: range ).average( :value )
 		elsif metric.metric_type == 'current_value'

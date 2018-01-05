@@ -388,15 +388,18 @@ ActiveRecord::Schema.define(version: 20170829150217) do
   add_index "media_versions", ["media_id", "status", "id"], name: "index_media_versions_on_media_id_and_status_and_id", using: :btree
 
   create_table "metrics", force: :cascade do |t|
-    t.integer "movement_id"
-    t.string  "title"
-    t.string  "slug"
-    t.text    "aliases",      default: [], array: true
-    t.integer "user_id"
-    t.string  "metric_type"
-    t.text    "description"
-    t.integer "availability", default: 0
-    t.integer "unit_id"
+    t.integer  "movement_id"
+    t.string   "title"
+    t.string   "slug"
+    t.text     "aliases",        default: [],         array: true
+    t.integer  "user_id"
+    t.string   "metric_type"
+    t.text     "description"
+    t.integer  "availability",   default: 0
+    t.integer  "unit_id"
+    t.string   "default_period", default: "all_time"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "metrics", ["movement_id"], name: "index_metrics_on_movement_id", using: :btree

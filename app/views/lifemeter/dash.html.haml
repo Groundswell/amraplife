@@ -7,7 +7,7 @@
 			.pull-right= f.submit 'Submit', class: 'btn btn-success btn-lg', style: 'margin: 0.5em auto;'
 			.clearfix
 .row
-	.col-sm-12
+	.col-sm-8
 		.main-box.clearfix.project-box.purple-box
 			.main-box-body.clearfix
 				.project-box-header.purple-bg
@@ -44,8 +44,6 @@
 												ago.
 												%br
 												= input.created_at.to_s( :slashed_time )
-											
-
 					- else
 						%center
 							%h1
@@ -56,6 +54,38 @@
 								%a{ href: '/lifemeter/help' }
 									Read the guide
 								to learn all about what Life Meter can do.
+
+	.col-sm-4
+		.main-box.clearfix.project-box.emerald-box
+			.main-box-body.clearfix
+				.project-box-header.emerald-bg
+					.name
+						%a{ href: '#' }
+							Metrics
+				.project-box-content
+					.main-box.feed
+						.main-box-body.clearfix
+							%ul
+								- current_user.metrics.order( updated_at: :desc ).each do |metric|
+									%li.clearfix{ style: 'list-style: none;text-align:left;' }
+										= metric.title
+										.time-ago
+											= metric.default_value
+											- if metric.default_period == 'day'
+												%br
+												.pull-right
+													today
+											- elsif metric.default_period == 'week'
+												%br
+												.pull-right
+													this week
+											- elsif metric.default_period == 'month'
+												%br
+												.pull-right
+													this month
+										
+
+				
 
 
 

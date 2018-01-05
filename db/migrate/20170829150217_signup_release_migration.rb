@@ -58,6 +58,11 @@ class SignupReleaseMigration < ActiveRecord::Migration
 		add_index 	:units, :imperial_correlate_id
 
 		add_column		:metrics, :unit_id, :integer
+		add_column		:metrics, :default_period, :string, default: :all_time
+		add_column		:metrics, :created_at, :datetime
+		add_column		:metrics, :updated_at, :datetime
+
+
 		add_column		:observations, :unit_id, :integer
 
 		rename_column :users, :use_metric, :use_imperial_units

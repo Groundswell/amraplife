@@ -59,6 +59,40 @@ class Metric < ActiveRecord::Base
 		self.aliases = aliases_csv.split( /,\s*/ )
 	end
 
+	def default_value( args={} )
+		
+		args[:convert] = true unless args[:convert] == false
+
+		# default to all_time
+		start_date = Time.zone.now - 10.years
+		
+		if not( self.default_period == 'all_time' )
+			start_date = Time.zone.now - eval( "1.#{self.default_period}" )
+		end
+		range = start_date..Time.zone.now
+
+		if self.metric_type == 'max_value'
+			value = self.observations.where( recorded_at: range ).maximum( :value )
+		elsif self.metric_type == 'min_value'
+			value = self.observations.where( recorded_at: range ).minimum( :value )
+		elsif self.metric_type == 'avg_value'
+			value = self.observations.where( recorded_at: range ).average( :value )
+		elsif self.metric_type == 'current_value'
+			value = self.observations.where( recorded_at: range ).order( recorded_at: :desc ).first.value
+		elsif self.metric_type == 'count'
+			value = self.observations.where( recorded_at: range ).count
+		else # sum_value -- aggregate
+			value = self.observations.where( recorded_at: range ).sum( :value )
+		end
+
+		if args[:convert] && self.unit.present?
+			return self.unit.convert_from_base( value )
+		else
+			return value
+		end
+
+	end
+
 	def slugger
 		"#{self.title}_#{self.user_id}"
 	end
