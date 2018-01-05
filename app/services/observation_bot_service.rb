@@ -181,8 +181,8 @@ class ObservationBotService < AbstractBotService
 				# I ran 3 miles
 				'(?:that )?\s*i {action} {value}',
 				'(?:that )?\s*i {action} {value}\s*{unit}',
-				'(?:that )?\s*i {action} for {value}',
-				'(?:that )?\s*i {action} for {value}\s*{unit}',
+				'(?:that )?\s*i (did)?\s*{action} for {value}',
+				'(?:that )?\s*i (did)?\s*{action} for {value}\s*{unit}',
 
 				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*i did {value}\s*{unit} of {action}',
 				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*i did {value} {action}',
@@ -191,7 +191,7 @@ class ObservationBotService < AbstractBotService
 
 				'(?:that )?\s*i did {value}\s*{unit} of {action}',
 
-				'my {action} (is|was) {value} {unit}',
+				'my {action} (is|was) {value}\s*{unit}',
 				'my {action} (is|was) {value}',
 
 				# for input like....
@@ -307,7 +307,7 @@ class ObservationBotService < AbstractBotService
 		},
 		Unit: {
 			regex: [
-				'(?:a )?[a-zA-Z]+'
+				'(?:a )?[a-zA-Z\"\'%#"]+'
 			],
 			values: [
 				{ value: "g", synonyms: [] },
@@ -640,8 +640,7 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
-		observations = user.observations.of( metric ).where( value: nil ).where( 'started_at is not null' ).order( started_at: :desc )
-		observation  = observations.first
+		observation = user.observations.of( metric ).where( value: nil ).where( 'started_at is not null' ).order( started_at: :desc ).first
 
 		if observation.present?
 			observation.stop!

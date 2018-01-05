@@ -61,14 +61,15 @@
 				.project-box-header.emerald-bg
 					.name
 						%a{ href: '#' }
-							Metrics
+							Recent Metrics
 				.project-box-content
 					.main-box.feed
 						.main-box-body.clearfix
 							%ul
-								- current_user.metrics.order( updated_at: :desc ).each do |metric|
+								- current_user.metrics.order( updated_at: :desc ).limit( 10 ).each do |metric|
 									%li.clearfix{ style: 'list-style: none;text-align:left;' }
 										= metric.title
+
 										.time-ago
 											= metric.default_value
 											- if metric.default_period == 'day'

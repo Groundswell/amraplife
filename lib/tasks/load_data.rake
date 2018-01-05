@@ -181,6 +181,11 @@ namespace :amraplife do
 
 		act = Metric.create title: 'Drive', metric_type: 'sum_value', 	aliases: ['drv', 'driving', 'drove'], unit: sec, default_period: 'day'
 		act.targets.create target_type: :sum_value, direction: :at_most, period: :week, value: 7200
+		act = Metric.create title: 'Cook', metric_type: 'sum_value', 	aliases: ['cooking', 'cooked'], unit: sec, default_period: 'week'
+		act.targets.create target_type: :sum_value, direction: :at_most, period: :week, value: 25200
+		act = Metric.create title: 'Clean', metric_type: 'sum_value', 	aliases: ['cln', 'cleaning', 'cleaned'], unit: sec, default_period: 'week'
+		act.targets.create target_type: :sum_value, direction: :at_most, period: :week, value: 7200
+
 		act = Metric.create title: 'Work', metric_type: 'sum_value', 	aliases: ['wrk', 'working', 'worked'], unit: sec, default_period: 'week'
 		act.targets.create target_type: :sum_value, direction: :at_least, period: :week, value: 144000
 		act = Metric.create title: 'Walk', metric_type: 'sum_value', 	aliases: ['wlk', 'walking', 'walked'], unit: sec, default_period: 'day'

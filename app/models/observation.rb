@@ -8,7 +8,7 @@ class Observation < ActiveRecord::Base
 	before_create 	:set_defaults
 	validate 		:gotta_have_value_or_notes
 
-	belongs_to 	:observed, polymorphic: true
+	belongs_to 	:observed, polymorphic: true, touch: true
 	belongs_to 	:user
 	belongs_to 	:unit
 

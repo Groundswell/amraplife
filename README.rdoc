@@ -1,3 +1,3 @@
 == README
 
-* % not being parsed correctly. e,g, "mood is 45%" = sorry I didn't understand that. "mood = 45" works...
+* Add time record???... e.g. I woke up at 6:34am
