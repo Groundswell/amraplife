@@ -415,7 +415,7 @@ class ObservationBotService < AbstractBotService
 					range = Time.zone.now.beginning_of_year..Time.zone.now.end_of_day
 					target_period = 'per year'
 					current_period = 'this year'
-				else
+				else # forever
 					range = "2001-01-01".to_date..Time.zone.now.end_of_day
 					target_period = ''
 					current_period = ''
@@ -431,20 +431,32 @@ class ObservationBotService < AbstractBotService
 				when 'avg_value'
 					current = metric.observations.where( recorded_at: range ).average( :value )
 					target_type = "average"
+				when 'max_value'
+					current = metric.observations.where( recorded_at: range ).maximum( :value )
+					target_type = "max"
+				when 'min_value'
+					current = metric.observations.where( recorded_at: range ).minimum( :value )
+					target_type = "min"
 				end
+
 
 			end
 
-			formatted_target = metric.active_target.unit.convert_from_base( metric.active_target.value, show_units: true ) #UnitService.new( val: metric.target, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric, show_units: true ).convert_to_display
-
-			formatted_current = metric.unit.convert_from_base( current, show_units: true ) #UnitService.new( val: current, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric, show_units: true ).convert_to_display
-
 			delta = current - metric.active_target.value
-			formatted_delta = metric.unit.convert_from_base( delta.abs, show_units: true )# UnitService.new( val: delta.abs, unit: metric.unit, disp_unit: metric.display_unit, use_metric: user.use_metric, show_units: true ).convert_to_display
+
+			unless metric.active_target.target_type == 'count'
+				formatted_target = metric.active_target.unit.convert_from_base( metric.active_target.value, show_units: true )
+				formatted_current = metric.unit.convert_from_base( current, show_units: true )
+				formatted_delta = metric.unit.convert_from_base( delta.abs, show_units: true )
+			else
+				formatted_target = metric.active_target.value
+				formatted_current = current
+				formatted_delta = delta.abs
+			end
 			
 			direction = delta > 0 ? 'over' : 'under'
 
-			if metric.active_target.target_type == 'value'
+			if metric.active_target.target_type == 'current_value'
 				response = "You have a target of #{metric.active_target.direction.gsub( /_/, ' ' )} #{formatted_target}. Your most recent #{metric.title} is #{formatted_current}. "
 				response += "You are #{direction} your target by #{formatted_delta}."
 			else
