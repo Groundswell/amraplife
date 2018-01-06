@@ -4,7 +4,15 @@ class ObservationBotService < AbstractBotService
 
  		assign_metric: {
 			utterances: [
-				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*track\s+(my)?\s*{action}',
+				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*track my {action} {unit}',
+				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*track my {action}',
+				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*track {action} {unit}',
+				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*track {action}',
+
+				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*start tracking my {action} {unit}',
+				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*start tracking my {action}',
+				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*start tracking {action} {unit}',
+				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*start tracking {action}',
 			],
 			slots: {
 				action: 'Action',
@@ -343,7 +351,9 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
-		metric = get_user_metric( user, params[:action], nil, true )
+		unit = params[:unit].singularize
+
+		metric = get_user_metric( user, params[:action], unit, true )
 
 		response = "Great, I've added #{metric.title}. You can start logging it by saying '#{metric.title} is some value.'"
 		add_speech( response )
@@ -938,7 +948,7 @@ class ObservationBotService < AbstractBotService
 			if action.present?
 				
 				# clean up the action string... some of our matchers leave cruft
-				action = action.gsub( /(log|record|to |my | todays | is| are| was| = |i | for|timer)/i, '' ).strip
+				action = action.gsub( /(\Alog|\Arecord|to |my | todays | is| are| was| = |i | for|timer)/i, '' ).strip
 
 				# first, check the user's existing assigned metrics. Return that if exists...
 				if user.metrics.find_by_alias( action.downcase )

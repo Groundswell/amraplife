@@ -1,10 +1,16 @@
-%h1
-	Editing Observation 
-	- if @observation.observed.present?
-		of
-		= @observation.observed.title
+
 .main-box.clearfix
 	.main-box-header.clearfix
+		.row
+			.col-xs-10
+				%h1
+					Editing Observation 
+					- if @observation.observed.present?
+						of
+						= @observation.observed.title
+			.col-xs-2
+				%a.btn.btn-danger{ href: observation_path( @observation ), data: { method: 'delete', confirm: 'Are you sure?' } }
+					Delete
 		
 	.main-box-body.clearfix
 		= form_for @observation do |f|
@@ -12,11 +18,13 @@
 				.col-sm-8
 					.form-group
 						= f.label :value
-						.input-group
-							= f.text_field :value, value: @observation.display_value( show_units: false ), class: 'form-control'
-							%span.input-group-addon
-								= @observation.unit.try( :abbrev )
-					
+
+						= f.text_field :value, value: @observation.display_value, class: 'form-control'
+
+
+						stored value:
+						= @observation.value
+						
 					.row
 						.col-xs-12
 							.form-group
@@ -24,6 +32,7 @@
 								= f.text_area :notes, class: 'form-control'
 				.col-sm-4
 					.well
+
 						.form-group
 							= f.label :started_at
 							.input-group.date

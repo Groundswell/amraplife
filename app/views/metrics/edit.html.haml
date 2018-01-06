@@ -1,8 +1,14 @@
 .main-box.clearfix
 	.main-box-header.clearfix
-		%h1
-			Editing
-			= @metric.title
+		.row
+			.col-xs-10
+				%h1
+					Editing
+					= @metric.title
+			.col-xs-2
+				%a.btn.btn-danger{ href: metric_path( @metric ), data: { method: 'delete', confirm: 'Are you sure? ALL related observations will also be deleted.' } }
+					Delete
+
 	.main-box-body.clearfix
 		= form_for @metric do |f|
 			.row
@@ -17,60 +23,66 @@
 
 					%h3
 						Summary
-					%table.table
-						%tbody
-							%tr
-								%td
-									%b Count
-								%td
-									= pluralize @metric.observations.count, 'Observation'
-							%tr
-								%td
-									%b Last
-								%td
-									= @metric.observations.order( recorded_at: :desc ).first.display_value
-									%br
-									= @metric.observations.order( recorded_at: :desc ).first.recorded_at.to_s( :short )
-							%tr
-								%td
-									%b Max
-								%td
-									= @metric.unit.convert_from_base( @metric.observations.maximum( :value ) )
-							%tr
-								%td
-									%b Min
-								%td
-									= @metric.unit.convert_from_base( @metric.observations.minimum( :value ) )
-							
-							%tr
-								%td
-									%b Total
-								%td
-									= @metric.unit.convert_from_base( @metric.observations.sum( :value ) )
-							%tr
-								%td
-									%b Avg
-								%td
-									= @metric.unit.convert_from_base( @metric.observations.average( :value ) )
-
-
-
-					%h3
-						Observations of this metric
-					%table.table
-						%thead
-							%th
-							%th
-							%th
-						%tbody
-							- @metric.observations.order( recorded_at: :desc ).limit( 50 ).each do |obs|
+					- if @metric.observations.present?
+						%table.table
+							%tbody
 								%tr
 									%td
-										= obs.display_value( show_units: true )
+										%b Count
 									%td
-										= obs.recorded_at.to_s( :long )
+										= pluralize @metric.observations.count, 'Observation'
+								%tr
 									%td
-										= obs.notes
+										%b Last
+									%td
+
+										= @metric.observations.order( recorded_at: :desc ).first.display_value
+										%br
+										= @metric.observations.order( recorded_at: :desc ).first.recorded_at.to_s( :short )
+								%tr
+									%td
+										%b Max
+									%td
+										= @metric.unit.convert_from_base( @metric.observations.maximum( :value ) )
+								%tr
+									%td
+										%b Min
+									%td
+										= @metric.unit.convert_from_base( @metric.observations.minimum( :value ) )
+								
+								%tr
+									%td
+										%b Total
+									%td
+										= @metric.unit.convert_from_base( @metric.observations.sum( :value ) )
+								%tr
+									%td
+										%b Avg
+									%td
+										= @metric.unit.convert_from_base( @metric.observations.average( :value ) )
+					
+						%h3
+							Recent Observations of this metric
+						%table.table
+							%thead
+								%th
+								%th
+								%th
+							%tbody
+								- @metric.observations.order( recorded_at: :desc ).limit( 50 ).each do |obs|
+									%tr
+										%td
+											= link_to obs.display_value( show_units: true ), edit_observation_path( obs )
+										%td
+											= obs.recorded_at.to_s( :long )
+										%td
+											= obs.notes
+					- else
+						No observations yet
+
+
+
+					
 									
 									
 

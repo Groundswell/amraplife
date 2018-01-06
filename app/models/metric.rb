@@ -108,7 +108,7 @@ class Metric < ActiveRecord::Base
 				self.aliases[index] = value.parameterize
 			end
 			self.aliases = self.aliases.sort
-			self.unit ||= Unit.nada
+			self.unit ||= Unit.nada.first
 		end
 
 		def unique_aliases

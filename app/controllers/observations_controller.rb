@@ -33,7 +33,31 @@ class ObservationsController < ApplicationController
 	end
 
 	def update
-		@observation.update( observation_params )
+
+		@observation.status = observation_params[:status]
+		@observation.started_at = observation_params[:started_at]
+		@observation.ended_at = observation_params[:ended_at]
+		@observation.recorded_at = observation_params[:recorded_at]
+
+		if @observation.unit.is_time?
+			val = observation_params[:value]
+		else
+
+			unit = observation_params[:value].strip.split( /\s+/ ).last.gsub( /\d+/, '' ).singularize
+			val = observation_params[:value].strip.split( /\s+/ ).first.gsub( /[a-zA-Z]+/, '' )
+		end
+
+
+		if unit.present?
+			stored_unit = Unit.find_by_alias( unit )
+			@observation.unit = stored_unit if stored_unit.present?
+		end
+
+		@observation.unit ||= @observation.parent_obj.unit
+
+		@observation.value = @observation.unit.convert_to_base( val )
+
+		@observation.save
 
 		redirect_to :back
 	end
@@ -45,19 +69,7 @@ class ObservationsController < ApplicationController
 		end
 
 		def observation_params
-
-			# todo
-			params[:observation][:display_unit] = params[:observation][:display_unit].chomp('.').singularize
-			
-			val_to_store =  UnitService.new( val: params[:observation][:value], stored_unit: params[:observation][:unit], display_unit: params[:observation][:display_unit] ).convert_to_stored_value
-			
-			if val_to_store == @observation.value
-				params[:observation].delete( :value )
-			else
-				params[:observation][:value] = val_to_store
-			end
-
-			params.require( :observation ).permit( :recorded_at, :started_at, :ended_at, :value, :unit, :display_unit, :notes )
+			params.require( :observation ).permit( :status, :recorded_at, :started_at, :ended_at, :value, :notes )
 		end
 
 end

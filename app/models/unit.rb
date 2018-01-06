@@ -44,7 +44,10 @@ class Unit < ActiveRecord::Base
 	def convert_to_base( val, opts={} )
 
 		if self.is_time?
-			return ChronicDuration.parse( "#{val} #{self.name}" )
+			if not( val.strip.match( /\D+/ ) )
+				val = "#{val} #{self.name}"
+			end
+			return ChronicDuration.parse( val )
 		elsif self.is_percent?
 			return val.to_f / 100
 		elsif self.base_unit.present?

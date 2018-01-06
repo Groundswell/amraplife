@@ -1,13 +1,15 @@
 
-.row
-	.col-sm-12
-		%h3 Quick Log
-		= form_for UserInput.new, html: { style: 'margin: auto 1em;' } do |f|
-			= f.text_field :content, class: 'form-control', placeholder: 'Hi There!'
-			.pull-right= f.submit 'Submit', class: 'btn btn-success btn-lg', style: 'margin: 0.5em auto;'
-			.clearfix
-.row
-	.col-sm-8
+%h3 Quick Log
+
+= form_for UserInput.new, html: { style: 'margin: auto 1em;' } do |f|
+	.row
+		.col-sm-10
+			= f.text_field :content, class: 'form-control lg', placeholder: 'Hi There!'
+		.col-sm-2
+			= f.submit 'Submit', class: 'btn btn-success btn-lg', style: 'margin: auto;'
+			
+.row{ style: 'margin-top:2em;' }
+	.col-sm-7
 		.main-box.clearfix.project-box.purple-box
 			.main-box-body.clearfix
 				.project-box-header.purple-bg
@@ -55,7 +57,7 @@
 									Read the guide
 								to learn all about what Life Meter can do.
 
-	.col-sm-4
+	.col-sm-5
 		.main-box.clearfix.project-box.emerald-box
 			.main-box-body.clearfix
 				.project-box-header.emerald-bg
