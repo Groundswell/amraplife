@@ -46,6 +46,10 @@ class Target < ActiveRecord::Base
 	def display_value( opts={} )
 		opts[:precision] ||= 2
 
+		if self.target_type == 'count'
+			return "#{self.value} observation"
+		end
+
 		if self.unit.nil?
 			"#{self.value}"
 		else

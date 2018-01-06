@@ -109,18 +109,32 @@ class ObservationBotService < AbstractBotService
 
  		set_target:{
  			utterances: [
+
+ 				# todo -- send this into a context: e.g. "set a target..." resp: 'ok, for which which metric?' 'how many' etc...
+
+ 				# syntax for sum_value or pr metrics where action_name is the unit, like '...50 pushups per day' or '2000 calories' 
+ 				# set a target of at most 1500 cals total per day
+ 				'set\s+(a\s+)?(target|goal)\s+of\s+{target_direction}\s+{value}\s+{action}\s+{target_type}\s+{target_period}',
  				# set a target of at most 1500 cals per day
- 				'set\s+(a\s+)?target\s+of\s+{target_direction}\s+{value}\s+{action}\s+{target_period}',
+ 				'set\s+(a\s+)?t(arget|goal)\s+of\s+{target_direction}\s+{value}\s+{action}\s+{target_period}',
  				# set a target of 1500 cals per day
- 				'set\s+(a\s+)?target\s+of\s+{value}\s+{action}\s+{target_period}',
+ 				'set\s+(a\s+)?(target|goal)\s+of\s+{value}\s+{action}\s+{target_period}',
  				# set a target of 1500 cals 
- 				'set\s+(a\s+)?target\s+of\s+{value}\s+{action}',
+ 				'set\s+(a\s+)?(target|goal)\s+of\s+{value}\s+{action}',
 
+ 				# syntax for current value stat like weight
+ 				'set\s+(a\s+)?(target|goal)\s+{action}\s+of\s+{target_direction}\s+{value}\s*{unit}\s+{target_type}',
+ 				'set\s+(a\s+)?(target|goal)\s+{action}\s+of\s+{target_direction}\s+{value}\s*{unit}',
+ 				'set\s+(a\s+)?(target|goal)\s+{action}\s+of\s+{value}\s*{unit}',
+ 				
 
- 				# 'set\s+(a\s+)?target\s+for\s+{action}',
- 				# 'set\s+(a\s+)?target\s+of\s+{value}\s*(?:{unit})?\s+for\s+{action}',
- 				# 'set\s+(a\s+)?target\s+of\s+{target_direction}\s+{value}\s*(?:{unit})?\s+for\s+{action}',
- 				# 'set\s+(a\s+)?target\s+of\s+{target_direction}\s+{value}\s*(?:{unit})?\s+{target_period}\s+for\s+{action}',
+ 				'set\s+(a\s+)?target\s+for\s+{action}\s+of\s+{target_direction}\s+{value}\s*(?:{unit})?\s+{target_period}\s+{target_type}',
+ 				'set\s+(a\s+)?target\s+for\s+{action}\s+of\s+{target_direction}\s+{value}\s*(?:{unit})?\s+{target_period}',
+ 				'set\s+(a\s+)?target\s+for\s+{action}\s+of\s+{target_direction}\s+{value}\s*(?:{unit})?',
+ 				'set\s+(a\s+)?target\s+for\s+{action}\s+of\s+{value}\s*(?:{unit})?\s{target_period}',
+ 				'set\s+(a\s+)?target\s+for\s+{action}\s+of\s+{value}\s*(?:{unit})?',
+ 				'set\s+(a\s+)?target\s+for\s+{action}',
+
 
  			],
  			slots:{
@@ -295,21 +309,21 @@ class ObservationBotService < AbstractBotService
 		
 		TargetDirection: {
 			regex: [
-				'at least|at most|exactly|minimum|maximum'
+				'at least|at most|exactly|min|max'
 				],
 				values: []
 		},
 
 		TargetPeriod: {
 			regex: [
-				'per day|per week|per month|daily|weekly|monthly|forever|all time|all-time'
+				'per hour|per day|per month|per year|daily|weekly|monthly|yearly|forever|all time|all-time'
 				],
 				values: []
 		},
 
 		TargetType: {
 			regex: [
-				'total|average|count'
+				'total|average|count|checkins|observations'
 				],
 				values: []
 		},
@@ -381,7 +395,7 @@ class ObservationBotService < AbstractBotService
 		end
 
 		if metric.active_target.present?
-			if metric.active_target.target_type == 'value'
+			if metric.active_target.target_type == 'current_value'
 				current = metric.observations.order( created_at: :desc ).first.value
 			else
 				case metric.active_target.period
@@ -699,9 +713,11 @@ class ObservationBotService < AbstractBotService
 		unit ||= metric.unit 
 
 		direction = params[:target_direction].try( :downcase )
-		direction.gsub!( /\s+/, '_' ) if direction.present?
-		direction = 'at_least' if direction == 'minimum'
-		direction = 'at_most' if direction == 'maximum'
+		if direction.present?
+			direction.gsub!( /\s+/, '_' )
+			direction = 'at_least' if direction.match( /min/ )
+			direction = 'at_most' if direction .match( /max/ )
+		end
 		direction ||= system_target.direction 
 
 		period = params[:target_period] 
@@ -709,6 +725,7 @@ class ObservationBotService < AbstractBotService
 			period.gsub!( /\s+/, '_' )
 			period = 'hour' if period.match( /hour/ )
 			period = 'day' if period.match( /day/ )
+			period = 'day' if period.match( /daily/ )
 			period = 'week' if period.match( /week/ )
 			period = 'month' if period.match( /month/ )
 			period = 'year' if period.match( /year/ )
@@ -716,7 +733,14 @@ class ObservationBotService < AbstractBotService
 			period = system_target.period
 		end
 
-		type = params[:target_type] || system_target.target_type
+		type = params[:target_type] 
+		if type.present?
+			type = 'sum_value' if type.match( /total/ )
+			type = 'avg_value' if type.match( /average/ )
+			type = 'count' if type.match( /check|observation/ )
+		end
+		type = 'count' if params[:unit].present? && params[:unit].match( /check|observation/ )
+		type ||= system_target.target_type
 
 		target = metric.targets.where( user: user ).last || metric.targets.new( user: user )
 
@@ -724,12 +748,16 @@ class ObservationBotService < AbstractBotService
 		target.direction = direction
 		target.period = period
 		target.target_type = type
-		target.value = metric.unit.convert_to_base( value )
 
+		unless type == 'count'
+			target.value = metric.unit.convert_to_base( value )
+		else
+			target.value = value 
+		end
 
 		target.save
 
-		disp_value = target.unit.convert_from_base( target.value )
+		disp_value = target.display_value
 
 
 		response = "I set a target of #{Target.directions[target.direction]} #{disp_value} #{Target.periods[target.period]} for #{metric.title}."
@@ -848,7 +876,11 @@ class ObservationBotService < AbstractBotService
 			value = user.observations.for( metric ).where( recorded_at: range ).sum( :value )
 		end
 
-		formatted_value = metric.unit.convert_from_base( value )
+		unless metric.metric_type == 'count'
+			formatted_value = metric.unit.convert_from_base( value )
+		else
+			formatted_value = "#{value} observations"
+		end
 
 		verb = params[:verb]
 		if verb.blank? || verb.to_s.match( /did i|do i/i )
@@ -866,11 +898,6 @@ class ObservationBotService < AbstractBotService
 		add_speech( response )
 
 		user.user_inputs.create( content: raw_input, action: 'reported', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{response}'." )
-
-		# todo -- parse notes for calories burned modifier
-		# parse notes for time_period
-		# report sum
-
 
 	end
 	
@@ -946,24 +973,28 @@ class ObservationBotService < AbstractBotService
 		def get_user_metric( user, action, unit=nil, create=false )
 
 			if action.present?
-				
 				# clean up the action string... some of our matchers leave cruft
-				action = action.gsub( /(\Alog|\Arecord|to |my | todays | is| are| was| = |i | for|timer)/i, '' ).strip
+				action = action.gsub( /(\Alog|\Arecord|\Ai did|\Adid|to |my | todays | is| are| was| = |i | for|timer)/i, '' ).strip
+
+				# clean up unit
+				unit ||= 'nada'
+				unit = unit.downcase.singularize
 
 				# first, check the user's existing assigned metrics. Return that if exists...
 				if user.metrics.find_by_alias( action.downcase )
 					return user.metrics.find_by_alias( action.downcase )
 				end
+
 				# also check the user's existing assigned metrics based on unit that if exists...
-				if unit.present? && user.metrics.find_by_alias( unit.try( :downcase ) )
-					return user.metrics.find_by_alias( unit.downcase )
+				if unit.present? && user.metrics.find_by_alias( unit )
+					return user.metrics.find_by_alias( unit )
 				end
 
 				# if we didn't find it in the user's assigned metric list, and create option is invoked...
 				if create
 					# check the system default metrics
 					system_metric = Metric.where( user_id: nil ).find_by_alias( action.downcase )
-					system_metric ||= Metric.where( user_id: nil ).find_by_alias( unit.try( :downcase ) )
+					system_metric ||= Metric.where( user_id: nil ).find_by_alias( unit )
 
 					if system_metric.present?
 						# assign with default display units based on the user's preference
@@ -993,8 +1024,10 @@ class ObservationBotService < AbstractBotService
 						
 						if users_unit = Unit.find_by_alias( unit )
 							observed_metric.unit = users_unit
-						elsif unit.present?
+						elsif unit != 'nada'
 							observed_metric.unit = Unit.create( user_id: user.id, name: unit, abbrev: unit )
+						else
+							observed_metric.unit = Unit.nada.first
 						end
 
 						observed_metric.user = user

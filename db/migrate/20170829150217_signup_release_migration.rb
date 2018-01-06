@@ -62,13 +62,11 @@ class SignupReleaseMigration < ActiveRecord::Migration
 		add_column		:metrics, :created_at, :datetime
 		add_column		:metrics, :updated_at, :datetime
 
-
 		add_column		:observations, :unit_id, :integer
-		add_column		:observations, :status, :integer, default: 1
-
 		rename_column :users, :use_metric, :use_imperial_units
 
-
+		# comment these out to rollback
+		add_column		:observations, :status, :integer, default: 1
 		change_column_default :users, :use_imperial_units, true
 
 	end

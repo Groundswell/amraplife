@@ -1,3 +1,4 @@
 == README
 
-* Add time record???... e.g. I woke up at 6:34am
+* Add event time record???... e.g. I woke up at 6:34am
+* Add money? e.g. I spent $2.23 on item.... 
