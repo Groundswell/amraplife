@@ -15,7 +15,7 @@
 		%table.table.table-striped
 			%thead
 				%th Name
-				%th Status
+				%th Metric
 				%th
 			%tbody
 				- @units.each do |unit|
@@ -23,7 +23,7 @@
 						%td
 							= link_to unit.name, edit_user_unit_path( unit )
 						%td
-							= unit.status
+							= Metric.find_by( id: unit.metric_id ).title
 						%td
 							.btn-group
 								%button.btn.btn-mini.btn-default.dropdown-toggle{ data: { toggle: :dropdown } }

@@ -167,8 +167,15 @@ namespace :amraplife do
 		nutrition = Metric.create title: 'Soda', metric_type: 'sum_value', 	aliases: [ 'of soda', 'coke', 'pepsi' ], unit: ml, default_period: 'day'
 		nutrition.targets.create target_type: :sum_value, direction: :at_most, period: :day, period: :week, value: 946.353
 
-		nutrition = Metric.create title: 'Alcohol', metric_type: 'sum_value', 	aliases: [ 'of alcohol', 'beer', 'wine', 'liquor' ], unit: ml, default_period: 'day'
+		nutrition = Metric.create title: 'Alcohol', metric_type: 'sum_value', 	aliases: [ 'liquor', 'drinks' ], unit: ml, default_period: 'day'
 		nutrition.targets.create target_type: :sum_value, direction: :at_most, period: :week, value: 120
+
+		nutrition = Metric.create title: 'Beer', metric_type: 'sum_value', 	aliases: [ 'beers' ], unit: ml, default_period: 'day'
+		nutrition.targets.create target_type: :sum_value, direction: :at_most, period: :week, value: 120
+
+		nutrition = Metric.create title: 'Wine', metric_type: 'sum_value', 	aliases: [ 'wines' ], unit: ml, default_period: 'day'
+		nutrition.targets.create target_type: :sum_value, direction: :at_most, period: :week, value: 120
+
 
 		act = Metric.create title: 'Sleep', metric_type: 'sum_value', 	aliases: ['slp', 'sleeping', 'slept', 'nap', 'napping', 'napped'], unit: sec, default_period: 'day'
 		act.targets.create target_type: :sum_value, direction: :at_least, period: :day, value: 28800

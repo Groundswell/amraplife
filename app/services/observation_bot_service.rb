@@ -594,13 +594,12 @@ class ObservationBotService < AbstractBotService
 			user_unit = 'fl oz'
 		end
 
-		unit = Unit.find_by_alias( user_unit ) || metric.unit
-
-		val = params[:value].to_f * unit.conversion_factor
-
 		# fetch the metric
 		metric = get_user_metric( user, metric_alias, user_unit, true )
 
+		unit = Unit.find_by_alias( user_unit ) || metric.unit
+
+		val = params[:value].to_f * unit.conversion_factor
 
 		observation = user.observations.create( observed: metric, value: val, unit: unit, notes: @raw_input )
 
@@ -1017,22 +1016,27 @@ class ObservationBotService < AbstractBotService
 						observed_metric ||= system_metric.dup
 						observed_metric.user = user
 
-						#if not( user.use_metric? ) && not( system_metric.metric_type == 'nutrition' ) # hack to keep from converting grams of nutrient to ounces
-							#if UnitService::METRIC_TO_IMPERIAL_MAP[ observed_metric.display_unit ].present?
-							#	observed_metric.display_unit = UnitService::METRIC_TO_IMPERIAL_MAP[ observed_metric.display_unit ]
-							#end
-						#end
 
+						if unit.blank?
+							observed_metric.unit = Unit.nada.first
 						# convert unit user gave us to base correct unit
-						if users_unit = Unit.find_by_alias( unit )
+						elsif users_unit = Unit.find_by_alias( unit )
 							observed_metric.unit = users_unit
-						elsif user.use_imperial_units?
+						else
+							# create a custom unit
+							observed_metric.unit = Unit.create name: unit, user_id: user.id, aliases: [ unit.pluralize ]
+						end
+						
+						if user.use_imperial_units?
 							# didn't get a unit from the user... translate to their preference
 							# by default, system metric units are metric
 							observed_metric.unit = observed_metric.unit.imperial_correlate || observed_metric.unit
 						end
 
 						observed_metric.save
+
+						observed_metric.unit.update( metric_id: observed_metric.id ) if observed_metric.unit.user_id.present?
+
 						return observed_metric
 					else
 						# gotta make a new metric from scratch
