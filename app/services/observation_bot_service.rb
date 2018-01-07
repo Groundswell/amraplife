@@ -25,7 +25,7 @@ class ObservationBotService < AbstractBotService
 			utterances: [
 				'(to)?\s*check\s*(my)?\s*{action}\s*target',
 				'(to)?\s*check\s*(my)?\s*{action}',
-				'how (much|many) {action} do I have left',
+				'how (much|many) {action} do I have.*',
 				'how is\s*(my)?\s*{action}',
 				'how\'s\s*(my)?\s*{action}',
 				'hows\s*(my)?\s*{action}',
@@ -63,9 +63,10 @@ class ObservationBotService < AbstractBotService
 
 		log_drink_observation:{
 			utterances: [
+				'(?:that)?(?:i)?\s*(drank|drink)\s*{value}\s*{unit}\s+of\s+{action}',
 				'(?:that)?(?:i)?\s*(drank|drink)\s*{value}\s*{action}',
-				'(?:that)?(?:i)?\s*(drank|drink)\s*{value}\s*{unit}\s*(?:of)?\s*{action}',
-				'(?:that)?(?:i)?\s*(drank|drink)\s*{unit}\s*(?:of)?\s*{action}',
+				
+				#'(?:that)?(?:i)?\s*(drank|drink)\s*{unit}\s*(?:of)?\s*{action}',
 			],
 			slots: {
 				action: 'Action',
@@ -578,8 +579,6 @@ class ObservationBotService < AbstractBotService
 			user_unit ||= params[:action].match( /\S+\s/ ).to_s.strip.singularize
 		end
 
-		# fetch the metric
-		metric = get_user_metric( user, metric_alias, 'l', true )
 
 		# invocations like 'a cup of milk' leave value params nil
 		# we';ll assume one unless given a number like
@@ -590,13 +589,17 @@ class ObservationBotService < AbstractBotService
 		user_unit.gsub!( /(\Aa.*\s)/i, '' )
 
 
-		if [ 'ounce', 'oz'].include?( :user_unit )
+		if [ 'ounce', 'oz' ].include?( user_unit.singularize )
 			user_unit = 'fl oz'
 		end
 
 		unit = Unit.find_by_alias( user_unit ) || metric.unit
 
 		val = params[:value].to_f * unit.conversion_factor
+
+		# fetch the metric
+		metric = get_user_metric( user, metric_alias, user_unit, true )
+
 
 		observation = user.observations.create( observed: metric, value: val, unit: unit, notes: @raw_input )
 
