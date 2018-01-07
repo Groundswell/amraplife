@@ -8,6 +8,7 @@ class User < SwellMedia::User
 	has_many :metrics
 	has_many :observations
 	has_many :targets
+	has_many :units # custom units entered by the user: e.g. water bottle
 	has_many :user_inputs
 
 

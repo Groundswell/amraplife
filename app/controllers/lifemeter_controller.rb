@@ -73,7 +73,7 @@ class LifemeterController < ApplicationController
 		current_user.gender = params[:gender] if params[:gender].present?
 		current_user.dob = params[:dob] if params[:dob].present?
 		current_user.email = params[:email] unless params[:email].blank?
-		current_user.use_metric = params[:use_metric]
+		current_user.use_imperial_units = params[:use_imperial_units]
 		if params[:new_password].present?
 			if current_user.encrypted_password.nil?
 				if params[:new_password] == params[:new_password_confirmation]

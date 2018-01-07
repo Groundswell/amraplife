@@ -482,8 +482,8 @@ ActiveRecord::Schema.define(version: 20170829150217) do
     t.hstore   "properties",    default: {}
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "unit_id"
     t.integer  "status",        default: 1
+    t.integer  "unit_id"
   end
 
   add_index "observations", ["parent_id"], name: "index_observations_on_parent_id", using: :btree
@@ -718,6 +718,7 @@ ActiveRecord::Schema.define(version: 20170829150217) do
     t.integer  "base_unit_id"
     t.integer  "imperial_correlate_id"
     t.integer  "user_id"
+    t.integer  "metric_id"
     t.float    "conversion_factor",     default: 1.0
     t.string   "name"
     t.string   "slug"

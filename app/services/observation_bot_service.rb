@@ -26,6 +26,7 @@ class ObservationBotService < AbstractBotService
 				'(to)?\s*check\s*(my)?\s*{action}\s*target',
 				'(to)?\s*check\s*(my)?\s*{action}',
 				'how (much|many) {action} do I have.*',
+				'how is\s*(my)?\s*{action} (d|g)oing',
 				'how is\s*(my)?\s*{action}',
 				'how\'s\s*(my)?\s*{action}',
 				'hows\s*(my)?\s*{action}',

@@ -1,0 +1,45 @@
+.row
+	.col-xs-10
+		%h1
+			Custom Units
+	.col-xs-2
+		%a.btn.btn-success{ data: { toggle: :modal, target: '#new_unit' } }
+			%i.fa.fa-plus-square
+			Add a Custom Unit
+
+.main-box.clearfix
+	.main-box-header.clearfix
+
+	.main-box-body.clearfix
+		= raw paginate @units
+		%table.table.table-striped
+			%thead
+				%th Name
+				%th Status
+				%th
+			%tbody
+				- @units.each do |unit|
+					%tr
+						%td
+							= link_to unit.name, edit_user_unit_path( unit )
+						%td
+							= unit.status
+						%td
+							.btn-group
+								%button.btn.btn-mini.btn-default.dropdown-toggle{ data: { toggle: :dropdown } }
+									%i.fa.fa-cog
+									%b.caret
+								%ul.dropdown-menu
+									%li
+										%a{ href: edit_user_unit_path( unit.id ) }
+											%i.fa.fa-pencil
+											Edit
+									%li.divider
+									%li
+										%a{ href: user_unit_path( unit ), data: { method: 'delete', confirm: 'Are you sure?' } }
+											%i.fa.fa-trash-o
+											Delete!
+		= raw paginate @units
+
+
+= render 'new_modal', args: {}

@@ -44,6 +44,7 @@ class SignupReleaseMigration < ActiveRecord::Migration
 			t.references 	:base_unit
 			t.references 	:imperial_correlate
 			t.references 	:user
+			t.references 	:metric # for user_units to apply to specificmetric. e.g. water bottle vs beer bottle
 			t.float 		:conversion_factor, default: 1
 			t.string		:name
 			t.string		:slug
@@ -65,8 +66,10 @@ class SignupReleaseMigration < ActiveRecord::Migration
 		add_column		:observations, :unit_id, :integer
 		rename_column :users, :use_metric, :use_imperial_units
 
-		# comment these out to rollback
 		add_column		:observations, :status, :integer, default: 1
+
+
+		# comment these out to rollback
 		change_column_default :users, :use_imperial_units, true
 
 	end
