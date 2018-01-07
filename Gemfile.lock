@@ -167,6 +167,8 @@ GEM
       tzinfo
     fission (0.5.0)
       CFPropertyList (~> 2.2)
+    fitbit_api (0.8.1)
+      oauth2 (~> 1.0)
     fog (1.40.0)
       fog-aliyun (>= 0.1.0)
       fog-atmos
@@ -568,6 +570,7 @@ DEPENDENCIES
   elasticsearch
   elasticsearch-model
   elasticsearch-rails
+  fitbit_api
   gibbon
   google_assistant
   jbuilder (~> 2.0)

@@ -1,5 +1,6 @@
 == README
 
+* Add Fitbit api / sanity-check metric/obs data structure
 * Add custom units so user can specify water bottle size, etc....
 * Add event time record???... e.g. I woke up at 6:34am
 * Add money? e.g. I spent $2.23 on item.... 

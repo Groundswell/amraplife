@@ -36,6 +36,7 @@ gem 'elasticsearch'
 gem 'elasticsearch-model'
 gem 'elasticsearch-rails'
 gem 'bonsai-elasticsearch-rails'
+gem 'fitbit_api'
 gem 'gibbon'
 gem "google_assistant"
 gem 'kaminari'
