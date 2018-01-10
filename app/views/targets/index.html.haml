@@ -1,14 +1,15 @@
-.row
-	.col-xs-10
-		%h1
-			Targets
-	.col-xs-2
-		%a.btn.btn-success{ data: { toggle: :modal, target: '#new_target' } }
-			%i.fa.fa-plus-square
-			Add a Target
+
 
 .main-box.clearfix
 	.main-box-header.clearfix
+		.row
+			.col-xs-10
+				%h1
+					Targets
+			.col-xs-2
+				%a.btn.btn-success{ data: { toggle: :modal, target: '#new_target' } }
+					%i.fa.fa-plus-square
+					Add a Target
 
 	.main-box-body.clearfix
 		= raw paginate @targets

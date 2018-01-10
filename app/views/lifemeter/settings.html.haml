@@ -1,7 +1,14 @@
-%h1
-	Settings 
+
 .main-box.clearfix
 	.main-box-header.clearfix
+		.row
+			.col-xs-10
+				%h1
+					Settings 
+			.col-xs-2
+				%a{ href: user_units_path }
+					Custom Units
+
 		
 	.main-box-body.clearfix
 		= form_tag update_settings_lifemeter_index_path, method: :put do
