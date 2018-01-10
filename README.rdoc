@@ -2,4 +2,5 @@
 
 * Add Fitbit api / sanity-check metric/obs data structure
 * wire-up user profile photo update
+* convert chart/stat data to units (or ditch for now)
 * Add custom units so user can specify water bottle size, etc....
