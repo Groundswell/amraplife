@@ -1,0 +1,241 @@
+%h3.text
+	Commands and formats
+%p.text
+	Here is a list of commands and expected behaviors. Anything in parentheses e.g. (to) means it is optional, or simply a dirfferent way of saying the same thing. Anything in braces e.g. {name} means it will be data sent to Life Meter. 
+
+.table-responsive
+	%table.table.table-bordered.table-striped
+		%thead
+			%th Command
+			%th Variations
+			%th Result
+		%tbody
+			
+
+			%tr
+				%td
+					.primary-command "ate {value} ({unit}) (of) {metric}"
+					.example-command 
+						ex. "I ate 300 calories"
+						%br
+						"I ate 15 grams of protein"
+				%td
+					"ate {value}"
+					(defaults to calories)
+				%td
+					Records calories and macronutrients.
+
+			%tr
+				%td
+					.primary-command "burned {value} calories"
+					.example-command 
+						ex. "I burned 200 calories"
+				%td
+					"burned {value}"
+					%br
+					(defaults to calories)
+				%td
+					Records calories burned (ex from excersize).
+
+
+			%tr
+				%td
+					.primary-command
+						"call me {name}"
+					.example-command ex. "call me Cindy"
+				%td
+					"my name is {name}"
+				%td
+					Updates your name
+
+			
+					
+			%tr
+				%td
+					.primary-command
+						"check {metric}
+						"
+					.example-command 
+						ex. "check my calories"
+						%br
+						"tell me about my weight"
+						%br
+						"how many push-ups do I have left"
+				%td
+					"how much (or many) {metric} do I have left"
+					%br
+					"how is (or are) my {metric}"
+					%br
+					"tell me about (my) {metric}"
+				%td
+					Gives a report for how you're doing for that metric relative to your target if any.
+
+			%tr
+				%td
+					.primary-command "drank {value} ({unit}) (of) {metric}"
+					.example-command 
+						ex. "I drank 20oz of water"
+				%td
+					"drank {value}"
+				%td
+					Records drinks. Can use for water, soda, alcohol, etc.
+
+			%tr
+				%td
+					.primary-command "help"
+				%td
+
+				%td
+					Gives Help
+
+			%tr
+				%td
+					.primary-command "inspire me"
+				%td
+					"motivate me"
+					%br
+					"give me inspiration"
+					%br
+					"give me motivation"
+				%td
+					Gives a pithy motivational quote
+					
+			%tr
+				%td
+					.primary-command "journal {notes}"
+					.example-command 
+						ex. "journal that today is the first day of vacation...."
+				%td
+					"dear diary {notes}"
+					%br
+					"note (that) {notes}"
+				%td
+					Creates a free-form journal entry without metrics or observations.
+
+			%tr
+				%td
+					.primary-command
+						"log {value} for {metric}"
+					.example-command 
+						ex. "log 200 calories"
+						%br
+						"log 140 pounds for bench press"
+						%br
+						"my weight is 110 pounds"
+				%td
+					"record my {metric} is {value}"
+					%br
+					"my {metric} is {value}",
+					%br
+					"{metric} = {value}",
+
+				%td
+					Creates an observation of value for the metric."
+			
+			%tr
+				%td
+					.primary-command "set a target of ({target_direction}) {target_value} {metric} ({target_type}) ({target_period})"
+					.example-command 
+						ex. "set a target of at most 2000 calories total per day"
+						%br
+						"seta target for weight of 165"
+				%td
+					"set a target for {metric}"
+				%td
+					Creates a target for the metric.
+
+			%tr
+				%td
+					.primary-command "start {metric} timer"
+					.example-command 
+						ex. "start a workout timer"
+						%br
+						"start meditating"
+				%td
+					"start {metric}"
+				%td
+					Begins a timer for the metric.
+
+			%tr
+				%td
+					.primary-command "stop {metric} timer"
+					.example-command 
+						ex. "stop a workout timer"
+						%br
+						"stop jogging"
+				%td
+					"stop {metric}"
+				%td
+					Stops a timer for the metric and records the elapsed time as the value.
+
+			%tr
+				%td
+					.primary-command "track {metric}"
+					.example-command 
+						ex. "track sleep"
+				%td
+					"Start tracking my {metric}"
+				%td
+					Assigns a Metric to begin tracking.
+
+			%tr
+				%td
+					.primary-command "what is (was) my {metric} ({time_period})"
+					.example-command 
+						ex. "what are my calories"
+						%br
+						"how long did I meditate 5 weeks ago"
+				%td
+					"how much (many|long) did I {metric} ({time_period})"
+				%td
+					Provides a quick report for a metric.
+
+			-#
+
+
+				Set target
+
+
+
+				
+
+				-# %tr
+					%td
+						.primary-command "what is (my) {metric}"
+					%td
+						Reports the last logged value for the metric.
+				-# %tr
+					%td
+						.primary-command "set a target of {value} for {metric}"
+					%td
+						Creates a target for the metric. You may want to further edit the target type in your dashboard.
+				%tr
+					%td
+						.primary-command
+							" set my target
+							%u metric or activity
+							to
+							%u amount
+							"
+						.example-command ex. " set my target calories to 1800 " or " set my target bench press to 150 pounds "
+					%td
+						Creates a target for the metric. You may want to further edit the target type in your dashboard.
+					%td
+						" set my target
+						%u metric or activity
+						to
+						%u amount
+						%u unit
+						",
+						" set target
+						%u metric or activity
+						to
+						%u amount
+						",
+						" set target
+						%u metric or activity
+						to
+						%u amount
+						%u unit
+						"
+

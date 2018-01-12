@@ -1,15 +1,43 @@
 class LifemeterController < ApplicationController
 
-	before_filter :authenticate_user!, only: :dash
+	before_filter :authenticate_user!, only: [:dash, :update_settings, :log]
 
 	def dash
-		@day = ( params[:day].present? && params[:day].to_datetime ) || Time.zone.now
-
 		@inputs = current_user.user_inputs.order( created_at: :desc ).page( params[:page] )
+		# @start_date = 30.days.ago.beginning_of_day
+		# @end_date = Time.zone.now.end_of_day
 
-		@metrics = current_user.metrics
+		# if params[:start_date].present? && params[:end_date].present?
+		# 	@start_date = Date.strptime( params[:start_date], '%m/%d/%Y' ).beginning_of_day
+		# 	@end_date = Date.strptime( params[:end_date], '%m/%d/%Y' ).end_of_day
+		# end
 
-		@timers = current_user.observations.where.not( started_at: nil ).where( value: nil )
+
+		# top_observations 	= current_user.observations.where( observed_type: 'Metric' )
+		# top_observations 	= top_observations.group( :observed_id ).having('COUNT(id) > 1').order( 'COUNT(id) DESC' )
+		# top_observations	= top_observations.dated_between( @start_date, @end_date )
+		# top_metric_ids 		= top_observations.limit(8).pluck( :observed_id )
+
+		# @top_metrics = Metric.none
+		# @top_metrics = Metric.where( id: top_metric_ids ).to_a if top_metric_ids.present?
+
+		# @top_metric_observations = {}
+
+
+		# if @top_metrics.present?
+
+		# 	@top_metrics.each do |metric|
+
+		# 		observations = current_user.observations.for( metric ).dated_between( @start_date, @end_date ).to_a
+
+		# 		@top_metric_observations[metric.id] = observations if observations.present?
+
+		# 	end
+
+		# 	@top_metrics = @top_metrics.select{ |metric| @top_metric_observations[metric.id].present? } || []
+
+		# end
+
 		render layout: 'lifemeter'
 	end
 
@@ -27,13 +55,25 @@ class LifemeterController < ApplicationController
 		render layout: 'lifemeter_splash'
 	end
 
+	def log
+		@day = ( params[:day].present? && params[:day].to_datetime ) || Time.zone.now
+
+		@inputs = current_user.user_inputs.order( created_at: :desc ).page( params[:page] )
+
+		@metrics = current_user.metrics
+
+		@timers = current_user.observations.where.not( started_at: nil ).where( value: nil )
+
+		render layout: 'lifemeter'
+	end
+
 	def update_settings
 
 		current_user.full_name = params[:full_name] if params[:full_name].present?
 		current_user.gender = params[:gender] if params[:gender].present?
 		current_user.dob = params[:dob] if params[:dob].present?
 		current_user.email = params[:email] unless params[:email].blank?
-		current_user.use_metric = params[:use_metric]
+		current_user.use_imperial_units = params[:use_imperial_units]
 		if params[:new_password].present?
 			if current_user.encrypted_password.nil?
 				if params[:new_password] == params[:new_password_confirmation]

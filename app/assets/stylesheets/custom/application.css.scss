@@ -1,3 +1,6 @@
+
+
+
 .buy-btn {
 	min-height: 120px;
 	border: 1px solid #ccc;
@@ -103,6 +106,32 @@ a.color-white:hover, a.color-white:active {
 	position: absolute;
     display: block;
     top: 0; right: 0; bottom: 0; left: 0;
+}
+
+
+.btn-facebook {
+  color: #fff !important;
+  background-color: #3b5998 !important;
+  border-color: #2f477b !important; }
+.btn-facebook:hover {
+  background-color: #2f477b !important;
+  border-color: #263963 !important; }
+
+.btn-success {
+  color: #fff !important;
+  background-color: #03a9f4;
+  border-color: #2980b9; }
+.btn-success:hover, .btn-success:focus, .btn-success:active, .btn-success.active, .open .dropdown-toggle.btn-success {
+  background-color: #2980b9;
+  border-color: #1c5c87;
+}
+
+
+.social-text {
+	margin: 0;
+	padding: 15px 0;
+	text-align: center;
+	font-size: 0.875em;
 }
 
 .content ul li {

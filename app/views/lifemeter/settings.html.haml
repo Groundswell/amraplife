@@ -1,7 +1,14 @@
-%h1
-	Settings 
+
 .main-box.clearfix
 	.main-box-header.clearfix
+		.row
+			.col-xs-10
+				%h1
+					Settings 
+			.col-xs-2
+				%a{ href: user_units_path }
+					Custom Units
+
 		
 	.main-box-body.clearfix
 		= form_tag update_settings_lifemeter_index_path, method: :put do
@@ -38,13 +45,16 @@
 						
 				.col-sm-4
 					.well
-						.form-group
-							= check_box_tag :use_metric, true, current_user.use_metric?, { class: 'form-control', style: 'width:40px;'  }
-							= label_tag :use_metric, 'Use Metric Units?', style: 'display:inline;'
+						.row
+							.col-xs-3
+								= check_box_tag :use_imperial_units, true, current_user.use_imperial_units?, { class: 'form-control'  }
+							.col-xs-9
+								= label_tag :use_imperial_units, 'Use Imperial Units?', style: 'margin-top:1em;'
+						
 
 						.form-group
 							= label_tag :gender
-							= text_field_tag :gender, current_user.gender, class: 'form-control'
+							= select_tag :gender, options_for_select( [ [ 'Unspecified', 'unspecified' ], ['Female', 'female' ], [ 'Male', 'male' ], ], current_user.gender ), { class: 'form-control' }
 						.form-group
 							= label_tag :dob, 'Birthdate:'
 							= text_field_tag :dob, current_user.dob, class: 'form-control'

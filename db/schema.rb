@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170727205200) do
+ActiveRecord::Schema.define(version: 20170829150217) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -388,23 +388,18 @@ ActiveRecord::Schema.define(version: 20170727205200) do
   add_index "media_versions", ["media_id", "status", "id"], name: "index_media_versions_on_media_id_and_status_and_id", using: :btree
 
   create_table "metrics", force: :cascade do |t|
-    t.integer "movement_id"
-    t.string  "title"
-    t.string  "slug"
-    t.text    "aliases",          default: [],         array: true
-    t.string  "unit"
-    t.integer "user_id"
-    t.string  "metric_type"
-    t.text    "description"
-    t.string  "target_period",    default: "all_time"
-    t.string  "target_type",      default: "value"
-    t.float   "target_min"
-    t.float   "target_max"
-    t.integer "availability",     default: 0
-    t.float   "target"
-    t.string  "target_direction", default: "at_most"
-    t.string  "display_unit"
-    t.string  "target_unit"
+    t.integer  "movement_id"
+    t.string   "title"
+    t.string   "slug"
+    t.text     "aliases",        default: [],         array: true
+    t.integer  "user_id"
+    t.string   "metric_type"
+    t.text     "description"
+    t.integer  "availability",   default: 0
+    t.integer  "unit_id"
+    t.string   "default_period", default: "all_time"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "metrics", ["movement_id"], name: "index_metrics_on_movement_id", using: :btree
@@ -479,7 +474,6 @@ ActiveRecord::Schema.define(version: 20170727205200) do
     t.string   "title"
     t.string   "content"
     t.float    "value"
-    t.string   "unit"
     t.string   "rx"
     t.text     "notes"
     t.datetime "started_at"
@@ -488,7 +482,8 @@ ActiveRecord::Schema.define(version: 20170727205200) do
     t.hstore   "properties",    default: {}
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "display_unit"
+    t.integer  "unit_id"
+    t.integer  "status",        default: 1
   end
 
   add_index "observations", ["parent_id"], name: "index_observations_on_parent_id", using: :btree
@@ -645,6 +640,28 @@ ActiveRecord::Schema.define(version: 20170727205200) do
   add_index "recipes", ["slug"], name: "index_recipes_on_slug", unique: true, using: :btree
   add_index "recipes", ["tags"], name: "index_recipes_on_tags", using: :gin
 
+  create_table "targets", force: :cascade do |t|
+    t.integer  "parent_obj_id"
+    t.string   "parent_obj_type"
+    t.integer  "user_id"
+    t.integer  "unit_id"
+    t.string   "target_type",     default: "value"
+    t.float    "value"
+    t.float    "min"
+    t.float    "max"
+    t.string   "direction",       default: "at_most"
+    t.string   "period",          default: "all_time"
+    t.datetime "start_at"
+    t.datetime "end_at"
+    t.integer  "status",          default: 1
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "targets", ["parent_obj_id", "parent_obj_type"], name: "index_targets_on_parent_obj_id_and_parent_obj_type", using: :btree
+  add_index "targets", ["unit_id"], name: "index_targets_on_unit_id", using: :btree
+  add_index "targets", ["user_id"], name: "index_targets_on_user_id", using: :btree
+
   create_table "team_users", force: :cascade do |t|
     t.integer  "team_id"
     t.integer  "user_id"
@@ -696,6 +713,26 @@ ActiveRecord::Schema.define(version: 20170727205200) do
 
   add_index "transactions", ["parent_obj_id", "parent_obj_type"], name: "index_transactions_on_parent_obj_id_and_parent_obj_type", using: :btree
   add_index "transactions", ["reference_code"], name: "index_transactions_on_reference_code", using: :btree
+
+  create_table "units", force: :cascade do |t|
+    t.integer  "base_unit_id"
+    t.integer  "imperial_correlate_id"
+    t.integer  "user_id"
+    t.integer  "metric_id"
+    t.float    "conversion_factor",     default: 1.0
+    t.string   "name"
+    t.string   "slug"
+    t.string   "abbrev"
+    t.integer  "unit_type",             default: 0
+    t.text     "aliases",               default: [],   array: true
+    t.boolean  "imperial",              default: true
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "units", ["base_unit_id"], name: "index_units_on_base_unit_id", using: :btree
+  add_index "units", ["imperial_correlate_id"], name: "index_units_on_imperial_correlate_id", using: :btree
+  add_index "units", ["user_id"], name: "index_units_on_user_id", using: :btree
 
   create_table "user_inputs", force: :cascade do |t|
     t.integer  "user_id"
@@ -765,7 +802,7 @@ ActiveRecord::Schema.define(version: 20170727205200) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "authorization_code"
-    t.boolean  "use_metric",             default: false
+    t.boolean  "use_imperial_units",     default: true
   end
 
   add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", unique: true, using: :btree

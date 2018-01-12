@@ -2,32 +2,32 @@
 <script>
 	new Morris.Line({
   // ID of the element in which to draw the chart.
-  element: 'chart_container',
+  element: '<%= args[:chart_container] || 'chart_container' %>',
   // Chart data records -- each entry in this array corresponds to a point on
   // the chart.
   data: [
-  		<%= data.map{ |e| "{ time: '#{e.recorded_at.strftime('%F %T')}', #{e.observed.title}: #{e.value} }" }.join(',').html_safe %>
-      
-      <% if comp_data.present? %>
+  		<%= args[:data].map{ |e| "{ 'time': '#{e.recorded_at.strftime('%F %T')}', '#{e.observed.title}': #{e.value || 0} }" }.join(',').html_safe %>
+
+      <% if args[:comp_data].present? %>
         <%= ',' %>
-        <%= comp_data.map{ |e| "{ time: '#{e.recorded_at.strftime('%F %T')}', #{e.observed.title}: #{e.value} }" }.join(',').html_safe %>
+        <%= args[:comp_data].map{ |e| "{ 'time': '#{e.recorded_at.strftime('%F %T')}', '#{e.observed.title}': #{e.value || 0} }" }.join(',').html_safe %>
       <% end %>
   ],
   // The name of the data record attribute that contains x-values.
   xkey: 'time',
   // A list of names of data record attributes that contain y-values.
-  <% if @comp_stat.present? %>
-    ykeys: ["<%= @stat.title %>", "<%= @comp_stat.title %>"],
+  <% if args[:comp_stat].present? %>
+    ykeys: ["<%= args[:stat].title %>", "<%= args[:comp_stat].title %>"],
   <% else %>
-    ykeys: ["<%= @stat.title %>"],
+    ykeys: ["<%= args[:stat].title %>"],
   <% end %>
-  
+
   // Labels for the ykeys -- will be displayed when you hover over the
   // chart.
-  <% if @comp_stat.present? %>
-    labels: ["<%= @stat.title %>", "<%= @comp_stat.title %>"],
+  <% if args[:comp_stat].present? %>
+    labels: ["<%= args[:stat].title %>", "<%= args[:comp_stat].title %>"],
   <% else %>
-    labels: ["<%= @stat.title %>"],
+    labels: ["<%= args[:stat].title %>"],
   <% end %>
 
   lineColors: [  '#689f38', '#0288d1',  '#607d8b', '#8e44ad', '#c0392b', '#f39c12'],

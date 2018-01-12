@@ -1,0 +1,26 @@
+%h1
+	Editing Unit
+	= @unit.name
+.main-box.clearfix
+	.main-box-header.clearfix
+		
+	.main-box-body.clearfix
+		= form_for @unit, url: user_unit_path( @unit ) do |f|
+			.row
+				.col-sm-8
+					.row			
+						.col-sm-6
+							= f.label :name
+							= f.text_field :name, class: 'form-control'
+						
+				.col-sm-4
+					.well
+						.form-group
+							=# f.label :status
+							= #f.collection_select :status, Unit.statuses, :first, :first, {}, class: 'form-control'
+
+
+						.form-group
+							= f.submit 'Update', class: 'btn btn-primary'
+
+	

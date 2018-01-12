@@ -6,10 +6,23 @@
 *= require_self
 */
 
+.lifemeter-help{ margin: 0 2em; }
+.lifemeter-help .text{ font-size: 120%; line-height: 1.75em; }
+
 p.text, li.text{
 	font-size: 16px;
 }
 
 h3.text, h4.text{
 	font-weight: bold;
+}
+
+
+.example-command {
+	font-size: 0.8em;
+	padding-left: 1em;
+}
+
+.primary-command {
+	font-weight: normal;
 }

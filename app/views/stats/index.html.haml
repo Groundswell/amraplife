@@ -1,5 +1,5 @@
 
-	
+
 .row
 	.col-xs-12
 
@@ -21,7 +21,7 @@
 					.checkbox-nice.normalizer
 						= check_box_tag :normalize, true, params[:normalize].present?
 						= label_tag :normalize, 'Normalize?'
-						
+
 				.form-group.col-xs-2{ style: 'margin-top:1.5em;' }
 					= submit_tag 'View', class: 'btn btn-primary'
 
@@ -41,11 +41,11 @@
 				= @end_date.strftime( '%m/%d/%Y')
 			.main-box-body.clearfix
 				#chart_container.flot-chart{ style: "width:100%;height:250px;"}
-			
 
-			
+
+
 
 
 =# render 'flot_chart', data: @chart_data
 
-= render 'morris_chart', data: @chart_data, comp_data: @comp_data
+= render 'morris_chart', args: { data: @chart_data, comp_data: @comp_data, stat: @stat, comp_stat: @comp_stat }

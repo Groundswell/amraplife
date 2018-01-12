@@ -1,15 +1,13 @@
 
-%h3 Quick Log
-
-= form_for UserInput.new, html: { style: 'margin: auto 1em;' } do |f|
-	.row
-		.col-sm-10
-			= f.text_field :content, class: 'form-control lg', placeholder: 'Hi There!'
-		.col-sm-2
-			= f.submit 'Submit', class: 'btn btn-success btn-lg', style: 'margin: auto;'
-			
-.row{ style: 'margin-top:2em;' }
-	.col-sm-7
+.row
+	.col-sm-12
+		%h3 Quick Log
+		= form_for UserInput.new, html: { style: 'margin: auto 1em;' } do |f|
+			= f.text_field :content, class: 'form-control', placeholder: 'Hi There!'
+			.pull-right= f.submit 'Submit', class: 'btn btn-success btn-lg', style: 'margin: 0.5em auto;'
+			.clearfix
+.row
+	.col-sm-12
 		.main-box.clearfix.project-box.purple-box
 			.main-box-body.clearfix
 				.project-box-header.purple-bg
@@ -46,6 +44,8 @@
 												ago.
 												%br
 												= input.created_at.to_s( :slashed_time )
+											
+
 					- else
 						%center
 							%h1
@@ -56,39 +56,6 @@
 								%a{ href: '/lifemeter/help' }
 									Read the guide
 								to learn all about what Life Meter can do.
-
-	.col-sm-5
-		.main-box.clearfix.project-box.emerald-box
-			.main-box-body.clearfix
-				.project-box-header.emerald-bg
-					.name
-						%a{ href: '#' }
-							Recent Metrics
-				.project-box-content
-					.main-box.feed
-						.main-box-body.clearfix
-							%ul
-								- current_user.metrics.order( updated_at: :desc ).limit( 10 ).each do |metric|
-									%li.clearfix{ style: 'list-style: none;text-align:left;' }
-										= metric.title
-
-										.time-ago
-											= metric.default_value
-											- if metric.default_period == 'day'
-												%br
-												.pull-right
-													today
-											- elsif metric.default_period == 'week'
-												%br
-												.pull-right
-													this week
-											- elsif metric.default_period == 'month'
-												%br
-												.pull-right
-													this month
-										
-
-				
 
 
 

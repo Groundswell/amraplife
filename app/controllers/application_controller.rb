@@ -23,8 +23,8 @@ class ApplicationController < ActionController::Base
 
 
 	def after_sign_in_path_for(resource)
-		if session[:oauth_uri].present?
-			return session[:oauth_uri]
+		if ( oauth_uri = session.delete(:oauth_uri) ).present?
+			return oauth_uri
 		elsif resource.admin?
 			return '/admin'
 		else

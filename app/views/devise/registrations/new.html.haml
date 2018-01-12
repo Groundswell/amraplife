@@ -43,7 +43,7 @@
 												Or Create an account with
 									.row
 										.col-xs-12.col-sm-8.col-sm-offset-2
-											%a.btn.btn-primary.btn-facebook.col-xs-12
+											%a.auth-pop.btn.btn-primary.btn-facebook.col-xs-12{ href: main_app.user_facebook_omniauth_authorize_path( ga_client_id: ':ga_client_id' ) }
 												%i.fa.fa-facebook
 												Facebook
 										-#.col-xs-12.col-sm-6
@@ -58,62 +58,10 @@
 												Already have an account?
 												%a{ href: main_app.login_path }
 													Log In
+
 				-##login-box-footer
 					.row
 						.col-xs-12
 							Already have an account?
 							%a{ href: main_app.login_path }
 								Log In
-
--#
-	.container
-		.row
-
-			.col-md-5.col-md-offset-3
-				.panel.panel-default{ style: "margin-top: 100px;" }
-					.panel-heading
-						%h3.panel-title
-							Sign Up
-
-					.panel-body
-						= form_for( resource, as: resource_name, url: registration_path( resource_name ), html: { class: 'separate-sections' } ) do |f|
-							= devise_error_messages!
-							.row
-								.form-group.col-md-10
-									.input-group
-										.input-group-addon
-											%i.fa.fa-envelope
-										= f.email_field :email, :autofocus => true, placeholder: 'Email', class: 'form-control'
-
-							.row
-								.form-group.col-md-10
-									.input-group
-										.input-group-addon
-											%i.fa.fa-user
-										= f.text_field :name, placeholder: 'User Name', class: 'form-control'
-
-
-							.row
-								.form-group.col-md-10
-									.input-group
-										.input-group-addon
-											%i.fa.fa-key
-										= f.password_field :password, placeholder: 'Password', class: 'form-control'
-
-
-							.row
-								.form-group.col-md-10
-									.input-group
-										.input-group-addon
-											%i.fa.fa-key
-										= f.password_field :password_confirmation, placeholder: 'Confirm Password', class: 'form-control'
-
-							
-							.row
-								.form-group.col-md-10
-									.input-group
-										= f.submit "Sign up", class: 'btn btn-primary'
-
-					.panel-footer
-						= render "devise/shared/links"
-

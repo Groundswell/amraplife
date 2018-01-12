@@ -1,0 +1,54 @@
+#login-box-inner
+	= form_for (args[:resource] || User.new), as: (args[:resource_name] || 'user'), url: registration_path( (args[:resource_name] || 'user') ), role: :form do |f|
+		.form-group
+			.input-group
+				%span.input-group-addon
+					%i.fa.fa-user
+				= f.text_field :name, placeholder: 'User Name', class: 'form-control'
+		.form-group
+			.input-group
+				%span.input-group-addon
+					%i.fa.fa-envelope
+				= f.text_field :login, autofocus: true, placeholder: "email", class: 'form-control'
+		.form-group
+			.input-group
+				%span.input-group-addon
+					%i.fa.fa-lock
+				= f.password_field :password, placeholder: "password", class: 'form-control'
+		.form-group
+			.input-group
+				%span.input-group-addon
+					%i.fa.fa-unlock-alt
+				= f.password_field :password_confirmation, placeholder: 'Confirm Password', class: 'form-control'
+
+		#remember-me-wrapper
+			.row
+				.col-xs-12
+					.checkbox-nice.text-center
+						= f.check_box :terms, checked: true
+						= f.label :terms, "I accept terms and conditions"
+
+			.row
+				.col-xs-12.col-sm-8.col-sm-offset-2
+					= f.submit "Register", class: 'btn btn-success col-xs-12'
+		.row
+			.col-xs-12
+				%p.social-text.text-center
+					Or Create an account with
+		.row
+			.col-xs-12.col-sm-8.col-sm-offset-2
+				%a.auth-pop.btn.btn-primary.btn-facebook.col-xs-12{ href: main_app.user_facebook_omniauth_authorize_path( ga_client_id: ':ga_client_id' ) }
+					%i.fa.fa-facebook
+					Facebook
+			-#.col-xs-12.col-sm-6
+				%a.btn.btn-primary.btn-twitter.col-xs-12
+					%i.fa.fa-twitter
+					Twitter
+
+
+		.row
+			.col-xs-12
+				%p.social-text.text-center{ style: 'font-size: 16px;' }
+					Already have an account?
+					%a{ href: main_app.login_path }
+						Log In

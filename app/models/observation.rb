@@ -8,8 +8,9 @@ class Observation < ActiveRecord::Base
 	before_create 	:set_defaults
 	validate 		:gotta_have_value_or_notes
 
-	belongs_to 	:observed, polymorphic: true
+	belongs_to 	:observed, polymorphic: true, touch: true
 	belongs_to 	:user
+	belongs_to 	:unit
 
 	def self.dated_between( start_date=1.month.ago, end_date=Time.zone.now )
 		start_date = start_date.to_datetime.beginning_of_day
@@ -32,12 +33,31 @@ class Observation < ActiveRecord::Base
 
 
 	def display_value( opts={} )
-		UnitService.new( val: self.value, stored_unit: self.unit, display_unit: self.display_unit, use_metric: self.user.use_metric, show_units: opts[:show_units] ).convert_to_display
+		opts[:precision] ||= 2
+
+		if self.unit.nil?
+			"#{self.value}"
+		else
+			self.unit.convert_from_base( self.value, opts )
+		end
+		
+		# if self.unit.nil?
+		# 	"#{value}"
+		# elsif self.unit.is_time?
+		# 	return ChronicDuration.output( self.value, format: :chrono )
+		# elsif self.unit.is_percent?
+		# 	return "#{( self.value * 100.to_f ).round( opts[:precision] )}%"
+		# else
+		# 	stored_unit = self.unit.base_unit
+		# 	if stored_unit.present?
+		# 		value = ( self.value / self.unit.conversion_factor.to_f ).round( opts[:precision] )
+		# 	else
+		# 		value = self.value
+		# 	end
+		# 	"#{value} #{self.unit.abbrev}"
+		# end
 	end
 
-	def is_time?
-		self.unit == 's'
-	end
 
 	def stop!
 		self.ended_at = Time.zone.now
@@ -86,7 +106,6 @@ class Observation < ActiveRecord::Base
 			#self.started_at ||= Time.zone.now
 
 			self.unit ||= self.observed.try( :unit )
-			self.display_unit ||= self.observed.try( :display_unit )
 
 		end
 

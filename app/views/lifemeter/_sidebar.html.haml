@@ -48,9 +48,21 @@
 						%a{ href: main_app.observations_path }
 							%i.fa.fa-eye
 							%span
-								Observations
+								Your Observations
 							-#%span.label.label-success.pull-right
 								New
+
+					%li{ class: set_css_if( controller: :targets ) }
+						%a{ href: main_app.targets_path }
+							%i.fa.fa-bullseye
+							%span
+								Your Goals & Targets
+
+					-#%li{ class: set_css_if( controller: :journal ) }
+						%a{ href: main_app.journal_entries_path }
+							%i.fa.fa-book
+							%span
+								Your Journal
 
 					- if current_user.observations.count > 1
 						%li
