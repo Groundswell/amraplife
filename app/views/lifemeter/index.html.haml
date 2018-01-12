@@ -45,8 +45,9 @@
 							And win an Echo Dot *
 
 
-						= render 'application/signin_widget', args: {}
-						-# = form_for SwellMedia::ContactUs.new, url: swell_media.contacts_path do |f|
+						=# render 'application/signin_widget', args: {}
+						
+						= form_for SwellMedia::ContactUs.new, url: swell_media.contacts_path do |f|
 							= f.hidden_field :subject, value: 'lifemeter beta test'
 							.form-group
 								= f.label :email

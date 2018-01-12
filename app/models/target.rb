@@ -38,6 +38,8 @@ class Target < ActiveRecord::Base
 			'max_value' 		=> 'All-Time High',
 			'min_Value'			=> 'All-Time Low',
 			'sum_value' 		=> 'Accumulated Value'
+			#started_at		=> 'Start Time',
+			# recorded_at	=> 'End Time'
 		}
 	end
 
