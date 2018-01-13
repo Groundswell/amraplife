@@ -809,24 +809,45 @@ class ObservationBotService < AbstractBotService
 		# deal with greedy-match action param
 		# e.g. 'calories did I eat' or 'beer did i drink' or 'minutes did i work out'
 
-		# first, strip verbs
-		if params[:action].match( /do i|did i|have i|were/i )
-			params[:action].gsub!( /do i|did i|have i|were/i, '' )
-			candidates = params[:action].split( /\s{2,}/ )
-			metric = get_user_metric( user, candidates.first.downcase, nil, false ) || get_user_metric( user, candidates.second.downcase, nil, false )
-		else
-			metric = get_user_metric( user, params[:action], nil, false )
+		# first, strip I
+		cleaned_action = params[:action].gsub( /\s+i\s+/i, ' ' )
+
+		# next, strip verbs & ' of '
+		cleaned_action.gsub!( /\s+do\s+|\s+did\s+|were|\s+of\s+/i, ' ' )
+
+		# and, strip trailing
+		cleaned_action.gsub!( /\s+do\z|have|\s+for\z|\s+done/i, ' ' )
+
+		cleaned_action.try( :strip! )
+			
+		# ok, lets check for units
+		if cleaned_action.match( /\s+/ )
+			unit_str = cleaned_action.split( /\s+/ )[0]
+			requested_unit = Unit.find_by_alias( unit_str.strip.downcase.singularize )
+			cleaned_action.gsub!( unit_str, '' ) if requested_unit.present?
+		end
+
+		metric = get_user_metric( user, cleaned_action.strip.parameterize, nil, false )
+
+		if metric.nil?
+			cleaned_action.strip.split( /\s+/ ).each do |str|
+				metric = get_user_metric( user, str.strip, nil, false )
+				break if metric.present?
+			end
 		end
 
 		if metric.nil?
-			if candidates.present?
-				Metric.where( user_id: nil ).find_by_alias( candidates.first.downcase ) || Metric.where( user_id: nil ).find_by_alias( candidates.second.downcase )
-			else
-				default_metric ||= Metric.where( user_id: nil ).find_by_alias( params[:action].downcase )
+			default_metric =  Metric.where( user_id: nil ).find_by_alias( cleaned_action.strip.downcase.singularize )
+			cleaned_action.split( /\s+/ ).each do |str|
+				default_metric = Metric.where( user_id: nil ).find_by_alias( str.strip.downcase.singularize )
+				break if default_metric.present?
 			end
+
 			action = default_metric.try( :title ) || params[:action]
 			add_speech("Sorry, you haven't recorded anything for #{action} yet.")
+
 			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found', action: 'reported', system_notes: "Spoke: 'Sorry, you haven't recorded anything for #{action} yet.'" )
+			
 			return
 		end
 
@@ -881,7 +902,7 @@ class ObservationBotService < AbstractBotService
 
 		if user.observations.for( metric ).where( recorded_at: range ).count < 1
 			add_speech("Sorry, there are no observations for #{metric.title} #{period}.")
-			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found', action: 'reported', system_notes: "Spoke: 'Sorry, you haven't recorded anything for #{action} yet.'" )
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found', action: 'reported', system_notes: "Spoke: 'Sorry, there are no observations for #{metric.title} #{period}.'" )
 			return
 		end
 

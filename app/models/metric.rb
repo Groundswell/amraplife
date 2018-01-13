@@ -7,6 +7,7 @@ class Metric < ActiveRecord::Base
 	# benchmark - report max all-time e.g. bench
 
 	before_create 	:set_defaults
+	before_save 	:clean_aliases
 	validate 		:unique_aliases
 
 	validates :title, presence: true
@@ -104,11 +105,14 @@ class Metric < ActiveRecord::Base
 	private
 		def set_defaults
 			self.aliases << self.title.parameterize unless self.aliases.include?( self.title.parameterize )
+			self.unit ||= Unit.nada.first
+		end
+
+		def clean_aliases
 			self.aliases.each_with_index do |value, index|
 				self.aliases[index] = value.parameterize
 			end
 			self.aliases = self.aliases.sort
-			self.unit ||= Unit.nada.first
 		end
 
 		def unique_aliases

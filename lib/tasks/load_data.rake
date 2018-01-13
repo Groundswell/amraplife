@@ -167,13 +167,13 @@ namespace :amraplife do
 		nutrition = Metric.create title: 'Soda', metric_type: 'sum_value', 	aliases: [ 'of soda', 'coke', 'pepsi' ], unit: ml, default_period: 'day'
 		nutrition.targets.create target_type: :sum_value, direction: :at_most, period: :day, period: :week, value: 946.353
 
-		nutrition = Metric.create title: 'Alcohol', metric_type: 'sum_value', 	aliases: [ 'liquor', 'drinks' ], unit: ml, default_period: 'day'
+		nutrition = Metric.create title: 'Alcohol', metric_type: 'sum_value', 	aliases: [ 'liquor', 'of alcohol' ], unit: ml, default_period: 'day'
 		nutrition.targets.create target_type: :sum_value, direction: :at_most, period: :week, value: 120
 
-		nutrition = Metric.create title: 'Beer', metric_type: 'sum_value', 	aliases: [ 'beers' ], unit: ml, default_period: 'day'
+		nutrition = Metric.create title: 'Beer', metric_type: 'sum_value', 	aliases: [ 'beers', 'of beer' ], unit: ml, default_period: 'day'
 		nutrition.targets.create target_type: :sum_value, direction: :at_most, period: :week, value: 120
 
-		nutrition = Metric.create title: 'Wine', metric_type: 'sum_value', 	aliases: [ 'wines' ], unit: ml, default_period: 'day'
+		nutrition = Metric.create title: 'Wine', metric_type: 'sum_value', 	aliases: [ 'wines', 'of wine' ], unit: ml, default_period: 'day'
 		nutrition.targets.create target_type: :sum_value, direction: :at_most, period: :week, value: 120
 
 
@@ -208,7 +208,7 @@ namespace :amraplife do
 		act = Metric.create title: 'Plank Time', metric_type: 'sum_value', aliases: ['plank', 'planked', 'planking'], unit: sec, movement: Movement.find_by_alias( 'plank' ), default_period: 'day'
 		act.targets.create target_type: :sum_value, direction: :at_least, period: :day, value: 20
 
-		act = Metric.create title: 'Push-ups', metric_type: 'sum_value', aliases: ['pushup', 'push', 'puhshups'], unit: rep, movement: Movement.find_by_alias( 'pushup' ), default_period: 'day'
+		act = Metric.create title: 'Push-ups', metric_type: 'sum_value', aliases: ['pushup', 'push', 'pushshups'], unit: rep, movement: Movement.find_by_alias( 'pushup' ), default_period: 'day'
 		act.targets.create target_type: :sum_value, direction: :at_least, period: :day, value: 20
 		
 		act = Metric.create title: 'Pull-ups', metric_type: 'sum_value', aliases: ['pullup', 'pull-up', 'pull', 'pullups'], unit: rep, movement: Movement.find_by_alias( 'pullup' ), default_period: 'day'
