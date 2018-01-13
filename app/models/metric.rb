@@ -73,17 +73,17 @@ class Metric < ActiveRecord::Base
 		range = start_date..Time.zone.now
 
 		if self.metric_type == 'max_value'
-			value = self.observations.where( recorded_at: range ).maximum( :value )
+			value = self.observations.where( unit_id: self.unit_id ).where( recorded_at: range ).maximum( :value )
 		elsif self.metric_type == 'min_value'
-			value = self.observations.where( recorded_at: range ).minimum( :value )
+			value = self.observations.where( unit_id: self.unit_id ).where( recorded_at: range ).minimum( :value )
 		elsif self.metric_type == 'avg_value'
-			value = self.observations.where( recorded_at: range ).average( :value )
+			value = self.observations.where( unit_id: self.unit_id ).where( recorded_at: range ).average( :value )
 		elsif self.metric_type == 'current_value'
-			value = self.observations.where( recorded_at: range ).order( recorded_at: :desc ).first.value
+			value = self.observations.where( unit_id: self.unit_id ).where( recorded_at: range ).order( recorded_at: :desc ).first.value
 		elsif self.metric_type == 'count'
 			value = self.observations.where( recorded_at: range ).count
 		else # sum_value -- aggregate
-			value = self.observations.where( recorded_at: range ).sum( :value )
+			value = self.observations.where( unit_id: self.unit_id ).where( recorded_at: range ).sum( :value )
 		end
 
 		if args[:convert] && self.unit.present?

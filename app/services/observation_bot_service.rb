@@ -907,20 +907,20 @@ class ObservationBotService < AbstractBotService
 		end
 
 		if metric.metric_type == 'max_value'
-			value = user.observations.for( metric ).where( recorded_at: range ).maximum( :value )
+			value = user.observations.for( metric ).where( unit_id: metric.unit_id ).where( recorded_at: range ).maximum( :value )
 		elsif metric.metric_type == 'min_value'
-			value = user.observations.for( metric ).where( recorded_at: range ).minimum( :value )
+			value = user.observations.for( metric ).where( unit_id: metric.unit_id ).where( recorded_at: range ).minimum( :value )
 		elsif metric.metric_type == 'avg_value'
-			value = user.observations.for( metric ).where( recorded_at: range ).average( :value )
+			value = user.observations.for( metric ).where( unit_id: metric.unit_id ).where( recorded_at: range ).average( :value )
 		elsif metric.metric_type == 'current_value'
-			value = user.observations.for( metric ).where( recorded_at: range ).order( recorded_at: :desc ).first.value
+			value = user.observations.for( metric ).where( unit_id: metric.unit_id ).where( recorded_at: range ).order( recorded_at: :desc ).first.value
 		elsif metric.metric_type == 'count'
 			value = user.observations.for( metric ).where( recorded_at: range ).count
 		else # sum_value -- aggregate
-			value = user.observations.for( metric ).where( recorded_at: range ).sum( :value )
+			value = user.observations.for( metric ).where( unit_id: metric.unit_id ).where( recorded_at: range ).sum( :value )
 		end
 
-		unless metric.metric_type == 'count'
+		if not( metric.metric_type == 'count' )
 			formatted_value = metric.unit.convert_from_base( value )
 		else
 			formatted_value = "#{value} observations"
@@ -964,8 +964,10 @@ class ObservationBotService < AbstractBotService
 		# @todo parse notes
 		notes = @raw_input
 		sys_notes = nil
+
 		# trim the unit
 		unit = params[:unit].chomp( '.' ).singularize if params[:unit].present?
+		unit = Unit.find_by_alias( 's' ) if params[:value].match( ':' )
 
 		action = params[:action].gsub( /(log|record|to |my | todays | is| are| was| = |i | for)/i, '' ).strip if params[:action].present?
 
@@ -975,6 +977,9 @@ class ObservationBotService < AbstractBotService
 
 			if params[:duration].present?
 				val = ChronicDuration.parse( params[:duration] )
+				user_unit = Unit.find_by_alias( 's' )
+			elsif params[:value].match( ':' )
+				val = ChronicDuration.parse( params[:value] )
 				user_unit = Unit.find_by_alias( 's' )
 			else
 

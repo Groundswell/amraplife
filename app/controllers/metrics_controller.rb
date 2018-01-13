@@ -33,7 +33,8 @@ class MetricsController < ApplicationController
 		@metric.update( unit_id: unit.id ) if unit.present?
 
 		if @metric.previous_changes.include?( :unit_id )
-			@metric.observations.update_all( unit_id: @metric.unit_id )
+			# TODO only update metrics with same unit_type as new unit
+			#@metric.observations.update_all( unit_id: @metric.unit_id )
 		end
 
 		if params[:metric][:reassign_to_metric_id].present?
