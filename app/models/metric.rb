@@ -94,6 +94,11 @@ class Metric < ActiveRecord::Base
 
 	end
 
+
+	def is_calories?
+		return self.title == 'Calories'
+	end
+
 	def slugger
 		"#{self.title}_#{self.user_id}"
 	end

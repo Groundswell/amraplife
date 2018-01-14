@@ -33,33 +33,43 @@
 										= pluralize @metric.observations.count, 'Observation'
 								%tr
 									%td
+										%b First
+									%td
+
+										= @metric.observations.order( recorded_at: :asc ).first.try( :display_value )
+										%br
+										- if @metric.observations.order( recorded_at: :asc ).first.present?
+											= @metric.observations.order( recorded_at: :asc ).first.recorded_at.to_s( :short )
+								%tr
+									%td
 										%b Last
 									%td
 
-										= @metric.observations.order( recorded_at: :desc ).first.display_value
+										= @metric.observations.order( recorded_at: :desc ).first.try( :display_value )
 										%br
-										= @metric.observations.order( recorded_at: :desc ).first.recorded_at.to_s( :short )
+										- if @metric.observations.order( recorded_at: :desc ).first.present?
+											= @metric.observations.order( recorded_at: :desc ).first.recorded_at.to_s( :short )
 								%tr
 									%td
 										%b Max
 									%td
-										= @metric.unit.convert_from_base( @metric.observations.maximum( :value ) )
+										= @metric.unit.convert_from_base( @metric.observations.where( unit_id: @metric.unit_id ).maximum( :value ) )
 								%tr
 									%td
 										%b Min
 									%td
-										= @metric.unit.convert_from_base( @metric.observations.minimum( :value ) )
+										= @metric.unit.convert_from_base( @metric.observations.where( unit_id: @metric.unit_id ).minimum( :value ) )
 								
 								%tr
 									%td
 										%b Total
 									%td
-										= @metric.unit.convert_from_base( @metric.observations.sum( :value ) )
+										= @metric.unit.convert_from_base( @metric.observations.where( unit_id: @metric.unit_id ).sum( :value ) )
 								%tr
 									%td
 										%b Avg
 									%td
-										= @metric.unit.convert_from_base( @metric.observations.average( :value ) )
+										= @metric.unit.convert_from_base( @metric.observations.where( unit_id: @metric.unit_id ).average( :value ) )
 					
 						%h3
 							Recent Observations of this metric

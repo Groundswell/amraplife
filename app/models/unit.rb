@@ -14,6 +14,8 @@ class Unit < ActiveRecord::Base
 
 	# acts_as_taggable_array_on :aliases
 
+	attr_accessor :custom_base_unit, :custom_conversion_factor
+
 
 	def self.find_by_alias( term )
 		term = term.parameterize if term.present? && term.length > 1

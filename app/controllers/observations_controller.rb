@@ -43,7 +43,7 @@ class ObservationsController < ApplicationController
 			val = observation_params[:value]
 		else
 
-			unit = observation_params[:value].strip.split( /\s+/ ).last.gsub( /\d+/, '' ).singularize
+			unit = observation_params[:value].strip.split( /\s+/ ).last.gsub( /\d+/, '' ).downcase.singularize
 			val = observation_params[:value].strip.split( /\s+/ ).first.gsub( /[a-zA-Z]+/, '' )
 		end
 

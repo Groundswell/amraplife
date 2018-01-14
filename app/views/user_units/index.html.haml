@@ -23,7 +23,7 @@
 						%td
 							= link_to unit.name, edit_user_unit_path( unit )
 						%td
-							= Metric.find_by( id: unit.metric_id ).title
+							= Metric.find_by( id: unit.metric_id ).try( :title )
 						%td
 							.btn-group
 								%button.btn.btn-mini.btn-default.dropdown-toggle{ data: { toggle: :dropdown } }

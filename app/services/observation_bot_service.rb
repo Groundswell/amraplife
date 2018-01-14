@@ -13,6 +13,9 @@ class ObservationBotService < AbstractBotService
 				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*start tracking my {action}',
 				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*start tracking {action} {unit}',
 				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*start tracking {action}',
+
+				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*add metric {action} {unit}',
+				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*add metric {action}'
 			],
 			slots: {
 				action: 'Action',
@@ -32,7 +35,8 @@ class ObservationBotService < AbstractBotService
 				'how\'s\s*(my)?\s*{action}',
 				'hows\s*(my)?\s*{action}',
 				'how\s*are\s*(my)?\s*{action}',
-				'(to)?\s*tell\s*(?:me)?\s*about\s*(?:my)?\s*{action}'
+				'(to)?\s*tell\s*(?:me)?\s*about\s*(?:my)?\s*{action}',
+				'\s*about\s*(?:my)?\s*{action}'
 				 ],
 			slots: {
 				action: 'Action',
@@ -368,7 +372,7 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
-		unit = params[:unit].singularize
+		unit = params[:unit].try( :singularize ) || nil
 
 		metric = get_user_metric( user, params[:action], unit, true )
 
@@ -553,6 +557,7 @@ class ObservationBotService < AbstractBotService
 		sys_notes = nil
 
 		val = params[:value].to_f
+		val = -val if val > 0
 
 		metric = get_user_metric( user, 'burned', 'cal', true )
 
@@ -929,7 +934,11 @@ class ObservationBotService < AbstractBotService
 		verb = params[:verb]
 		if verb.blank? || verb.to_s.match( /did i|do i/i )
 			if period.present? && not( period.match( /today|this/i ) )
-				verb = 'were'
+				if params[:action].singularize == params[:action] && params[:action].pluralize != params[:action]
+					verb = 'was'
+				else
+					verb = 'were'
+				end
 			else
 				if params[:action].singularize == params[:action] && params[:action].pluralize != params[:action]
 					verb = 'is'
@@ -938,7 +947,17 @@ class ObservationBotService < AbstractBotService
 				end
 			end
 		end
-		response = "Your #{metric.title} #{verb} #{formatted_value} #{period}. (#{start_date}-#{end_date})"
+
+		# let's add a special case for calories
+		if metric.is_calories?
+			value_in = user.observations.for( metric ).where( 'value > 0' ).where( unit_id: metric.unit_id ).where( recorded_at: range ).sum( :value )
+			value_out = user.observations.for( metric ).where( 'value < 0' ).where( unit_id: metric.unit_id ).where( recorded_at: range ).sum( :value ).abs
+			value_net = value_in - value_out 
+			response = "#{period} your calories #{verb} #{value_in} and you burned #{value_out}. Your net calories #{verb} #{value_net}.  (#{start_date.to_s( :short )}-#{end_date.to_s( :short )})"
+		else
+			response = "#{period} your #{metric.title} #{verb} #{formatted_value}.  (#{start_date.to_s( :short ) }-#{end_date.to_s( :short )})"
+		end
+
 		add_speech( response )
 
 		user.user_inputs.create( content: raw_input, action: 'reported', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{response}'." )
@@ -967,7 +986,7 @@ class ObservationBotService < AbstractBotService
 
 		# trim the unit
 		unit = params[:unit].chomp( '.' ).singularize if params[:unit].present?
-		unit = Unit.find_by_alias( 's' ) if params[:value].match( ':' )
+		unit = 's' if params[:value].match( ':' )
 
 		action = params[:action].gsub( /(log|record|to |my | todays | is| are| was| = |i | for)/i, '' ).strip if params[:action].present?
 
@@ -1026,8 +1045,8 @@ class ObservationBotService < AbstractBotService
 				action = action.gsub( /(\Alog|\Arecord|\Ai did|\Adid|to |my | todays | is| are| was| = |i | for|timer)/i, '' ).strip
 
 				# clean up unit
-				unit ||= 'nada'
-				unit = unit.downcase.singularize
+				# unit ||= 'nada'
+				unit = unit.downcase.singularize if unit.present?
 
 				# first, check the user's existing assigned metrics. Return that if exists...
 				if user.metrics.find_by_alias( action.downcase )
@@ -1051,14 +1070,14 @@ class ObservationBotService < AbstractBotService
 						observed_metric.user = user
 
 
-						if unit.blank?
-							observed_metric.unit = Unit.nada.first
 						# convert unit user gave us to base correct unit
-						elsif users_unit = Unit.find_by_alias( unit )
+						if users_unit = Unit.find_by_alias( unit )
 							observed_metric.unit = users_unit
-						else
-							# create a custom unit
+						elsif unit.present?
+							# create a custom unit... not sure we really want to do this?
 							observed_metric.unit = Unit.create name: unit, user_id: user.id, aliases: [ unit.pluralize ]
+						else # unit.blank?
+							observed_metric.unit ||= Unit.nada.first
 						end
 
 						if user.use_imperial_units?
@@ -1078,14 +1097,16 @@ class ObservationBotService < AbstractBotService
 
 						if users_unit = Unit.find_by_alias( unit )
 							observed_metric.unit = users_unit
-						elsif unit != 'nada'
-							observed_metric.unit = Unit.create( user_id: user.id, name: unit, abbrev: unit )
+						elsif unit.present?
+							# create a custom unit... not sure we really want to do this?
+							observed_metric.unit = Unit.create name: unit, user_id: user.id, aliases: [ unit.pluralize ]
 						else
-							observed_metric.unit = Unit.nada.first
+							observed_metric.unit ||= Unit.nada.first
 						end
 
 						observed_metric.user = user
 						if observed_metric.save
+							observed_metric.unit.update( metric_id: observed_metric.id ) if observed_metric.unit.user_id.present?
 							return observed_metric
 						else
 							return false
