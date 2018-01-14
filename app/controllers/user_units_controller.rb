@@ -14,7 +14,7 @@ class UserUnitsController < ApplicationController
 		else
 			set_flash "Unit could not be saved", :danger, @unit
 		end
-		redirect_to edit_user_units_path( @unit )
+		redirect_to edit_user_unit_path( @unit )
 	end
 
 	def destroy

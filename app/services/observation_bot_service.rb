@@ -401,9 +401,11 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
+		same_type_unit_ids = Unit.where( unit_type: Unit.unit_types[metric.unit.unit_type] ).pluck( :id )
+
 		if metric.active_target.present?
 			if metric.active_target.target_type == 'current_value'
-				current = metric.observations.order( created_at: :desc ).first.value
+				current = metric.observations.where( unit_id: same_type_unit_ids ).order( created_at: :desc ).first.value
 			else
 				case metric.active_target.period
 				when 'day'
@@ -430,19 +432,19 @@ class ObservationBotService < AbstractBotService
 
 				case metric.active_target.target_type
 				when 'sum_value'
-					current = metric.observations.where( recorded_at: range ).sum( :value )
+					current = metric.observations.where( unit_id: same_type_unit_ids ).where( recorded_at: range ).sum( :value )
 					target_type = "total"
 				when 'count'
 					current = metric.observations.where( recorded_at: range ).count
 					target_type = "observations"
 				when 'avg_value'
-					current = metric.observations.where( recorded_at: range ).average( :value )
+					current = metric.observations.where( unit_id: same_type_unit_ids ).where( recorded_at: range ).average( :value )
 					target_type = "average"
 				when 'max_value'
-					current = metric.observations.where( recorded_at: range ).maximum( :value )
+					current = metric.observations.where( unit_id: same_type_unit_ids ).where( recorded_at: range ).maximum( :value )
 					target_type = "max"
 				when 'min_value'
-					current = metric.observations.where( recorded_at: range ).minimum( :value )
+					current = metric.observations.where( unit_id: same_type_unit_ids ).where( recorded_at: range ).minimum( :value )
 					target_type = "min"
 				end
 
@@ -911,18 +913,20 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
+		same_type_unit_ids = Unit.where( unit_type: Unit.unit_types[metric.unit.unit_type] ).pluck( :id )
+
 		if metric.metric_type == 'max_value'
-			value = user.observations.for( metric ).where( unit_id: metric.unit_id ).where( recorded_at: range ).maximum( :value )
+			value = user.observations.for( metric ).where( unit_id: same_type_unit_ids ).where( recorded_at: range ).maximum( :value )
 		elsif metric.metric_type == 'min_value'
-			value = user.observations.for( metric ).where( unit_id: metric.unit_id ).where( recorded_at: range ).minimum( :value )
+			value = user.observations.for( metric ).where( unit_id: same_type_unit_ids ).where( recorded_at: range ).minimum( :value )
 		elsif metric.metric_type == 'avg_value'
-			value = user.observations.for( metric ).where( unit_id: metric.unit_id ).where( recorded_at: range ).average( :value )
+			value = user.observations.for( metric ).where( unit_id: same_type_unit_ids ).where( recorded_at: range ).average( :value )
 		elsif metric.metric_type == 'current_value'
-			value = user.observations.for( metric ).where( unit_id: metric.unit_id ).where( recorded_at: range ).order( recorded_at: :desc ).first.value
+			value = user.observations.for( metric ).where( unit_id: same_type_unit_ids ).where( recorded_at: range ).order( recorded_at: :desc ).first.value
 		elsif metric.metric_type == 'count'
 			value = user.observations.for( metric ).where( recorded_at: range ).count
 		else # sum_value -- aggregate
-			value = user.observations.for( metric ).where( unit_id: metric.unit_id ).where( recorded_at: range ).sum( :value )
+			value = user.observations.for( metric ).where( unit_id: same_type_unit_ids ).where( recorded_at: range ).sum( :value )
 		end
 
 		if not( metric.metric_type == 'count' )
@@ -953,9 +957,9 @@ class ObservationBotService < AbstractBotService
 			value_in = user.observations.for( metric ).where( 'value > 0' ).where( unit_id: metric.unit_id ).where( recorded_at: range ).sum( :value )
 			value_out = user.observations.for( metric ).where( 'value < 0' ).where( unit_id: metric.unit_id ).where( recorded_at: range ).sum( :value ).abs
 			value_net = value_in - value_out 
-			response = "#{period} your calories #{verb} #{value_in} and you burned #{value_out}. Your net calories #{verb} #{value_net}.  (#{start_date.to_s( :short )}-#{end_date.to_s( :short )})"
+			response = "You've eaten #{value_in} calories and you burned #{value_out}. Your net calories #{verb} #{value_net} #{period}. (#{start_date.to_s( :short )}-#{end_date.to_s( :short )})"
 		else
-			response = "#{period} your #{metric.title} #{verb} #{formatted_value}.  (#{start_date.to_s( :short ) }-#{end_date.to_s( :short )})"
+			response = "Your #{metric.title} #{verb} #{formatted_value} #{period}. (#{start_date.to_s( :short ) }-#{end_date.to_s( :short )})"
 		end
 
 		add_speech( response )
