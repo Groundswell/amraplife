@@ -30,6 +30,10 @@ class Unit < ActiveRecord::Base
 		self.friendly.find( 'second' )
 	end
 
+	def self.system
+		where( user_id: nil )
+	end
+
 	def self.calorie
 		self.friendly.find( 'calorie' )
 	end

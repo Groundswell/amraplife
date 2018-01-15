@@ -42,7 +42,7 @@ class UserUnitsController < ApplicationController
 			custom_base_unit = Unit.find_by_alias( 'fl oz' )
 		end
 
-		@unit.base_unit = custom_base_unit.try( :base_unit )
+		@unit.base_unit = custom_base_unit.try( :base_unit ) || Unit.system.where( unit_type: Unit.unit_types[params[:unit][:unit_type]] ).where( base_unit_id: nil ).first
 
 		@unit.conversion_factor = ( custom_base_unit.try( :conversion_factor ) || 0 ) * params[:unit][:custom_conversion_factor].to_f
 

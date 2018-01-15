@@ -263,7 +263,7 @@ class ObservationBotService < AbstractBotService
 		},
 		Amount: {
 			regex: [
-				'[0-9.:&]+'
+				'[0-9.:&|\s+a\s+|\s+an\s+]+'
 			],
 			values: [
 			]
@@ -508,6 +508,7 @@ class ObservationBotService < AbstractBotService
 		notes = @raw_input
 		sys_notes = nil
 
+		params[:value] = 1.0 if params[:value].match( /a|an/ )
 
 		# trim the unit
 		unit = params[:unit].chomp( '.' ).singularize if params[:unit].present?
@@ -521,7 +522,7 @@ class ObservationBotService < AbstractBotService
 		# fetch the metric
 		if metric = get_user_metric( user, action, unit, true )
 
-			user_unit = Unit.find_by_alias( unit ) || metric.unit
+			user_unit = user.units.find_by_alias( unit ) || Unit.system.find_by_alias( unit ) || metric.unit
 
 			if user_unit.present?
 				val = params[:value].to_f * user_unit.conversion_factor
@@ -586,6 +587,9 @@ class ObservationBotService < AbstractBotService
 
 		user_unit = params[:unit]
 
+		params[:value] = 1.0 if params[:value].match( /a|an/ )
+
+
 		# todo -- this breaks coffee
 		if params[:action].match( /of/ )
 			metric_alias = params[:action].gsub( /.+of/, '' ).strip
@@ -612,7 +616,7 @@ class ObservationBotService < AbstractBotService
 		# fetch the metric
 		metric = get_user_metric( user, metric_alias, user_unit, true )
 
-		unit = Unit.find_by_alias( user_unit ) || metric.unit
+		unit = user.units.find_by_alias( user_unit ) || Unit.system.find_by_alias( user_unit ) || metric.unit
 
 		val = params[:value].to_f * unit.conversion_factor
 
@@ -738,7 +742,7 @@ class ObservationBotService < AbstractBotService
 
 		value = params[:value] || system_target.value
 		if params[:unit].present?
-			unit = Unit.find_by_alias( params[:unit].singularize )
+			unit = user.units.find_by_alias( params[:unit].singularize ) || Unit.system.find_by_alias( params[:unit].singularize )
 		end
 		unit ||= metric.unit
 
@@ -803,8 +807,6 @@ class ObservationBotService < AbstractBotService
 			call_intent( :login )
 			return
 		end
-
-
 
 		if params[:action].match( /(calories).*(burn)/i )
 			params[:action] = 'calories burned'
@@ -994,19 +996,19 @@ class ObservationBotService < AbstractBotService
 
 		action = params[:action].gsub( /(log|record|to |my | todays | is| are| was| = |i | for)/i, '' ).strip if params[:action].present?
 
+		params[:value] = 1.0 if params[:value].match( /a|an/ )
 
 		# fetch the metric
 		if metric = get_user_metric( user, params[:action], unit, true )
 
 			if params[:duration].present?
 				val = ChronicDuration.parse( params[:duration] )
-				user_unit = Unit.find_by_alias( 's' )
+				user_unit = Unit.system.find_by_alias( 's' )
 			elsif params[:value].match( ':' )
 				val = ChronicDuration.parse( params[:value] )
-				user_unit = Unit.find_by_alias( 's' )
+				user_unit = Unit.system.find_by_alias( 's' )
 			else
-
-				user_unit = Unit.find_by_alias( unit ) || metric.unit
+				user_unit = user.units.find_by_alias( unit ) || Unit.system.find_by_alias( unit ) || metric.unit
 
 				if user_unit.present?
 					val = user_unit.convert_to_base( params[:value] )
@@ -1021,7 +1023,6 @@ class ObservationBotService < AbstractBotService
 			add_ask( "I'm sorry, I didn't understand that.  You must supply a unit or action with your value in order to log it.  For example \"log one hundred calories\" or \"my weight is one hundred sixty\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it.", deligate_if_possible: true )
 			return
 		end
-
 
 		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'created', source: options[:source], result_status: 'success', system_notes: "Logged #{observation.display_value( show_units: true )} for #{observation.observed.try(:title) || params[:action]}." )
 
@@ -1075,11 +1076,11 @@ class ObservationBotService < AbstractBotService
 
 
 						# convert unit user gave us to base correct unit
-						if users_unit = Unit.find_by_alias( unit )
+						if users_unit = Unit.system.find_by_alias( unit )
 							observed_metric.unit = users_unit
 						elsif unit.present?
 							# create a custom unit... not sure we really want to do this?
-							observed_metric.unit = Unit.create name: unit, user_id: user.id, aliases: [ unit.pluralize ]
+							observed_metric.unit = Unit.create name: unit, user_id: user.id, aliases: [ unit.pluralize ], unit_type: observed_metric.try( :unit ).try( :unit_type )
 						else # unit.blank?
 							observed_metric.unit ||= Unit.nada.first
 						end
@@ -1103,7 +1104,7 @@ class ObservationBotService < AbstractBotService
 							observed_metric.unit = users_unit
 						elsif unit.present?
 							# create a custom unit... not sure we really want to do this?
-							observed_metric.unit = Unit.create name: unit, user_id: user.id, aliases: [ unit.pluralize ]
+							observed_metric.unit = Unit.create name: unit, user_id: user.id, aliases: [ unit.pluralize ], unit_type: observed_metric.try( :unit ).try( :unit_type )
 						else
 							observed_metric.unit ||= Unit.nada.first
 						end

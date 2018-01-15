@@ -42,11 +42,9 @@ class ObservationsController < ApplicationController
 		if @observation.unit.is_time?
 			val = observation_params[:value]
 		else
-
 			unit = observation_params[:value].strip.split( /\s+/ ).last.gsub( /\d+/, '' ).downcase.singularize
 			val = observation_params[:value].strip.split( /\s+/ ).first.gsub( /[a-zA-Z]+/, '' )
 		end
-
 
 		if unit.present?
 			stored_unit = Unit.find_by_alias( unit )
