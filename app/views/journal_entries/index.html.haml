@@ -1,1 +1,33 @@
-index.html.haml
+
+.main-box.clearfix
+	.main-box-header.clearfix
+		%h1
+			Your Journal
+	.main-box-body.clearfix
+		%table.table.table-striped
+			%thead
+				%th Title
+				%th 
+				%th
+			%tbody
+				- @entries.each do |entry|
+					%tr
+						%td
+							= link_to entry.created_at, edit_journal_entry_path( entry )
+						%td
+							= entry.notes
+						%td
+							.btn-group
+								%button.btn.btn-mini.btn-default.dropdown-toggle{ data: { toggle: :dropdown } }
+									%i.fa.fa-cog
+									%b.caret
+								%ul.dropdown-menu
+									%li
+										%a{ href: edit_journal_entry_path( entry.id ) }
+											%i.fa.fa-pencil
+											Edit
+									%li.divider
+									%li
+										%a{ href: journal_entry_path( entry ), data: { method: 'delete', confirm: 'Are you sure? ALL related observations will also be deleted.' } }
+											%i.fa.fa-trash-o
+											Delete!

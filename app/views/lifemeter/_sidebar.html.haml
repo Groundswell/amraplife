@@ -64,7 +64,7 @@
 							%span
 								Your Journal
 
-					- if current_user.observations.count > 1
+					-# if current_user.observations.count > 1
 						%li
 							%a{ href: main_app.stats_path }
 								%i.fa.fa-bar-chart
@@ -86,7 +86,7 @@
 							%span
 								Help & FAQs
 
-					%li
+					-#%li
 						.text-center{ style: 'margin: 4em 0 1em 0;' }
 
 							%a.btn.btn-default{ href: 'https://www.messenger.com/t/lifemeterapp' }

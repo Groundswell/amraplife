@@ -14,7 +14,7 @@ class JournalEntriesController < ApplicationController
 	end
 
 	def index
-		
+		@entries = current_user.observations.journal_entry.order( created_at: :desc )
 	end
 
 	def update

@@ -30,6 +30,9 @@ class Observation < ActiveRecord::Base
 		self.dated_between( day.beginning_of_day, day.end_of_day )
 	end
 
+	def self.journal_entry
+		self.where( observed: nil ).where.not( notes: nil )
+	end
 
 
 	def display_value( opts={} )
