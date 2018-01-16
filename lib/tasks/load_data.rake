@@ -3,6 +3,10 @@ namespace :amraplife do
 
 	task load_sample_data: :environment do
 
+		5.times{
+			u = User.create name: ('a'..'z').to_a.concat(('A'..'Z').to_a).shuffle[0,8].join, password: '1234', email: ('a'..'z').to_a.shuffle[0,3].join + "@amrap.com"
+		}
+
 		wt = Metric.where( user_id: nil ).find_by_alias( 'wt' ).try(:dup)
 		u = Unit.pound
 		wt.update( user: User.first, unit: u )
