@@ -24,8 +24,12 @@ class ObservationGoogleActionsController < ActionController::Base
 				request_text = params[:inputs].first[:raw_inputs].first[:query]
 				request_text = request_text.gsub(/^.* (lifemeter|life\s+meter|amraplife|amrap\s+life|am\s+wrap\s+life)/i, '').strip
 
-				unless @bot_service.respond_to_text( request_text )
-					action_response.add_speech( "Sorry, I don't know about that." )
+				if request_text.blank?
+					@bot_service.call_intent( :launch )
+				else
+					unless @bot_service.respond_to_text( request_text )
+						action_response.add_speech( "Sorry, I don't know about that." )
+					end
 				end
 
 				action_response.respond( assistant )
