@@ -27,8 +27,8 @@
 								= hidden_field_tag :avatar, class: 'form-control', id: 'user_avatar'
 						.col-sm-8
 							.form-group
-								= label_tag :full_name
-
+								= label_tag :full_name, 'Name'
+								= text_field_tag :full_name, current_user.full_name, class: 'form-control'
 							.form-group
 								= label_tag :email
 								= text_field_tag :email, current_user.email, class: 'form-control'
