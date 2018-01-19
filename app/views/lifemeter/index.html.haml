@@ -46,7 +46,7 @@
 
 
 						=# render 'application/signin_widget', args: {}
-						
+
 						= form_for SwellMedia::ContactUs.new, url: swell_media.contacts_path do |f|
 							= f.hidden_field :subject, value: 'lifemeter beta test'
 							.form-group
@@ -62,7 +62,7 @@
 								Already Registered for the Beta?
 								%br
 								%center
-									%a{ href: '.login-modal', data: { toggle: :modal } }
+									%a{ href: '#login-modal', data: { toggle: :modal, target: '#login-modal' } }
 										Log In Here.
 
 
