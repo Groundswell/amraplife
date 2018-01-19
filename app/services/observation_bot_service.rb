@@ -49,6 +49,10 @@ class ObservationBotService < AbstractBotService
 				'(?:that )?\s*(?:i)?\s*ate {value}\s*{unit} of {action}\s*({time_period})?\s*({notes})?', # e.g. 30 grams of protein
 				'(?:that )?\s*(?:i)?\s*ate {value}\s*{unit}\s*({time_period})?\s*({notes})?', # e.g. 480 calories
 				'(?:that )?\s*(?:i)?\s*ate {value}\s*({time_period})?\s*({notes})?', # e.g. ate 300 defaults to calories
+
+				'(?:that )?\s*(?:i)?\s*have eaten {value}\s*{unit} of {action}\s*({time_period})?\s*({notes})?', # e.g. 30 grams of protein
+				'(?:that )?\s*(?:i)?\s*have eaten {value}\s*{unit}\s*({time_period})?\s*({notes})?', # e.g. 480 calories
+				'(?:that )?\s*(?:i)?\s*have eaten {value}\s*({time_period})?\s*({notes})?', # e.g. ate 300 defaults to calories
 			],
 			slots: {
 				action: 'Action',
@@ -531,9 +535,11 @@ class ObservationBotService < AbstractBotService
 		end
 
 		# have to double-scan action param cause action a greedy matcher
-		params[:notes] = params[:action].slice!( Regexp.new(ObservationBotService.slots[:ExplicitNotes][:regex].first) ) if params[:action].match( Regexp.new(ObservationBotService.slots[:ExplicitNotes][:regex].first) )
-		params[:time_period] = params[:action].slice!( Regexp.new(ObservationBotService.slots[:TimePeriod][:regex].first) ) if params[:action].match( Regexp.new(ObservationBotService.slots[:TimePeriod][:regex].first) )
-		params[:action].strip!
+		if params[:action].present?
+			params[:notes] = params[:action].slice!( Regexp.new(ObservationBotService.slots[:ExplicitNotes][:regex].first) ) if params[:action].match( Regexp.new(ObservationBotService.slots[:ExplicitNotes][:regex].first) ) 
+			params[:time_period] = params[:action].slice!( Regexp.new(ObservationBotService.slots[:TimePeriod][:regex].first) ) if params[:action].match( Regexp.new(ObservationBotService.slots[:TimePeriod][:regex].first) )
+			params[:action].strip!
+		end
 
 		notes = params[:notes]
 
@@ -562,7 +568,7 @@ class ObservationBotService < AbstractBotService
 			recorded_at = set_recorded_at( params[:time_period] )
 
 
-			die
+			# die
 
 
 			observation = user.observations.create( observed: metric, value: val, unit: user_unit, recorded_at: recorded_at, notes: notes, content: @raw_input )
@@ -655,7 +661,7 @@ class ObservationBotService < AbstractBotService
 
 		recorded_at = set_recorded_at( params[:time_period] )
 
-		die
+		# die
 
 		observation = user.observations.create( observed: metric, value: val, unit: unit, recorded_at: recorded_at, content: @raw_input, notes: notes )
 
@@ -1015,6 +1021,8 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
+		die
+
 		if params[:action].blank?
 			add_ask( "I'm sorry, I didn't understand that.  I don't know what to log. You must supply an action with your value in order to log it.  For example \"log one hundred calories\" or \"my weight is one hundred sixty\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it.", deligate_if_possible: true )
 			return
@@ -1041,7 +1049,7 @@ class ObservationBotService < AbstractBotService
 
 		action = params[:action].gsub( /(log|record|to |my | todays | is| are| was| = |i | for)/i, '' ).strip if params[:action].present?
 
-		params[:value] = 1.0 if params[:value].match( /a|an/ )
+		params[:value] = 1.0 if params[:value].match( /a|an/ ) if params[:value].present?
 
 		# fetch the metric
 		if metric = get_user_metric( user, params[:action], unit, true )
@@ -1064,10 +1072,11 @@ class ObservationBotService < AbstractBotService
 
 			recorded_at = set_recorded_at( params[:time_period] )
 
+			observation = user.observations.new( observed: metric, value: val, unit: user_unit, recorded_at: recorded_at, notes: notes, content: @raw_input )
+			
 			die
 
-
-			observation = user.observations.create( observed: metric, value: val, unit: user_unit, recorded_at: recorded_at, notes: notes, content: @raw_input )
+			observation.save
 			add_speech( observation.to_s( user ) )
 		else
 			add_ask( "I'm sorry, I didn't understand that.  You must supply a unit or action with your value in order to log it.  For example \"log one hundred calories\" or \"my weight is one hundred sixty\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it.", deligate_if_possible: true )
