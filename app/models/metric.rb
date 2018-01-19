@@ -81,7 +81,7 @@ class Metric < ActiveRecord::Base
 		elsif self.metric_type == 'avg_value'
 			value = self.observations.where( unit_id: same_type_unit_ids ).where( recorded_at: range ).average( :value )
 		elsif self.metric_type == 'current_value'
-			value = self.observations.where( unit_id: same_type_unit_ids ).where( recorded_at: range ).order( recorded_at: :desc ).first.value
+			value = self.observations.where( unit_id: same_type_unit_ids ).where( recorded_at: range ).order( recorded_at: :desc ).first.try( :value )
 		elsif self.metric_type == 'count'
 			value = self.observations.where( recorded_at: range ).count
 		else # sum_value -- aggregate
