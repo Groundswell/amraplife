@@ -199,55 +199,51 @@ class ObservationBotService < AbstractBotService
 		log_metric_observation: {
 			utterances: [
 
-				# utterances ending with an {action} don't get the \s*({time_period})?\s*({notes})? treatment
-				# cause their going to greedy-match to end of string anyway (unless there's a number of symbol in there)
+				# 	utterances ending with an {action} don't get the \s*({time_period})?\s*({notes})? treatment
+				# 	cause their going to greedy-match to end of string anyway (unless there's a number of symbol in there)
 
 
-				'(?:that )?\s*i {action} for {duration}\s*({time_period})?\s*({notes})?',
+				# special duration catcher
+				# only works for 
+				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*(?:i )?\s*{action} (for )?\s*{duration}\s*({time_period})?\s*({notes})?',
 
-				# for input like....
-				# log weight = 176
-				# log weight is 176
-				# to log that wt is 194
-				# weight 179lbs
-				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*{action}\s*(?:=|is|was)?\s*{value}\s*({time_period})?\s*({notes})?',
-				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*{action}\s*(?:=|is|was)?\s*{value}\s*{unit}\s*({time_period})?\s*({notes})?',
+				# 	for input like....
+				# 	log weight = 176
+				# 	log weight is 176
+				# 	to log that wt is 194
+				# 	log that my weight was 176
+				# 	weight 179lbs
+				#'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*(?:my )?\s*{action}\s*(?:=|is|was)?\s*{value}\s*({time_period})?\s*({notes})?',
+				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*(?:i )?\s*(?:my )?\s*{action}\s*(:|=|is|was|are|were|equal)\s*{value}\s*({unit})?\s*({time_period})?\s*({notes})?',
 
 
+
+				# # 	for input like....
+				# # 	log 172 for weight
+				'(?:to )?\s*(?:log |record )?\s*{value}\s*({unit})? (for|of) (my)?\s*{action}\s*({time_period})?\s*({notes})?',
+
+
+
+				# # 	for input like....
+				# # 	actions that are verbs
+				# # 	I ran 3 miles
+
+				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*(?:i )?\s*{action} for {value}\s*({unit})?\s*({time_period})?\s*({notes})?',
+				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*(?:i )?\s*{action} {value}\s*({unit})?\s*({time_period})?\s*({notes})?',
+
+				# '(?:that )?\s*i {action} {value}\s*({time_period})?\s*({notes})?',
+				# '(?:that )?\s*i {action} {value}\s*{unit}\s*({time_period})?\s*({notes})?',
+
+				# '(?:that )?\s*i (did)?\s*{action} for {value}\s*({time_period})?\s*({notes})?',
+				# '(?:that )?\s*i (did)?\s*{action} for {value}\s*{unit}\s*({time_period})?\s*({notes})?',
+
+
+				# # 	for input like....
+				# # 	10 pushups
+				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*(?:i )?\s*did {value}\s*({unit})? {action}\s*({time_period})?\s*({notes})?',
+				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*(?:i )?\s*{value}\s*({unit})? {action}\s*({time_period})?\s*({notes})?',
 				
-
-				# for input like....
-				# log 172 for weight
-				'(?:to )?\s*(?:log |record )?\s*{value} for {action}',
-				'(?:to )?\s*(?:log |record )?\s*{value}\s*{unit} for {action}',
-
-				# for input like....
-				# log 10 for sleep OR log 10 hours of sleep
-				'(?:to )?\s*(?:log |record )?\s*{value} of {action}',
-				'(?:to )?\s*(?:log |record )?\s*{value}\s*{unit} of {action}',
-
-				# for input like....
-				# I ran 3 miles
-				'(?:that )?\s*i {action} {value}\s*({time_period})?\s*({notes})?',
-				'(?:that )?\s*i {action} {value}\s*{unit}\s*({time_period})?\s*({notes})?',
-				'(?:that )?\s*i (did)?\s*{action} for {value}\s*({time_period})?\s*({notes})?',
-				'(?:that )?\s*i (did)?\s*{action} for {value}\s*{unit}\s*({time_period})?\s*({notes})?',
-
-				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*i did {value}\s*{unit} of {action}',
-				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*i did {value} {action}',
-
-				
-
-				'(?:that )?\s*i did {value}\s*{unit} of {action}',
-
-				'my {action} (is|was) {value}\s*{unit}\s*({time_period})?\s*({notes})?',
-				'my {action} (is|was) {value}\s*({time_period})?\s*({notes})?',
-
-				# for input like....
-				# 8 grams protein
-				'{value} {unit} {action}',
-				# 10 pushups
-				'{value} {action}'
+				# '(?:to )?\s*(?:log |record ){value} {action}'
 
 			],
 			slots: {
