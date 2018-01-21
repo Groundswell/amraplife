@@ -12,14 +12,13 @@ class TargetsController < ApplicationController
 		val = target_params[:value].strip.split( /\s+/ ).first.gsub( /[a-zA-Z]+/, '' )
 
 		if unit.present?
-			stored_unit = Unit.find_by_alias( unit )
+			stored_unit = Unit.where( metric_id: @target.parent_obj_id, user_id: current_user.id ).find_by_alias( unit.singularize.downcase ) || Unit.system.find_by_alias( unit.singularize.downcase )
 			@target.unit = stored_unit if stored_unit.present?
 		end
 
 		@target.unit ||= @target.parent_obj.unit
 
 		@target.value = @target.unit.convert_to_base( val )
-
 
 		@target.save
 		redirect_to :back
@@ -53,7 +52,7 @@ class TargetsController < ApplicationController
 		val = target_params[:value].strip.split( /\s+/ ).first.gsub( /[a-zA-Z]+/, '' )
 
 		if unit.present?
-			stored_unit = Unit.find_by_alias( unit )
+			stored_unit = Unit.where( metric_id: @target.parent_obj_id, user_id: current_user.id ).find_by_alias( unit.singularize.downcase ) || Unit.system.find_by_alias( unit.singularize.downcase )
 			@target.unit = stored_unit if stored_unit.present?
 		end
 

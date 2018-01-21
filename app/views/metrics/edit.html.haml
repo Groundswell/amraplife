@@ -112,7 +112,7 @@
 							= f.collection_select :reassign_to_metric_id, current_user.metrics.where.not( id: @metric.id ), :id, :title, { prompt: '--None--' }, { class: 'form-control' }
 						
 
-						.well
+						-#.well
 							%h4 
 								= @metric.title 
 								Targets

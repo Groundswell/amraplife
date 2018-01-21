@@ -344,7 +344,7 @@ class ObservationBotService < AbstractBotService
 		},
 		TimePeriod: {
 			regex: [
-				'this morning|this afternoon|this evening|tonight|today|yesterday|last night|this week|last week|this month|last month|this year|last year|in the past \d+ hour|in the last \d+ hour|in the past \d+ day|in the last \d+ day|in the past \d+ week|in the last \d+ week|in the past \d+ month|in the last \d+ month|in the past year|in the last year|\d+ hour(s)? ago|\d+ day(s)? ago|\d+ week(s)? ago|\d+ month(s)? ago'
+				'for breakfast|for lunch|for dinner|for snack|this morning|this afternoon|this evening|tonight|today|yesterday|last night|this week|last week|this month|last month|this year|last year|in the past \d+ hour|in the last \d+ hour|in the past \d+ day|in the last \d+ day|in the past \d+ week|in the last \d+ week|in the past \d+ month|in the last \d+ month|in the past year|in the last year|\d+ hour(s)? ago|\d+ day(s)? ago|\d+ week(s)? ago|\d+ month(s)? ago'
 				],
 				values: []
 		},
@@ -546,7 +546,7 @@ class ObservationBotService < AbstractBotService
 			params[:action].strip!
 		end
 
-		notes = params[:notes]
+		notes = params[:notes].gsub( /note (that)?/i, '' ).strip if params[:notes].present?
 
 		params[:value] = 1.0 if params[:value].match( /a\s+|an\s+/ )
 
@@ -562,7 +562,7 @@ class ObservationBotService < AbstractBotService
 		# fetch the metric
 		if metric = get_user_metric( user, action, unit, true )
 
-			user_unit = user.units.find_by_alias( unit ) || Unit.system.find_by_alias( unit ) || metric.unit
+			user_unit = Unit.where( metric_id: metric.id, user_id: user.id ).find_by_alias( unit ) || Unit.system.find_by_alias( unit ) || metric.unit
 
 			if user_unit.present?
 				val = params[:value].to_f * user_unit.conversion_factor
@@ -571,10 +571,6 @@ class ObservationBotService < AbstractBotService
 			end
 
 			recorded_at = set_recorded_at( params[:time_period] )
-
-
-			# die
-
 
 			observation = user.observations.create( observed: metric, value: val, unit: user_unit, recorded_at: recorded_at, notes: notes, content: @raw_input )
 			add_speech( observation.to_s( user ) )
@@ -602,7 +598,7 @@ class ObservationBotService < AbstractBotService
 		end
 
 		# @todo parse notes
-		notes = params[:notes]
+		notes = params[:notes].gsub( /note (that)?/i, '' ).strip if params[:notes].present?
 
 		val = params[:value].to_f
 		val = -val if val > 0
@@ -635,7 +631,7 @@ class ObservationBotService < AbstractBotService
 		params[:time_period] = params[:action].slice!( Regexp.new(ObservationBotService.slots[:TimePeriod][:regex].first) ) if params[:action].match( Regexp.new(ObservationBotService.slots[:TimePeriod][:regex].first) )
 		params[:action].strip!
 
-		notes = params[:notes]
+		notes = params[:notes].gsub( /note (that)?/i, '' ).strip if params[:notes].present?
 
 		user_unit = params[:unit]
 
@@ -655,21 +651,16 @@ class ObservationBotService < AbstractBotService
 			user_unit = 'fl oz'
 		end
 
-
-
 		# fetch the metric
 		metric = get_user_metric( user, params[:action], user_unit, true )
 
-		unit = user.units.find_by_alias( user_unit ) || Unit.system.find_by_alias( user_unit ) || metric.unit
+		unit = Unit.where( metric_id: metric.id, user_id: user.id ).find_by_alias( user_unit ) || Unit.system.find_by_alias( user_unit ) || metric.unit
 
 		val = params[:value].to_f * unit.conversion_factor
 
 		recorded_at = set_recorded_at( params[:time_period] )
 
-		# die
-
 		observation = user.observations.create( observed: metric, value: val, unit: unit, recorded_at: recorded_at, content: @raw_input, notes: notes )
-
 
 		add_speech( observation.to_s( user ) )
 		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'created', source: options[:source], result_status: 'success', system_notes: "Logged #{observation.display_value( show_units: true )} for #{observation.observed.title}." )
@@ -683,7 +674,8 @@ class ObservationBotService < AbstractBotService
 		end
 
 		if params[:notes].present?
-			observation = user.observations.create( notes: params[:notes], content: @raw_input )
+			notes = params[:notes].gsub( /note (that)?/i, '' ).strip
+			observation = user.observations.create( notes: notes, content: @raw_input )
 			add_speech( "I recorded your journal entry." )
 			user.user_inputs.create( content: @raw_input, result_obj: observation, action: 'created', source: options[:source], result_status: 'success', system_notes: "Spoke: 'I recorded your journal entry.'" )
 		end
@@ -695,9 +687,7 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
-
 		if params[:action].blank?
-
 			add_ask( "I'm sorry, I didn't understand that.  You must supply an action in order to start a timer.  For example \"start jogging timer\" or \"start bike ride\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply an action in order to start a timer.", deligate_if_possible: true )
 			return
 
@@ -705,7 +695,7 @@ class ObservationBotService < AbstractBotService
 
 		# @todo parse notes
 
-		notes = params[:notes]
+		notes = params[:notes].gsub( /note (that)?/i, '' ).strip if params[:notes].present?
 
 		params[:action] = params[:action].gsub( /timer/, '' )
 
@@ -726,15 +716,12 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
-
 		if params[:action].blank?
-
 			add_ask( "I'm sorry, I didn't understand that.  You must supply an action in order to stop a timer.  For example \"stop jogging timer\" or \"stop bike ride\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply an action in order to stop a timer.", deligate_if_possible: true )
 			return
-
 		end
 
-		notes = params[:notes]
+		notes = params[:notes].gsub( /note (that)?/i, '' ).strip if params[:notes].present?
 		sys_notes = ''
 
 		metric = get_user_metric( user, params[:action], 's' )
@@ -791,7 +778,7 @@ class ObservationBotService < AbstractBotService
 
 		value = params[:value] || system_target.value
 		if params[:unit].present?
-			unit = user.units.find_by_alias( params[:unit].singularize ) || Unit.system.find_by_alias( params[:unit].singularize )
+			unit = Unit.where( metric_id: metric.id, user_id: user.id ).find_by_alias( params[:unit].singularize ) || Unit.system.find_by_alias( params[:unit].singularize )
 		end
 		unit ||= metric.unit
 
@@ -841,7 +828,6 @@ class ObservationBotService < AbstractBotService
 		target.save
 
 		disp_value = target.display_value
-
 
 		response = "I set a target of #{Target.directions[target.direction]} #{disp_value} #{Target.periods[target.period]} for #{metric.title}."
 		add_speech( response )
@@ -964,6 +950,7 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
+		# TODO -- add requested_unit so can report miles run vs time run, etc...
 		same_type_unit_ids = Unit.where( unit_type: Unit.unit_types[metric.unit.unit_type] ).pluck( :id )
 
 		if metric.default_value_type == 'max_value'
@@ -1042,9 +1029,8 @@ class ObservationBotService < AbstractBotService
 		params[:action].strip!
 
 		# @todo parse notes
-		notes = params[:notes].gsub( /note (that)?/i, '' ).strip
+		notes = params[:notes].gsub( /note (that)?/i, '' ).strip if params[:notes].present?
 		sys_notes = ''
-
 
 		# trim the unit
 		unit = params[:unit].chomp( '.' ).singularize if params[:unit].present?
@@ -1068,8 +1054,7 @@ class ObservationBotService < AbstractBotService
 				val = ChronicDuration.parse( params[:value] )
 				user_unit = Unit.system.find_by_alias( 's' )
 			else
-				user_unit = user.units.find_by_alias( unit ) || Unit.system.find_by_alias( unit ) || metric.unit
-
+				user_unit = Unit.where( metric_id: metric.id, user_id: user.id ).find_by_alias( unit ) || Unit.system.find_by_alias( unit ) || metric.unit
 				if user_unit.present?
 					val = user_unit.convert_to_base( params[:value] )
 				else

@@ -14,7 +14,7 @@ class Unit < ActiveRecord::Base
 
 	# acts_as_taggable_array_on :aliases
 
-	attr_accessor :custom_base_unit, :custom_conversion_factor
+	attr_accessor :custom_base_unit_name
 
 
 	def self.find_by_alias( term )
@@ -117,7 +117,7 @@ class Unit < ActiveRecord::Base
 	
 
 	def to_s
-		self.name
+		self.name || self.abbrev
 	end
 
 

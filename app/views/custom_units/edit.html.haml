@@ -1,11 +1,22 @@
-%h1
-	Editing Unit
-	= @unit.name
+
 .main-box.clearfix
 	.main-box-header.clearfix
-		
+		.row
+			.col-xs-10
+				%h1
+					%a{ href: settings_lifemeter_index_path }
+						Settings 
+					>
+					%a{ href: custom_units_path }
+						Units
+					>
+					Edit
+					= @unit.name
+			.col-xs-2
+						
 	.main-box-body.clearfix
-		= form_for @unit, url: user_unit_path( @unit ) do |f|
+
+		= form_for @unit, url: custom_unit_path( @unit ) do |f|
 			.row
 				.col-sm-8
 					.row			
@@ -25,8 +36,8 @@
 								= f.text_field :custom_conversion_factor, class: 'form-control'
 						.col-sm-6
 							.form-group
-								= f.label :custom_base_unit, 'Units:'
-								= f.text_field :custom_base_unit, class: 'form-control'
+								= f.label :custom_base_unit_name, 'Units:'
+								= f.text_field :custom_base_unit_name, class: 'form-control'
 
 						
 				.col-sm-4

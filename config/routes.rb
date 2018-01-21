@@ -18,7 +18,7 @@ Rails.application.routes.draw do
 		resources :observations
 		resources :stats
 		resources :targets
-		resources :user_units
+		resources :custom_units
 	end
 
 	resources :equipment

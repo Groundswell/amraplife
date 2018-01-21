@@ -720,16 +720,17 @@ ActiveRecord::Schema.define(version: 20180121011527) do
     t.integer  "imperial_correlate_id"
     t.integer  "user_id"
     t.integer  "metric_id"
-    t.float    "conversion_factor",     default: 1.0
+    t.float    "conversion_factor",        default: 1.0
     t.string   "name"
     t.string   "slug"
     t.string   "abbrev"
-    t.integer  "unit_type",             default: 0
-    t.text     "aliases",               default: [],   array: true
-    t.boolean  "imperial",              default: true
+    t.integer  "unit_type",                default: 0
+    t.text     "aliases",                  default: [],   array: true
+    t.boolean  "imperial",                 default: true
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "custom_base_unit_id"
+    t.integer  "custom_conversion_factor"
   end
 
   add_index "units", ["base_unit_id"], name: "index_units_on_base_unit_id", using: :btree

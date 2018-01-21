@@ -4,6 +4,7 @@ class V1ReleaseMigration < ActiveRecord::Migration
 		add_column		:metrics, :category_id, :integer
 
 		add_column 		:units, :custom_base_unit_id, :integer
+		add_column 		:units, :custom_conversion_factor, :integer
 	end
 	# add_index 		:metrics, :category_id
 	#add_index 		:units, :custom_base_unit_id

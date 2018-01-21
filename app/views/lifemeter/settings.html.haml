@@ -6,8 +6,7 @@
 				%h1
 					Settings 
 			.col-xs-2
-				%a{ href: user_units_path }
-					Custom Units
+				
 
 		
 	.main-box-body.clearfix
@@ -46,20 +45,26 @@
 				.col-sm-4
 					.well
 						.row
-							.col-xs-3
+							.col-xs-2
 								= check_box_tag :use_imperial_units, true, current_user.use_imperial_units?, { class: 'form-control'  }
-							.col-xs-9
+							.col-xs-10
 								= label_tag :use_imperial_units, 'Use Imperial Units?', style: 'margin-top:1em;'
 						
+						.row
+							.col-xs-10.col-xs-offset-2
+								%a{ href: custom_units_path }
+									Edit Custom Units
+						
+						.row{ style: 'margin-top: 2em;' }
+							.col-xs-12
+								.form-group
+									= label_tag :gender
+									= select_tag :gender, options_for_select( [ [ 'Unspecified', 'unspecified' ], ['Female', 'female' ], [ 'Male', 'male' ], ], current_user.gender ), { class: 'form-control' }
+								.form-group
+									= label_tag :dob, 'Birthdate:'
+									= text_field_tag :dob, current_user.dob, class: 'form-control'
 
-						.form-group
-							= label_tag :gender
-							= select_tag :gender, options_for_select( [ [ 'Unspecified', 'unspecified' ], ['Female', 'female' ], [ 'Male', 'male' ], ], current_user.gender ), { class: 'form-control' }
-						.form-group
-							= label_tag :dob, 'Birthdate:'
-							= text_field_tag :dob, current_user.dob, class: 'form-control'
+								.form-group
+									= submit_tag 'Update', class: 'btn btn-primary'
 
-						.form-group
-							= submit_tag 'Update', class: 'btn btn-primary'
-
-	
+			
