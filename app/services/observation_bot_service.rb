@@ -224,6 +224,7 @@ class ObservationBotService < AbstractBotService
 
 
 
+
 				# # 	for input like....
 				# # 	actions that are verbs
 				# # 	I ran 3 miles
@@ -231,17 +232,22 @@ class ObservationBotService < AbstractBotService
 				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*(?:i )?\s*{action} for {value}\s*({unit})?\s*({time_period})?\s*({notes})?',
 				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*(?:i )?\s*{action} {value}\s*({unit})?\s*({time_period})?\s*({notes})?',
 
-				# '(?:that )?\s*i {action} {value}\s*({time_period})?\s*({notes})?',
-				# '(?:that )?\s*i {action} {value}\s*{unit}\s*({time_period})?\s*({notes})?',
 
 				# '(?:that )?\s*i (did)?\s*{action} for {value}\s*({time_period})?\s*({notes})?',
 				# '(?:that )?\s*i (did)?\s*{action} for {value}\s*{unit}\s*({time_period})?\s*({notes})?',
 
 
 				# # 	for input like....
-				# # 	10 pushups
-				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*(?:i )?\s*did {value}\s*({unit})? {action}\s*({time_period})?\s*({notes})?',
-				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*(?:i )?\s*{value}\s*({unit})? {action}\s*({time_period})?\s*({notes})?',
+				
+				# # 	did 30 minutes of cardio
+				# #  	MUST use 'of' to separate units from action
+				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*(?:i )?\s*did {value} {unit} of {action}\s*({time_period})?\s*({notes})?',
+				# # 	did 100 pullups
+				# # 	NO Unit
+				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*(?:i )?\s*did {value} {action}\s*({time_period})?\s*({notes})?',
+				
+				# # 	10 pushups, 300 calories, 
+				'(?:to )?\s*(?:log |record )?\s*{value} {action}\s*({time_period})?\s*({notes})?',
 				
 				# '(?:to )?\s*(?:log |record ){value} {action}'
 
@@ -957,21 +963,21 @@ class ObservationBotService < AbstractBotService
 
 		same_type_unit_ids = Unit.where( unit_type: Unit.unit_types[metric.unit.unit_type] ).pluck( :id )
 
-		if metric.metric_type == 'max_value'
+		if metric.default_value_type == 'max_value'
 			value = user.observations.for( metric ).where( unit_id: same_type_unit_ids ).where( recorded_at: range ).maximum( :value )
-		elsif metric.metric_type == 'min_value'
+		elsif metric.default_value_type == 'min_value'
 			value = user.observations.for( metric ).where( unit_id: same_type_unit_ids ).where( recorded_at: range ).minimum( :value )
-		elsif metric.metric_type == 'avg_value'
+		elsif metric.default_value_type == 'avg_value'
 			value = user.observations.for( metric ).where( unit_id: same_type_unit_ids ).where( recorded_at: range ).average( :value )
-		elsif metric.metric_type == 'current_value'
+		elsif metric.default_value_type == 'current_value'
 			value = user.observations.for( metric ).where( unit_id: same_type_unit_ids ).where( recorded_at: range ).order( recorded_at: :desc ).first.value
-		elsif metric.metric_type == 'count'
+		elsif metric.default_value_type == 'count'
 			value = user.observations.for( metric ).where( recorded_at: range ).count
 		else # sum_value -- aggregate
 			value = user.observations.for( metric ).where( unit_id: same_type_unit_ids ).where( recorded_at: range ).sum( :value )
 		end
 
-		if not( metric.metric_type == 'count' )
+		if not( metric.default_value_type == 'count' )
 			formatted_value = metric.unit.convert_from_base( value )
 		else
 			formatted_value = "#{value} observations"
@@ -1017,8 +1023,6 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
-		die
-
 		if params[:action].blank?
 			add_ask( "I'm sorry, I didn't understand that.  I don't know what to log. You must supply an action with your value in order to log it.  For example \"log one hundred calories\" or \"my weight is one hundred sixty\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it.", deligate_if_possible: true )
 			return
@@ -1049,6 +1053,10 @@ class ObservationBotService < AbstractBotService
 
 		# fetch the metric
 		if metric = get_user_metric( user, params[:action], unit, true )
+
+			if metric.unit.volume? && unit.singularize.scan( /ounce|oz/ ).present?
+				unit = 'fl oz'
+			end
 
 			if params[:duration].present?
 				val = ChronicDuration.parse( params[:duration] )
@@ -1129,6 +1137,9 @@ class ObservationBotService < AbstractBotService
 						observed_metric ||= system_metric.dup
 						observed_metric.user = user
 
+						if system_metric.unit.volume? && unit.singularize.scan( /ounce|oz/ ).present?
+							unit = 'fl oz'
+						end
 
 						# convert unit user gave us to base correct unit
 						if users_unit = Unit.system.find_by_alias( unit )

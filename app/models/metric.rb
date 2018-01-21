@@ -35,7 +35,7 @@ class Metric < ActiveRecord::Base
 		where( ":term = ANY( aliases )", term: term.parameterize ).first
 	end
 
-	def self.metric_types
+	def self.default_value_types
 		{
 			'avg_value' 		=> 'Average',
 			'count' 			=> 'Frequency',
@@ -74,15 +74,15 @@ class Metric < ActiveRecord::Base
 
 		same_type_unit_ids = Unit.where( unit_type: Unit.unit_types[self.unit.unit_type] ).pluck( :id )
 
-		if self.metric_type == 'max_value'
+		if self.default_value_type == 'max_value'
 			value = self.observations.where( unit_id: same_type_unit_ids ).where( recorded_at: range ).maximum( :value )
-		elsif self.metric_type == 'min_value'
+		elsif self.default_value_type == 'min_value'
 			value = self.observations.where( unit_id: same_type_unit_ids ).where( recorded_at: range ).minimum( :value )
-		elsif self.metric_type == 'avg_value'
+		elsif self.default_value_type == 'avg_value'
 			value = self.observations.where( unit_id: same_type_unit_ids ).where( recorded_at: range ).average( :value )
-		elsif self.metric_type == 'current_value'
+		elsif self.default_value_type == 'current_value'
 			value = self.observations.where( unit_id: same_type_unit_ids ).where( recorded_at: range ).order( recorded_at: :desc ).first.try( :value )
-		elsif self.metric_type == 'count'
+		elsif self.default_value_type == 'count'
 			value = self.observations.where( recorded_at: range ).count
 		else # sum_value -- aggregate
 			value = self.observations.where( unit_id: same_type_unit_ids ).where( recorded_at: range ).sum( :value )

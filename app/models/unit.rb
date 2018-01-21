@@ -1,7 +1,7 @@
 
 class Unit < ActiveRecord::Base
 	before_create	:set_aliases
-	enum unit_type: { 'nada' => -1, 'custom' => 0, 'volume' => 1, 'weight' => 2, 'length' => 3, 'time' => 4, 'percent' => 5, 'pressure' => 6, 'energy' => 7 }
+	enum unit_type: { 'nada' => -1, 'custom' => 0, 'volume' => 1, 'weight' => 2, 'length' => 3, 'time' => 4, 'percent' => 5, 'pressure' => 6, 'energy' => 7, 'rate' => 8 }
 
 	belongs_to :base_unit, class_name: 'Unit'
 

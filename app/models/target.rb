@@ -66,7 +66,7 @@ class Target < ActiveRecord::Base
 
 	private
 		def set_defaults
-			self.target_type ||= self.parent_obj.try( :metric_type )
+			self.target_type ||= self.parent_obj.try( :default_value_type )
 			self.period ||= self.parent_obj.try( :default_period )
 		end
 
