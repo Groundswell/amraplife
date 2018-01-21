@@ -2,7 +2,7 @@ class GreetingsBotService < AbstractBotService
 
 	add_intents( {
 		hello: {
-			utterances: [ 'hi', 'hey', 'yo', 'hello', 'hi there', 'good morning', 'good afternoon' ]
+			utterances: [ 'hi', 'hey', 'yo', 'hello', 'hi there', 'good morning', 'good afternoon', 'howdy' ]
 		},
    		set_name: {
    			utterances: [
@@ -31,7 +31,9 @@ class GreetingsBotService < AbstractBotService
 			'Whasssup',
 			'Hey Hey',
 			'Greetings',
-			'Hi there'
+			'Hi there',
+			'Good Day',
+			'Hi'
 		]
 
 		if user.present?
@@ -58,8 +60,8 @@ class GreetingsBotService < AbstractBotService
 		end
 
 		user.update( first_name: params[:name] )
-		add_speech("OK, from now on I'll call you #{params[:name]}.")
-		user.user_inputs.create( content: raw_input, result_obj: user, action: 'updated', source: options[:source], result_status: 'success', system_notes: "Spoke: 'OK, from now on I'll call you #{params[:name]}.'" )
+		add_speech("OK, from now on I'll call you #{user.full_name}.")
+		user.user_inputs.create( content: raw_input, result_obj: user, action: 'updated', source: options[:source], result_status: 'success', system_notes: "Spoke: 'OK, from now on I'll call you #{user.full_name}.'" )
 	end
 
 end

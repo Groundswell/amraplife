@@ -294,6 +294,9 @@ class ObservationBotService < AbstractBotService
 		},
 		Duration: {
 			regex: [
+				'\d+\s+hour(s)?\s*(and)?\s*\d+\s+minute(s)?\s*(and)?\s*\d+\s+second(s)?',
+				'\d+\s+hour(s)?\s*(and)?\s*\d+\s+minute(s)?',
+				'\d+\s+minute(s)?\s*(and)?\s*\d+\s+second(s)?',
 				'\d+\s+(second|minute|hour|day)',
 				'\d+:\d+:\d+',
 				'\d+:\d+',
@@ -1039,7 +1042,7 @@ class ObservationBotService < AbstractBotService
 		params[:action].strip!
 
 		# @todo parse notes
-		notes = params[:notes]
+		notes = params[:notes].gsub( /note (that)?/i, '' ).strip
 		sys_notes = ''
 
 
@@ -1077,8 +1080,6 @@ class ObservationBotService < AbstractBotService
 			recorded_at = set_recorded_at( params[:time_period] )
 
 			observation = user.observations.new( observed: metric, value: val, unit: user_unit, recorded_at: recorded_at, notes: notes, content: @raw_input )
-			
-			die
 
 			observation.save
 			add_speech( observation.to_s( user ) )

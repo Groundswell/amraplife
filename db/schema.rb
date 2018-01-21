@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170829150217) do
+ActiveRecord::Schema.define(version: 20180121011527) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -391,15 +391,16 @@ ActiveRecord::Schema.define(version: 20170829150217) do
     t.integer  "movement_id"
     t.string   "title"
     t.string   "slug"
-    t.text     "aliases",        default: [],         array: true
+    t.text     "aliases",            default: [],         array: true
     t.integer  "user_id"
-    t.string   "metric_type"
+    t.string   "default_value_type"
     t.text     "description"
-    t.integer  "availability",   default: 0
+    t.integer  "availability",       default: 0
     t.integer  "unit_id"
-    t.string   "default_period", default: "all_time"
+    t.string   "default_period",     default: "all_time"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "category_id"
   end
 
   add_index "metrics", ["movement_id"], name: "index_metrics_on_movement_id", using: :btree
@@ -728,6 +729,7 @@ ActiveRecord::Schema.define(version: 20170829150217) do
     t.boolean  "imperial",              default: true
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "custom_base_unit_id"
   end
 
   add_index "units", ["base_unit_id"], name: "index_units_on_base_unit_id", using: :btree
