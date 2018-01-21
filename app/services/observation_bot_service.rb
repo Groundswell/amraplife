@@ -124,35 +124,15 @@ class ObservationBotService < AbstractBotService
 			}
 		},
 
-
- 		set_target:{
+		set_target:{
  			utterances: [
 
  				# todo -- send this into a context: e.g. "set a target..." resp: 'ok, for which which metric?' 'how many' etc...
+ 				# set a target of at most 1500 cals total per day for calories
+ 				# set a target of at most 185 lbs for weight
 
- 				# syntax for sum_value or pr metrics where action_name is the unit, like '...50 pushups per day' or '2000 calories'
- 				# set a target of at most 1500 cals total per day
- 				'(?:to)?set\s+(a\s+)?(target|goal)\s+of\s+{target_direction}\s+{value}\s+{action}\s+{target_type}\s+{target_period}',
- 				# set a target of at most 1500 cals per day
- 				'(?:to)?set\s+(a\s+)?t(arget|goal)\s+of\s+{target_direction}\s+{value}\s+{action}\s+{target_period}',
- 				# set a target of 1500 cals per day
- 				'(?:to)?set\s+(a\s+)?(target|goal)\s+of\s+{value}\s+{action}\s+{target_period}',
- 				# set a target of 1500 cals
- 				'(?:to)?set\s+(a\s+)?(target|goal)\s+of\s+{value}\s+{action}',
-
- 				# syntax for current value stat like weight
- 				'(?:to)?set\s+(a\s+)?(target|goal)\s+{action}\s+of\s+{target_direction}\s+{value}\s*{unit}\s+{target_type}',
- 				'(?:to)?set\s+(a\s+)?(target|goal)\s+{action}\s+of\s+{target_direction}\s+{value}\s*{unit}',
- 				'(?:to)?set\s+(a\s+)?(target|goal)\s+{action}\s+of\s+{value}\s*{unit}',
-
-
- 				'(?:to)?set\s+(a\s+)?target\s+for\s+{action}\s+of\s+{target_direction}\s+{value}\s*(?:{unit})?\s+{target_period}\s+{target_type}',
- 				'(?:to)?set\s+(a\s+)?target\s+for\s+{action}\s+of\s+{target_direction}\s+{value}\s*(?:{unit})?\s+{target_period}',
- 				'(?:to)?set\s+(a\s+)?target\s+for\s+{action}\s+of\s+{target_direction}\s+{value}\s*(?:{unit})?',
- 				'(?:to)?set\s+(a\s+)?target\s+for\s+{action}\s+of\s+{value}\s*(?:{unit})?\s{target_period}',
- 				'(?:to)?set\s+(a\s+)?target\s+for\s+{action}\s+of\s+{value}\s*(?:{unit})?',
- 				'(?:to)?set\s+(a\s+)?target\s+for\s+{action}',
-
+ 				'(?:to)?set\s+(a\s+)?(target|goal)\s+of\s+({target_direction})?\s+{value}\s*({unit})?\s*({target_type})?\s*({target_period})?\s*for {action}',
+ 				
 
  			],
  			slots:{
@@ -164,6 +144,46 @@ class ObservationBotService < AbstractBotService
  				target_type: 'TargetType'
  			},
  		},
+
+ 		# old_set_target:{
+ 		# 	utterances: [
+
+ 		# 		# todo -- send this into a context: e.g. "set a target..." resp: 'ok, for which which metric?' 'how many' etc...
+
+ 		# 		# syntax for sum_value or pr metrics where action_name is the unit, like '...50 pushups per day' or '2000 calories'
+ 		# 		# set a target of at most 1500 cals total per day
+ 		# 		'(?:to)?set\s+(a\s+)?(target|goal)\s+of\s+{target_direction}\s+{value}\s+{action}\s+{target_type}\s+{target_period}',
+ 		# 		# set a target of at most 1500 cals per day
+ 		# 		'(?:to)?set\s+(a\s+)?t(arget|goal)\s+of\s+{target_direction}\s+{value}\s+{action}\s+{target_period}',
+ 		# 		# set a target of 1500 cals per day
+ 		# 		'(?:to)?set\s+(a\s+)?(target|goal)\s+of\s+{value}\s+{action}\s+{target_period}',
+ 		# 		# set a target of 1500 cals
+ 		# 		'(?:to)?set\s+(a\s+)?(target|goal)\s+of\s+{value}\s+{action}',
+
+ 		# 		# syntax for current value stat like weight
+ 		# 		'(?:to)?set\s+(a\s+)?(target|goal)\s+{action}\s+of\s+{target_direction}\s+{value}\s*{unit}\s+{target_type}',
+ 		# 		'(?:to)?set\s+(a\s+)?(target|goal)\s+{action}\s+of\s+{target_direction}\s+{value}\s*{unit}',
+ 		# 		'(?:to)?set\s+(a\s+)?(target|goal)\s+{action}\s+of\s+{value}\s*{unit}',
+
+
+ 		# 		'(?:to)?set\s+(a\s+)?target\s+for\s+{action}\s+of\s+{target_direction}\s+{value}\s*(?:{unit})?\s+{target_period}\s+{target_type}',
+ 		# 		'(?:to)?set\s+(a\s+)?target\s+for\s+{action}\s+of\s+{target_direction}\s+{value}\s*(?:{unit})?\s+{target_period}',
+ 		# 		'(?:to)?set\s+(a\s+)?target\s+for\s+{action}\s+of\s+{target_direction}\s+{value}\s*(?:{unit})?',
+ 		# 		'(?:to)?set\s+(a\s+)?target\s+for\s+{action}\s+of\s+{value}\s*(?:{unit})?\s{target_period}',
+ 		# 		'(?:to)?set\s+(a\s+)?target\s+for\s+{action}\s+of\s+{value}\s*(?:{unit})?',
+ 		# 		'(?:to)?set\s+(a\s+)?target\s+for\s+{action}',
+
+
+ 		# 	],
+ 		# 	slots:{
+ 		# 		action: 'Action',
+ 		# 		value: 'Amount',
+ 		# 		unit: 'Unit',
+ 		# 		target_direction: 'TargetDirection',
+ 		# 		target_period: 'TargetPeriod',
+ 		# 		target_type: 'TargetType'
+ 		# 	},
+ 		# },
 
 
 		quick_report: {
@@ -769,6 +789,8 @@ class ObservationBotService < AbstractBotService
 			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'missing metric', action: 'reported', system_notes: "Spoke: 'You must supply a metric in order to set a target for it.'" )
 			return
 		end
+
+		die 
 
 		metric = get_user_metric( user, params[:action], params[:unit], true )
 
