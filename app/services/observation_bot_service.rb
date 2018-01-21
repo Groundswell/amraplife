@@ -531,12 +531,10 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
-
 		if params[:value].blank?
-
-			add_ask( "I'm sorry, I didn't understand that.  You must supply a unit or action with your value in order to log it.  For example \"I ate one hundred calories\" or \"I ate 12 grams of sugar\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it." )
+			add_ask( "I'm sorry, I didn't understand that.  You must supply a value in order to log it.  For example \"I ate one hundred calories\" or \"I ate 12 grams of sugar\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it." )
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'missing value', action: 'reported', system_notes: "Spoke: 'You must supply a value in order to log it.'" )
 			return
-
 		end
 
 		# have to double-scan action param cause action a greedy matcher
@@ -579,7 +577,6 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
-
 		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'created', source: options[:source], result_status: 'success', system_notes: "Logged #{observation.display_value( show_units: true )} for #{observation.observed.try(:title) || params[:action]}." )
 
 	end
@@ -594,6 +591,7 @@ class ObservationBotService < AbstractBotService
 
 		if params[:value].blank?
 			add_ask( "I'm sorry, I didn't understand that.  You must supply a value in order to log it.  For example \"I burned one hundred calories\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a value in order to log it." )
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'missing value', action: 'reported', system_notes: "Spoke: 'You must supply a value in order to log it.'" )
 			return
 		end
 
@@ -622,7 +620,8 @@ class ObservationBotService < AbstractBotService
 		end
 
 		if params[:value].blank? || params[:action].blank?
-			add_ask( "I'm sorry, I didn't understand that.  You must supply a unit or action with your value in order to log it.  For example \"I drank one cup of orange juice\" or \"I drank 1 beer\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it." )
+			add_ask( "I'm sorry, I didn't understand that.  You must supply a value or metric in order to log it.  For example \"I drank one cup of orange juice\" or \"I drank 1 beer\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it." )
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'missing value or metric', action: 'reported', system_notes: "Spoke: 'You must supply a value or metric in order to log it.'" )
 			return
 		end
 
@@ -688,9 +687,9 @@ class ObservationBotService < AbstractBotService
 		end
 
 		if params[:action].blank?
-			add_ask( "I'm sorry, I didn't understand that.  You must supply an action in order to start a timer.  For example \"start jogging timer\" or \"start bike ride\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply an action in order to start a timer.", deligate_if_possible: true )
+			add_ask( "I'm sorry, I didn't understand that.  You must supply a metric in order to start a timer.  For example \"start jogging timer\" or \"start bike ride\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply an action in order to start a timer.", deligate_if_possible: true )
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'missing metric', action: 'reported', system_notes: "Spoke: 'You must supply a metric in order to log it.'" )
 			return
-
 		end
 
 		# @todo parse notes
@@ -717,7 +716,8 @@ class ObservationBotService < AbstractBotService
 		end
 
 		if params[:action].blank?
-			add_ask( "I'm sorry, I didn't understand that.  You must supply an action in order to stop a timer.  For example \"stop jogging timer\" or \"stop bike ride\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply an action in order to stop a timer.", deligate_if_possible: true )
+			add_ask( "I'm sorry, I didn't understand that.  You must supply a metric in order to stop a timer.  For example \"stop jogging timer\" or \"stop bike ride\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply an action in order to stop a timer.", deligate_if_possible: true )
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'missing metric', action: 'reported', system_notes: "Spoke: 'You must supply a metric in order to stop a timer.'" )
 			return
 		end
 
@@ -766,6 +766,7 @@ class ObservationBotService < AbstractBotService
 
 		unless params[:action].present?
 			add_ask("Sounds like you were trying to set a target, but I didn't catch what it was.  Next time be sure to specify what it is you want to track.  For example \"set a target of one thousand eight hundred for calories\".  Now give it another try.", reprompt_text: "I still didn't understand that.  To set a target you must specify what it is you want to track, and what your goal is.", deligate_if_possible: true )
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'missing metric', action: 'reported', system_notes: "Spoke: 'You must supply a metric in order to set a target for it.'" )
 			return
 		end
 
@@ -1014,11 +1015,13 @@ class ObservationBotService < AbstractBotService
 		end
 
 		if params[:action].blank?
-			add_ask( "I'm sorry, I didn't understand that.  I don't know what to log. You must supply an action with your value in order to log it.  For example \"log one hundred calories\" or \"my weight is one hundred sixty\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it.", deligate_if_possible: true )
+			add_ask( "I'm sorry, I didn't understand that.  I don't know what to log. You must supply a metric with your value in order to log it.  For example \"log one hundred calories\" or \"my weight is one hundred sixty\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it.", deligate_if_possible: true )
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'missing metric', action: 'reported', system_notes: "Spoke: 'You must supply a metric in order to log it.'" )
 			return
 
 		elsif params[:duration].blank? && params[:value].blank? && params[:unit].blank?
-			add_ask( "I'm sorry, I didn't understand that.  You must supply a unit or value with your action in order to log it.  For example \"log one hundred calories\" or \"my weight is one hundred sixty\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it.", deligate_if_possible: true )
+			add_ask( "I'm sorry, I didn't understand that.  You must supply a unit or value with your metric in order to log it.  For example \"log one hundred calories\" or \"my weight is one hundred sixty\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it.", deligate_if_possible: true )
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'missing value', action: 'reported', system_notes: "Spoke: 'You must supply a value in order to log it.'" )
 			return
 		end
 
