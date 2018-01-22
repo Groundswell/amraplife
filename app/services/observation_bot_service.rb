@@ -131,9 +131,9 @@ class ObservationBotService < AbstractBotService
  				# set a target of at most 1500 cals total per day for calories
  				# set a target of at most 185 lbs for weight
 
- 				'(?:to)?set\s+(a\s+)?(target|goal)\s+of\s+({target_direction})?\s+{value}\s*({unit})?\s*({target_type})?\s*({target_period})?\s*for {action}',
+ 				#'(?:to)?set\s+(a\s+)?(target|goal)\s+of\s*({target_direction})?\s+{value}\s*({unit})?\s*({target_type})?\s*({target_period})?\s*for {action}',
  				
-
+ 				'(?:to)?set\s+(a\s+)?(target|goal)\s+of\s+({target_direction})?\s*{value}\s*({unit})?\s*({target_period})?\s* for {action}'
  			],
  			slots:{
  				action: 'Action',
@@ -371,14 +371,14 @@ class ObservationBotService < AbstractBotService
 
 		TargetDirection: {
 			regex: [
-				'at least|at most|exactly|min|max'
+				'at least|at most|exactly|min|max|minimum|maximum'
 				],
 				values: []
 		},
 
 		TargetPeriod: {
 			regex: [
-				'per hour|per day|per month|per year|daily|weekly|monthly|yearly|forever|all time|all-time'
+				'per hour|per day|per week|per month|per year|daily|weekly|monthly|yearly|forever|all time|all-time'
 				],
 				values: []
 		},
