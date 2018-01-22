@@ -7,7 +7,6 @@
 		%table.table.table-striped
 			%thead
 				%th Title
-				%th Type
 				%th Disp Unit
 				%th Observations
 				%th
@@ -16,8 +15,6 @@
 					%tr
 						%td
 							= link_to metric.title, edit_metric_path( metric )
-						%td
-							= metric.unit.try( :unit_type ) || 'Arbitrary'
 						%td
 							= metric.unit
 						%td

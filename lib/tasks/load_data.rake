@@ -269,13 +269,13 @@ namespace :amraplife do
 		act = Metric.create title: 'Max Plank Time', default_value_type: 'max_value', aliases: ['max plank'], unit: sec, movement: Movement.find_by_alias( 'plank' )
 		act.targets.create target_type: :max_value, direction: :at_least, period: :all_time
 
-		act = Metric.create title: '100m Time', default_value_type: 'min_value', aliases: ['hundred', 'one hundred', 'hundred time', 'hundred meter time', 'hundred meter'], unit: sec, movement: Movement.find_by_alias( 'run' )
+		act = Metric.create title: '100m Time', default_value_type: 'min_value', aliases: ['one hundred', 'hundred time', 'hundred meter time', 'hundred meter dash', '100 meter dash', '100 meter time'], unit: sec, movement: Movement.find_by_alias( 'run' )
 		act.targets.create target_type: :min_value, direction: :at_most, period: :all_time
 		
-		act = Metric.create title: '400m Time', default_value_type: 'min_value', aliases: ['four_hundred'], unit: sec, movement: Movement.find_by_alias( 'run' )
+		act = Metric.create title: '400m Time', default_value_type: 'min_value', aliases: ['four hundred', 'four hundred time', 'four hundred meter time', 'four hundred meter dash', '400 meter dash', '400 meter time'], unit: sec, movement: Movement.find_by_alias( 'run' )
 		act.targets.create target_type: :min_value, direction: :at_most, period: :all_time
 		
-		act = Metric.create title: 'Mile Time', default_value_type: 'min_value', aliases: ['mile', 'one mile'], unit: sec, movement: Movement.find_by_alias( 'run' )
+		act = Metric.create title: 'Mile Time', default_value_type: 'min_value', aliases: ['mile', 'one mile', 'one mile run', '1 mile run', '1 mile'], unit: sec, movement: Movement.find_by_alias( 'run' )
 		act.targets.create target_type: :min_value, direction: :at_most, period: :all_time
 
 		act = Metric.create title: 'Max Pushups', default_value_type: 'max_value', aliases: ['max pushup'], unit: rep, movement: Movement.find_by_alias( 'pushup' )

@@ -134,13 +134,13 @@
 			
 			%tr
 				%td
-					.primary-command "set a target of ({target_direction}) {target_value} {metric} ({target_type}) ({target_period})"
+					.primary-command "set a target of ({target_direction}) {target_value} ({unit}) ({target_type}) ({target_period}) for {metric}"
 					.example-command 
-						ex. "set a target of at most 2000 calories total per day"
+						ex. "set a target of at most 2000 total per day for calories"
 						%br
-						"seta target for weight of 165"
+						"set a target of 165 for weight"
 				%td
-					"set a target for {metric}"
+					"set a target of {value} for {metric}"
 				%td
 					Creates a target for the metric.
 
@@ -190,52 +190,4 @@
 				%td
 					Provides a quick report for a metric.
 
-			-#
-
-
-				Set target
-
-
-
-				
-
-				-# %tr
-					%td
-						.primary-command "what is (my) {metric}"
-					%td
-						Reports the last logged value for the metric.
-				-# %tr
-					%td
-						.primary-command "set a target of {value} for {metric}"
-					%td
-						Creates a target for the metric. You may want to further edit the target type in your dashboard.
-				%tr
-					%td
-						.primary-command
-							" set my target
-							%u metric or activity
-							to
-							%u amount
-							"
-						.example-command ex. " set my target calories to 1800 " or " set my target bench press to 150 pounds "
-					%td
-						Creates a target for the metric. You may want to further edit the target type in your dashboard.
-					%td
-						" set my target
-						%u metric or activity
-						to
-						%u amount
-						%u unit
-						",
-						" set target
-						%u metric or activity
-						to
-						%u amount
-						",
-						" set target
-						%u metric or activity
-						to
-						%u amount
-						%u unit
-						"
-
+	

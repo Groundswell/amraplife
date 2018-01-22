@@ -133,7 +133,7 @@ class ObservationBotService < AbstractBotService
 
  				#'(?:to)?set\s+(a\s+)?(target|goal)\s+of\s*({target_direction})?\s+{value}\s*({unit})?\s*({target_type})?\s*({target_period})?\s*for {action}',
  				
- 				'(?:to)?set\s+(a\s+)?(target|goal)\s+of\s+({target_direction})?\s*{value}\s*({unit})?\s*({target_period})?\s* for {action}'
+ 				'(?:to)?set\s+(a\s+)?(target|goal)\s+of\s+({target_direction})?\s*{value}\s*({unit})?\s*({target_type})?\s*({target_period})?\s* for {action}'
  			],
  			slots:{
  				action: 'Action',
@@ -145,46 +145,6 @@ class ObservationBotService < AbstractBotService
  			},
  		},
 
- 		# old_set_target:{
- 		# 	utterances: [
-
- 		# 		# todo -- send this into a context: e.g. "set a target..." resp: 'ok, for which which metric?' 'how many' etc...
-
- 		# 		# syntax for sum_value or pr metrics where action_name is the unit, like '...50 pushups per day' or '2000 calories'
- 		# 		# set a target of at most 1500 cals total per day
- 		# 		'(?:to)?set\s+(a\s+)?(target|goal)\s+of\s+{target_direction}\s+{value}\s+{action}\s+{target_type}\s+{target_period}',
- 		# 		# set a target of at most 1500 cals per day
- 		# 		'(?:to)?set\s+(a\s+)?t(arget|goal)\s+of\s+{target_direction}\s+{value}\s+{action}\s+{target_period}',
- 		# 		# set a target of 1500 cals per day
- 		# 		'(?:to)?set\s+(a\s+)?(target|goal)\s+of\s+{value}\s+{action}\s+{target_period}',
- 		# 		# set a target of 1500 cals
- 		# 		'(?:to)?set\s+(a\s+)?(target|goal)\s+of\s+{value}\s+{action}',
-
- 		# 		# syntax for current value stat like weight
- 		# 		'(?:to)?set\s+(a\s+)?(target|goal)\s+{action}\s+of\s+{target_direction}\s+{value}\s*{unit}\s+{target_type}',
- 		# 		'(?:to)?set\s+(a\s+)?(target|goal)\s+{action}\s+of\s+{target_direction}\s+{value}\s*{unit}',
- 		# 		'(?:to)?set\s+(a\s+)?(target|goal)\s+{action}\s+of\s+{value}\s*{unit}',
-
-
- 		# 		'(?:to)?set\s+(a\s+)?target\s+for\s+{action}\s+of\s+{target_direction}\s+{value}\s*(?:{unit})?\s+{target_period}\s+{target_type}',
- 		# 		'(?:to)?set\s+(a\s+)?target\s+for\s+{action}\s+of\s+{target_direction}\s+{value}\s*(?:{unit})?\s+{target_period}',
- 		# 		'(?:to)?set\s+(a\s+)?target\s+for\s+{action}\s+of\s+{target_direction}\s+{value}\s*(?:{unit})?',
- 		# 		'(?:to)?set\s+(a\s+)?target\s+for\s+{action}\s+of\s+{value}\s*(?:{unit})?\s{target_period}',
- 		# 		'(?:to)?set\s+(a\s+)?target\s+for\s+{action}\s+of\s+{value}\s*(?:{unit})?',
- 		# 		'(?:to)?set\s+(a\s+)?target\s+for\s+{action}',
-
-
- 		# 	],
- 		# 	slots:{
- 		# 		action: 'Action',
- 		# 		value: 'Amount',
- 		# 		unit: 'Unit',
- 		# 		target_direction: 'TargetDirection',
- 		# 		target_period: 'TargetPeriod',
- 		# 		target_type: 'TargetType'
- 		# 	},
- 		# },
-
 
 		quick_report: {
 			utterances: [
@@ -193,8 +153,6 @@ class ObservationBotService < AbstractBotService
 				# what is my max bench
 				'what\s+{verb}\s*(?:my)?\s*{action}\s*{report_period}',
 				'what\s+{verb}\s*(?:my)?\s*{action}',
-
-
 
 				# how much do i weigh
 
@@ -385,7 +343,7 @@ class ObservationBotService < AbstractBotService
 
 		TargetType: {
 			regex: [
-				'total|average|count|checkins|observations'
+				'total|average|avg|count|checkin|observation'
 				],
 				values: []
 		},
@@ -790,8 +748,6 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
-		die 
-
 		metric = get_user_metric( user, params[:action], params[:unit], true )
 
 		system_metric = Metric.where( user_id: nil ).find_by_alias( params[:action].singularize.downcase )
@@ -800,10 +756,7 @@ class ObservationBotService < AbstractBotService
 		system_target = system_metric.targets.where( user_id: nil ).first
 
 		value = params[:value] || system_target.value
-		if params[:unit].present?
-			unit = Unit.where( metric_id: metric.id, user_id: user.id ).find_by_alias( params[:unit].singularize ) || Unit.system.find_by_alias( params[:unit].singularize )
-		end
-		unit ||= metric.unit
+		
 
 		direction = params[:target_direction].try( :downcase )
 		if direction.present?
@@ -829,11 +782,33 @@ class ObservationBotService < AbstractBotService
 		type = params[:target_type]
 		if type.present?
 			type = 'sum_value' if type.match( /total/ )
-			type = 'avg_value' if type.match( /average/ )
-			type = 'count' if type.match( /check|observation/ )
+			type = 'avg_value' if type.match( /average|avg/ )
+			type = 'count' if type.match( /check|observation|count/ )
 		end
-		type = 'count' if params[:unit].present? && params[:unit].match( /check|observation/ )
+
+		# unit param is a bit greedy.... so target_type will fall to unit
+		# if explicit unit is missing
+		unit_str = params[:unit].singularize.downcase if params[:unit].present?
+
+		if unit_str.present?
+			if unit_str.match( /check|observation|count/ ) 
+				type = 'count'
+				unit_str = ''
+			elsif unit_str.match( /total/ )
+				type = 'sum_value'
+				unit_str = ''
+			elsif unit_str.match( /average|avg/ )
+				type = 'avg_value'
+				unit_str = ''
+			end
+		end
+
 		type ||= system_target.target_type
+
+		if unit_str.present?
+			unit = Unit.where( metric_id: metric.id, user_id: user.id ).find_by_alias( unit_str ) || Unit.system.find_by_alias( unit_str )
+		end
+		unit ||= metric.unit
 
 		target = metric.targets.where( user: user ).last || metric.targets.new( user: user )
 

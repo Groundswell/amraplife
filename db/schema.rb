@@ -483,8 +483,8 @@ ActiveRecord::Schema.define(version: 20180121011527) do
     t.hstore   "properties",    default: {}
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "status",        default: 1
     t.integer  "unit_id"
+    t.integer  "status",        default: 1
   end
 
   add_index "observations", ["parent_id"], name: "index_observations_on_parent_id", using: :btree
@@ -765,8 +765,8 @@ ActiveRecord::Schema.define(version: 20180121011527) do
     t.datetime "dob"
     t.string   "gender"
     t.string   "location"
-    t.string   "address1"
-    t.string   "address2"
+    t.string   "street"
+    t.string   "street2"
     t.string   "city"
     t.string   "state"
     t.string   "zip"
@@ -806,6 +806,7 @@ ActiveRecord::Schema.define(version: 20180121011527) do
     t.datetime "updated_at"
     t.text     "authorization_code"
     t.boolean  "use_imperial_units",     default: true
+    t.string   "nickname"
   end
 
   add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", unique: true, using: :btree

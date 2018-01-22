@@ -69,10 +69,19 @@ class LifemeterController < ApplicationController
 
 	def update_settings
 
-		current_user.full_name = params[:full_name] if params[:full_name].present?
+		current_user.nickname = params[:nickname] if params[:nickname].present?
 		current_user.gender = params[:gender] if params[:gender].present?
 		current_user.dob = params[:dob] if params[:dob].present?
 		current_user.email = params[:email] unless params[:email].blank?
+
+		current_user.full_name = params[:full_name] if params[:full_name].present?
+		current_user.street = params[:street] unless params[:street].blank?
+		current_user.street2 = params[:street2] unless params[:street2].blank?
+		current_user.city = params[:city] unless params[:city].blank?
+		current_user.state = params[:state] unless params[:state].blank?
+		current_user.zip = params[:zip] unless params[:zip].blank?
+		current_user.phone = params[:phone] unless params[:phone].blank?
+
 		current_user.use_imperial_units = params[:use_imperial_units]
 		if params[:new_password].present?
 			if current_user.encrypted_password.nil?

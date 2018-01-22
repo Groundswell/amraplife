@@ -11,6 +11,8 @@ class User < SwellMedia::User
 	has_many :units # custom units entered by the user: e.g. water bottle
 	has_many :user_inputs
 
+	has_one :address, class_name: 'SwellEcom::GeoAddress'
+
 
 	### Class Methods   	--------------------------------------
 	# over-riding Deivse method to allow login via name or email
@@ -54,6 +56,27 @@ class User < SwellMedia::User
 			end
 		end
 	end
+
+
+
+	def to_s( args={} )
+		if args[:username]
+			str = self.name.try(:strip)
+			str = 'Guest' if str.blank?
+			return str
+		else
+			str = "#{self.first_name} #{self.last_name}".strip
+			str = self.name.try(:strip) if str.blank?
+			if self.nickname.present?
+				str = str + " (#{self.nickname})"
+			elsif str.blank?
+				str = 'Guest'
+			end
+
+			return str
+		end
+	end
+
 
 	private
 		def set_name
