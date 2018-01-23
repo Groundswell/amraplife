@@ -343,7 +343,7 @@ class ObservationBotService < AbstractBotService
 
 		TargetType: {
 			regex: [
-				'total|average|avg|count|checkin|observation'
+				'total|average|avg|count|checkin|observation|times'
 				],
 				values: []
 		},
@@ -791,7 +791,7 @@ class ObservationBotService < AbstractBotService
 		unit_str = params[:unit].singularize.downcase if params[:unit].present?
 
 		if unit_str.present?
-			if unit_str.match( /check|observation|count/ ) 
+			if unit_str.match( /check|observation|count|times/ ) 
 				type = 'count'
 				unit_str = ''
 			elsif unit_str.match( /total/ )
