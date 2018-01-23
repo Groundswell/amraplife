@@ -4,7 +4,7 @@
 			.input-group
 				%span.input-group-addon
 					%i.fa.fa-user
-				= f.text_field :name, placeholder: 'User Name', class: 'form-control'
+				= f.text_field :name, placeholder: 'Name', class: 'form-control'
 		.form-group
 			.input-group
 				%span.input-group-addon
@@ -31,7 +31,7 @@
 			.row
 				.col-xs-12.col-sm-8.col-sm-offset-2
 					= f.submit "Register", class: 'btn btn-success col-xs-12'
-		.row
+		-#.row
 			.col-xs-12
 				%p.social-text.text-center
 					Or Create an account with

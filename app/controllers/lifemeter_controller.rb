@@ -4,6 +4,12 @@ class LifemeterController < ApplicationController
 
 	def dash
 		@inputs = current_user.user_inputs.order( created_at: :desc ).page( params[:page] )
+
+		@metrics = current_user.metrics.joins( :observations ).order( updated_at: :desc ).limit( 10 ).distinct
+		
+		@targets = current_user.targets.order( updated_at: :desc ).limit( 10 )
+
+		
 		# @start_date = 30.days.ago.beginning_of_day
 		# @end_date = Time.zone.now.end_of_day
 

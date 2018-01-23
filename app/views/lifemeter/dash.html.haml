@@ -4,7 +4,7 @@
 = form_for UserInput.new, html: { style: 'margin: auto 1em;' } do |f|
 	.row
 		.col-sm-10
-			= f.text_field :content, class: 'form-control lg', placeholder: 'Hi There!'
+			= f.text_field :content, class: 'form-control lg', placeholder: "Enter a command such as: 'I ate 300 calories.'"
 		.col-sm-2
 			= f.submit 'Submit', class: 'btn btn-success btn-lg', style: 'margin: auto;'
 			
@@ -49,7 +49,7 @@
 					- else
 						%center
 							%h1
-								No Activity Yet
+								Hi Welcome to LifeMeter!!!
 							%p
 								To start tracking, just type something like: "weight is 173" or "ate 300" into the box above. 
 							%p
@@ -58,39 +58,69 @@
 								to learn all about what Life Meter can do.
 
 	.col-sm-5
+		.main-box.clearfix.project-box.green-box
+			.main-box-body.clearfix
+				.project-box-header.green-bg
+					.name
+						%a{ href: targets_path }
+							Targets
+
+
+				.project-box-content
+					.main-box.feed
+						.main-box-body.clearfix
+							- if @targets.present?
+								%ul
+									- @targets.each do |target|
+										%li.clearfix{ style: 'list-style: none;text-align:left;' }
+											
+											= link_to target.parent_obj.to_s, edit_target_path( target )
+											= target.to_s
+
+											.time-ago
+												= target.end_at
+												
+							- else
+								No Targets yet.
+								%a{ data: { toggle: :modal, target: '#new_target' } }
+									Add One
+
 		.main-box.clearfix.project-box.emerald-box
 			.main-box-body.clearfix
 				.project-box-header.emerald-bg
 					.name
-						%a{ href: '#' }
+						%a{ href: metrics_path }
 							Recent Metrics
 				.project-box-content
 					.main-box.feed
 						.main-box-body.clearfix
-							%ul
-								- current_user.metrics.order( updated_at: :desc ).limit( 10 ).each do |metric|
-									%li.clearfix{ style: 'list-style: none;text-align:left;' }
-										= metric.title
+							- if @metrics.present?
+								%ul
+									- @metrics.each do |metric|
+										%li.clearfix{ style: 'list-style: none;text-align:left;' }
+											= link_to metric.title, edit_metric_path( metric )
 
-										.time-ago
-											= metric.default_value
-											- if metric.default_period == 'day'
-												%br
-												.pull-right
-													today
-											- elsif metric.default_period == 'week'
-												%br
-												.pull-right
-													this week
-											- elsif metric.default_period == 'month'
-												%br
-												.pull-right
-													this month
+											.time-ago
+												= metric.default_value
+												- if metric.default_period == 'day'
+													%br
+													.pull-right
+														today
+												- elsif metric.default_period == 'week'
+													%br
+													.pull-right
+														this week
+												- elsif metric.default_period == 'month'
+													%br
+													.pull-right
+														this month
+							- else
+								No Metrics yet. Strart Recording observations to track your progress.
 										
 
 				
 
-
+= render 'targets/new_modal', args: {}
 
 
 

@@ -1,50 +1,62 @@
-%h1
-	Editing Target
-	for
-	= @target.parent_obj.title
+
 .main-box.clearfix
 	.main-box-header.clearfix
+		.row
+			.col-xs-10
+				%h1
+					Editing Target
+					for
+					= @target.parent_obj.to_s
+			.col-xs-2
+				%a.btn.btn-danger{ href: target_path( @target ), data: { method: :delete, confirm: 'Are you sure?' } }
+					%i.fa.fa-trash
+					Delete
+
+
+	.main-box.clearfix
+		.main-box-header.clearfix
+			
+		.main-box-body.clearfix
+			= form_for @target do |f|
+				.row
+					.col-sm-8
+						.row
+							.col-sm-6
+								= f.label :target_type
+								= f.collection_select :target_type, Target.target_types, :first, :second, {}, class: 'form-control'
+							
+							.col-sm-6
+								= f.label :direction
+								= f.collection_select :direction, Target.directions, :first, :second, {}, class: 'form-control'
+							
+						.row
+							.col-sm-6
+								= f.label :value
+								= f.text_field :value, value: @target.display_value( show_units: true ), class: 'form-control'
+							
+							.col-sm-6
+								= f.label :period
+								= f.collection_select :period, Target.periods, :first, :second, {}, class: 'form-control'
+					.col-sm-4
+						.well
+							.form-group
+								= f.label :status
+								= f.collection_select :status, Target.statuses, :first, :first, {}, class: 'form-control'
+
+							.form-group
+								= f.label :start_at
+								.input-group.date
+									= f.text_field :start_at, class: 'form-control'
+									%span.input-group-addon
+										%i.fa.fa-calendar
+							.form-group
+								= f.label :end_at
+								.input-group.date
+									= f.text_field :end_at, class: 'form-control'
+									%span.input-group-addon
+										%i.fa.fa-calendar
+
+							.form-group
+								= f.submit 'Update', class: 'btn btn-primary'
+
 		
-	.main-box-body.clearfix
-		= form_for @target do |f|
-			.row
-				.col-sm-8
-					.row
-						.col-sm-3
-							= f.label :target_type
-							= f.collection_select :target_type, Target.target_types, :first, :second, {}, class: 'form-control'
-						
-						.col-sm-3
-							= f.label :direction
-							= f.collection_select :direction, Target.directions, :first, :second, {}, class: 'form-control'
-						
-						.col-sm-3
-							= f.label :value
-							= f.text_field :value, value: @target.display_value( show_units: true ), class: 'form-control'
-						
-						.col-sm-3
-							= f.label :period
-							= f.collection_select :period, Target.periods, :first, :second, {}, class: 'form-control'
-				.col-sm-4
-					.well
-						.form-group
-							= f.label :status
-							= f.collection_select :status, Target.statuses, :first, :first, {}, class: 'form-control'
-
-						.form-group
-							= f.label :start_at
-							.input-group.date
-								= f.text_field :start_at, class: 'form-control'
-								%span.input-group-addon
-									%i.fa.fa-calendar
-						.form-group
-							= f.label :end_at
-							.input-group.date
-								= f.text_field :end_at, class: 'form-control'
-								%span.input-group-addon
-									%i.fa.fa-calendar
-
-						.form-group
-							= f.submit 'Update', class: 'btn btn-primary'
-
-	

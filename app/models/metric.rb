@@ -105,6 +105,10 @@ class Metric < ActiveRecord::Base
 		"#{self.title}_#{self.user_id}"
 	end
 
+	def to_s
+		self.title
+	end
+
 	def total_for_day( day=Time.zone.now )
 		self.observations.for_day( day ).sum( :value )
 	end
