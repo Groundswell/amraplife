@@ -58,33 +58,6 @@
 								to learn all about what Life Meter can do.
 
 	.col-sm-5
-		.main-box.clearfix.project-box.green-box
-			.main-box-body.clearfix
-				.project-box-header.green-bg
-					.name
-						%a{ href: targets_path }
-							Targets
-
-
-				.project-box-content
-					.main-box.feed
-						.main-box-body.clearfix
-							- if @targets.present?
-								%ul
-									- @targets.each do |target|
-										%li.clearfix{ style: 'list-style: none;text-align:left;' }
-											
-											= link_to target.parent_obj.to_s, edit_target_path( target )
-											= target.to_s
-
-											.time-ago
-												= target.end_at
-												
-							- else
-								No Targets yet.
-								%a{ data: { toggle: :modal, target: '#new_target' } }
-									Add One
-
 		.main-box.clearfix.project-box.emerald-box
 			.main-box-body.clearfix
 				.project-box-header.emerald-bg
@@ -116,6 +89,33 @@
 														this month
 							- else
 								No Metrics yet. Strart Recording observations to track your progress.
+
+		.main-box.clearfix.project-box.green-box
+			.main-box-body.clearfix
+				.project-box-header.green-bg
+					.name
+						%a{ href: targets_path }
+							Targets
+
+
+				.project-box-content
+					.main-box.feed
+						.main-box-body.clearfix
+							- if @targets.present?
+								%ul
+									- @targets.each do |target|
+										%li.clearfix{ style: 'list-style: none;text-align:left;' }
+											
+											= link_to target.parent_obj.to_s, edit_target_path( target )
+											= target.to_s
+
+											.time-ago
+												= target.end_at
+												
+							- else
+								No Targets yet.
+								%a{ data: { toggle: :modal, target: '#new_target' } }
+									Add One
 										
 
 				

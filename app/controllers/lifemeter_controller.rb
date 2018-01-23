@@ -1,6 +1,6 @@
 class LifemeterController < ApplicationController
 
-	before_filter :authenticate_user!, only: [:dash, :update_settings, :log]
+	before_filter :authenticate_user!, only: [:dash, :settings, :update_settings, :log]
 
 	def dash
 		@inputs = current_user.user_inputs.order( created_at: :desc ).page( params[:page] )

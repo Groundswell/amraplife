@@ -6,7 +6,10 @@ class RegistrationsController < Devise::RegistrationsController
 		email = params[:user][:email] || params[:user][:login]
 		# todo -- check validity of email param?
 
-		user_attributes = { email: email, full_name: params[:user][:name], name: params[:user][:name], ip: request.ip }
+
+		nick = params[:user][:name].split( /\s+/ ).first unless params[:user][:name].blank?
+
+		user_attributes = { email: email, full_name: params[:user][:name], nickname: nick, name: params[:user][:name], ip: request.ip }
 
 		user = User.where( email: email ).first || User.new_with_session( user_attributes, session )
 
@@ -28,7 +31,8 @@ class RegistrationsController < Devise::RegistrationsController
         	respond_with user, location: after_sign_up_path_for( user )
 		else
 			set_flash "Could not register user.", :error, user
-			render :new, locals: { resource: user }
+			redirect_to :back
+			#render :new, locals: { resource: user }
 			return false
 		end
 

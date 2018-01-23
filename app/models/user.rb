@@ -65,10 +65,10 @@ class User < SwellMedia::User
 			str = 'Guest' if str.blank?
 			return str
 		else
-			str = "#{self.first_name} #{self.last_name}".strip
-			str = self.name.try(:strip) if str.blank?
 			if self.nickname.present?
-				str = str + " (#{self.nickname})"
+				str = self.nickname
+			elsif self.full_name.present?
+				self.full_name
 			elsif str.blank?
 				str = 'Guest'
 			end
@@ -80,8 +80,8 @@ class User < SwellMedia::User
 
 	private
 		def set_name
-			if self.first_name.blank?
-				self.update( first_name: self.email.split( /@/ ).first )
+			if self.nickname.blank?
+				self.update( nickname: self.email.split( /@/ ).first )
 			end
 		end
 
