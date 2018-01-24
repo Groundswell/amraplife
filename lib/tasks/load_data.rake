@@ -1,6 +1,17 @@
 # desc "Explaining what the task does"
 namespace :amraplife do
 
+	task load_users: :environment do
+		10.times{
+			name = PasswordGeneratorService.new.generate( length: 4 )
+			domain = PasswordGeneratorService.new.generate( length: 6 )
+			pw = PasswordGeneratorService.new.generate()
+			u = User.create email: "#{name}@#{domain}.com", password: pw 
+			puts "Created user: #{u.nickname} - #{u.email} - #{pw}"
+		}
+	end
+
+
 	task load_sample_data: :environment do
 
 		5.times{

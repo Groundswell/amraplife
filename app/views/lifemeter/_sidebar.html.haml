@@ -39,6 +39,8 @@
 								Dashboard
 							-#%span.label.label-primary.label-circle.pull-right
 								= current_user.observations.count
+					
+
 					%li{ class: set_css_if( controller: :metrics ) }
 						%a{ href: main_app.metrics_path }
 							%i.fa.fa-line-chart
@@ -57,6 +59,12 @@
 							%i.fa.fa-bullseye
 							%span
 								Your Goals & Targets
+
+					%li{ class: set_css_if( path: '/lifemeter/settings' ) }
+						%a{ href: settings_lifemeter_index_path }
+							%i.fa.fa-cog
+							%span
+								Settings
 
 					-#%li{ class: set_css_if( controller: :journal ) }
 						%a{ href: main_app.journal_entries_path }
