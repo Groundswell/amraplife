@@ -49,13 +49,15 @@
 					- else
 						%center
 							%h1
-								Hi Welcome to LifeMeter!!!
+								Hi 
+								= "#{current_user.to_s.capitalize},"
+								Welcome to LifeMeter!!!
 							%p
 								To start tracking, just type something like: "weight is 173" or "ate 300" into the box above. 
 							%p
 								%a{ href: '/lifemeter/help' }
 									Read the guide
-								to learn all about what Life Meter can do.
+								to learn all about what LifeMeter can do.
 
 	.col-sm-5
 		.main-box.clearfix.project-box.emerald-box

@@ -1,19 +1,5 @@
 == README
 
-* add metric.value_type
-* move metric_type to value_type
-* remove metric.metric_type ? Would use metric_category anyway for stuff like movement, nutrition, etc...
-* so, just rename metric_type to value_type
-
-* add unit_type
-* use unit_type for default unit_type
-
-
-
-* use metric.unit_type to set unit
-
-* add unit.custom_base_unit_id ## for custom units?
-
 * Add Fitbit api / sanity-check metric/obs data structure
 * wire-up user profile photo update
 * convert chart/stat data to units (or ditch for now)
