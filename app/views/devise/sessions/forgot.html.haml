@@ -1,0 +1,38 @@
+.container
+	.row
+		.col-xs-12
+			#login-box
+				#login-box-holder
+					.row
+						.col-xs-12
+							%header#login-header
+								#login-logo
+									= image_tag 'amrap_logo_wht.png'
+							#login-box-inner
+
+								= render 'application/flash'
+
+								= form_tag '/password_reset', role: :form do |f|
+									.row
+										.col-xs-12
+											.input-group
+												%span.input-group-addon
+													%i.fa.fa-user
+													= text_field_tag :email, '', { autofocus: true, placeholder: "email", class: 'form-control' }
+				
+										.row
+											.col-xs-12
+												= submit_tag "Sign in", class: 'btn btn-success col-xs-12'
+								
+									.row
+										.col-xs-12
+											%p.social-text{ style: 'font-size: 16px;' }
+												Don't have an account?
+												%a{ href: main_app.register_path }
+													Register
+				-#login-box-footer
+					.row
+						.col-xs-12
+							Don't have an account?
+							%a{ href: main_app.register_path }
+								Register

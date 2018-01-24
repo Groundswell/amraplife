@@ -12,6 +12,10 @@ class SessionsController < Devise::SessionsController
 
 	end
 
+	def forgot
+		
+	end
+
 	def new
 		super
 

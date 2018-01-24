@@ -1,3 +1,4 @@
+
 Rails.application.routes.draw do
 
 	# resources :cards do
@@ -87,10 +88,12 @@ Rails.application.routes.draw do
 	get '/about' => 'swell_media/static#about', as: 'about'
 
 	get '/faq' => 'swell_media/static#faq', as: 'faq'
+
 	get '/inspirations' => 'swell_media/static#inspirations', as: 'inspirations'
 	get '/deleteGAPPSnotBefore20170225utc.html' => 'swell_media/static#goog_verify'
 
 	devise_scope :user do
+		get '/forgot' => 'sessions#forgot', as: 'forgot'
 		get '/login' => 'sessions#new', as: 'login'
 		get '/logout' => 'sessions#destroy', as: 'logout'
 		get '/register' => 'registrations#new', as: 'register'
