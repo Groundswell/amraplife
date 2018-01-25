@@ -81,7 +81,8 @@ class User < SwellMedia::User
 	private
 		def set_names
 			if self.nickname.blank?
-				self.nickname = self.email.split( /@/ ).first
+				nick = self.full_name.split( /\s+/ ).first unless self.full_name.blank?
+				self.nickname ||= self.email.split( /@/ ).first
 			end
 
 			if self.name.blank?
