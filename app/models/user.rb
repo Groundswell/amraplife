@@ -2,7 +2,7 @@ class User < SwellMedia::User
 
 	devise 		:database_authenticatable, :omniauthable, :registerable, :recoverable, :rememberable, :trackable, :omniauthable, :omniauth_providers => [:facebook], :authentication_keys => [:login]
 
-	after_create :set_name
+	before_create :set_names
 
 	# App declarations
 	has_many :metrics
@@ -79,9 +79,13 @@ class User < SwellMedia::User
 
 
 	private
-		def set_name
+		def set_names
 			if self.nickname.blank?
-				self.update( nickname: self.email.split( /@/ ).first )
+				self.nickname = self.email.split( /@/ ).first
+			end
+
+			if self.name.blank?
+				self.name = self.email.parameterize
 			end
 		end
 
