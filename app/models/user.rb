@@ -68,7 +68,7 @@ class User < SwellMedia::User
 			if self.nickname.present?
 				str = self.nickname
 			elsif self.full_name.present?
-				self.full_name
+				str = self.full_name
 			elsif str.blank?
 				str = 'Guest'
 			end
