@@ -9,7 +9,7 @@ class RegistrationsController < Devise::RegistrationsController
 
 		nick = params[:user][:name].split( /\s+/ ).first unless params[:user][:name].blank?
 
-		user_attributes = { email: email, full_name: params[:user][:name], nickname: nick, name: params[:user][:name], ip: request.ip }
+		user_attributes = { email: email, full_name: params[:user][:name], nickname: nick, name: params[:user][:name].parameterize, ip: request.ip }
 
 		user = User.where( email: email ).first || User.new_with_session( user_attributes, session )
 
