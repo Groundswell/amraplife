@@ -1,0 +1,125 @@
+
+.container-fluid
+	.row
+		.col-xs-10
+			%ul.breadcrumb
+				%li
+					= link_to 'Admin', admin_index_path
+				%li
+					= link_to 'User Admin', user_admin_index_path
+				%li
+					%strong
+						Edit
+						= @user
+						
+
+		.col-xs-2
+			%a.btn.btn-danger{ href: '#TODO' }
+				%i.fa.fa-trash
+				Delete
+
+	= form_for @user, url: user_admin_path( @user ), method: :put do |f|
+		.row
+			.col-xs-8
+				.row
+					.col-xs-6
+						.form-group
+							= f.label :first_name
+							= f.text_field :first_name, class: 'form-control'
+					.col-xs-6
+						.form-group
+							= f.label :last_name
+							= f.text_field :last_name, class: 'form-control'
+
+				.row
+					.col-xs-6
+						.form-group
+							= f.label :email
+							= f.text_field :email, class: 'form-control'
+					.col-xs-6
+						.form-group
+							= f.label :name, 'User Name'
+							= f.text_field :name, class: 'form-control'
+				
+				.row{ style: 'margin: 1em auto;' }
+					.col-xs-6
+						.form-group
+							= f.label :nickname, 'Nickname'
+							= f.text_field :nickname, class: 'form-control'
+					.col-xs-6
+						.row
+							.col-xs-4
+								= @user.avatar_tag class: 'img img-responsive img-rounded', style: 'margin-top:1.5em;'
+							.col-xs-8
+								= f.label :avatar
+								= f.text_field :avatar, class: 'form-control'
+						
+				.row
+					.col-xs-12
+						= f.label :street
+						= f.text_field :street, class: 'form-control'
+
+						= f.label :street2
+						= f.text_field :street2, class: 'form-control'
+				.row
+					.col-xs-6
+						= f.label :city
+						= f.text_field :city, class: 'form-control'
+					.col-xs-3
+						= f.label :state
+						= f.text_field :state, class: 'form-control'
+					.col-xs-3
+						= f.label :zip
+						= f.text_field :zip, class: 'form-control'
+			
+			.col-xs-4
+				- if params[:pw].present?
+					%h4
+						Temp PW:
+						= params[:pw]
+				%table.table
+					%tr
+						%td
+							Joined
+						%td
+							= @user.created_at.to_s( :long )
+					%tr
+						%td
+							Last Sign In
+						%td
+							- if @user.last_sign_in_at.present?
+								= @user.last_sign_in_at.to_s( :long )
+							- else
+								Never
+					%tr
+						%td
+							Sign In Count
+						%td
+							= @user.sign_in_count
+					%tr
+						%td
+							Inputs
+						%td
+							= @user.user_inputs.count
+					%tr
+						%td
+							Metrics
+						%td
+							= @user.metrics.count
+					%tr
+						%td
+							Observations
+						%td
+							= @user.observations.count
+
+				.form-group
+					= f.label :status
+					= f.collection_select :status, SwellMedia.registered_user_class.constantize.statuses, :first, :first, {}, class: 'form-control'
+				.form-group
+					= f.label :role
+					= f.collection_select :role, SwellMedia.registered_user_class.constantize.roles, :first, :first, {}, class: 'form-control'
+
+				.input-group
+					= f.submit 'Update', class: 'btn btn-primary'
+		
+
