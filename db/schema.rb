@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170829150217) do
+ActiveRecord::Schema.define(version: 20180121011527) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -391,15 +391,16 @@ ActiveRecord::Schema.define(version: 20170829150217) do
     t.integer  "movement_id"
     t.string   "title"
     t.string   "slug"
-    t.text     "aliases",        default: [],         array: true
+    t.text     "aliases",            default: [],         array: true
     t.integer  "user_id"
-    t.string   "metric_type"
+    t.string   "default_value_type"
     t.text     "description"
-    t.integer  "availability",   default: 0
+    t.integer  "availability",       default: 0
     t.integer  "unit_id"
-    t.string   "default_period", default: "all_time"
+    t.string   "default_period",     default: "all_time"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "category_id"
   end
 
   add_index "metrics", ["movement_id"], name: "index_metrics_on_movement_id", using: :btree
@@ -482,8 +483,8 @@ ActiveRecord::Schema.define(version: 20170829150217) do
     t.hstore   "properties",    default: {}
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "unit_id"
     t.integer  "status",        default: 1
+    t.integer  "unit_id"
   end
 
   add_index "observations", ["parent_id"], name: "index_observations_on_parent_id", using: :btree
@@ -719,15 +720,17 @@ ActiveRecord::Schema.define(version: 20170829150217) do
     t.integer  "imperial_correlate_id"
     t.integer  "user_id"
     t.integer  "metric_id"
-    t.float    "conversion_factor",     default: 1.0
+    t.float    "conversion_factor",        default: 1.0
     t.string   "name"
     t.string   "slug"
     t.string   "abbrev"
-    t.integer  "unit_type",             default: 0
-    t.text     "aliases",               default: [],   array: true
-    t.boolean  "imperial",              default: true
+    t.integer  "unit_type",                default: 0
+    t.text     "aliases",                  default: [],   array: true
+    t.boolean  "imperial",                 default: true
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "custom_base_unit_id"
+    t.integer  "custom_conversion_factor"
   end
 
   add_index "units", ["base_unit_id"], name: "index_units_on_base_unit_id", using: :btree
@@ -762,8 +765,8 @@ ActiveRecord::Schema.define(version: 20170829150217) do
     t.datetime "dob"
     t.string   "gender"
     t.string   "location"
-    t.string   "address1"
-    t.string   "address2"
+    t.string   "street"
+    t.string   "street2"
     t.string   "city"
     t.string   "state"
     t.string   "zip"
@@ -803,6 +806,7 @@ ActiveRecord::Schema.define(version: 20170829150217) do
     t.datetime "updated_at"
     t.text     "authorization_code"
     t.boolean  "use_imperial_units",     default: true
+    t.string   "nickname"
   end
 
   add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", unique: true, using: :btree

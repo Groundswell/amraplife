@@ -49,6 +49,10 @@ class ObservationBotService < AbstractBotService
 				'(?:that )?\s*(?:i)?\s*ate {value}\s*{unit} of {action}\s*({time_period})?\s*({notes})?', # e.g. 30 grams of protein
 				'(?:that )?\s*(?:i)?\s*ate {value}\s*{unit}\s*({time_period})?\s*({notes})?', # e.g. 480 calories
 				'(?:that )?\s*(?:i)?\s*ate {value}\s*({time_period})?\s*({notes})?', # e.g. ate 300 defaults to calories
+
+				'(?:that )?\s*(?:i)?\s*have eaten {value}\s*{unit} of {action}\s*({time_period})?\s*({notes})?', # e.g. 30 grams of protein
+				'(?:that )?\s*(?:i)?\s*have eaten {value}\s*{unit}\s*({time_period})?\s*({notes})?', # e.g. 480 calories
+				'(?:that )?\s*(?:i)?\s*have eaten {value}\s*({time_period})?\s*({notes})?', # e.g. ate 300 defaults to calories
 			],
 			slots: {
 				action: 'Action',
@@ -120,36 +124,16 @@ class ObservationBotService < AbstractBotService
 			}
 		},
 
-
- 		set_target:{
+		set_target:{
  			utterances: [
 
  				# todo -- send this into a context: e.g. "set a target..." resp: 'ok, for which which metric?' 'how many' etc...
+ 				# set a target of at most 1500 cals total per day for calories
+ 				# set a target of at most 185 lbs for weight
 
- 				# syntax for sum_value or pr metrics where action_name is the unit, like '...50 pushups per day' or '2000 calories'
- 				# set a target of at most 1500 cals total per day
- 				'(?:to)?set\s+(a\s+)?(target|goal)\s+of\s+{target_direction}\s+{value}\s+{action}\s+{target_type}\s+{target_period}',
- 				# set a target of at most 1500 cals per day
- 				'(?:to)?set\s+(a\s+)?t(arget|goal)\s+of\s+{target_direction}\s+{value}\s+{action}\s+{target_period}',
- 				# set a target of 1500 cals per day
- 				'(?:to)?set\s+(a\s+)?(target|goal)\s+of\s+{value}\s+{action}\s+{target_period}',
- 				# set a target of 1500 cals
- 				'(?:to)?set\s+(a\s+)?(target|goal)\s+of\s+{value}\s+{action}',
-
- 				# syntax for current value stat like weight
- 				'(?:to)?set\s+(a\s+)?(target|goal)\s+{action}\s+of\s+{target_direction}\s+{value}\s*{unit}\s+{target_type}',
- 				'(?:to)?set\s+(a\s+)?(target|goal)\s+{action}\s+of\s+{target_direction}\s+{value}\s*{unit}',
- 				'(?:to)?set\s+(a\s+)?(target|goal)\s+{action}\s+of\s+{value}\s*{unit}',
-
-
- 				'(?:to)?set\s+(a\s+)?target\s+for\s+{action}\s+of\s+{target_direction}\s+{value}\s*(?:{unit})?\s+{target_period}\s+{target_type}',
- 				'(?:to)?set\s+(a\s+)?target\s+for\s+{action}\s+of\s+{target_direction}\s+{value}\s*(?:{unit})?\s+{target_period}',
- 				'(?:to)?set\s+(a\s+)?target\s+for\s+{action}\s+of\s+{target_direction}\s+{value}\s*(?:{unit})?',
- 				'(?:to)?set\s+(a\s+)?target\s+for\s+{action}\s+of\s+{value}\s*(?:{unit})?\s{target_period}',
- 				'(?:to)?set\s+(a\s+)?target\s+for\s+{action}\s+of\s+{value}\s*(?:{unit})?',
- 				'(?:to)?set\s+(a\s+)?target\s+for\s+{action}',
-
-
+ 				#'(?:to)?set\s+(a\s+)?(target|goal)\s+of\s*({target_direction})?\s+{value}\s*({unit})?\s*({target_type})?\s*({target_period})?\s*for {action}',
+ 				
+ 				'(?:to)?set\s+(a\s+)?(target|goal)\s+of\s+({target_direction})?\s*{value}\s*({unit})?\s*({target_type})?\s*({target_period})?\s* for {action}'
  			],
  			slots:{
  				action: 'Action',
@@ -169,8 +153,6 @@ class ObservationBotService < AbstractBotService
 				# what is my max bench
 				'what\s+{verb}\s*(?:my)?\s*{action}\s*{report_period}',
 				'what\s+{verb}\s*(?:my)?\s*{action}',
-
-
 
 				# how much do i weigh
 
@@ -195,55 +177,57 @@ class ObservationBotService < AbstractBotService
 		log_metric_observation: {
 			utterances: [
 
-				# utterances ending with an {action} don't get the \s*({time_period})?\s*({notes})? treatment
-				# cause their going to greedy-match to end of string anyway (unless there's a number of symbol in there)
+				# 	utterances ending with an {action} don't get the \s*({time_period})?\s*({notes})? treatment
+				# 	cause their going to greedy-match to end of string anyway (unless there's a number of symbol in there)
 
 
-				'(?:that )?\s*i {action} for {duration}\s*({time_period})?\s*({notes})?',
+				# special duration catcher
+				# only works for 
+				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*(?:i )?\s*{action} (for )?\s*{duration}\s*({time_period})?\s*({notes})?',
 
-				# for input like....
-				# log weight = 176
-				# log weight is 176
-				# to log that wt is 194
-				# weight 179lbs
-				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*{action}\s*(?:=|is|was)?\s*{value}\s*({time_period})?\s*({notes})?',
-				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*{action}\s*(?:=|is|was)?\s*{value}\s*{unit}\s*({time_period})?\s*({notes})?',
+				# 	for input like....
+				# 	log weight = 176
+				# 	log weight is 176
+				# 	to log that wt is 194
+				# 	log that my weight was 176
+				# 	weight 179lbs
+				#'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*(?:my )?\s*{action}\s*(?:=|is|was)?\s*{value}\s*({time_period})?\s*({notes})?',
+				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*(?:i )?\s*(?:my )?\s*{action}\s*(:|=|is|was|are|were|equal)\s*{value}\s*({unit})?\s*({time_period})?\s*({notes})?',
 
 
+
+				# # 	for input like....
+				# # 	log 172 for weight
+				'(?:to )?\s*(?:log |record )?\s*{value}\s*({unit})? (for|of) (my)?\s*{action}\s*({time_period})?\s*({notes})?',
+
+
+
+
+				# # 	for input like....
+				# # 	actions that are verbs
+				# # 	I ran 3 miles
+
+				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*(?:i )?\s*{action} for {value}\s*({unit})?\s*({time_period})?\s*({notes})?',
+				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*(?:i )?\s*{action} {value}\s*({unit})?\s*({time_period})?\s*({notes})?',
+
+
+				# '(?:that )?\s*i (did)?\s*{action} for {value}\s*({time_period})?\s*({notes})?',
+				# '(?:that )?\s*i (did)?\s*{action} for {value}\s*{unit}\s*({time_period})?\s*({notes})?',
+
+
+				# # 	for input like....
 				
-
-				# for input like....
-				# log 172 for weight
-				'(?:to )?\s*(?:log |record )?\s*{value} for {action}',
-				'(?:to )?\s*(?:log |record )?\s*{value}\s*{unit} for {action}',
-
-				# for input like....
-				# log 10 for sleep OR log 10 hours of sleep
-				'(?:to )?\s*(?:log |record )?\s*{value} of {action}',
-				'(?:to )?\s*(?:log |record )?\s*{value}\s*{unit} of {action}',
-
-				# for input like....
-				# I ran 3 miles
-				'(?:that )?\s*i {action} {value}\s*({time_period})?\s*({notes})?',
-				'(?:that )?\s*i {action} {value}\s*{unit}\s*({time_period})?\s*({notes})?',
-				'(?:that )?\s*i (did)?\s*{action} for {value}\s*({time_period})?\s*({notes})?',
-				'(?:that )?\s*i (did)?\s*{action} for {value}\s*{unit}\s*({time_period})?\s*({notes})?',
-
-				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*i did {value}\s*{unit} of {action}',
-				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*i did {value} {action}',
-
+				# # 	did 30 minutes of cardio
+				# #  	MUST use 'of' to separate units from action
+				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*(?:i )?\s*did {value} {unit} of {action}\s*({time_period})?\s*({notes})?',
+				# # 	did 100 pullups
+				# # 	NO Unit
+				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*(?:i )?\s*did {value} {action}\s*({time_period})?\s*({notes})?',
 				
-
-				'(?:that )?\s*i did {value}\s*{unit} of {action}',
-
-				'my {action} (is|was) {value}\s*{unit}\s*({time_period})?\s*({notes})?',
-				'my {action} (is|was) {value}\s*({time_period})?\s*({notes})?',
-
-				# for input like....
-				# 8 grams protein
-				'{value} {unit} {action}',
-				# 10 pushups
-				'{value} {action}'
+				# # 	10 pushups, 300 calories, 
+				'(?:to )?\s*(?:log |record )?\s*{value} {action}\s*({time_period})?\s*({notes})?',
+				
+				# '(?:to )?\s*(?:log |record ){value} {action}'
 
 			],
 			slots: {
@@ -288,6 +272,9 @@ class ObservationBotService < AbstractBotService
 		},
 		Duration: {
 			regex: [
+				'\d+\s+hour(s)?\s*(and)?\s*\d+\s+minute(s)?\s*(and)?\s*\d+\s+second(s)?',
+				'\d+\s+hour(s)?\s*(and)?\s*\d+\s+minute(s)?',
+				'\d+\s+minute(s)?\s*(and)?\s*\d+\s+second(s)?',
 				'\d+\s+(second|minute|hour|day)',
 				'\d+:\d+:\d+',
 				'\d+:\d+',
@@ -335,28 +322,28 @@ class ObservationBotService < AbstractBotService
 		},
 		TimePeriod: {
 			regex: [
-				'this morning|this afternoon|this evening|tonight|today|yesterday|last night|this week|last week|this month|last month|this year|last year|in the past \d+ hour|in the last \d+ hour|in the past \d+ day|in the last \d+ day|in the past \d+ week|in the last \d+ week|in the past \d+ month|in the last \d+ month|in the past year|in the last year|\d+ hour(s)? ago|\d+ day(s)? ago|\d+ week(s)? ago|\d+ month(s)? ago'
+				'for breakfast|for lunch|for dinner|for snack|this morning|this afternoon|this evening|tonight|today|yesterday|last night|this week|last week|this month|last month|this year|last year|in the past \d+ hour|in the last \d+ hour|in the past \d+ day|in the last \d+ day|in the past \d+ week|in the last \d+ week|in the past \d+ month|in the last \d+ month|in the past year|in the last year|\d+ hour(s)? ago|\d+ day(s)? ago|\d+ week(s)? ago|\d+ month(s)? ago'
 				],
 				values: []
 		},
 
 		TargetDirection: {
 			regex: [
-				'at least|at most|exactly|min|max'
+				'at least|at most|exactly|min|max|minimum|maximum'
 				],
 				values: []
 		},
 
 		TargetPeriod: {
 			regex: [
-				'per hour|per day|per month|per year|daily|weekly|monthly|yearly|forever|all time|all-time'
+				'per hour|per day|per week|per month|per year|daily|weekly|monthly|yearly|forever|all time|all-time'
 				],
 				values: []
 		},
 
 		TargetType: {
 			regex: [
-				'total|average|count|checkins|observations'
+				'total|average|avg|count|checkin|observation|times'
 				],
 				values: []
 		},
@@ -522,20 +509,20 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
-
 		if params[:value].blank?
-
-			add_ask( "I'm sorry, I didn't understand that.  You must supply a unit or action with your value in order to log it.  For example \"I ate one hundred calories\" or \"I ate 12 grams of sugar\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it." )
+			add_ask( "I'm sorry, I didn't understand that.  You must supply a value in order to log it.  For example \"I ate one hundred calories\" or \"I ate 12 grams of sugar\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it." )
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'missing value', action: 'reported', system_notes: "Spoke: 'You must supply a value in order to log it.'" )
 			return
-
 		end
 
 		# have to double-scan action param cause action a greedy matcher
-		params[:notes] = params[:action].slice!( Regexp.new(ObservationBotService.slots[:ExplicitNotes][:regex].first) ) if params[:action].match( Regexp.new(ObservationBotService.slots[:ExplicitNotes][:regex].first) )
-		params[:time_period] = params[:action].slice!( Regexp.new(ObservationBotService.slots[:TimePeriod][:regex].first) ) if params[:action].match( Regexp.new(ObservationBotService.slots[:TimePeriod][:regex].first) )
-		params[:action].strip!
+		if params[:action].present?
+			params[:notes] = params[:action].slice!( Regexp.new(ObservationBotService.slots[:ExplicitNotes][:regex].first) ) if params[:action].match( Regexp.new(ObservationBotService.slots[:ExplicitNotes][:regex].first) ) 
+			params[:time_period] = params[:action].slice!( Regexp.new(ObservationBotService.slots[:TimePeriod][:regex].first) ) if params[:action].match( Regexp.new(ObservationBotService.slots[:TimePeriod][:regex].first) )
+			params[:action].strip!
+		end
 
-		notes = params[:notes]
+		notes = params[:notes].gsub( /note (that)?/i, '' ).strip if params[:notes].present?
 
 		params[:value] = 1.0 if params[:value].match( /a\s+|an\s+/ )
 
@@ -551,7 +538,7 @@ class ObservationBotService < AbstractBotService
 		# fetch the metric
 		if metric = get_user_metric( user, action, unit, true )
 
-			user_unit = user.units.find_by_alias( unit ) || Unit.system.find_by_alias( unit ) || metric.unit
+			user_unit = Unit.where( metric_id: metric.id, user_id: user.id ).find_by_alias( unit ) || Unit.system.find_by_alias( unit ) || metric.unit
 
 			if user_unit.present?
 				val = params[:value].to_f * user_unit.conversion_factor
@@ -561,17 +548,12 @@ class ObservationBotService < AbstractBotService
 
 			recorded_at = set_recorded_at( params[:time_period] )
 
-
-			die
-
-
 			observation = user.observations.create( observed: metric, value: val, unit: user_unit, recorded_at: recorded_at, notes: notes, content: @raw_input )
 			add_speech( observation.to_s( user ) )
 		else
 			add_ask( "I'm sorry, I didn't understand that.  You must supply a unit or action with your value in order to log it.  For example \"I ate one hundred calories\" or \"I ate 16 grams of sugar\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it.", deligate_if_possible: true )
 			return
 		end
-
 
 		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'created', source: options[:source], result_status: 'success', system_notes: "Logged #{observation.display_value( show_units: true )} for #{observation.observed.try(:title) || params[:action]}." )
 
@@ -587,11 +569,12 @@ class ObservationBotService < AbstractBotService
 
 		if params[:value].blank?
 			add_ask( "I'm sorry, I didn't understand that.  You must supply a value in order to log it.  For example \"I burned one hundred calories\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a value in order to log it." )
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'missing value', action: 'reported', system_notes: "Spoke: 'You must supply a value in order to log it.'" )
 			return
 		end
 
 		# @todo parse notes
-		notes = params[:notes]
+		notes = params[:notes].gsub( /note (that)?/i, '' ).strip if params[:notes].present?
 
 		val = params[:value].to_f
 		val = -val if val > 0
@@ -615,7 +598,8 @@ class ObservationBotService < AbstractBotService
 		end
 
 		if params[:value].blank? || params[:action].blank?
-			add_ask( "I'm sorry, I didn't understand that.  You must supply a unit or action with your value in order to log it.  For example \"I drank one cup of orange juice\" or \"I drank 1 beer\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it." )
+			add_ask( "I'm sorry, I didn't understand that.  You must supply a value or metric in order to log it.  For example \"I drank one cup of orange juice\" or \"I drank 1 beer\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it." )
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'missing value or metric', action: 'reported', system_notes: "Spoke: 'You must supply a value or metric in order to log it.'" )
 			return
 		end
 
@@ -624,7 +608,7 @@ class ObservationBotService < AbstractBotService
 		params[:time_period] = params[:action].slice!( Regexp.new(ObservationBotService.slots[:TimePeriod][:regex].first) ) if params[:action].match( Regexp.new(ObservationBotService.slots[:TimePeriod][:regex].first) )
 		params[:action].strip!
 
-		notes = params[:notes]
+		notes = params[:notes].gsub( /note (that)?/i, '' ).strip if params[:notes].present?
 
 		user_unit = params[:unit]
 
@@ -644,21 +628,16 @@ class ObservationBotService < AbstractBotService
 			user_unit = 'fl oz'
 		end
 
-
-
 		# fetch the metric
 		metric = get_user_metric( user, params[:action], user_unit, true )
 
-		unit = user.units.find_by_alias( user_unit ) || Unit.system.find_by_alias( user_unit ) || metric.unit
+		unit = Unit.where( metric_id: metric.id, user_id: user.id ).find_by_alias( user_unit ) || Unit.system.find_by_alias( user_unit ) || metric.unit
 
 		val = params[:value].to_f * unit.conversion_factor
 
 		recorded_at = set_recorded_at( params[:time_period] )
 
-		die
-
 		observation = user.observations.create( observed: metric, value: val, unit: unit, recorded_at: recorded_at, content: @raw_input, notes: notes )
-
 
 		add_speech( observation.to_s( user ) )
 		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'created', source: options[:source], result_status: 'success', system_notes: "Logged #{observation.display_value( show_units: true )} for #{observation.observed.title}." )
@@ -672,7 +651,8 @@ class ObservationBotService < AbstractBotService
 		end
 
 		if params[:notes].present?
-			observation = user.observations.create( notes: params[:notes], content: @raw_input )
+			notes = params[:notes].gsub( /note (that)?/i, '' ).strip
+			observation = user.observations.create( notes: notes, content: @raw_input )
 			add_speech( "I recorded your journal entry." )
 			user.user_inputs.create( content: @raw_input, result_obj: observation, action: 'created', source: options[:source], result_status: 'success', system_notes: "Spoke: 'I recorded your journal entry.'" )
 		end
@@ -684,17 +664,15 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
-
 		if params[:action].blank?
-
-			add_ask( "I'm sorry, I didn't understand that.  You must supply an action in order to start a timer.  For example \"start jogging timer\" or \"start bike ride\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply an action in order to start a timer.", deligate_if_possible: true )
+			add_ask( "I'm sorry, I didn't understand that.  You must supply a metric in order to start a timer.  For example \"start jogging timer\" or \"start bike ride\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply an action in order to start a timer.", deligate_if_possible: true )
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'missing metric', action: 'reported', system_notes: "Spoke: 'You must supply a metric in order to log it.'" )
 			return
-
 		end
 
 		# @todo parse notes
 
-		notes = params[:notes]
+		notes = params[:notes].gsub( /note (that)?/i, '' ).strip if params[:notes].present?
 
 		params[:action] = params[:action].gsub( /timer/, '' )
 
@@ -715,15 +693,13 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
-
 		if params[:action].blank?
-
-			add_ask( "I'm sorry, I didn't understand that.  You must supply an action in order to stop a timer.  For example \"stop jogging timer\" or \"stop bike ride\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply an action in order to stop a timer.", deligate_if_possible: true )
+			add_ask( "I'm sorry, I didn't understand that.  You must supply a metric in order to stop a timer.  For example \"stop jogging timer\" or \"stop bike ride\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply an action in order to stop a timer.", deligate_if_possible: true )
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'missing metric', action: 'reported', system_notes: "Spoke: 'You must supply a metric in order to stop a timer.'" )
 			return
-
 		end
 
-		notes = params[:notes]
+		notes = params[:notes].gsub( /note (that)?/i, '' ).strip if params[:notes].present?
 		sys_notes = ''
 
 		metric = get_user_metric( user, params[:action], 's' )
@@ -768,6 +744,7 @@ class ObservationBotService < AbstractBotService
 
 		unless params[:action].present?
 			add_ask("Sounds like you were trying to set a target, but I didn't catch what it was.  Next time be sure to specify what it is you want to track.  For example \"set a target of one thousand eight hundred for calories\".  Now give it another try.", reprompt_text: "I still didn't understand that.  To set a target you must specify what it is you want to track, and what your goal is.", deligate_if_possible: true )
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'missing metric', action: 'reported', system_notes: "Spoke: 'You must supply a metric in order to set a target for it.'" )
 			return
 		end
 
@@ -779,10 +756,7 @@ class ObservationBotService < AbstractBotService
 		system_target = system_metric.targets.where( user_id: nil ).first
 
 		value = params[:value] || system_target.value
-		if params[:unit].present?
-			unit = user.units.find_by_alias( params[:unit].singularize ) || Unit.system.find_by_alias( params[:unit].singularize )
-		end
-		unit ||= metric.unit
+		
 
 		direction = params[:target_direction].try( :downcase )
 		if direction.present?
@@ -808,11 +782,33 @@ class ObservationBotService < AbstractBotService
 		type = params[:target_type]
 		if type.present?
 			type = 'sum_value' if type.match( /total/ )
-			type = 'avg_value' if type.match( /average/ )
-			type = 'count' if type.match( /check|observation/ )
+			type = 'avg_value' if type.match( /average|avg/ )
+			type = 'count' if type.match( /check|observation|count/ )
 		end
-		type = 'count' if params[:unit].present? && params[:unit].match( /check|observation/ )
+
+		# unit param is a bit greedy.... so target_type will fall to unit
+		# if explicit unit is missing
+		unit_str = params[:unit].singularize.downcase if params[:unit].present?
+
+		if unit_str.present?
+			if unit_str.match( /check|observation|count|times/ ) 
+				type = 'count'
+				unit_str = ''
+			elsif unit_str.match( /total/ )
+				type = 'sum_value'
+				unit_str = ''
+			elsif unit_str.match( /average|avg/ )
+				type = 'avg_value'
+				unit_str = ''
+			end
+		end
+
 		type ||= system_target.target_type
+
+		if unit_str.present?
+			unit = Unit.where( metric_id: metric.id, user_id: user.id ).find_by_alias( unit_str ) || Unit.system.find_by_alias( unit_str )
+		end
+		unit ||= metric.unit
 
 		target = metric.targets.where( user: user ).last || metric.targets.new( user: user )
 
@@ -830,7 +826,6 @@ class ObservationBotService < AbstractBotService
 		target.save
 
 		disp_value = target.display_value
-
 
 		response = "I set a target of #{Target.directions[target.direction]} #{disp_value} #{Target.periods[target.period]} for #{metric.title}."
 		add_speech( response )
@@ -953,23 +948,24 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
+		# TODO -- add requested_unit so can report miles run vs time run, etc...
 		same_type_unit_ids = Unit.where( unit_type: Unit.unit_types[metric.unit.unit_type] ).pluck( :id )
 
-		if metric.metric_type == 'max_value'
+		if metric.default_value_type == 'max_value'
 			value = user.observations.for( metric ).where( unit_id: same_type_unit_ids ).where( recorded_at: range ).maximum( :value )
-		elsif metric.metric_type == 'min_value'
+		elsif metric.default_value_type == 'min_value'
 			value = user.observations.for( metric ).where( unit_id: same_type_unit_ids ).where( recorded_at: range ).minimum( :value )
-		elsif metric.metric_type == 'avg_value'
+		elsif metric.default_value_type == 'avg_value'
 			value = user.observations.for( metric ).where( unit_id: same_type_unit_ids ).where( recorded_at: range ).average( :value )
-		elsif metric.metric_type == 'current_value'
+		elsif metric.default_value_type == 'current_value'
 			value = user.observations.for( metric ).where( unit_id: same_type_unit_ids ).where( recorded_at: range ).order( recorded_at: :desc ).first.value
-		elsif metric.metric_type == 'count'
+		elsif metric.default_value_type == 'count'
 			value = user.observations.for( metric ).where( recorded_at: range ).count
 		else # sum_value -- aggregate
 			value = user.observations.for( metric ).where( unit_id: same_type_unit_ids ).where( recorded_at: range ).sum( :value )
 		end
 
-		if not( metric.metric_type == 'count' )
+		if not( metric.default_value_type == 'count' )
 			formatted_value = metric.unit.convert_from_base( value )
 		else
 			formatted_value = "#{value} observations"
@@ -1016,11 +1012,13 @@ class ObservationBotService < AbstractBotService
 		end
 
 		if params[:action].blank?
-			add_ask( "I'm sorry, I didn't understand that.  I don't know what to log. You must supply an action with your value in order to log it.  For example \"log one hundred calories\" or \"my weight is one hundred sixty\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it.", deligate_if_possible: true )
+			add_ask( "I'm sorry, I didn't understand that.  I don't know what to log. You must supply a metric with your value in order to log it.  For example \"log one hundred calories\" or \"my weight is one hundred sixty\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it.", deligate_if_possible: true )
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'missing metric', action: 'reported', system_notes: "Spoke: 'You must supply a metric in order to log it.'" )
 			return
 
 		elsif params[:duration].blank? && params[:value].blank? && params[:unit].blank?
-			add_ask( "I'm sorry, I didn't understand that.  You must supply a unit or value with your action in order to log it.  For example \"log one hundred calories\" or \"my weight is one hundred sixty\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it.", deligate_if_possible: true )
+			add_ask( "I'm sorry, I didn't understand that.  You must supply a unit or value with your metric in order to log it.  For example \"log one hundred calories\" or \"my weight is one hundred sixty\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it.", deligate_if_possible: true )
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'missing value', action: 'reported', system_notes: "Spoke: 'You must supply a value in order to log it.'" )
 			return
 		end
 
@@ -1031,9 +1029,8 @@ class ObservationBotService < AbstractBotService
 		params[:action].strip!
 
 		# @todo parse notes
-		notes = params[:notes]
+		notes = params[:notes].gsub( /note (that)?/i, '' ).strip if params[:notes].present?
 		sys_notes = ''
-
 
 		# trim the unit
 		unit = params[:unit].chomp( '.' ).singularize if params[:unit].present?
@@ -1041,10 +1038,14 @@ class ObservationBotService < AbstractBotService
 
 		action = params[:action].gsub( /(log|record|to |my | todays | is| are| was| = |i | for)/i, '' ).strip if params[:action].present?
 
-		params[:value] = 1.0 if params[:value].match( /a|an/ )
+		params[:value] = 1.0 if params[:value].match( /a|an/ ) if params[:value].present?
 
 		# fetch the metric
 		if metric = get_user_metric( user, params[:action], unit, true )
+
+			if metric.unit.volume? && unit.singularize.scan( /ounce|oz/ ).present?
+				unit = 'fl oz'
+			end
 
 			if params[:duration].present?
 				val = ChronicDuration.parse( params[:duration] )
@@ -1053,8 +1054,7 @@ class ObservationBotService < AbstractBotService
 				val = ChronicDuration.parse( params[:value] )
 				user_unit = Unit.system.find_by_alias( 's' )
 			else
-				user_unit = user.units.find_by_alias( unit ) || Unit.system.find_by_alias( unit ) || metric.unit
-
+				user_unit = Unit.where( metric_id: metric.id, user_id: user.id ).find_by_alias( unit ) || Unit.system.find_by_alias( unit ) || metric.unit
 				if user_unit.present?
 					val = user_unit.convert_to_base( params[:value] )
 				else
@@ -1064,10 +1064,9 @@ class ObservationBotService < AbstractBotService
 
 			recorded_at = set_recorded_at( params[:time_period] )
 
-			die
+			observation = user.observations.new( observed: metric, value: val, unit: user_unit, recorded_at: recorded_at, notes: notes, content: @raw_input )
 
-
-			observation = user.observations.create( observed: metric, value: val, unit: user_unit, recorded_at: recorded_at, notes: notes, content: @raw_input )
+			observation.save
 			add_speech( observation.to_s( user ) )
 		else
 			add_ask( "I'm sorry, I didn't understand that.  You must supply a unit or action with your value in order to log it.  For example \"log one hundred calories\" or \"my weight is one hundred sixty\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it.", deligate_if_possible: true )
@@ -1124,6 +1123,9 @@ class ObservationBotService < AbstractBotService
 						observed_metric ||= system_metric.dup
 						observed_metric.user = user
 
+						if system_metric.unit.volume? && unit.singularize.scan( /ounce|oz/ ).present?
+							unit = 'fl oz'
+						end
 
 						# convert unit user gave us to base correct unit
 						if users_unit = Unit.system.find_by_alias( unit )

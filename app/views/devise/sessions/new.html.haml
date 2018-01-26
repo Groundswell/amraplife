@@ -33,11 +33,11 @@
 										.row
 											.col-xs-12
 												= f.submit "Sign in", class: 'btn btn-success col-xs-12'
-									.row
+									-#.row
 										.col-xs-12
 											%p.social-text
 												Or login with
-									.row
+									-#.row
 										.col-xs-12.col-sm-8.col-sm-offset-2
 											%a.btn.btn-primary.btn-facebook.col-xs-12.auth-pop{ href: main_app.user_facebook_omniauth_authorize_path( ga_client_id: ':ga_client_id' ) }
 												%i.fa.fa-facebook

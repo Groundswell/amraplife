@@ -6,8 +6,7 @@
 				%h1
 					Settings 
 			.col-xs-2
-				%a{ href: user_units_path }
-					Custom Units
+				
 
 		
 	.main-box-body.clearfix
@@ -26,8 +25,11 @@
 										upload
 								= hidden_field_tag :avatar, class: 'form-control', id: 'user_avatar'
 						.col-sm-8
+							%h3 Account
+							
 							.form-group
-								= label_tag :full_name
+								= label_tag :nickname
+								= text_field_tag :nickname, current_user.nickname, class: 'form-control'
 
 							.form-group
 								= label_tag :email
@@ -42,24 +44,60 @@
 							.form-group
 								= label_tag :new_password_confirmation
 								= password_field_tag :new_password_confirmation, '', class: 'form-control'
+
+							
+							%h3 Address
+							.row
+								.col-sm-12
+									.form-group
+										= label_tag :full_name, 'Name'
+										= text_field_tag :full_name, current_user.full_name, class: 'form-control'
+							.row
+								.col-sm-12
+									= label_tag :street
+									= text_field_tag :street, current_user.street, class: 'form-control'
+							.row
+								.col-sm-12
+									= label_tag :street2
+									= text_field_tag :street2, current_user.street2, class: 'form-control'
+							.row
+								.col-sm-6
+									= label_tag :city
+									= text_field_tag :city, current_user.city, class: 'form-control'
+								.col-sm-3
+									= label_tag :state
+									= text_field_tag :state, current_user.state, class: 'form-control'
+								.col-sm-3
+									= label_tag :zip
+									= text_field_tag :zip, current_user.zip, class: 'form-control'
+							.row
+								.col-sm-8
+									= label_tag :phone
+									= text_field_tag :phone, current_user.phone, class: 'form-control'
 						
 				.col-sm-4
 					.well
 						.row
-							.col-xs-3
+							.col-xs-2
 								= check_box_tag :use_imperial_units, true, current_user.use_imperial_units?, { class: 'form-control'  }
-							.col-xs-9
+							.col-xs-10
 								= label_tag :use_imperial_units, 'Use Imperial Units?', style: 'margin-top:1em;'
 						
+						.row
+							.col-xs-10.col-xs-offset-2
+								%a{ href: custom_units_path }
+									Manage Custom Units
+						
+						.row{ style: 'margin-top: 2em;' }
+							.col-xs-12
+								.form-group
+									= label_tag :gender
+									= select_tag :gender, options_for_select( [ [ 'Unspecified', 'unspecified' ], ['Female', 'female' ], [ 'Male', 'male' ], ], current_user.gender ), { class: 'form-control' }
+								.form-group
+									= label_tag :dob, 'Birthdate:'
+									= text_field_tag :dob, current_user.dob, class: 'form-control'
 
-						.form-group
-							= label_tag :gender
-							= select_tag :gender, options_for_select( [ [ 'Unspecified', 'unspecified' ], ['Female', 'female' ], [ 'Male', 'male' ], ], current_user.gender ), { class: 'form-control' }
-						.form-group
-							= label_tag :dob, 'Birthdate:'
-							= text_field_tag :dob, current_user.dob, class: 'form-control'
+								.form-group
+									= submit_tag 'Update', class: 'btn btn-primary'
 
-						.form-group
-							= submit_tag 'Update', class: 'btn btn-primary'
-
-	
+			

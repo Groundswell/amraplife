@@ -2,7 +2,7 @@ class User < SwellMedia::User
 
 	devise 		:database_authenticatable, :omniauthable, :registerable, :recoverable, :rememberable, :trackable, :omniauthable, :omniauth_providers => [:facebook], :authentication_keys => [:login]
 
-	after_create :set_name
+	before_create :set_names
 
 	# App declarations
 	has_many :metrics
@@ -10,6 +10,8 @@ class User < SwellMedia::User
 	has_many :targets
 	has_many :units # custom units entered by the user: e.g. water bottle
 	has_many :user_inputs
+
+	has_one :address, class_name: 'SwellEcom::GeoAddress'
 
 
 	### Class Methods   	--------------------------------------
@@ -55,10 +57,36 @@ class User < SwellMedia::User
 		end
 	end
 
+
+
+	def to_s( args={} )
+		if args[:username]
+			str = self.name.try(:strip)
+			str = 'Guest' if str.blank?
+			return str
+		else
+			if self.nickname.present?
+				str = self.nickname
+			elsif self.full_name.present?
+				str = self.full_name
+			elsif str.blank?
+				str = 'Guest'
+			end
+
+			return str
+		end
+	end
+
+
 	private
-		def set_name
-			if self.first_name.blank?
-				self.update( first_name: self.email.split( /@/ ).first )
+		def set_names
+			if self.nickname.blank?
+				nick = self.full_name.split( /\s+/ ).first unless self.full_name.blank?
+				self.nickname ||= self.email.split( /@/ ).first
+			end
+
+			if self.name.blank?
+				self.name = self.email.parameterize
 			end
 		end
 

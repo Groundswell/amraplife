@@ -1,14 +1,16 @@
-.row
-	.col-xs-10
-		%h1
-			Custom Units
-	.col-xs-2
-		%a.btn.btn-success{ data: { toggle: :modal, target: '#new_unit' } }
-			%i.fa.fa-plus-square
-			Add a Custom Unit
-
 .main-box.clearfix
 	.main-box-header.clearfix
+		.row
+			.col-xs-9
+				%h1
+					%a{ href: settings_lifemeter_index_path }
+						Settings 
+					>
+					Custom Units
+			.col-xs-3
+				%a.btn.btn-success{ data: { toggle: :modal, target: '#new_unit' } }
+					%i.fa.fa-plus-square
+					Add a Custom Unit
 
 	.main-box-body.clearfix
 		= raw paginate @units
@@ -21,7 +23,7 @@
 				- @units.each do |unit|
 					%tr
 						%td
-							= link_to unit.name, edit_user_unit_path( unit )
+							= link_to unit.name, edit_custom_unit_path( unit )
 						%td
 							= Metric.find_by( id: unit.metric_id ).try( :title )
 						%td
@@ -31,12 +33,12 @@
 									%b.caret
 								%ul.dropdown-menu
 									%li
-										%a{ href: edit_user_unit_path( unit.id ) }
+										%a{ href: edit_custom_unit_path( unit.id ) }
 											%i.fa.fa-pencil
 											Edit
 									%li.divider
 									%li
-										%a{ href: user_unit_path( unit ), data: { method: 'delete', confirm: 'Are you sure?' } }
+										%a{ href: custom_unit_path( unit ), data: { method: 'delete', confirm: 'Are you sure?' } }
 											%i.fa.fa-trash-o
 											Delete!
 		= raw paginate @units

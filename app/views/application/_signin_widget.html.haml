@@ -4,7 +4,7 @@
 			.input-group
 				%span.input-group-addon
 					%i.fa.fa-user
-				= f.text_field :name, placeholder: 'User Name', class: 'form-control'
+				= f.text_field :name, placeholder: 'Name', class: 'form-control'
 		.form-group
 			.input-group
 				%span.input-group-addon
@@ -31,11 +31,11 @@
 			.row
 				.col-xs-12.col-sm-8.col-sm-offset-2
 					= f.submit "Register", class: 'btn btn-success col-xs-12'
-		.row
+		-#.row
 			.col-xs-12
 				%p.social-text.text-center
 					Or Create an account with
-		.row
+		-#.row
 			.col-xs-12.col-sm-8.col-sm-offset-2
 				%a.auth-pop.btn.btn-primary.btn-facebook.col-xs-12{ href: main_app.user_facebook_omniauth_authorize_path( ga_client_id: ':ga_client_id' ) }
 					%i.fa.fa-facebook

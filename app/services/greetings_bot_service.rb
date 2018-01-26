@@ -2,7 +2,10 @@ class GreetingsBotService < AbstractBotService
 
 	add_intents( {
 		hello: {
-			utterances: [ 'hi', 'hey', 'yo', 'hello', 'hi there', 'good morning', 'good afternoon' ]
+			utterances: [ 'hi', 'hey', 'yo', 'hello', 'hi there', 'good morning', 'good afternoon', 'howdy' ]
+		},
+		query_name: {
+			utterances: [ 'who am i', 'what is my name', "what's my name" ]
 		},
    		set_name: {
    			utterances: [
@@ -31,11 +34,13 @@ class GreetingsBotService < AbstractBotService
 			'Whasssup',
 			'Hey Hey',
 			'Greetings',
-			'Hi there'
+			'Hi there',
+			'Good Day',
+			'Hi'
 		]
 
 		if user.present?
-			 message = "#{greetings.sample}, #{user}"
+			 message = "#{greetings.sample}, #{user.nickname}"
 		else
 			 message = "#{greetings.sample}"
 		end
@@ -43,6 +48,24 @@ class GreetingsBotService < AbstractBotService
 		add_speech( message )
 
 		user.user_inputs.create( content: raw_input, action: 'read', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{message}'" ) if user.present?
+
+	end
+
+	def query_name
+		unless user.present?
+			call_intent( :login )
+			return
+		end
+
+		if user.nickname.present?
+			 message = "I call you #{user.nickname}"
+		else
+			 message = "You haven't told me your name yet."
+		end
+
+		add_speech( message )
+
+		user.user_inputs.create( content: raw_input, action: 'read', source: options[:source], result_status: 'success', system_notes: "Spoke: '#{message}'" )
 
 	end
 
@@ -57,9 +80,9 @@ class GreetingsBotService < AbstractBotService
 			return
 		end
 
-		user.update( first_name: params[:name] )
-		add_speech("OK, from now on I'll call you #{params[:name]}.")
-		user.user_inputs.create( content: raw_input, result_obj: user, action: 'updated', source: options[:source], result_status: 'success', system_notes: "Spoke: 'OK, from now on I'll call you #{params[:name]}.'" )
+		user.update( nickname: params[:name] )
+		add_speech("OK, from now on I'll call you #{user.nickname}.")
+		user.user_inputs.create( content: raw_input, result_obj: user, action: 'updated', source: options[:source], result_status: 'success', system_notes: "Spoke: 'OK, from now on I'll call you #{user.nickname}.'" )
 	end
 
 end

@@ -27,10 +27,21 @@ class MetricsController < ApplicationController
 	end
 
 	def update
-		unit = Unit.find_by_alias( metric_params[:unit_alias].singularize.downcase )
+
+		unit_alias = metric_params[:unit_alias]
+		# special case to disambiguate ounces
+		if @metric.unit.volume? && unit_alias.match( /ounce|oz/i )
+			unit_alias = 'fl oz'
+		end
+
+		unit = Unit.where( metric_id: @metric.id, user_id: current_user.id ).find_by_alias( unit_alias.singularize.downcase ) || Unit.system.find_by_alias( unit_alias.singularize.downcase )
 		
 		@metric.update( metric_params )
+
+
 		@metric.update( unit_id: unit.id ) if unit.present?
+
+
 
 		if @metric.previous_changes.include?( :unit_id )
 			# only update metrics with same unit_type as new unit. e.g. changing run distance from miles to yards shouldn't change time observations
