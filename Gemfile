@@ -56,6 +56,7 @@ gem 'bootstrap3-datetimepicker-rails', '~> 4.17.47'
 gem 'unicorn'
 
 # dev
+# gem 'swell_media', path: '../../engines/swell_media'
 # gem 'swell_media', path: '../engines/swell_media'
 # gem 'swell_theme_store', path: '../../engines/swell_theme_store'
 
