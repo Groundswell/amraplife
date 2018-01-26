@@ -11,7 +11,7 @@ if ENV['FOG_DIRECTORY'] && defined?( CarrierWave )
 		}
 		config.fog_directory  = ENV['FOG_DIRECTORY'] # required
 		config.asset_host = ENV['ASSET_HOST']
-		config.fog_public = true
+		# config.fog_public = true
 
 		# see https://github.com/jnicklas/carrierwave#using-amazon-s3
 		# for more optional configuration
