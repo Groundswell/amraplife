@@ -31,11 +31,11 @@
 						- else
 							%li.account-login
 								%span
-									%a{ href: '.login-modal', data: { toggle: "modal" } }
+									%a{ href: '#login-modal', data: { toggle: "modal", target: "#login-modal" } }
 										Log in
 										-#%small
 											or
-									-#%a{ href: '#signup', data: { toggle: "modal" } } 
+									-#%a{ href: '#signup', data: { toggle: "modal" } }
 										Create an account
 						%li.searchBox
 							%a{ href: 'javascript:void(0)' }
@@ -80,7 +80,7 @@
 												Cart
 											%a.btn.btn-default{ href: '/checkout', style: 'color: #333;padding-left:1em;padding-right:1em;' }
 												Checkout
-													
+
 
 
 	%nav.navbar.navbar-main.navbar-default{ role: 'navigation' }
@@ -94,7 +94,7 @@
 					%span.icon-bar
 				%a.navbar-brand{ href: '/' }
 					= image_tag 'amrap_logo_blk.png'
-			
+
 			.collapse.navbar-collapse.navbar-ex1-collapse
 				%ul.nav.navbar-nav.navbar-right
 					%li
@@ -107,12 +107,12 @@
 					%li
 						%a{ href: '/articles' }
 							Blog
-					
+
 					%li
 						%a{ href: '/about' }
 							About
 					-#%li.dropdown
-						%a.dropdown-toggle{ href: "javascript:void(0)", role: :button, 'aria-haspopup' => true, 'aria-expanded' => false, data: { toggle: "dropdown" } } 
+						%a.dropdown-toggle{ href: "javascript:void(0)", role: :button, 'aria-haspopup' => true, 'aria-expanded' => false, data: { toggle: "dropdown" } }
 							More
 							%i.fa.fa-chevron-down
 						%ul.dropdown-menu.dropdown-menu-right
@@ -125,7 +125,3 @@
 							%li
 								%a{ href: '/workouts' }
 									Workouts
-
-
-
-

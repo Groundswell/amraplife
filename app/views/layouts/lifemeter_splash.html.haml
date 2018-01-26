@@ -55,7 +55,7 @@
 									- else
 										%li.account-login
 											%span
-												%a{ href: '.login-modal', data: { toggle: "modal" } }
+												%a{ href: '#login-modal', data: { toggle: "modal", target: '#login-modal' } }
 													Log in
 													-#%small
 														or
@@ -110,7 +110,7 @@
 				%nav.navbar.navbar-main.navbar-default{ role: 'navigation' }
 					.container
 						.navbar-header
-						
+
 							%a.navbar-brand{ href: '/' }
 								= image_tag 'life_meter_full_logo.png', width: 420
 
