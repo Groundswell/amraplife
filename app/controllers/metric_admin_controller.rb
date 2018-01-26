@@ -17,9 +17,13 @@ class MetricAdminController < SwellMedia::AdminController
 		by = params[:by] || 'title'
 		dir = params[:dir] || 'asc'
 		@metrics = Metric.order( "#{by} #{dir}" )
+		if params[:src] == 'user'
+			@metrics =  @metrics.where.not( user_id: nil )
+		end
+
 		if params[:q]
 			match = params[:q].downcase.singularize.gsub( /\s+/, '' )
-			@metrics = @metrics.where( "lower(REGEXP_REPLACE(title, '\s', '' )) = :m", m: match )
+			@metrics =  @metrics.where( "title like :q", q: "%#{match}%" )   # @metrics.where( "lower(REGEXP_REPLACE(title, '\s', '' )) = :m", m: match )
 			@metrics << Metric.find_by_alias( match )
 		end
 
