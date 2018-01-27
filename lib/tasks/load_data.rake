@@ -71,11 +71,13 @@ namespace :amraplife do
 		
 		bmi = Unit.create name: 'Bodymass Index', abbrev: 'bmi', unit_type: 'custom'
 		block = Unit.create name: 'Block', abbrev: 'block', unit_type: 'custom'
+
+		round = Unit.create name: 'Round', abbrev: 'rd', unit_type: 'custom'
 		rep = Unit.create name: 'Rep', abbrev: 'rep', unit_type: 'custom'
 
 		per = Unit.create name: 'Percent', abbrev: '%', unit_type: 'percent'
 
-		mmhg = Unit.create name: 'Millimeters Mercury', abbrev: 'mmHg', unit_type: 'pressure'
+		mmhg = Unit.create name: 'Millimeters Mercury', abbrev: 'mmHg', aliases: ['mmhg'], unit_type: 'pressure'
 		psi = Unit.create name: 'Pounds Per Square Inch', abbrev: 'psi', unit_type: 'pressure'
 
 		cal = Unit.create name: 'Calorie', abbrev: 'cal', aliases: ['kCal', 'calory'], unit_type: 'energy'
@@ -130,13 +132,14 @@ namespace :amraplife do
 		rhr = Metric.create title: 'Resting Heart Rate', default_value_type: 'current_value', aliases: ['pulse', 'heart rate', 'rhr'], unit: bpm
 		rhr.targets.create target_type: :current_value, direction: :at_most, period: :all_time
 
-		systolic = Metric.create title: 'Systolic Blood Pressure', default_value_type: 'current_value', aliases: ['sbp', 'systolic'], unit: mmhg
+		
+		systolic = Metric.create title: 'Blood Pressure', default_value_type: 'current_value', aliases: ['sbp', 'systolic', 'blood pressure'], unit: mmhg # blood pressure is a compund with a sub. By default, systolic is first
 		systolic.targets.create target_type: :current_value, direction: :at_most, period: :all_time
 
 		diastolic = Metric.create title: 'Diastolic Blood Pressure', default_value_type: 'current_value', aliases: ['dbp', 'diastolic'], unit: mmhg 
 		diastolic.targets.create target_type: :current_value, direction: :at_most, period: :all_time
 
-		bp = Metric.create title: 'Blood Pressure', default_value_type: 'current_value', aliases: ['bp', 'blood pressure'], unit: mmhg # use sub units for sys/dias observations
+
 		
 		bs = Metric.create title: 'Blood Sugar', default_value_type: 'current_value', aliases: ['glucose level', 'blood glucose'], unit: mgdl
 		

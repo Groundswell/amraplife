@@ -181,6 +181,10 @@ class ObservationBotService < AbstractBotService
 				# 	cause their going to greedy-match to end of string anyway (unless there's a number of symbol in there)
 
 
+				## testing compund distance + duration
+				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*(?:i )?\s*{action} (for)?\s*{value}\s*({unit})?\s*in\s*{duration}\s*({time_period})?\s*({notes})?',
+
+
 				# special duration catcher
 				# only works for 
 				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*(?:i )?\s*{action} (for )?\s*{duration}\s*({time_period})?\s*({notes})?',
@@ -199,7 +203,6 @@ class ObservationBotService < AbstractBotService
 				# # 	for input like....
 				# # 	log 172 for weight
 				'(?:to )?\s*(?:log |record )?\s*{value}\s*({unit})? (for|of) (my)?\s*{action}\s*({time_period})?\s*({notes})?',
-
 
 
 
@@ -265,7 +268,10 @@ class ObservationBotService < AbstractBotService
 		},
 		Amount: {
 			regex: [
-				'[0-9.:&|\s+a\s+|\s+an\s+]+'
+				'[0-9]+\s*(\/|over)\s*[0-9]+', # blood pressure -- split on (\/|over)
+				'[0-9]+\s*(round|rounds|rd|rds)?\s*(and|&|\+)?\s*[0-9]+\s*(rep)?', # rounds & reps -- split on (and|&|\+)
+				'[0-9.:&|\s+a\s+|\s+an\s+]+',
+				
 			],
 			values: [
 			]
@@ -275,7 +281,7 @@ class ObservationBotService < AbstractBotService
 				'\d+\s+hour(s)?\s*(and)?\s*\d+\s+minute(s)?\s*(and)?\s*\d+\s+second(s)?',
 				'\d+\s+hour(s)?\s*(and)?\s*\d+\s+minute(s)?',
 				'\d+\s+minute(s)?\s*(and)?\s*\d+\s+second(s)?',
-				'\d+\s+(second|minute|hour|day)',
+				'\d+\s+(second|seconds|minute|minutes|hour|hours|day|days)',
 				'\d+:\d+:\d+',
 				'\d+:\d+',
 			],
@@ -1047,12 +1053,49 @@ class ObservationBotService < AbstractBotService
 				unit = 'fl oz'
 			end
 
-			if params[:duration].present?
+			sub = false
+
+			if params[:duration].present? && params[:value].present?
+				# compound distance and duration / record sub for time
+				sub = true 
+				user_unit = Unit.where( metric_id: metric.id, user_id: user.id ).find_by_alias( unit ) || Unit.system.find_by_alias( unit ) || metric.unit
+				if user_unit.present?
+					val = user_unit.convert_to_base( params[:value] )
+				else
+					val = params[:value].to_f
+				end
+				sub_metric = metric
+				sub_val = ChronicDuration.parse( params[:duration] )
+				sub_unit = Unit.system.find_by_alias( 's' )
+
+			elsif params[:duration].present? && params[:value].blank?
 				val = ChronicDuration.parse( params[:duration] )
 				user_unit = Unit.system.find_by_alias( 's' )
+			
+			elsif params[:value].match( /(and|&|\+)/ )
+				# compund rounds & reps
+				sub = true
+				val = params[:value].split( /(and|&|\+)/ ).first
+				user_unit = Unit.system.find_by_alias( 'round' )
+				sub_metric = metric
+				sub_val = params[:value].split( /(and|&|\+)/ ).last
+				sub_unit = Unit.system.find_by_alias( 'rep' )
+
+			elsif params[:value].match( /(\/|over)/ )
+				# compund blood pressure
+				# systolic / diastolic
+				sub = true
+
+				val = params[:value].split( /(\/|over)/ ).first
+				user_unit = Unit.system.find_by_alias( 'mmhg' )
+				sub_metric = get_user_metric( user, 'diastolic', 'mmhg', true )
+				sub_val = params[:value].split( /(\/|over)/ ).last
+				sub_unit = Unit.system.find_by_alias( 'mmhg' )
+
 			elsif params[:value].match( ':' )
 				val = ChronicDuration.parse( params[:value] )
 				user_unit = Unit.system.find_by_alias( 's' )
+			
 			else
 				user_unit = Unit.where( metric_id: metric.id, user_id: user.id ).find_by_alias( unit ) || Unit.system.find_by_alias( unit ) || metric.unit
 				if user_unit.present?
@@ -1067,6 +1110,11 @@ class ObservationBotService < AbstractBotService
 			observation = user.observations.new( observed: metric, value: val, unit: user_unit, recorded_at: recorded_at, notes: notes, content: @raw_input )
 
 			observation.save
+
+			if sub
+				sub_obs = user.observations.create( parent_id: observation.id, observed: sub_metric, value: sub_val, unit: sub_unit, recorded_at: recorded_at, notes: notes, content: @raw_input )
+			end
+
 			add_speech( observation.to_s( user ) )
 		else
 			add_ask( "I'm sorry, I didn't understand that.  You must supply a unit or action with your value in order to log it.  For example \"log one hundred calories\" or \"my weight is one hundred sixty\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it.", deligate_if_possible: true )

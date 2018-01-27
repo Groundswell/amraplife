@@ -1,5 +1,8 @@
 == README
 
+I got 18 rounds and 9 reps for|in today's workout
+I ran 3 miles in 20:21
+
 * Add Fitbit api / sanity-check metric/obs data structure
 * wire-up user profile photo update
 * convert chart/stat data to units (or ditch for now)

@@ -40,6 +40,8 @@ class Observation < ActiveRecord::Base
 
 		if self.unit.nil?
 			"#{self.value}"
+		elsif self.sub.present?
+			"#{self.unit.convert_from_base( self.value, opts )} and #{self.sub.unit.convert_from_base( self.sub.value, opts )}"
 		else
 			self.unit.convert_from_base( self.value, opts )
 		end
@@ -69,6 +71,10 @@ class Observation < ActiveRecord::Base
 		self.save
 	end
 
+	def sub
+		self.user.observations.where( parent_id: self.id ).first
+	end
+
 	def to_s( user=nil )
 		str = ""
 		if user = self.user
@@ -76,6 +82,8 @@ class Observation < ActiveRecord::Base
 		else
 			str = "#{self.user} "
 		end
+
+
 
 		if self.value.present? && self.observed.present?
 			str += "recorded #{self.display_value} for #{self.observed.try( :title )} "
@@ -89,7 +97,9 @@ class Observation < ActiveRecord::Base
 
 		str += self.notes if self.notes.present?
 
-		str.strip
+		return str.strip
+
+
 	end
 
 
