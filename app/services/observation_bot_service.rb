@@ -46,9 +46,9 @@ class ObservationBotService < AbstractBotService
 		log_ate_observation: {
 			utterances: [
 				# TODO -- {action} is a greedy matcher.... it slurps up time_period & note params
-				'(?:that )?\s*(?:i)?\s*ate {value}\s*{unit} of {action}\s*({time_period})?\s*({notes})?', # e.g. 30 grams of protein
-				'(?:that )?\s*(?:i)?\s*ate {value}\s*{unit}\s*({time_period})?\s*({notes})?', # e.g. 480 calories
-				'(?:that )?\s*(?:i)?\s*ate {value}\s*({time_period})?\s*({notes})?', # e.g. ate 300 defaults to calories
+				'(?:that )?\s*(?:i)?\s*ate\s*{value}\s*{unit} of {action}\s*({time_period})?\s*({notes})?', # e.g. 30 grams of protein
+				'(?:that )?\s*(?:i)?\s*ate\s*{value}\s*{unit}\s*({time_period})?\s*({notes})?', # e.g. 480 calories
+				'(?:that )?\s*(?:i)?\s*ate\s*{value}\s*({time_period})?\s*({notes})?', # e.g. ate 300 defaults to calories
 
 				'(?:that )?\s*(?:i)?\s*have eaten {value}\s*{unit} of {action}\s*({time_period})?\s*({notes})?', # e.g. 30 grams of protein
 				'(?:that )?\s*(?:i)?\s*have eaten {value}\s*{unit}\s*({time_period})?\s*({notes})?', # e.g. 480 calories
@@ -521,7 +521,6 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
-		die
 
 		# have to double-scan action param cause action a greedy matcher
 		if params[:action].present?
