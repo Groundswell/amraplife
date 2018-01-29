@@ -9,6 +9,8 @@ class Observation < ActiveRecord::Base
 	validate 		:gotta_have_value_or_notes
 
 	belongs_to 	:observed, polymorphic: true, touch: true
+	belongs_to 	:parent, class_name: 'Observation'
+	has_many 	:subs, foreign_key: :parent_id, class_name: 'Observation'
 	belongs_to 	:user
 	belongs_to 	:unit
 
@@ -33,6 +35,16 @@ class Observation < ActiveRecord::Base
 	def self.journal_entry
 		self.where( observed: nil ).where.not( notes: nil )
 	end
+
+
+	def self.nonsubs
+		where( parent_id: nil )
+	end
+
+	def self.subs
+		where.not( parent_id: nil )
+	end
+
 
 
 	def display_value( opts={} )

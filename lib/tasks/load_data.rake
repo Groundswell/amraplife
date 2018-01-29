@@ -75,6 +75,10 @@ namespace :amraplife do
 		round = Unit.create name: 'Round', abbrev: 'rd', unit_type: 'custom'
 		rep = Unit.create name: 'Rep', abbrev: 'rep', unit_type: 'custom'
 
+		celcius = Unit.create name: 'Degrees Celcius', abbrev: 'celcius', aliases: ['c', 'cel'], unit_type: 'temperature', imperial: false
+		f = Unit.create name: 'Degrees Farenheit', abbrev: 'degrees', aliases: ['f', 'degs'], unit_type: 'temperature', base_unit: celcius, conversion_factor: 5/9.to_f
+		celcius.update( imperial_correlate_id: f.id )
+
 		per = Unit.create name: 'Percent', abbrev: '%', unit_type: 'percent'
 
 		mmhg = Unit.create name: 'Millimeters Mercury', abbrev: 'mmHg', aliases: ['mmhg'], unit_type: 'pressure'
@@ -148,6 +152,9 @@ namespace :amraplife do
 
 		bmi = Metric.create title: 'Body Mass Index', default_value_type: 'current_value', aliases: ['bmi'], unit: bmi
 		bmi.targets.create target_type: :current_value, direction: :at_most, period: :all_time
+
+		temp = Metric.create title: 'Body Temperature', default_value_type: 'current_value', aliases: ['temp', 'temperature'], unit: celcius
+		#bmi.targets.create target_type: :current_value, direction: :at_most, period: :all_time
 
 		md = Metric.create title: 'Mood', default_value_type: 'avg_value', aliases: [ 'feeling', 'happiness' ], unit: per, default_period: 'day'
 		md.targets.create target_type: :avg_value, direction: :at_least, period: :day, value: 75

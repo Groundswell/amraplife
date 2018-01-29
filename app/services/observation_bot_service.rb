@@ -521,6 +521,8 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
+		die
+
 		# have to double-scan action param cause action a greedy matcher
 		if params[:action].present?
 			params[:notes] = params[:action].slice!( Regexp.new(ObservationBotService.slots[:ExplicitNotes][:regex].first) ) if params[:action].match( Regexp.new(ObservationBotService.slots[:ExplicitNotes][:regex].first) ) 
@@ -946,6 +948,10 @@ class ObservationBotService < AbstractBotService
 		start_date ||= Time.zone.now.beginning_of_day
 		end_date ||= Time.zone.now.end_of_day
 
+		if metric.default_value_type == 'current_value'
+			start_date = 10.years.ago
+		end
+
 		range = start_date..end_date
 
 		if user.observations.for( metric ).where( recorded_at: range ).count < 1
@@ -975,6 +981,14 @@ class ObservationBotService < AbstractBotService
 			formatted_value = metric.unit.convert_from_base( value )
 		else
 			formatted_value = "#{value} observations"
+		end
+
+		# special-case hack for blood-pressure
+		if metric.aliases.include? 'blood-pressure'
+			last_obs = user.observations.for( metric ).where( recorded_at: range ).order( recorded_at: :desc ).first
+			value = last_obs.try( :value )
+			sub_value = last_obs.sub.value 
+			formatted_value = "#{value}/#{sub_value} mmHg"
 		end
 
 		verb = params[:verb]
@@ -1017,6 +1031,11 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
+		# sometimes google sends "8 300 calories" instead of "ate 300 calories"
+		if params[:value].match( /8\s+\d+/ ) 
+			params[:value].gsub!( /8\s+/, '' ) 
+		end
+
 		if params[:action].blank?
 			add_ask( "I'm sorry, I didn't understand that.  I don't know what to log. You must supply a metric with your value in order to log it.  For example \"log one hundred calories\" or \"my weight is one hundred sixty\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it.", deligate_if_possible: true )
 			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'missing metric', action: 'reported', system_notes: "Spoke: 'You must supply a metric in order to log it.'" )
@@ -1027,7 +1046,6 @@ class ObservationBotService < AbstractBotService
 			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'missing value', action: 'reported', system_notes: "Spoke: 'You must supply a value in order to log it.'" )
 			return
 		end
-
 
 		# have to double-scan action param cause action a greedy matcher
 		params[:notes] = params[:action].slice!( Regexp.new(ObservationBotService.slots[:ExplicitNotes][:regex].first) ) if params[:action].match( Regexp.new(ObservationBotService.slots[:ExplicitNotes][:regex].first) )
@@ -1042,9 +1060,19 @@ class ObservationBotService < AbstractBotService
 		unit = params[:unit].chomp( '.' ).singularize if params[:unit].present?
 		unit = 's' if params[:value].match( ':' ) if params[:value].present?
 
+		if params[:value].try( :match, /rep/ )
+			unit = 'rep'
+		end
+
+		if params[:value].try( :match, /round/ )
+			unit  = 'round'
+		end
+
 		action = params[:action].gsub( /(log|record|to |my | todays | is| are| was| = |i | for)/i, '' ).strip if params[:action].present?
 
-		params[:value] = 1.0 if params[:value].match( /a|an/ ) if params[:value].present?
+		params[:value] = 1.0 if params[:value].match( /a\s+|an\+/ ) if params[:value].present?
+
+		
 
 		# fetch the metric
 		if metric = get_user_metric( user, params[:action], unit, true )
@@ -1072,7 +1100,7 @@ class ObservationBotService < AbstractBotService
 				val = ChronicDuration.parse( params[:duration] )
 				user_unit = Unit.system.find_by_alias( 's' )
 			
-			elsif params[:value].match( /(and|&|\+)/ )
+			elsif params[:value].try( :match, /(and|&|\+)/ )
 				# compund rounds & reps
 				sub = true
 				val = params[:value].split( /(and|&|\+)/ ).first
@@ -1081,7 +1109,7 @@ class ObservationBotService < AbstractBotService
 				sub_val = params[:value].split( /(and|&|\+)/ ).last
 				sub_unit = Unit.system.find_by_alias( 'rep' )
 
-			elsif params[:value].match( /(\/|over)/ )
+			elsif params[:value].try( :match, /(\/|over)/ )
 				# compund blood pressure
 				# systolic / diastolic
 				sub = true
@@ -1092,7 +1120,7 @@ class ObservationBotService < AbstractBotService
 				sub_val = params[:value].split( /(\/|over)/ ).last
 				sub_unit = Unit.system.find_by_alias( 'mmhg' )
 
-			elsif params[:value].match( ':' )
+			elsif params[:value].try( :match, ':' )
 				val = ChronicDuration.parse( params[:value] )
 				user_unit = Unit.system.find_by_alias( 's' )
 			
@@ -1144,7 +1172,7 @@ class ObservationBotService < AbstractBotService
 
 			if action.present?
 				# clean up the action string... some of our matchers leave cruft
-				action = action.gsub( /(\Alog|\Arecord|\Ai did|\Adid|to |my | todays | is| are| was| = |i | for|timer|at|around|about|almost|near|close)/i, '' ).strip
+				action = action.gsub( /(\Alog|\Arecord|\Ai did|\Adid|to |my | todays | is| are| was| = |i | for|timer|\s+at|around|about|almost|near|close)/i, '' ).strip
 
 				# clean up unit
 				# unit ||= 'nada'

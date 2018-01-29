@@ -24,7 +24,7 @@ class ObservationsController < ApplicationController
 	end
 
 	def index
-		@observations = current_user.observations.order( recorded_at: :desc ).page( params[:page] )
+		@observations = current_user.observations.nonsubs.order( recorded_at: :desc ).page( params[:page] )
 	end
 
 	def stop

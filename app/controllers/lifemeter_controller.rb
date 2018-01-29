@@ -5,7 +5,7 @@ class LifemeterController < ApplicationController
 	def dash
 		@inputs = current_user.user_inputs.order( created_at: :desc ).page( params[:page] )
 
-		@metrics = current_user.metrics.joins( :observations ).order( updated_at: :desc ).limit( 10 ).distinct
+		@metrics = current_user.metrics.joins( :observations ).where( observations: { parent_id: nil } ).order( updated_at: :desc ).limit( 10 ).distinct
 		
 		@targets = current_user.targets.order( updated_at: :desc ).limit( 10 )
 

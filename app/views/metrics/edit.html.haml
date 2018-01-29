@@ -30,46 +30,46 @@
 									%td
 										%b Count
 									%td
-										= pluralize @metric.observations.count, 'Observation'
+										= pluralize @metric.observations.nonsubs.count, 'Observation'
 								%tr
 									%td
 										%b First
 									%td
 
-										= @metric.observations.order( recorded_at: :asc ).first.try( :display_value )
+										= @metric.observations.nonsubs.order( recorded_at: :asc ).first.try( :display_value )
 										%br
-										- if @metric.observations.order( recorded_at: :asc ).first.present?
-											= @metric.observations.order( recorded_at: :asc ).first.recorded_at.to_s( :short )
+										- if @metric.observations.nonsubs.order( recorded_at: :asc ).first.present?
+											= @metric.observations.nonsubs.order( recorded_at: :asc ).first.recorded_at.to_s( :short )
 								%tr
 									%td
 										%b Last
 									%td
 
-										= @metric.observations.order( recorded_at: :desc ).first.try( :display_value )
+										= @metric.observations.nonsubs.order( recorded_at: :desc ).first.try( :display_value )
 										%br
-										- if @metric.observations.order( recorded_at: :desc ).first.present?
-											= @metric.observations.order( recorded_at: :desc ).first.recorded_at.to_s( :short )
+										- if @metric.observations.nonsubs.order( recorded_at: :desc ).first.present?
+											= @metric.observations.nonsubs.order( recorded_at: :desc ).first.recorded_at.to_s( :short )
 								%tr
 									%td
 										%b Max
 									%td
-										= @metric.unit.convert_from_base( @metric.observations.where( unit_id: @metric.unit_id ).maximum( :value ) )
+										= @metric.unit.convert_from_base( @metric.observations.nonsubs.where( unit_id: @metric.unit_id ).maximum( :value ) )
 								%tr
 									%td
 										%b Min
 									%td
-										= @metric.unit.convert_from_base( @metric.observations.where( unit_id: @metric.unit_id ).minimum( :value ) )
+										= @metric.unit.convert_from_base( @metric.observations.nonsubs.where( unit_id: @metric.unit_id ).minimum( :value ) )
 								
 								%tr
 									%td
 										%b Total
 									%td
-										= @metric.unit.convert_from_base( @metric.observations.where( unit_id: @metric.unit_id ).sum( :value ) )
+										= @metric.unit.convert_from_base( @metric.observations.nonsubs.where( unit_id: @metric.unit_id ).sum( :value ) )
 								%tr
 									%td
 										%b Avg
 									%td
-										= @metric.unit.convert_from_base( @metric.observations.where( unit_id: @metric.unit_id ).average( :value ) )
+										= @metric.unit.convert_from_base( @metric.observations.nonsubs.where( unit_id: @metric.unit_id ).average( :value ) )
 					
 						%h3
 							Recent Observations of this metric
@@ -79,7 +79,7 @@
 								%th
 								%th
 							%tbody
-								- @metric.observations.order( recorded_at: :desc ).limit( 50 ).each do |obs|
+								- @metric.observations.nonsubs.order( recorded_at: :desc ).limit( 50 ).each do |obs|
 									%tr
 										%td
 											= link_to obs.display_value( show_units: true ), edit_observation_path( obs )

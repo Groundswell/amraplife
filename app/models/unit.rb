@@ -1,7 +1,7 @@
 
 class Unit < ActiveRecord::Base
 	before_create	:set_aliases
-	enum unit_type: { 'nada' => -1, 'custom' => 0, 'volume' => 1, 'weight' => 2, 'length' => 3, 'time' => 4, 'percent' => 5, 'pressure' => 6, 'energy' => 7, 'rate' => 8 }
+	enum unit_type: { 'nada' => -1, 'custom' => 0, 'volume' => 1, 'weight' => 2, 'length' => 3, 'time' => 4, 'percent' => 5, 'pressure' => 6, 'energy' => 7, 'temperature' => 8, 'rate' => 9 }
 
 	belongs_to :base_unit, class_name: 'Unit'
 
@@ -56,6 +56,8 @@ class Unit < ActiveRecord::Base
 			return ChronicDuration.parse( val )
 		elsif self.is_percent?
 			return val.to_f / 100
+		elsif self.temperature? && self.base_unit.present?
+			return (val.to_f - 32.0) * self.conversion_factor
 		elsif self.base_unit.present?
 			return val.to_f * self.conversion_factor
 		else
@@ -87,11 +89,14 @@ class Unit < ActiveRecord::Base
 				return "#{( val * 100.to_f ).round( opts[:precision] )}"
 			end
 		else
-			if self.base_unit.present?
+			if self.temperature? && self.base_unit.present?
+				value = ( val.to_f / self.conversion_factor ).round( opts[:precision] ) + 32.0
+			elsif self.base_unit.present?
 				value = ( val / self.conversion_factor.to_f ).round( opts[:precision] )
 			else
 				value = val
 			end
+			
 			if opts[:show_units]
 				return "#{value} #{self.abbrev}"
 			else

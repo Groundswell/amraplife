@@ -46,8 +46,6 @@ class Metric < ActiveRecord::Base
 		}
 	end
 
-
-
 	def active_target
 		self.targets.active.last
 	end
@@ -61,7 +59,8 @@ class Metric < ActiveRecord::Base
 	end
 
 	def default_value( args={} )
-		
+		# show current default state of the metric
+
 		args[:convert] = true unless args[:convert] == false
 
 		# default to all_time
@@ -75,17 +74,25 @@ class Metric < ActiveRecord::Base
 		same_type_unit_ids = Unit.where( unit_type: Unit.unit_types[self.unit.unit_type] ).pluck( :id )
 
 		if self.default_value_type == 'max_value'
-			value = self.observations.where( unit_id: same_type_unit_ids ).where( recorded_at: range ).maximum( :value )
+			value = self.observations.nonsubs.where( unit_id: same_type_unit_ids ).where( recorded_at: range ).maximum( :value )
 		elsif self.default_value_type == 'min_value'
-			value = self.observations.where( unit_id: same_type_unit_ids ).where( recorded_at: range ).minimum( :value )
+			value = self.observations.nonsubs.where( unit_id: same_type_unit_ids ).where( recorded_at: range ).minimum( :value )
 		elsif self.default_value_type == 'avg_value'
-			value = self.observations.where( unit_id: same_type_unit_ids ).where( recorded_at: range ).average( :value )
+			value = self.observations.nonsubs.where( unit_id: same_type_unit_ids ).where( recorded_at: range ).average( :value )
 		elsif self.default_value_type == 'current_value'
-			value = self.observations.where( unit_id: same_type_unit_ids ).where( recorded_at: range ).order( recorded_at: :desc ).first.try( :value )
+			value = self.observations.nonsubs.where( unit_id: same_type_unit_ids ).where( recorded_at: range ).order( recorded_at: :desc ).first.try( :value )
 		elsif self.default_value_type == 'count'
-			value = self.observations.where( recorded_at: range ).count
+			value = self.observations.nonsubs.where( recorded_at: range ).count
 		else # sum_value -- aggregate
-			value = self.observations.where( unit_id: same_type_unit_ids ).where( recorded_at: range ).sum( :value )
+			value = self.observations.nonsubs.where( unit_id: same_type_unit_ids ).where( recorded_at: range ).sum( :value )
+		end
+
+		# special hack for blood pressure
+		if self.aliases.include? 'blood-pressure'
+			last_obs = self.observations.where( recorded_at: range ).order( recorded_at: :desc ).first
+			value = last_obs.try( :value )
+			sub_value = last_obs.sub.value 
+			return "#{value}/#{sub_value} mmHg"
 		end
 
 		if args[:convert] && self.unit.present?
