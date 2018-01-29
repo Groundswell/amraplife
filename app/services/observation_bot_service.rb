@@ -684,9 +684,9 @@ class ObservationBotService < AbstractBotService
 
 		params[:action] = params[:action].gsub( /timer/, '' )
 
-		metric = get_user_metric( user, params[:action], 's', true )
+		metric = get_user_metric( user, params[:action], 'seconds', true )
 
-		observation = Observation.create( user: user, observed: metric, started_at: Time.zone.now, notes: notes, content: @raw_imput )
+		observation = Observation.create( user: user, observed: metric, started_at: Time.zone.now, unit: Unit.time.first, notes: notes, content: @raw_imput )
 		add_speech("Starting your #{metric.title} timer")
 
 		sys_notes = "Spoke: 'Starting your #{metric.title} timer'."
@@ -710,7 +710,7 @@ class ObservationBotService < AbstractBotService
 		notes = params[:notes].gsub( /note (that)?/i, '' ).strip if params[:notes].present?
 		sys_notes = ''
 
-		metric = get_user_metric( user, params[:action], 's' )
+		metric = get_user_metric( user, params[:action], 'seconds' )
 
 		if metric.nil?
 			default_metric ||= Metric.where( user_id: nil ).find_by_alias( params[:action].downcase )
@@ -1169,7 +1169,7 @@ class ObservationBotService < AbstractBotService
 	private
 
 		def get_user_metric( user, action, unit=nil, create=false )
-
+			
 			if action.present?
 				# clean up the action string... some of our matchers leave cruft
 				action = action.gsub( /(\Alog|\Arecord|\Ai did|\Adid|to |my | todays | is| are| was| = |i | for|timer|\s+at|around|about|almost|near|close)/i, '' ).strip
