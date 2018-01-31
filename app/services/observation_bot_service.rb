@@ -228,7 +228,7 @@ class ObservationBotService < AbstractBotService
 				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*(?:i )?\s*did {value} {action}\s*({time_period})?\s*({notes})?',
 				
 				# # 	10 pushups, 300 calories, 
-				'(?:to )?\s*(?:log |record )?\s*{value} {action}\s*({time_period})?\s*({notes})?',
+				'(?:to )?\s*(?:log |record )?\s*{value}\s*({unit})? {action}\s*({time_period})?\s*({notes})?',
 				
 				# '(?:to )?\s*(?:log |record ){value} {action}'
 
@@ -355,6 +355,9 @@ class ObservationBotService < AbstractBotService
 		},
 		Unit: {
 			regex: [
+				# strict matches
+				'(second|seconds|minute|minutes|hour|hours|day|days|meter|meters|yard|yards|mile|miles|percent|%|kg|kgs|kcal|#|lb|lbs|pound|pounds|gram|grams|ounce|ounces|oz|cup|cups|gallon|gallons|qt|qts|quart|quarts|pint|pints|liter|liters|ml|mls|milliliter|milliliters|"|\')\s+',
+				# pattern grabber
 				'(?:a )?[a-zA-Z\"\'%#"]+'
 			],
 			values: [
@@ -1035,6 +1038,8 @@ class ObservationBotService < AbstractBotService
 			params[:value].gsub!( /8\s+/, '' ) 
 		end
 
+		die
+
 		if params[:action].blank?
 			add_ask( "I'm sorry, I didn't understand that.  I don't know what to log. You must supply a metric with your value in order to log it.  For example \"log one hundred calories\" or \"my weight is one hundred sixty\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it.", deligate_if_possible: true )
 			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'missing metric', action: 'reported', system_notes: "Spoke: 'You must supply a metric in order to log it.'" )
@@ -1057,7 +1062,7 @@ class ObservationBotService < AbstractBotService
 
 		# trim the unit
 		unit = params[:unit].chomp( '.' ).singularize if params[:unit].present?
-		unit = 's' if params[:value].match( ':' ) if params[:value].present?
+		unit = 'sec' if params[:value].match( ':' ) if params[:value].present?
 
 		if params[:value].try( :match, /rep/ )
 			unit = 'rep'
