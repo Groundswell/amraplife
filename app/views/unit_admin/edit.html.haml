@@ -1,0 +1,34 @@
+
+.container-fluid
+	.row
+		.col-xs-10
+			%ul.breadcrumb
+				%li
+					= link_to 'Admin', swell_media.admin_index_path
+				%li
+					= link_to 'Unit Admin', unit_admin_index_path
+				%li
+					%strong
+						Edit
+						= @unit.name
+		.col-xs-2
+	
+	= form_for @unit, url: unit_admin_path( @unit ) do |f|
+		.row
+			.col-xs-8
+				.form-group
+					= f.text_field :name, class: 'form-control'
+
+
+			.col-xs-4
+				.well
+
+
+					.form-group
+						= f.label :aliases_csv, 'Aliases'
+						= f.text_field :aliases_csv, class: 'form-control'
+
+
+					.form-group
+						= f.submit 'Update', class: 'btn btn-primary'
+						.pull-right= link_to 'Cancel', :back, class: 'btn btn-default btn-sm'
