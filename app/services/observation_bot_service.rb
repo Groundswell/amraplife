@@ -1090,7 +1090,7 @@ class ObservationBotService < AbstractBotService
 			unit  = 'round'
 		end
 
-		action = params[:action].gsub( /(log|record|to |my | todays | is| are| was| = |i | for)/i, '' ).strip if params[:action].present?
+		action = params[:action].gsub( /(log|record|to |my | todays | is| are| was| = |i | for|more)/i, '' ).strip if params[:action].present?
 
 		params[:value] = 1.0 if params[:value].match( /a\s+|an\+/ ) if params[:value].present?
 

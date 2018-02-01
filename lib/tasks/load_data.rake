@@ -97,7 +97,7 @@ namespace :amraplife do
 		m = Unit.create name: 'Meter', abbrev: 'm', unit_type: 'length', imperial: false
 		cm = Unit.create name: 'Centimeter', abbrev: 'cm', unit_type: 'length', base_unit: m, conversion_factor: 0.01, imperial: false
 		mm = Unit.create name: 'Millimeter', abbrev: 'mm', unit_type: 'length', base_unit: m, conversion_factor: 0.001, imperial: false
-		km = Unit.create name: 'Kilometer', abbrev: 'km', unit_type: 'length', base_unit: m, conversion_factor: 1000, imperial: false
+		km = Unit.create name: 'Kilometer', abbrev: 'km', aliases: [ 'k' ], unit_type: 'length', base_unit: m, conversion_factor: 1000, imperial: false
 		inch = Unit.create name: 'Inch', abbrev: 'in', unit_type: 'length', aliases: ['"'], base_unit: m, conversion_factor: 0.0254
 		ft = Unit.create name: 'Foot', abbrev: 'ft', unit_type: 'length', aliases: ["'"], base_unit: m, conversion_factor: 0.3048
 		yd = Unit.create name: 'Yard', abbrev: 'yd', unit_type: 'length', base_unit: m, conversion_factor: 0.9144
