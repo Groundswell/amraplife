@@ -4,22 +4,27 @@ class ObservationBotService < AbstractBotService
 
  		assign_metric: {
 			utterances: [
-				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*track my {action} {unit}',
-				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*track my {action}',
-				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*track {action} {unit}',
-				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*track {action}',
+				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*track\s*(my)?\s*{unit} of {action}',
+				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*track\s*(my)?\s*{action} {unit}',
+				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*track\s*(my)?\s*{action}',
 
-				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*start tracking my {action} {unit}',
-				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*start tracking my {action}',
-				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*start tracking {action} {unit}',
-				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*start tracking {action}',
+				
 
+				# '(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*track\s*(my)?\s*{action}',
+				# '(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*track {action} {unit}',
+				# '(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*track {action}',
+
+				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*start tracking\s*(my)?\s*{unit} of {action}',
+				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*start tracking\s*(my)?\s*{action} {unit}',
+				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*start tracking\s*(my)?\s*{action}',
+
+				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*add metric {unit} of {action}',
 				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*add metric {action} {unit}',
 				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*add metric {action}'
 			],
 			slots: {
 				action: 'Action',
-				unit: 'Unit',
+				unit: 'ExplicitUnit',
 			}
 		},
 
@@ -57,7 +62,7 @@ class ObservationBotService < AbstractBotService
 			slots: {
 				action: 'Action',
 				value: 'Amount',
-				unit: 'Unit',
+				unit: 'ImplicitUnit',
 				time_period: 'TimePeriod',
 				notes: 'ExplicitNotes'
 			}
@@ -69,7 +74,7 @@ class ObservationBotService < AbstractBotService
 				'(?:that )?(?:i)?\s*burned {value}\s*({time_period})?\s*({notes})?', # e.g. burned 300 defaults to calories
 			],
 			slots: {
-				unit: 'Unit',
+				unit: 'ExplicitUnit',
 				value: 'Amount',
 				time_period: 'TimePeriod',
 				notes: 'ExplicitNotes'
@@ -86,7 +91,7 @@ class ObservationBotService < AbstractBotService
 			slots: {
 				action: 'Action',
 				value: 'Amount',
-				unit: 'Unit',
+				unit: 'ExplicitUnit',
 				time_period: 'TimePeriod',
 				notes: 'ExplicitNotes'
 			},
@@ -138,7 +143,7 @@ class ObservationBotService < AbstractBotService
  			slots:{
  				action: 'Action',
  				value: 'Amount',
- 				unit: 'Unit',
+ 				unit: 'ExplicitUnit',
  				target_direction: 'TargetDirection',
  				target_period: 'TargetPeriod',
  				target_type: 'TargetType'
@@ -180,6 +185,8 @@ class ObservationBotService < AbstractBotService
 				# 	utterances ending with an {action} don't get the \s*({time_period})?\s*({notes})? treatment
 				# 	cause their going to greedy-match to end of string anyway (unless there's a number of symbol in there)
 
+				# 20 minute run ; TODO - this seems to work for almost anything but minutes
+				'(?:to )?\s*(?:log |record )?\s*{value}\s*{unit}\s+{action}\s*({time_period})?\s*({notes})?',
 
 				## testing compund distance + duration
 				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*(?:i )?\s*{action} (for)?\s*{value}\s*({unit})?\s*in\s*{duration}\s*({time_period})?\s*({notes})?',
@@ -222,13 +229,13 @@ class ObservationBotService < AbstractBotService
 				
 				# # 	did 30 minutes of cardio
 				# #  	MUST use 'of' to separate units from action
-				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*(?:i )?\s*did {value} {unit} of {action}\s*({time_period})?\s*({notes})?',
+				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*(?:i )?\s*(did)?\s*{value} {unit} of {action}\s*({time_period})?\s*({notes})?',
 				# # 	did 100 pullups
 				# # 	NO Unit
-				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*(?:i )?\s*did {value} {action}\s*({time_period})?\s*({notes})?',
+				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*(?:i )?\s*(did)?\s*{value} {action}\s*({time_period})?\s*({notes})?',
 				
 				# # 	10 pushups, 300 calories, 
-				'(?:to )?\s*(?:log |record )?\s*{value}\s*({unit})? {action}\s*({time_period})?\s*({notes})?',
+				'(?:to )?\s*(?:log |record )?\s*{value} {action}\s*({time_period})?\s*({notes})?',
 				
 				# '(?:to )?\s*(?:log |record ){value} {action}'
 
@@ -236,7 +243,7 @@ class ObservationBotService < AbstractBotService
 			slots: {
 				value: 'Amount',
 				action: 'Action',
-				unit: 'Unit',
+				unit: 'ImplicitUnit',
 				duration: 'Duration',
 				time_period: 'TimePeriod',
 				notes: 'ExplicitNotes'
@@ -268,6 +275,9 @@ class ObservationBotService < AbstractBotService
 		},
 		Amount: {
 			regex: [
+				'[0-9]+\s*point\s*[0-9]+', # I weigh 169 point 5 lb
+				'([0-9]+)\s*and\s*([0-9]+)\/([0-9]+)', # I weigh 169 and 1/2 lb
+
 				'[0-9]+\s*(\/|over)\s*[0-9]+', # blood pressure -- split on (\/|over)
 				'[0-9]+\s*(round|rounds|rd|rds)?\s*(and|&|\+)?\s*[0-9]+\s*(rep)?', # rounds & reps -- split on (and|&|\+)
 				'[0-9.:&|\s+a\s+|\s+an\s+]+',
@@ -353,38 +363,39 @@ class ObservationBotService < AbstractBotService
 				],
 				values: []
 		},
-		Unit: {
+		ImplicitUnit: {
 			regex: [
-				# strict matches
-				'(second|seconds|minute|minutes|hour|hours|day|days|meter|meters|yard|yards|mile|miles|percent|%|kg|kgs|kcal|#|lb|lbs|pound|pounds|gram|grams|ounce|ounces|oz|cup|cups|gallon|gallons|qt|qts|quart|quarts|pint|pints|liter|liters|ml|mls|milliliter|milliliters|"|\')\s+',
 				# pattern grabber
 				'(?:a )?[a-zA-Z\"\'%#"]+'
 			],
-			values: [
-				{ value: "g", synonyms: [] },
-		        { value: "kg", synonyms: [] },
-		        { value: "in", synonyms: [] },
-		        { value: "cm", synonyms: [] },
-		        { value: "mile", synonyms: [] },
-		        { value: "cal", synonyms: [] },
-		        { value: "calorie", synonyms: [] },
-		        { value: "km", synonyms: [] },
-		        { value: "sec", synonyms: [] },
-		        { value: "kilometer", synonyms: [] },
-		        { value: "%", synonyms: [] },
-		        { value: "lb", synonyms: [] },
-		        { value: "pound", synonyms: [] },
-		        { value: "rd", synonyms: [] },
-		        { value: "rep", synonyms: [] },
-	      ]
-	  },
-	  Verb: {
+			values: []
+	  	},
+	  	ExplicitUnit: {
+			regex: [
+				# strict matches
+				
+				#'(second|seconds|minute|minutes|min|mins|hour|hours|hr|day|days|week|weeks|month|months)(\.)?',
+
+				# times
+				'(second|seconds|minute|minutes|min|mins|hour|hours|hr|day|days|week|weeks|month|months)(\.)',
+				# distances
+				'(millimeter|millimeters|mm|centimeter|centimeters|cm|meter|meters|m|kilometer|kilometers|k|km|kms|inch|inches|in|in|"|foot|feet|\'|ft|yard|yards|yd|yds|mile|miles|mi|lap|laps|length|lengths)(\.)?',
+				# # weights
+				'(gram|grams|g|kg|kgs|kilo|kilos|#|lb|lbs|lb|lbs|pound|pounds|ounce|ounces)(\.)?',
+				# # volumes
+				'(oz|ozs|fluid ounce|fluid ounces|cup|cups|qt|qts|quart|quarts|pint|pints|gallon|gallons|gal|gals|pt|ml|mls|milliliter|milliliters|liter|liters|bottle|bottles|can|cans|glass|glasses|drink|drinks|package|packages)(\.)?',
+				# # misc
+				'(percent|%|kcal|kcals|cal|cals|calorie|calories|calory|block|blocks|bpm|bpms|beats per minute|round|rounds|rep|reps|set|sets|psi|degrees|degree|farenheit|celcius|degrees celcius|degrees farenheit)(\.)?'
+			],
+			values: []
+	 	 },
+	 	 Verb: {
 			regex: [
 				'is|are|was|were|do i|did i|did i do'
 				],
 				values: []
-		},
-  	} )
+			},
+  		} )
 
 
 
@@ -622,7 +633,7 @@ class ObservationBotService < AbstractBotService
 
 		user_unit = params[:unit]
 
-		params[:value] = 1.0 if params[:value].match( /a|an/ )
+		params[:value] = 1.0 if params[:value].match( /a\s+|an\s+/ )
 
 
 		# invocations like 'a cup of milk' leave value params nil
@@ -1038,7 +1049,20 @@ class ObservationBotService < AbstractBotService
 			params[:value].gsub!( /8\s+/, '' ) 
 		end
 
-		die
+		# field spoken decimals
+		if params[:value].match( /[0-9]+\s*point\s*[0-9]+/i )
+			params[:value].gsub!( /\s*point\s*/, '.' )
+		end
+
+		# field fractions
+		if mdata = params[:value].match( /([0-9]+)\s*and\s*([0-9]+)\/([0-9]+)/i )
+			base = mdata[1]
+			numerator = mdata[2]
+			denominator = mdata[3]
+			dec = base.to_f + ( numerator.to_f / denominator.to_f )
+			params[:value] = dec.to_s
+		end
+
 
 		if params[:action].blank?
 			add_ask( "I'm sorry, I didn't understand that.  I don't know what to log. You must supply a metric with your value in order to log it.  For example \"log one hundred calories\" or \"my weight is one hundred sixty\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it.", deligate_if_possible: true )
