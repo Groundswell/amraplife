@@ -45,7 +45,7 @@ class UnitAdminController < SwellMedia::AdminController
 		end
 
 		def unit_params
-			params.require( :unit ).permit( :name, :user_id, :abbrev, :base_unit_id, :conversion_factor, :imperial_correlate_id, :unit_id, :aliases_csv, :imperial )
+			params.require( :unit ).permit( :name, :user_id, :abbrev, :base_unit_id, :conversion_factor, :imperial_correlate_id, :aliases_csv, :imperial )
 		end
 
 end

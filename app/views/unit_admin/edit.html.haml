@@ -16,13 +16,33 @@
 	= form_for @unit, url: unit_admin_path( @unit ) do |f|
 		.row
 			.col-xs-8
-				.form-group
-					= f.text_field :name, class: 'form-control'
+				.row
+					.col-sm-8
+						.form-group
+							= f.label :name
+							= f.text_field :name, class: 'form-control'
+					.col-sm-4
+						.form-group
+							= f.label :abbrev
+							= f.text_field :abbrev, class: 'form-control'
+				.row	
+					.col-sm-6
+						.form-group
+							= f.label :base_unit_id, "Base Unit"
+							= f.collection_select :base_unit_id, Unit.where.not( id: @unit.id ).where( base_unit_id: nil ).order( :name ), :id, :name, { prompt: '-- None --' }, class: 'form-control'
+					.col-sm-4
+						.form-group
+							= f.label :conversion_factor
+							= f.text_field :conversion_factor, class: 'form-control'
 
 
 			.col-xs-4
 				.well
 
+					.form-group
+						= f.label :unit_type
+						= f.collection_select :unit_type, Unit.unit_types, :first, :first, {}, class: 'form-control'
+						
 
 					.form-group
 						= f.label :aliases_csv, 'Aliases'
