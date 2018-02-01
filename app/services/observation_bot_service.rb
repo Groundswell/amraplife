@@ -8,12 +8,6 @@ class ObservationBotService < AbstractBotService
 				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*track\s*(my)?\s*{action} {unit}',
 				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*track\s*(my)?\s*{action}',
 
-				
-
-				# '(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*track\s*(my)?\s*{action}',
-				# '(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*track {action} {unit}',
-				# '(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*track {action}',
-
 				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*start tracking\s*(my)?\s*{unit} of {action}',
 				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*start tracking\s*(my)?\s*{action} {unit}',
 				'(?:that)?\s*(?:i)?\s*(?:want)?\s*(?:to)?\s*start tracking\s*(my)?\s*{action}',
@@ -276,7 +270,7 @@ class ObservationBotService < AbstractBotService
 		Amount: {
 			regex: [
 				'[0-9]+\s*point\s*[0-9]+', # I weigh 169 point 5 lb
-				'([0-9]+)\s*and\s*([0-9]+)\/([0-9]+)', # I weigh 169 and 1/2 lb
+				'([0-9]+)\s*(and|&|\s+)\s*([0-9]+)\/([0-9]+)', # I weigh 169 and 1/2 lb
 
 				'[0-9]+\s*(\/|over)\s*[0-9]+', # blood pressure -- split on (\/|over)
 				'[0-9]+\s*(round|rounds|rd|rds)?\s*(and|&|\+)?\s*[0-9]+\s*(rep)?', # rounds & reps -- split on (and|&|\+)
@@ -1055,10 +1049,10 @@ class ObservationBotService < AbstractBotService
 		end
 
 		# field fractions
-		if mdata = params[:value].match( /([0-9]+)\s*and\s*([0-9]+)\/([0-9]+)/i )
+		if mdata = params[:value].match( /([0-9]+)\s*(and|&|\s+)\s*([0-9]+)\/([0-9]+)/i )
 			base = mdata[1]
-			numerator = mdata[2]
-			denominator = mdata[3]
+			numerator = mdata[3]
+			denominator = mdata[4]
 			dec = base.to_f + ( numerator.to_f / denominator.to_f )
 			params[:value] = dec.to_s
 		end
