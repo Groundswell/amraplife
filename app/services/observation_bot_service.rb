@@ -43,6 +43,22 @@ class ObservationBotService < AbstractBotService
 			}
 		},
 
+		log_ate_food_observation: {
+			utterances: [
+				'(?:that )?\s*(?:i)?\s*ate {quantity} serving of {food}', # e.g. 1 serving of raisins
+				'(?:that )?\s*(?:i)?\s*ate {portion} portion of {food}', # e.g. 1 portion of pie
+				'(?:that )?\s*(?:i)?\s*ate a {measure} of {food}', # e.g. a can of soup
+				'(?:that )?\s*(?:i)?\s*ate {quantity} {measure} of {food}', # e.g. 1 cup of raisins
+				'(?:that )?\s*(?:i)?\s*ate {quantity} {food}', # e.g. 1 apple
+			],
+			slots: {
+				quantity: 'Number',
+				food: 'Food',
+				measure: 'Measure',
+				portion: 'Number',
+			}
+		},
+
 		log_ate_observation: {
 			utterances: [
 				# TODO -- {action} is a greedy matcher.... it slurps up time_period & note params
@@ -132,7 +148,7 @@ class ObservationBotService < AbstractBotService
  				# set a target of at most 185 lbs for weight
 
  				#'(?:to)?set\s+(a\s+)?(target|goal)\s+of\s*({target_direction})?\s+{value}\s*({unit})?\s*({target_type})?\s*({target_period})?\s*for {action}',
- 				
+
  				'(?:to)?set\s+(a\s+)?(target|goal)\s+of\s+({target_direction})?\s*{value}\s*({unit})?\s*({target_type})?\s*({target_period})?\s* for {action}'
  			],
  			slots:{
@@ -182,7 +198,7 @@ class ObservationBotService < AbstractBotService
 
 
 				# special duration catcher
-				# only works for 
+				# only works for
 				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*(?:i )?\s*{action} (for )?\s*{duration}\s*({time_period})?\s*({notes})?',
 
 				# 	for input like....
@@ -216,17 +232,17 @@ class ObservationBotService < AbstractBotService
 
 
 				# # 	for input like....
-				
+
 				# # 	did 30 minutes of cardio
 				# #  	MUST use 'of' to separate units from action
 				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*(?:i )?\s*did {value} {unit} of {action}\s*({time_period})?\s*({notes})?',
 				# # 	did 100 pullups
 				# # 	NO Unit
 				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*(?:i )?\s*did {value} {action}\s*({time_period})?\s*({notes})?',
-				
-				# # 	10 pushups, 300 calories, 
+
+				# # 	10 pushups, 300 calories,
 				'(?:to )?\s*(?:log |record )?\s*{value} {action}\s*({time_period})?\s*({notes})?',
-				
+
 				# '(?:to )?\s*(?:log |record ){value} {action}'
 
 			],
@@ -501,6 +517,72 @@ class ObservationBotService < AbstractBotService
 
 	end
 
+	def log_ate_food_observation
+		unless user.present?
+			call_intent( :login )
+			return
+		end
+
+		notes = nil
+		unit = 'calories'
+		params[:quantity] ||= 1
+
+		if params[:food].present?
+			begin
+				query = "#{params[:quantity] || 'a'} #{params[:measure]} of #{params[:food]}" if params[:unit].present?
+				query ||= params[:food]
+				results = NutritionService.new.nutrition_information( query: query, max: 4 )
+
+				calories = results[:average_calories]
+				calories = calories * params[:portion].to_i if params[:portion].present?
+
+			rescue Exception => e
+				NewRelic::Agent.notice_error(e)
+				logger.error "log_eaten_observation error"
+				logger.error e
+				puts e.backtrace
+
+			end
+
+		end
+
+		if calories.nil?
+			add_speech( system_message = "Sorry, I am unable to find information about #{params[:food]}.")
+			return
+		end
+
+		observed_metric = get_user_metric( user, 'ate', unit, true )
+		user_unit = Unit.where( metric_id: observed_metric.id, user_id: user.id ).find_by_alias( unit ) || Unit.system.find_by_alias( unit ) || observed_metric.unit
+
+		if params[:portion].present?
+
+			add_speech( system_message = "Logging that you ate #{params[:portion]} portion of #{params[:food]}.#{calories.present? ? " Approximately #{calories} calories." : ""}")
+
+			observation = Observation.create( user: user, observed: observed_metric, value: calories, unit: user_unit, notes: notes )
+
+		elsif params[:quantity].present? && params[:measure].blank?
+
+			add_speech( system_message = "Logging that you ate #{params[:quantity]} #{params[:food]}.#{calories.present? ? " Approximately #{calories} calories." : ""}")
+
+			observation = Observation.create( user: user, observed: observed_metric, value: calories, unit: user_unit, notes: notes )
+
+		elsif params[:measure].present?
+
+			add_speech( system_message = "Logging that you ate #{params[:quantity]} #{params[:measure]} of #{params[:food]}.#{calories.present? ? " Approximately #{calories} calories." : ""}.")
+
+			observation = Observation.create( user: user, observed: observed_metric, value: calories, unit: user_unit, notes: notes )
+
+		else
+
+			add_speech( system_message = "Sorry, I don't understand.")
+			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found', system_notes: system_message )
+			return
+
+		end
+
+		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'created', source: options[:source], result_status: 'success', system_notes: system_message )
+
+	end
 
 	def log_ate_observation
 
@@ -517,7 +599,7 @@ class ObservationBotService < AbstractBotService
 
 		# have to double-scan action param cause action a greedy matcher
 		if params[:action].present?
-			params[:notes] = params[:action].slice!( Regexp.new(ObservationBotService.slots[:ExplicitNotes][:regex].first) ) if params[:action].match( Regexp.new(ObservationBotService.slots[:ExplicitNotes][:regex].first) ) 
+			params[:notes] = params[:action].slice!( Regexp.new(ObservationBotService.slots[:ExplicitNotes][:regex].first) ) if params[:action].match( Regexp.new(ObservationBotService.slots[:ExplicitNotes][:regex].first) )
 			params[:time_period] = params[:action].slice!( Regexp.new(ObservationBotService.slots[:TimePeriod][:regex].first) ) if params[:action].match( Regexp.new(ObservationBotService.slots[:TimePeriod][:regex].first) )
 			params[:action].strip!
 		end
@@ -756,7 +838,7 @@ class ObservationBotService < AbstractBotService
 		system_target = system_metric.targets.where( user_id: nil ).first
 
 		value = params[:value] || system_target.value
-		
+
 
 		direction = params[:target_direction].try( :downcase )
 		if direction.present?
@@ -791,7 +873,7 @@ class ObservationBotService < AbstractBotService
 		unit_str = params[:unit].singularize.downcase if params[:unit].present?
 
 		if unit_str.present?
-			if unit_str.match( /check|observation|count|times/ ) 
+			if unit_str.match( /check|observation|count|times/ )
 				type = 'count'
 				unit_str = ''
 			elsif unit_str.match( /total/ )
@@ -861,7 +943,7 @@ class ObservationBotService < AbstractBotService
 		cleaned_action.gsub!( /\s+do\z|have|\s+for\z|\s+done/i, ' ' )
 
 		cleaned_action.try( :strip! )
-			
+
 		# ok, lets check for units
 		if cleaned_action.match( /\s+/ )
 			unit_str = cleaned_action.split( /\s+/ )[0]
@@ -889,7 +971,7 @@ class ObservationBotService < AbstractBotService
 			add_speech("Sorry, you haven't recorded anything for #{action} yet.")
 
 			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found', action: 'reported', system_notes: "Spoke: 'Sorry, you haven't recorded anything for #{action} yet.'" )
-			
+
 			return
 		end
 
@@ -992,7 +1074,7 @@ class ObservationBotService < AbstractBotService
 		if metric.is_calories?
 			value_in = user.observations.for( metric ).where( 'value > 0' ).where( unit_id: metric.unit_id ).where( recorded_at: range ).sum( :value )
 			value_out = user.observations.for( metric ).where( 'value < 0' ).where( unit_id: metric.unit_id ).where( recorded_at: range ).sum( :value ).abs
-			value_net = value_in - value_out 
+			value_net = value_in - value_out
 			response = "You've eaten #{value_in} calories and you burned #{value_out}. Your net calories #{verb} #{value_net} #{period}. (#{start_date.to_s( :short )}-#{end_date.to_s( :short )})"
 		else
 			response = "Your #{metric.title} #{verb} #{formatted_value} #{period}. (#{start_date.to_s( :short ) }-#{end_date.to_s( :short )})"
