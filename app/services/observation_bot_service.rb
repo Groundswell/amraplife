@@ -45,17 +45,34 @@ class ObservationBotService < AbstractBotService
 
 		log_ate_food_observation: {
 			utterances: [
+				'(?:that )?{time_period}\s*(?:i)?\s*(ate|have eaten) {quantity} serving of {food}', # e.g. 1 serving of raisins
+				'(?:that )?{time_period}\s*(?:i)?\s*(ate|have eaten) {portion} portion of {food}', # e.g. 1 portion of pie
+				'(?:that )?{time_period}\s*(?:i)?\s*(ate|have eaten) (a|an) {measure} of {food}', # e.g. a can of soup
+				'(?:that )?{time_period}\s*(?:i)?\s*(ate|have eaten) {quantity} {measure} of {food}', # e.g. 1 cup of raisins
+				'(?:that )?{time_period}\s*(?:i)?\s*(ate|have eaten) {quantity} {food}', # e.g. 1 apple
+				'(?:that )?{time_period}\s*(?:i)?\s*(ate|have eaten) (a|an) {food}', # e.g. 1 apple
+
+				'(?:that )?\s*(?:i)?\s*(ate|have eaten) {quantity} serving of {food} {time_period}', # e.g. 1 serving of raisins
+				'(?:that )?\s*(?:i)?\s*(ate|have eaten) {portion} portion of {food} {time_period}', # e.g. 1 portion of pie
+				'(?:that )?\s*(?:i)?\s*(ate|have eaten) (a|an) {measure} of {food} {time_period}', # e.g. a can of soup
+				'(?:that )?\s*(?:i)?\s*(ate|have eaten) {quantity} {measure} of {food} {time_period}', # e.g. 1 cup of raisins
+				'(?:that )?\s*(?:i)?\s*(ate|have eaten) {quantity} {food} {time_period}', # e.g. 1 apple
+				'(?:that )?\s*(?:i)?\s*(ate|have eaten) (a|an) {food} {time_period}', # e.g. 1 apple
+
 				'(?:that )?\s*(?:i)?\s*(ate|have eaten) {quantity} serving of {food}', # e.g. 1 serving of raisins
 				'(?:that )?\s*(?:i)?\s*(ate|have eaten) {portion} portion of {food}', # e.g. 1 portion of pie
-				'(?:that )?\s*(?:i)?\s*(ate|have eaten) a {measure} of {food}', # e.g. a can of soup
+				'(?:that )?\s*(?:i)?\s*(ate|have eaten) (a|an) {measure} of {food}', # e.g. a can of soup
 				'(?:that )?\s*(?:i)?\s*(ate|have eaten) {quantity} {measure} of {food}', # e.g. 1 cup of raisins
 				'(?:that )?\s*(?:i)?\s*(ate|have eaten) {quantity} {food}', # e.g. 1 apple
+				'(?:that )?\s*(?:i)?\s*(ate|have eaten) (a|an) {food}', # e.g. 1 apple
 			],
 			slots: {
 				quantity: 'Number',
 				food: 'Food',
 				measure: 'Measure',
 				portion: 'Number',
+				time_period: 'TimePeriod',
+				notes: 'ExplicitNotes'
 			}
 		},
 
@@ -566,16 +583,18 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
+		recorded_at = set_recorded_at( params[:time_period] )
+
 		unit = 'cal'
 		metric = get_user_metric( user, unit, unit, true )
 		user_unit = Unit.where( metric_id: metric.id, user_id: user.id ).find_by_alias( unit ) || Unit.system.find_by_alias( unit ) || metric.unit
-		observation = Observation.create( user: user, observed: metric, value: calories, unit: user_unit, notes: notes )
+		observation = Observation.create( user: user, observed: metric, value: calories, unit: user_unit, notes: notes, recorded_at: recorded_at )
 
 		results[:average_nutrion_facts].each do |unit, value|
 			unless unit.include? 'calories'
 				metric = get_user_metric( user, unit, 'g', true )
 				user_unit = Unit.where( metric_id: metric.id, user_id: user.id ).find_by_alias( unit ) || Unit.system.find_by_alias( unit ) || metric.unit
-				child_observation = Observation.create( user: user, parent: observation, observed: metric, value: value, unit: user_unit, notes: notes )
+				child_observation = Observation.create( user: user, parent: observation, observed: metric, value: value, unit: user_unit, notes: notes, recorded_at: recorded_at )
 			end
 		end
 
