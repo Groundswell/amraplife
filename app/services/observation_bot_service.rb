@@ -529,9 +529,12 @@ class ObservationBotService < AbstractBotService
 
 		if params[:food].present?
 			begin
-				query = "#{params[:quantity] || 'a'} #{params[:measure]} of #{params[:food]}" if params[:unit].present?
+				query = "#{params[:quantity] || 'a'} #{params[:measure]} of #{params[:food]}" if params[:measure].present?
 				query ||= params[:food]
+				# puts "query: #{query}"
 				results = NutritionService.new.nutrition_information( query: query, max: 4 )
+
+				# puts JSON.pretty_generate results
 
 				calories = results[:average_calories]
 				calories = calories * params[:portion].to_i if params[:portion].present?
