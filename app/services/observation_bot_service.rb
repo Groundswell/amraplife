@@ -45,11 +45,11 @@ class ObservationBotService < AbstractBotService
 
 		log_ate_food_observation: {
 			utterances: [
-				'(?:that )?\s*(?:i)?\s*ate {quantity} serving of {food}', # e.g. 1 serving of raisins
-				'(?:that )?\s*(?:i)?\s*ate {portion} portion of {food}', # e.g. 1 portion of pie
-				'(?:that )?\s*(?:i)?\s*ate a {measure} of {food}', # e.g. a can of soup
-				'(?:that )?\s*(?:i)?\s*ate {quantity} {measure} of {food}', # e.g. 1 cup of raisins
-				'(?:that )?\s*(?:i)?\s*ate {quantity} {food}', # e.g. 1 apple
+				'(?:that )?\s*(?:i)?\s*(ate|have eaten) {quantity} serving of {food}', # e.g. 1 serving of raisins
+				'(?:that )?\s*(?:i)?\s*(ate|have eaten) {portion} portion of {food}', # e.g. 1 portion of pie
+				'(?:that )?\s*(?:i)?\s*(ate|have eaten) a {measure} of {food}', # e.g. a can of soup
+				'(?:that )?\s*(?:i)?\s*(ate|have eaten) {quantity} {measure} of {food}', # e.g. 1 cup of raisins
+				'(?:that )?\s*(?:i)?\s*(ate|have eaten) {quantity} {food}', # e.g. 1 apple
 			],
 			slots: {
 				quantity: 'Number',
