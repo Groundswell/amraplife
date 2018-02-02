@@ -566,14 +566,17 @@ class ObservationBotService < AbstractBotService
 
 		unit = 'calories'
 		observed_metric = get_user_metric( user, 'ate', unit, true )
-		user_unit = Unit.where( metric_id: observed_metric.id, user_id: user.id ).find_by_alias( unit ) || Unit.system.find_by_alias( unit ) || observed_metric.unit
+		user_unit = Unit.where( metric_id: observed_metric.id, user_id: user.id ).find_by_alias( unit )
+		user_unit ||= Unit.create name: unit.singularize, user_id: user.id, aliases: [ unit ], unit_type: 'energy'
 		observation = Observation.create( user: user, observed: observed_metric, value: calories, unit: user_unit, notes: notes )
 
-		results[:average_nutrion_facts].each |unit, value|
+		results[:average_nutrion_facts].each do |unit, value|
 			if unit != :calories
 				unit = unit.to_s.gsub(/_/,' ')
+
 				observed_metric = get_user_metric( user, 'ate', unit, true )
-				user_unit = Unit.where( metric_id: observed_metric.id, user_id: user.id ).find_by_alias( unit ) || Unit.system.find_by_alias( unit ) || observed_metric.unit
+				user_unit = Unit.where( metric_id: observed_metric.id, user_id: user.id ).find_by_alias( unit )
+				user_unit ||= Unit.create name: unit.singularize, user_id: user.id, aliases: [ unit ], unit_type: 'weight'
 				child_observation = Observation.create( user: user, parent: observation, observed: observed_metric, value: value, unit: user_unit, notes: notes )
 			end
 		end
