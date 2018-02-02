@@ -33,7 +33,14 @@ class NutritionService
 
 				row[:fields].each do |key,value|
 					if key.to_s.start_with?('nf_')
-						nutrition_facts[key.to_s[3..-1].to_sym] = value
+
+						fact_key = key.to_s[3..-1].to_sym
+						fact_key = fact_key.to_s.downcase.gsub(/_/,' ')
+						fact_key = fact_key.gsub(/ f$/, ' fat').gsub(/ fty /, 'fatty')
+						fact_key = fact_key.gsub(/carbohydre/, 'carbohydrates').gsub(/ dv$/, '')
+						fact_key = fact_key.gsub(/^total /,'')
+						puts "fact_key #{fact_key}"
+						nutrition_facts[fact_key] = value
 					end
 				end
 
@@ -58,7 +65,7 @@ class NutritionService
 					average_nutrion_facts[key] = ( average_nutrion_facts[key] || 0.00 ) + ( result[:nutrion_facts][key] || 0.00 )
 				end
 			end
-			
+
 			average_nutrion_facts.each do |key, value|
 				average_nutrion_facts[key] = ( value.to_f / results.count.to_f ).round(2)
 			end

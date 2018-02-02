@@ -531,10 +531,12 @@ class ObservationBotService < AbstractBotService
 				notes = "#{params[:quantity]} #{params[:measure]} of #{params[:food]}" if params[:measure].present?
 				notes = "#{params[:portion]} portion of #{params[:food]}" if params[:portion].present?
 				notes ||= "#{params[:quantity]} #{params[:food]}"
+
 				# puts "query: #{query}"
 				results = NutritionService.new.nutrition_information( query: notes, max: 4 )
+				# puts "results #{JSON.pretty_generate results}"
 
-				calories = results[:average_nutrion_facts][:calories]
+				calories = results[:average_nutrion_facts]['calories']
 				calories = calories * params[:portion].to_i if params[:portion].present? && calories.present?
 
 			rescue Exception => e
@@ -564,20 +566,16 @@ class ObservationBotService < AbstractBotService
 			return
 		end
 
-		unit = 'calories'
-		observed_metric = get_user_metric( user, 'ate', unit, true )
-		user_unit = Unit.where( metric_id: observed_metric.id, user_id: user.id ).find_by_alias( unit )
-		user_unit ||= Unit.create name: unit.singularize, user_id: user.id, aliases: [ unit ], unit_type: 'energy'
-		observation = Observation.create( user: user, observed: observed_metric, value: calories, unit: user_unit, notes: notes )
+		unit = 'cal'
+		metric = get_user_metric( user, unit, unit, true )
+		user_unit = Unit.where( metric_id: metric.id, user_id: user.id ).find_by_alias( unit ) || Unit.system.find_by_alias( unit ) || metric.unit
+		observation = Observation.create( user: user, observed: metric, value: calories, unit: user_unit, notes: notes )
 
 		results[:average_nutrion_facts].each do |unit, value|
-			if unit != :calories
-				unit = unit.to_s.gsub(/_/,' ')
-
-				observed_metric = get_user_metric( user, 'ate', unit, true )
-				user_unit = Unit.where( metric_id: observed_metric.id, user_id: user.id ).find_by_alias( unit )
-				user_unit ||= Unit.create name: unit.singularize, user_id: user.id, aliases: [ unit ], unit_type: 'weight'
-				child_observation = Observation.create( user: user, parent: observation, observed: observed_metric, value: value, unit: user_unit, notes: notes )
+			unless unit.include? 'calories'
+				metric = get_user_metric( user, unit, 'g', true )
+				user_unit = Unit.where( metric_id: metric.id, user_id: user.id ).find_by_alias( unit ) || Unit.system.find_by_alias( unit ) || metric.unit
+				child_observation = Observation.create( user: user, parent: observation, observed: metric, value: value, unit: user_unit, notes: notes )
 			end
 		end
 
