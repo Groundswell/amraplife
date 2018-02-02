@@ -11,6 +11,7 @@ class Observation < ActiveRecord::Base
 	belongs_to 	:observed, polymorphic: true, touch: true
 	belongs_to 	:user
 	belongs_to 	:unit
+	belongs_to 	:parent, class_name: 'Observation'
 
 	def self.dated_between( start_date=1.month.ago, end_date=Time.zone.now )
 		start_date = start_date.to_datetime.beginning_of_day
@@ -43,7 +44,7 @@ class Observation < ActiveRecord::Base
 		else
 			self.unit.convert_from_base( self.value, opts )
 		end
-		
+
 		# if self.unit.nil?
 		# 	"#{value}"
 		# elsif self.unit.is_time?

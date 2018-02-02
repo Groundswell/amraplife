@@ -50,10 +50,23 @@ class NutritionService
 				}
 			end
 
+			nutrition_fact_keys = results.collect{|result| result[:nutrion_facts].keys.select{ |key| result[:nutrion_facts][key].is_a? Numeric } }.flatten.uniq
+
+			average_nutrion_facts = {}
+			results.each do |result|
+				nutrition_fact_keys.each do |key|
+					average_nutrion_facts[key] = ( average_nutrion_facts[key] || 0.00 ) + ( result[:nutrion_facts][key] || 0.00 )
+				end
+			end
+			
+			average_nutrion_facts.each do |key, value|
+				average_nutrion_facts[key] = ( value.to_f / results.count.to_f ).round(2)
+			end
+
 			return {
 				total_count: response[:total_hits],
 				best_score: response[:max_score],
-				average_calories: (results.collect{ |result| result[:nutrion_facts][:calories] }.sum / results.count).round(2),
+				average_nutrion_facts: average_nutrion_facts,
 				results: results
 			}
 

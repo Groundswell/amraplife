@@ -524,20 +524,18 @@ class ObservationBotService < AbstractBotService
 		end
 
 		notes = nil
-		unit = 'calories'
 		params[:quantity] ||= 1
 
 		if params[:food].present?
 			begin
-				query = "#{params[:quantity] || 'a'} #{params[:measure]} of #{params[:food]}" if params[:measure].present?
-				query ||= params[:food]
+				notes = "#{params[:quantity]} #{params[:measure]} of #{params[:food]}" if params[:measure].present?
+				notes = "#{params[:portion]} portion of #{params[:food]}" if params[:portion].present?
+				notes ||= "#{params[:quantity]} #{params[:food]}"
 				# puts "query: #{query}"
-				results = NutritionService.new.nutrition_information( query: query, max: 4 )
+				results = NutritionService.new.nutrition_information( query: notes, max: 4 )
 
-				# puts JSON.pretty_generate results
-
-				calories = results[:average_calories]
-				calories = calories * params[:portion].to_i if params[:portion].present?
+				calories = results[:average_nutrion_facts][:calories]
+				calories = calories * params[:portion].to_i if params[:portion].present? && calories.present?
 
 			rescue Exception => e
 				NewRelic::Agent.notice_error(e)
@@ -549,38 +547,35 @@ class ObservationBotService < AbstractBotService
 
 		end
 
-		if calories.nil?
+		if results.nil? || results[:results].blank?
 			add_speech( system_message = "Sorry, I am unable to find information about #{params[:food]}.")
 			return
 		end
 
-		observed_metric = get_user_metric( user, 'ate', unit, true )
-		user_unit = Unit.where( metric_id: observed_metric.id, user_id: user.id ).find_by_alias( unit ) || Unit.system.find_by_alias( unit ) || observed_metric.unit
-
 		if params[:portion].present?
-
 			add_speech( system_message = "Logging that you ate #{params[:portion]} portion of #{params[:food]}.#{calories.present? ? " Approximately #{calories} calories." : ""}")
-
-			observation = Observation.create( user: user, observed: observed_metric, value: calories, unit: user_unit, notes: notes )
-
 		elsif params[:quantity].present? && params[:measure].blank?
-
 			add_speech( system_message = "Logging that you ate #{params[:quantity]} #{params[:food]}.#{calories.present? ? " Approximately #{calories} calories." : ""}")
-
-			observation = Observation.create( user: user, observed: observed_metric, value: calories, unit: user_unit, notes: notes )
-
 		elsif params[:measure].present?
-
 			add_speech( system_message = "Logging that you ate #{params[:quantity]} #{params[:measure]} of #{params[:food]}.#{calories.present? ? " Approximately #{calories} calories." : ""}.")
-
-			observation = Observation.create( user: user, observed: observed_metric, value: calories, unit: user_unit, notes: notes )
-
 		else
-
 			add_speech( system_message = "Sorry, I don't understand.")
 			user.user_inputs.create( content: raw_input, source: options[:source], result_status: 'not found', system_notes: system_message )
 			return
+		end
 
+		unit = 'calories'
+		observed_metric = get_user_metric( user, 'ate', unit, true )
+		user_unit = Unit.where( metric_id: observed_metric.id, user_id: user.id ).find_by_alias( unit ) || Unit.system.find_by_alias( unit ) || observed_metric.unit
+		observation = Observation.create( user: user, observed: observed_metric, value: calories, unit: user_unit, notes: notes )
+
+		results[:average_nutrion_facts].each |unit, value|
+			if unit != :calories
+				unit = unit.to_s.gsub(/_/,' ')
+				observed_metric = get_user_metric( user, 'ate', unit, true )
+				user_unit = Unit.where( metric_id: observed_metric.id, user_id: user.id ).find_by_alias( unit ) || Unit.system.find_by_alias( unit ) || observed_metric.unit
+				child_observation = Observation.create( user: user, parent: observation, observed: observed_metric, value: value, unit: user_unit, notes: notes )
+			end
 		end
 
 		user.user_inputs.create( content: raw_input, result_obj: observation, action: 'created', source: options[:source], result_status: 'success', system_notes: system_message )
