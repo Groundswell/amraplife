@@ -220,6 +220,8 @@ class ObservationBotService < AbstractBotService
 
 
 				# # 	for input like....
+				# I got 3 rounds for the workout
+				'(?:to )?\s*(?:log |record )?\s*(?:that )?\s*(?:i )?\s*(got)?\s*{value} for (the)?\s*(today\'s)?\s*{action}\s*({time_period})?\s*({notes})?',
 				
 				# # 	did 30 minutes of cardio
 				# #  	MUST use 'of' to separate units from action
@@ -271,9 +273,10 @@ class ObservationBotService < AbstractBotService
 			regex: [
 				'[0-9]+\s*point\s*[0-9]+', # I weigh 169 point 5 lb
 				'([0-9]+)\s*(and|&|\s+)\s*([0-9]+)\/([0-9]+)', # I weigh 169 and 1/2 lb
+				'([0-9]{1,2})\s+([0-9]{1,2})', # time often comes as 32 15
 
 				'[0-9]+\s*(\/|over)\s*[0-9]+', # blood pressure -- split on (\/|over)
-				'[0-9]+\s*(round|rounds|rd|rds)?\s*(and|&|\+)?\s*[0-9]+\s*(rep)?', # rounds & reps -- split on (and|&|\+)
+				'[0-9]+\s*(round|rounds|rd|rds)?\s*(and|&|\+)?\s*[0-9]+\s*(rep|reps)?', # rounds & reps -- split on (and|&|\+)
 				'[0-9.:&|\s+a\s+|\s+an\s+]+',
 				
 			],
@@ -1057,6 +1060,16 @@ class ObservationBotService < AbstractBotService
 			params[:value] = dec.to_s
 		end
 
+		# 18 51 should be 18:51
+		if mdata = params[:value].match( /([0-9]{1,2})\s+([0-9]{1,2})/i )
+			minutes = mdata[1]
+			seconds = mdata[2]
+			
+			params[:value] = "#{minutes}:#{seconds}" if ( minutes.to_i < 60 ) && ( seconds.to_i < 60 )
+		end
+
+		
+
 
 		if params[:action].blank?
 			add_ask( "I'm sorry, I didn't understand that.  I don't know what to log. You must supply a metric with your value in order to log it.  For example \"log one hundred calories\" or \"my weight is one hundred sixty\".  Now, give it another try.", reprompt_text: "I still didn't understand that.  You must supply a unit or action with your value in order to log it.", deligate_if_possible: true )
@@ -1126,9 +1139,11 @@ class ObservationBotService < AbstractBotService
 				# compund rounds & reps
 				sub = true
 				val = params[:value].split( /(and|&|\+)/ ).first
+				val = val.to_f
 				user_unit = Unit.system.find_by_alias( 'round' )
 				sub_metric = metric
 				sub_val = params[:value].split( /(and|&|\+)/ ).last
+				sub_val = sub_val.to_f
 				sub_unit = Unit.system.find_by_alias( 'rep' )
 
 			elsif params[:value].try( :match, /(\/|over)/ )
@@ -1194,7 +1209,7 @@ class ObservationBotService < AbstractBotService
 			
 			if action.present?
 				# clean up the action string... some of our matchers leave cruft
-				action = action.gsub( /(\Alog|\Arecord|\Ai did|\Adid|to |my | todays | is| are| was| = |i | for|timer|\s+at|around|about|almost|near|close)/i, '' ).strip
+				action = action.gsub( /(\Alog|\Arecord|\Ai did|\Adid|\Athe\s+|to |my | todays | is| are| was| = |i | for|timer|\s+at|around|about|almost|near|close)/i, '' ).strip
 
 				# clean up unit
 				# unit ||= 'nada'
