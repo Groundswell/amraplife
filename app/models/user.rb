@@ -82,7 +82,7 @@ class User < SwellMedia::User
 	private
 
 		def set_custom_units
-			Unit.create( user_id: self.id, name: 'Steps', abbrev: 'step', unit_type: 'length', base_unit_id: Unit.system.find_by_alias( 'meter' ).id, conversion_factor: 0.7112, custom_base_unit_id: Unit.system.find_by_alias( 'inch' ).id, custom_conversion_factor: 28 )
+			#Unit.create( user_id: self.id, name: 'Steps', abbrev: 'step', unit_type: 'length', base_unit_id: Unit.system.find_by_alias( 'meter' ).id, conversion_factor: 0.7112, custom_base_unit_id: Unit.system.find_by_alias( 'inch' ).id, custom_conversion_factor: 28 )
 		end
 
 		def set_names
