@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180121011527) do
+ActiveRecord::Schema.define(version: 20180203183214) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -483,8 +483,8 @@ ActiveRecord::Schema.define(version: 20180121011527) do
     t.hstore   "properties",    default: {}
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "unit_id"
     t.integer  "status",        default: 1
+    t.integer  "unit_id"
   end
 
   add_index "observations", ["parent_id"], name: "index_observations_on_parent_id", using: :btree
@@ -588,14 +588,17 @@ ActiveRecord::Schema.define(version: 20180121011527) do
     t.text     "shopify_code"
     t.string   "title"
     t.string   "caption"
+    t.integer  "seq",             default: 1
     t.string   "slug"
     t.string   "avatar"
+    t.string   "brand_model"
     t.integer  "status",          default: 0
     t.text     "description"
     t.text     "content"
     t.datetime "publish_at"
     t.integer  "price",           default: 0
     t.integer  "suggested_price", default: 0
+    t.integer  "shipping_price",  default: 0
     t.string   "currency",        default: "USD"
     t.string   "tags",            default: [],      array: true
     t.hstore   "properties",      default: {}
@@ -606,12 +609,11 @@ ActiveRecord::Schema.define(version: 20180121011527) do
     t.text     "size_info"
     t.text     "notes"
     t.integer  "collection_id"
-    t.integer  "shipping_price",  default: 0
     t.string   "tax_code",        default: "00000"
-    t.integer  "seq",             default: 1
   end
 
   add_index "products", ["category_id"], name: "index_products_on_category_id", using: :btree
+  add_index "products", ["seq"], name: "index_products_on_seq", using: :btree
   add_index "products", ["slug"], name: "index_products_on_slug", unique: true, using: :btree
   add_index "products", ["status"], name: "index_products_on_status", using: :btree
   add_index "products", ["tags"], name: "index_products_on_tags", using: :gin
@@ -688,9 +690,10 @@ ActiveRecord::Schema.define(version: 20180121011527) do
   create_table "terms", force: :cascade do |t|
     t.string   "title"
     t.string   "slug"
+    t.text     "description"
     t.text     "content"
-    t.text     "aliases",    default: [], array: true
-    t.integer  "status",     default: 1
+    t.text     "aliases",     default: [], array: true
+    t.integer  "status",      default: 1
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -727,7 +730,7 @@ ActiveRecord::Schema.define(version: 20180121011527) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "custom_base_unit_id"
-    t.integer  "custom_conversion_factor"
+    t.float    "custom_conversion_factor"
   end
 
   add_index "units", ["base_unit_id"], name: "index_units_on_base_unit_id", using: :btree

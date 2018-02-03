@@ -25,6 +25,7 @@ class CustomUnitsController < ApplicationController
 
 	def edit
 		@unit.custom_base_unit_name = Unit.where( id: @unit.custom_base_unit_id ).first.try( :name )
+		@unit.conversion_factor = @unit.conversion_factor.to_f
 	end
 
 	def index

@@ -556,7 +556,7 @@ class ObservationBotService < AbstractBotService
 		# fetch the metric
 		if metric = get_user_metric( user, action, unit, true )
 
-			user_unit = Unit.where( metric_id: metric.id, user_id: user.id ).find_by_alias( unit ) || Unit.system.find_by_alias( unit ) || metric.unit
+			user_unit = Unit.where( metric_id: metric.id, user_id: user.id ).find_by_alias( unit ) || Unit.where( user_id: user.id ).find_by_alias( unit ) || Unit.system.find_by_alias( unit ) || metric.unit
 
 			if user_unit.present?
 				val = params[:value].to_f * user_unit.conversion_factor
@@ -649,7 +649,7 @@ class ObservationBotService < AbstractBotService
 		# fetch the metric
 		metric = get_user_metric( user, params[:action], user_unit, true )
 
-		unit = Unit.where( metric_id: metric.id, user_id: user.id ).find_by_alias( user_unit ) || Unit.system.find_by_alias( user_unit ) || metric.unit
+		unit = Unit.where( metric_id: metric.id, user_id: user.id ).find_by_alias( user_unit ) || Unit.where( user_id: user.id ).find_by_alias( user_unit ) || Unit.system.find_by_alias( user_unit ) || metric.unit
 
 		val = params[:value].to_f * unit.conversion_factor
 
@@ -824,7 +824,7 @@ class ObservationBotService < AbstractBotService
 		type ||= system_target.target_type
 
 		if unit_str.present?
-			unit = Unit.where( metric_id: metric.id, user_id: user.id ).find_by_alias( unit_str ) || Unit.system.find_by_alias( unit_str )
+			unit = Unit.where( metric_id: metric.id, user_id: user.id ).find_by_alias( unit_str ) || Unit.where( user_id: user.id ).find_by_alias( unit_str ) || Unit.system.find_by_alias( unit_str ) || metric.unit
 		end
 		unit ||= metric.unit
 
@@ -1162,7 +1162,7 @@ class ObservationBotService < AbstractBotService
 				user_unit = Unit.system.find_by_alias( 's' )
 			
 			else
-				user_unit = Unit.where( metric_id: metric.id, user_id: user.id ).find_by_alias( unit ) || Unit.system.find_by_alias( unit ) || metric.unit
+				user_unit = Unit.where( metric_id: metric.id, user_id: user.id ).find_by_alias( unit ) || Unit.where( user_id: user.id ).find_by_alias( unit ) || Unit.system.find_by_alias( unit ) || metric.unit
 				if user_unit.present?
 					val = user_unit.convert_to_base( params[:value] )
 				else
