@@ -8,7 +8,7 @@
 						Settings 
 					>
 					%a{ href: custom_units_path }
-						Units
+						Custom Units
 					>
 					Edit
 					= @unit.name
@@ -42,6 +42,10 @@
 						
 				.col-sm-4
 					.well
+						.form-group
+							= f.label :aliases_csv, "Aliases"
+							= f.text_field :aliases_csv, class: 'form-control'
+
 						.form-group
 							= f.label :metric_id, 'Applies to Metric'
 							= f.collection_select :metric_id, current_user.metrics, :id, :title, {}, class: 'form-control'

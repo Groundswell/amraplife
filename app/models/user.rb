@@ -2,7 +2,8 @@ class User < SwellMedia::User
 
 	devise 		:database_authenticatable, :omniauthable, :registerable, :recoverable, :rememberable, :trackable, :omniauthable, :omniauth_providers => [:facebook], :authentication_keys => [:login]
 
-	before_create :set_names
+	before_create 	:set_names
+	after_create 	:set_custom_units
 
 	# App declarations
 	has_many :metrics
@@ -79,6 +80,11 @@ class User < SwellMedia::User
 
 
 	private
+
+		def set_custom_units
+			Unit.create( user_id: self.id, name: 'Steps', abbrev: 'step', unit_type: 'length', base_unit_id: Unit.system.find_by_alias( 'meter' ).id, conversion_factor: 0.7112, custom_base_unit_id: Unit.system.find_by_alias( 'inch' ).id, custom_conversion_factor: 28 )
+		end
+
 		def set_names
 			if self.nickname.blank?
 				nick = self.full_name.split( /\s+/ ).first unless self.full_name.blank?

@@ -1241,11 +1241,11 @@ class ObservationBotService < AbstractBotService
 						end
 
 						# convert unit user gave us to base correct unit
-						if users_unit = Unit.system.find_by_alias( unit )
+						if users_unit = Unit.where( metric_id: observed_metric.id, user_id: user.id ).find_by_alias( unit ) || Unit.where( user_id: user.id ).find_by_alias( unit ) || Unit.system.find_by_alias( unit )# || observed_metric.unit
 							observed_metric.unit = users_unit
 						elsif unit.present?
 							# create a custom unit... not sure we really want to do this?
-							observed_metric.unit = Unit.create name: unit, user_id: user.id, aliases: [ unit.pluralize ], unit_type: observed_metric.try( :unit ).try( :unit_type )
+							observed_metric.unit = Unit.create name: unit, user_id: user.id, aliases: [ unit.pluralize ], unit_type: 'custom' #observed_metric.try( :unit ).try( :unit_type )
 						else # unit.blank?
 							observed_metric.unit ||= Unit.nada.first
 						end
@@ -1265,11 +1265,11 @@ class ObservationBotService < AbstractBotService
 						# gotta make a new metric from scratch
 						observed_metric ||= Metric.new( title: action )
 
-						if users_unit = Unit.find_by_alias( unit )
+						if users_unit = Unit.where( metric_id: observed_metric.id, user_id: user.id ).find_by_alias( unit ) || Unit.where( user_id: user.id ).find_by_alias( unit ) || Unit.system.find_by_alias( unit )# || observed_metric.unit
 							observed_metric.unit = users_unit
 						elsif unit.present?
 							# create a custom unit... not sure we really want to do this?
-							observed_metric.unit = Unit.create name: unit, user_id: user.id, aliases: [ unit.pluralize ], unit_type: observed_metric.try( :unit ).try( :unit_type )
+							observed_metric.unit = Unit.create name: unit, user_id: user.id, aliases: [ unit.pluralize ], unit_type: 'custom' #observed_metric.try( :unit ).try( :unit_type )
 						else
 							observed_metric.unit ||= Unit.nada.first
 						end
