@@ -43,18 +43,19 @@ class CustomUnitsController < ApplicationController
 
 		custom_base_unit = Unit.where( user_id: current_user.id ).find_by_alias( params[:unit][:custom_base_unit_name].downcase.singularize ) || Unit.system.find_by_alias( params[:unit][:custom_base_unit_name].downcase.singularize )
 
+		@unit.unit_type = custom_base_unit.unit_type if Unit.unit_types[@unit.unit_type] < 1
+
 		# for display, save the custom unit base
 		@unit.custom_base_unit_id = custom_base_unit.id if custom_base_unit.present?
 
 		# the real base unit is the system base unit
 		@unit.base_unit = custom_base_unit.try( :base_unit ) || Unit.system.where( unit_type: Unit.unit_types[params[:unit][:unit_type]] ).where( base_unit_id: nil ).first
 
-		@unit.conversion_factor = ( custom_base_unit.try( :conversion_factor ) || 0 ) * params[:unit][:custom_conversion_factor].to_f
-
+		@unit.conversion_factor = ( ( custom_base_unit.try( :conversion_factor ) || 1 ) * params[:unit][:custom_conversion_factor].to_f )
 
 		@unit.save
 
-		if @unit.previous_changes.include?( :base_unit_id ) || @unit.previous_changes.include?( :conversion_factor )
+		if ( @unit.previous_changes.include?( :base_unit_id ) || @unit.previous_changes.include?( :custom_conversion_factor ) )# && not( @unit.conversion_factor_was == 1.0 )
 			current_user.observations.where( unit_id: @unit.id ).each do |obs|
 				obs.value = obs.value * @unit.conversion_factor 
 				obs.save 

@@ -483,8 +483,8 @@ ActiveRecord::Schema.define(version: 20180203183214) do
     t.hstore   "properties",    default: {}
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "status",        default: 1
     t.integer  "unit_id"
+    t.integer  "status",        default: 1
   end
 
   add_index "observations", ["parent_id"], name: "index_observations_on_parent_id", using: :btree
