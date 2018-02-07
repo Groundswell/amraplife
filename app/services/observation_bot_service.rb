@@ -1209,7 +1209,7 @@ class ObservationBotService < AbstractBotService
 			
 			if action.present?
 				# clean up the action string... some of our matchers leave cruft
-				action = action.gsub( /(\Alog|\Arecord|\Ai did|\Adid|\Athe\s+|to |my | todays | is| are| was| = |i | for|timer|\s+at|around|about|almost|near|close)/i, '' ).strip
+				action = action.gsub( /(\Alog|\Arecord|\Ai did|\Adid|\Athe\s+|to |my | todays | is| are| was| = |i | for|timer|\s+at|around|about|almost|near|close|more)/i, '' ).strip
 
 				# clean up unit
 				# unit ||= 'nada'

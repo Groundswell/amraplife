@@ -56,7 +56,9 @@ class CustomUnitsController < ApplicationController
 		@unit.save
 
 		if ( @unit.previous_changes.include?( :base_unit_id ) || @unit.previous_changes.include?( :custom_conversion_factor ) )# && not( @unit.conversion_factor_was == 1.0 )
+			die
 			current_user.observations.where( unit_id: @unit.id ).each do |obs|
+
 				obs.value = obs.value * @unit.conversion_factor 
 				obs.save 
 			end
