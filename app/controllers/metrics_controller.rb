@@ -45,8 +45,8 @@ class MetricsController < ApplicationController
 
 		if @metric.previous_changes.include?( :unit_id )
 			# only update metrics with same unit_type as new unit. e.g. changing run distance from miles to yards shouldn't change time observations
-			similar_metric_ids = Unit.where( unit_type: Unit.unit_types[@metric.unit.unit_type] ).pluck( :id )
-			@metric.observations.where( unit_id: similar_metric_ids ).update_all( unit_id: @metric.unit_id )
+			#similar_metric_ids = Unit.where( unit_type: Unit.unit_types[@metric.unit.unit_type] ).pluck( :id )
+			#@metric.observations.where( unit_id: similar_metric_ids ).update_all( unit_id: @metric.unit_id )
 		end
 
 		if params[:metric][:reassign_to_metric_id].present?
