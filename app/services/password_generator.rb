@@ -11,7 +11,7 @@
 #     puts pwgen.generate(8)
 #   end
 #
-class PasswordGeneratorService
+class PasswordGenerator
 
 	# These are the koremutake syllables, plus the most common 2 and 3 letter 
 	# syllables taken from the most common 5,000 words in English, minus a few
@@ -33,8 +33,21 @@ class PasswordGeneratorService
 	end
 
 	def generate( args={} )
+
 		result = ''
-		length = args[:length] || 8
+		length = args[:length] || 10 + rand( 8 )
+
+		if not( args[:humanize] )
+			chars = ('A'..'Z').to_a + ('0'..'9').to_a + ('a'..'z').to_a + ('0'..'9').to_a
+			
+			chars += [ '!', '@', '#', '$', '%', '&', '*', ',', ':', '=', '-', '_' ] if args[:symbolize]
+
+			while result.length < length
+				char = chars[rand( chars.length )]
+				result += char
+			end
+			return result
+		end 
 
 		while result.length < length
 			syl = SYLLABLES[rand(SYLLABLES.length)]
@@ -44,16 +57,24 @@ class PasswordGeneratorService
 		
 		if args[:digitize]
 			# Stick in a digit
-			dpos = rand(length)
-			result[dpos,1] = rand(9).to_s
+			num = rand( length/2 )
+			num.times do 
+				dpos = rand(length)
+				result[dpos,1] = rand(9).to_s
+			end
 		end
 		
 		if args[:capitalize]
 			# Make a letter capitalized
-			cpos = rand(length)
-			result[cpos,1] = result[cpos,1].swapcase
+			num = rand( length/2 )
+			num.times do 
+				cpos = rand(length)
+				result[cpos,1] = result[cpos,1].swapcase
+			end
 		end
 
 		return result
 	end
 end
+
+
