@@ -9,6 +9,8 @@ class ApplicationController < ActionController::Base
 	before_filter :allow_iframe_requests
 	before_filter :set_cart#, :clear_cart
 
+	around_action :set_timezone, if: :current_user
+
 	def allow_iframe_requests
 	  response.headers.delete('X-Frame-Options')
 	end
@@ -31,5 +33,12 @@ class ApplicationController < ActionController::Base
 			return '/lifemeter'
 		end
 	end
+
+
+	private
+		def set_timezone( &block )
+			Time.use_zone( current_user.timezone, &block )
+			
+		end
 
 end

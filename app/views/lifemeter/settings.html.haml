@@ -35,6 +35,11 @@
 								= label_tag :email
 								= text_field_tag :email, current_user.email, class: 'form-control'
 
+							
+							.form-group
+								= label_tag :timezone
+								= select_tag :timezone, time_zone_options_for_select( current_user.timezone, ActiveSupport::TimeZone.us_zones ), class: 'form-control'
+
 							.form-group
 								= label_tag :current_password
 								= password_field_tag :current_password, '', class: 'form-control'

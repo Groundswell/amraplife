@@ -5,3 +5,5 @@ Time::DATE_FORMATS[:full] = "%d %B, %Y"
 Time::DATE_FORMATS[:slashed_time] = "%m/%d/%Y %H:%M"
 Time::DATE_FORMATS[:dashed_time] = "%m-%d-%Y %H:%M"
 Time::DATE_FORMATS[:full_time] = "%d %B, %Y %H:%M"
+
+Time::DATE_FORMATS[:full_12_time] = "%b %d, %Y %I:%M%p"

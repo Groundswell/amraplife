@@ -45,7 +45,7 @@
 												= time_ago_in_words input.created_at
 												ago.
 												%br
-												= input.created_at.to_s( :slashed_time )
+												= input.created_at.to_s( :full_12_time )
 					- else
 						%center
 							%h1

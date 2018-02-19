@@ -21,7 +21,7 @@
 						%td
 							= observation.display_value( show_units: true )
 						%td
-							= observation.recorded_at
+							= observation.recorded_at.to_s( :full_12_time )
 						%td
 							.btn-group
 								%button.btn.btn-mini.btn-default.dropdown-toggle{ data: { toggle: :dropdown } }

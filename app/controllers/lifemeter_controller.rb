@@ -79,6 +79,8 @@ class LifemeterController < ApplicationController
 		current_user.gender = params[:gender] if params[:gender].present?
 		current_user.dob = params[:dob] if params[:dob].present?
 		current_user.email = params[:email] unless params[:email].blank?
+		
+		current_user.timezone = params[:timezone] unless params[:timezone].blank?
 
 		current_user.full_name = params[:full_name] if params[:full_name].present?
 		current_user.street = params[:street] unless params[:street].blank?
