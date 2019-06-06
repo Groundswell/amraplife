@@ -37,7 +37,7 @@
 											or
 									-#%a{ href: '#signup', data: { toggle: "modal" } }
 										Create an account
-						%li.searchBox
+						-#%li.searchBox
 							%a{ href: 'javascript:void(0)' }
 								%i.fa.fa-search
 							%ul.dropdown-menu.dropdown-menu-right
@@ -47,7 +47,7 @@
 											%input.form-control{ name: :query, type: :text, placeholder: 'Search...'}
 											%button.input-group-addon{ type: :submit }
 												Submit
-						%li.dropdown.cart-dropdown
+						-#%li.dropdown.cart-dropdown
 							%a.dropdown-toggle{ href: "javascript:void(0)", data: { toggle: "dropdown" } }
 								%i.fa.fa-shopping-cart
 								= session[:cart_count] || 0
@@ -97,7 +97,7 @@
 
 			.collapse.navbar-collapse.navbar-ex1-collapse
 				%ul.nav.navbar-nav.navbar-right
-					%li
+					-#%li
 						%a{ href: '/store' }
 							Shop
 					%li

@@ -20,7 +20,7 @@ SitemapGenerator::Sitemap.create do
 	add '/articles'
 	add '/movements'
 	add '/equipment'
-	add '/store'
+	#add '/store'
 	add '/recipes'
 	add '/crossfit-terms'
 	#add '/places'
@@ -28,9 +28,9 @@ SitemapGenerator::Sitemap.create do
 	SwellMedia::Media.published.each do |media|
 		add media.path, lastmod: media.updated_at
 	end
-	Product.published.each do |product|
-		add product.path, lastmod: product.updated_at
-	end
+	#Product.published.each do |product|
+	#	add product.path, lastmod: product.updated_at
+	#end
 	Equipment.published.each do |equipment|
 	 	add equipment.path, lastmod: equipment.updated_at
 	end

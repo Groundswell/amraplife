@@ -64,7 +64,7 @@ class Metric < ActiveRecord::Base
 		args[:convert] = true unless args[:convert] == false
 
 		# default to all_time
-		start_date = Time.zone.now - 10.years
+		start_date = Time.zone.now - 100.years
 		
 		if not( self.default_period == 'all_time' )
 			start_date = Time.zone.now - eval( "1.#{self.default_period}" )
