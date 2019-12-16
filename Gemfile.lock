@@ -156,7 +156,7 @@ GEM
       faraday
       multi_json
     erubis (2.7.0)
-    excon (0.60.0)
+    excon (0.71.0)
     execjs (2.7.0)
     extendmatrix (0.4)
     faraday (0.12.2)
