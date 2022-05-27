@@ -424,7 +424,7 @@ GEM
       prawn (>= 0.8.4)
     pundit (1.1.0)
       activesupport (>= 3.0.0)
-    rack (1.6.8)
+    rack (1.6.13)
     rack-oauth2 (1.7.0)
       activesupport (>= 2.3)
       attr_required (>= 0.0.5)
